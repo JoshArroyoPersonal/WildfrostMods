@@ -42,7 +42,7 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Wildfrost_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp-Publicized">
-      <HintPath>..\..\..\..\Documents\Assembly-CSharp-Publicized.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Managed\Assembly-CSharp-Publicized.dll</HintPath>
     </Reference>
     <Reference Include="AssortedPatchesCollection">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3155878385\AssortedPatchesCollection.dll</HintPath>

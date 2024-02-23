@@ -8,7 +8,6 @@ using UnityEngine.Localization.Tables;
 using UnityEngine;
 using HarmonyLib;
 using AssortedPatchesCollection;
-using BattleEditor;
 using Rewired;
 using UnityEngine.Localization;
 using System.IO;
@@ -22,9 +21,10 @@ namespace Pokefrost
         private List<CardUpgradeDataBuilder> charmlist;
         private static float shinyrate = 1/400f;
 
+        //I'm gonna make the greatest commit of the generation! - Michael
         public Pokefrost(string modDirectory) : base(modDirectory) 
         {
-
+            
         }
 
         private void CreateModAssets()
