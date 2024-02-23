@@ -450,7 +450,7 @@ namespace Pokefrost
             hittaunt.name = "Target Mode Taunt";
             hittaunt.keyword = "";
             //collection.SetString(hittaunt.name + "_text", "");
-            //hittaunt.textKey = collection.GetString(hittaunt.name + "_text");
+            hittaunt.textKey = new UnityEngine.Localization.LocalizedString();
             hittaunt.ModAdded = this;
 
             TraitData taunttrait = Get<TraitData>("Hellbent").InstantiateKeepName();
