@@ -461,7 +461,7 @@ namespace Pokefrost
             tauntedtrait.keyword = tauntedkey;
             StatusEffectData[] tauntedtemp = {taunteffect};
             tauntedtrait.effects = tauntedtemp;
-            TraitData[] tempoverrides = { Get<TraitData>("Aimless"), Get<TraitData>("Barrage"), Get<TraitData>("Aimless") };
+            TraitData[] tempoverrides = { Get<TraitData>("Aimless"), Get<TraitData>("Barrage"), Get<TraitData>("Longshot") };
             tauntedtrait.overrides = tempoverrides;
             tauntedtrait.ModAdded = this;
 
@@ -1072,7 +1072,7 @@ namespace Pokefrost
 
         private void ShinyPet()
         {
-            if (References.PlayerData == null || References.PlayerData.inventory == null || References.PlayerData.inventory.deck == null)
+            if (References.PlayerData?.inventory?.deck == null)
             {
                 return;
             }
