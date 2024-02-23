@@ -15,6 +15,10 @@ namespace Pokefrost
         public override void Autofill(string n, string descrip, WildfrostMod mod)
         {
             base.Autofill(n, descrip, mod);
+            if(upgradeMap.ContainsKey("CardUpgradeOverload"))
+            {
+                return;
+            }
             upgradeMap.Add("CardUpgradeOverload", "flareon");
             upgradeMap.Add("CardUpgradeSpice", "flareon");
             upgradeMap.Add("CardUpgradeBattle", "flareon");
@@ -29,6 +33,7 @@ namespace Pokefrost
             upgradeMap.Add("CardUpgradeDraw", "jolteon");
             upgradeMap.Add("CardUpgradeFrenzyReduceAttack", "jolteon");
             upgradeMap.Add("CardUpgradeWildcard", "jolteon");
+            upgradeMap.Add("websiteofsites.wildfrost.pokefrost.CardUpgradeMagnemite", "jolteon");
 
             upgradeMap.Add("CardUpgradeBalanced", "espeon");
             upgradeMap.Add("CardUpgradeBom", "espeon");

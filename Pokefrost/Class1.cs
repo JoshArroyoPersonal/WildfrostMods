@@ -21,7 +21,6 @@ namespace Pokefrost
         private List<CardUpgradeDataBuilder> charmlist;
         private static float shinyrate = 1/400f;
 
-        //I'm gonna make the greatest commit of the generation! - Michael
         public Pokefrost(string modDirectory) : base(modDirectory) 
         {
             
@@ -62,7 +61,6 @@ namespace Pokefrost
             wilder.silenced = null;
             wilder.added = null;
             wilder.addedAmount = 0;
-            UnityEngine.Debug.Log("[Michael] Wonder if it worked?");
             wilder.targetConstraints = new TargetConstraint[0];
             wilder.offensive = true;
             wilder.isKeyword = false;
@@ -354,7 +352,6 @@ namespace Pokefrost
             yskull2.textKey = collection.GetString(yskull2.name + "_text");
             yskull2.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", yskull2);
-            Debug.Log("[Josh] Duskull time");
             StatusEffectApplyRandomOnCardPlayed duskulleffect = ScriptableObject.CreateInstance<StatusEffectApplyRandomOnCardPlayed>();
             duskulleffect.type = "duskull";
             duskulleffect.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
@@ -436,7 +433,6 @@ namespace Pokefrost
             overoverburn.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overoverburn);
 
-            Debug.Log("Before Taunt");
 
             StatusEffectChangeTargetMode taunteffect = Get<StatusEffectData>("Hit All Enemies").InstantiateKeepName() as StatusEffectChangeTargetMode;
             taunteffect.name = "Hit All Taunt";
@@ -456,10 +452,8 @@ namespace Pokefrost
             TraitData taunttrait = Get<TraitData>("Hellbent").InstantiateKeepName();
             taunttrait.name = "Taunt";
             taunttrait.keyword = tauntkey;
-            Debug.Log("[Josh] taunttrait effects Before");
             StatusEffectData[] taunttemp = {hittaunt};
             taunttrait.effects = taunttemp;
-            Debug.Log("[Josh] taunttrait effects After");
             taunttrait.ModAdded = this;
 
             TraitData tauntedtrait = Get<TraitData>("Hellbent").InstantiateKeepName();
@@ -972,9 +966,6 @@ namespace Pokefrost
 
         private void Wildparty(CardData cardData)
         {
-            //UnityEngine.Debug.Log("[Michael] Initializing CardData.");
-            //CardData cardData = entity.gameObject.GetComponent<CardData>();
-            //UnityEngine.Debug.Log("[Michael] That worked.");
             if (cardData != null && cardData.cardType.name == "Leader")
             {
                 Debug.Log("Start overriding Leader effects");
@@ -1030,47 +1021,43 @@ namespace Pokefrost
             CardDataList list = References.Player.data.inventory.deck;
             List<CardData> slateForEvolution = new List<CardData>();
             List<StatusEffectEvolve> evolveEffects = new List<StatusEffectEvolve>();
-            Debug.Log("[[Michael]] Searching...");
             foreach (CardData card in list)
             {
                 foreach (CardData.StatusEffectStacks s in card.startWithEffects)
                 {
                     if (s.data.type == "evolve1")
                     {
-                        Debug.Log("[[Michael]] Found One!");
                         s.count -= 1;
                         if (s.count == 0)
                         {
                             if (((StatusEffectEvolve)s.data).ReadyToEvolve(card))
                             {
-                                Debug.Log("[[Michael]] Ready for evolution!");
+                                Debug.Log("[Pokefrost] Ready for evolution!");
                                 slateForEvolution.Add(card);
                                 evolveEffects.Add(((StatusEffectEvolve)s.data));
                             }
                             else
                             {
                                 s.count += 1;
-                                Debug.Log("[[Michael]] Conditions not met.");
+                                Debug.Log("[Pokefrost] Conditions not met.");
                             }
                         }
                     }
                     if (s.data.type == "evolve2")
                     {
-                        Debug.Log("[[Michael]] Found One!");
                         if (((StatusEffectEvolve)s.data).ReadyToEvolve(card))
                         {
-                            Debug.Log("[[Michael]] Ready for evolution!");
+                            Debug.Log("[Pokefrost] Ready for evolution!");
                             slateForEvolution.Add(card);
                             evolveEffects.Add(((StatusEffectEvolve)s.data));
                         }
                         else
                         {
-                            Debug.Log("[[Michael]] Conditions not met.");
+                            Debug.Log("[Pokefrost] Conditions not met.");
                         }
                     }
                 }
             }
-            Debug.Log("[[Michael]] <Drum Roll>");
             int count = slateForEvolution.Count;
 
             for (int i = 0; i < count; i++)
@@ -1085,6 +1072,10 @@ namespace Pokefrost
 
         private void ShinyPet()
         {
+            if (References.PlayerData == null || References.PlayerData.inventory == null || References.PlayerData.inventory.deck == null)
+            {
+                return;
+            }
             foreach(CardData card in References.PlayerData.inventory.deck)
             {
                 if (card.name.Contains("websiteofsites.wildfrost.pokefrost") && card.cardType.name == "Friendly" && UnityEngine.Random.Range(0, 1f) < shinyrate)
@@ -1138,9 +1129,7 @@ namespace Pokefrost
         public override void Load()
         {
             CreateModAssets();
-            UnityEngine.Debug.Log("Almost Loaded");
             base.Load();
-            UnityEngine.Debug.Log("Loaded");
             Events.OnCardDataCreated += PokemonEdits;
             Events.OnBattleEnd += NosepassAttach;
             Events.OnBattleEnd += CheckEvolve;
