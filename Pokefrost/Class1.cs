@@ -554,6 +554,22 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", bomall);
             statusList.Add(bomall);
 
+            StatusEffectTriggerWhenDamageType teethtrigger = ScriptableObject.CreateInstance<StatusEffectTriggerWhenDamageType>();
+            teethtrigger.name = "Trigger When Teeth Damage";
+            teethtrigger.isReaction = true;
+            teethtrigger.applyFormat = "";
+            teethtrigger.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            teethtrigger.keyword = "";
+            teethtrigger.targetConstraints = new TargetConstraint[0];
+            teethtrigger.triggerdamagetype = "spikes";
+            collection.SetString(teethtrigger.name + "_text", "<color=#F99C61>Trigger when <keyword=teeth> damage is dealt</color>");
+            teethtrigger.textKey = collection.GetString(teethtrigger.name + "_text");
+            teethtrigger.textOrder = 0;
+            teethtrigger.textInsert = "";
+            teethtrigger.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", teethtrigger);
+            statusList.Add(teethtrigger);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -769,6 +785,24 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("carvanha", "Carvanha")
+                    .SetStats(6, 3, 4)
+                    .SetSprites("carvanha.png", "carvanhaBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("sharpedo", "Sharpedo")
+                    .SetStats(7, 3, 4)
+                    .SetSprites("sharpedo.png", "sharpedoBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Teeth Damage"), 1))
+                    .AddPool("MagicUnitPool")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("spinda", "Spinda")
                     .SetStats(5, 4, 4)
                     .SetSprites("spinda.png", "spindaBG.png")
@@ -801,6 +835,7 @@ namespace Pokefrost
                     .SetStats(5, 5, 2)
                     .SetSprites("absol.png", "absolBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Apply Demonize To RandomAlly"), 1))
+                    .WithFlavour("Once mistaken to be the bringer of Wildfrost")
                     .AddPool()
                 );
 

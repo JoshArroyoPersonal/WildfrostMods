@@ -11,8 +11,8 @@ namespace Pokefrost
     {
         private bool isAlreadyOnBoard;
 
-        private string triggerdamagetype;
-        public override bool HasHitRoutine => true;
+        public string triggerdamagetype;
+        public override bool HasPostHitRoutine => true;
 
         public override object GetMidBattleData()
         {
@@ -30,16 +30,17 @@ namespace Pokefrost
 
         public override void Init()
         {
-            base.OnHit += Enable;
+            base.PostHit += Enable;
         }
 
-        public override bool RunHitEvent(Hit hit)
+        public override bool RunPostHitEvent(Hit hit)
         {
             return Battle.IsOnBoard(target);
         }
 
         private IEnumerator Enable(Hit hit)
         {
+            UnityEngine.Debug.Log("[Pokefrost] Damage type is " + hit.damageType.ToString());
             if (hit.damageType == triggerdamagetype)
             {
                 yield return Sequences.Wait(0.2f);
@@ -53,7 +54,7 @@ namespace Pokefrost
             {
                 yield return Sequences.Wait(0.1f);
                 target.curveAnimator?.Ping();
-                yield return Sequences.Wait(0.5f);
+                yield return Sequences.Wait(0.3f);
                 ActionQueue.Stack(new ActionTrigger(target, null), fixedPosition: true);
             }
         }
