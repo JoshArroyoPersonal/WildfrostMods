@@ -56,6 +56,7 @@ namespace Pokefrost
         public override bool RunPostHitEvent(Hit hit)
         {
             base.RunPostHitEvent(hit);
+            UnityEngine.Debug.Log("[Pokefrost] Post Hit Event");
             bool result1 = constraint(hit);
             bool result2 = false;
             bool result3 = (hit.damageType == targetType);
@@ -63,6 +64,8 @@ namespace Pokefrost
             {
                 result2 = (hit?.attacker?.owner == target?.owner);
             }
+            UnityEngine.Debug.Log("[Pokefrost] " + result1.ToString() + " " + result2.ToString() + " " + result3.ToString());
+            UnityEngine.Debug.Log(hit.damageType);
             if (result1 && result2 && result3)
             {
                 UnityEngine.Debug.Log("[Pokefrost] Confrimed Hit!");

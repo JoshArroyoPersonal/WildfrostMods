@@ -53,6 +53,7 @@ namespace Pokefrost
 
         public override bool RunPostApplyStatusEvent(StatusEffectApply apply)
         {
+            UnityEngine.Debug.Log("[Pokefrost] Post Apply Status");
             bool result1 = constraint(apply);
             bool result2 = false;
             bool result3 = (apply?.effectData?.type == targetType);

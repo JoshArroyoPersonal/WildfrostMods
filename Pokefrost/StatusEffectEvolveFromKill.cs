@@ -81,6 +81,8 @@ namespace Pokefrost
 
         public override bool RunEntityDestroyedEvent(Entity entity, DeathType deathType)
         {
+            UnityEngine.Debug.Log(entity.data.title + ", " + deathType.ToString());
+            UnityEngine.Debug.Log(entity.data.title + ", " + deathType.ToString());
             constraint(entity, deathType);
             //if (entity.lastHit != null && entity.lastHit.attacker == target && typeConditions.Contains<string>(entity.data.cardType.name))
             bool deserving = anyKill || (entity.lastHit != null && entity.lastHit.attacker == target);

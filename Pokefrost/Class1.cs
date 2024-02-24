@@ -805,8 +805,13 @@ namespace Pokefrost
                     .CreateUnit("carvanha", "Carvanha")
                     .SetStats(6, 3, 4)
                     .SetSprites("carvanha.png", "carvanhaBG.png")
+<<<<<<< HEAD
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3))
                     .AddPool("MagicUnitPool")
+=======
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Carvanha"), 10))
+                    .AddPool()
+>>>>>>> parent of b9b74cf (Removed some debug. Turned off debugshiny.)
                 );
 
             list.Add(
