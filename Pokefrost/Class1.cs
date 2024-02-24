@@ -445,6 +445,7 @@ namespace Pokefrost
 
             StatusEffectApplyXOnEffect overoverburn = ScriptableObject.CreateInstance<StatusEffectApplyXOnEffect>();
             overoverburn.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
+            overoverburn.doPing = false;
             overoverburn.conditionEffect = Get<StatusEffectData>("Overload");
             overoverburn.effectToApply = overoverburn.conditionEffect;
             overoverburn.applyEqualAmount = true;
@@ -939,7 +940,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("chandelure", "Chandelure")
-                    .SetStats(13, 0, 3)
+                    .SetStats(10, 0, 4)
                     .SetSprites("chandelure.png", "chandelureBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Barrage"), 1))
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload Self"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Overload Equal To Overload"), 1))
@@ -1242,7 +1243,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\n Adds 22 new companions and one new pet.";
+        public override string Description => "Pokemon Companions\r\n\r\n Adds 27 new companions and one new pet.";
 
         public override List<T> AddAssets<T, Y>()
         {
