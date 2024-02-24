@@ -621,6 +621,14 @@ namespace Pokefrost
             ev7.Confirm();
             statusList.Add(ev7);
 
+            StatusEffectEvolveFromHitApplied ev8 = ScriptableObject.CreateInstance<StatusEffectEvolveFromHitApplied>();
+            ev8.Autofill("Evolve Carvanha", "<keyword=evolve>: Apply <{a}> <keyword=teeth> damage", this);
+            ev8.SetEvolution("websiteofsites.wildfrost.pokefrost.sharpedo");
+            ev8.targetType = "spikes";
+            ev8.faction = "ally";
+            ev8.Confirm();
+            statusList.Add(ev8);
+
             collection.SetString(Get<StatusEffectData>("Double Negative Effects").name + "_text", "Double the target's negative effects");
             Get<StatusEffectData>("Double Negative Effects").textKey = collection.GetString(Get<StatusEffectData>("Double Negative Effects").name + "_text");
 
@@ -805,13 +813,8 @@ namespace Pokefrost
                     .CreateUnit("carvanha", "Carvanha")
                     .SetStats(6, 3, 4)
                     .SetSprites("carvanha.png", "carvanhaBG.png")
-<<<<<<< HEAD
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Carvanha"), 50))
                     .AddPool("MagicUnitPool")
-=======
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Carvanha"), 10))
-                    .AddPool()
->>>>>>> parent of b9b74cf (Removed some debug. Turned off debugshiny.)
                 );
 
             list.Add(
@@ -1218,7 +1221,7 @@ namespace Pokefrost
             References.instance.classes[0] = Get<ClassData>("Basic");
             References.instance.classes[1] = Get<ClassData>("Magic");
             References.instance.classes[2] = Get<ClassData>("Clunk");
-            DebugShiny();
+            //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
 
             //for (int i = 0; i < References.Classes.Length; i++)
