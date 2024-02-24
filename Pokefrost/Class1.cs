@@ -813,7 +813,7 @@ namespace Pokefrost
                     .CreateUnit("carvanha", "Carvanha")
                     .SetStats(6, 3, 4)
                     .SetSprites("carvanha.png", "carvanhaBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Carvanha"), 10))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Carvanha"), 50))
                     .AddPool()
                 );
 
@@ -1222,7 +1222,7 @@ namespace Pokefrost
             References.instance.classes[0] = Get<ClassData>("Basic");
             References.instance.classes[1] = Get<ClassData>("Magic");
             References.instance.classes[2] = Get<ClassData>("Clunk");
-            DebugShiny();
+            //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
 
             //for (int i = 0; i < References.Classes.Length; i++)
