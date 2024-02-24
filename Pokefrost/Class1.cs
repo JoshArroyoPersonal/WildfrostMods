@@ -398,7 +398,7 @@ namespace Pokefrost
             duskulltrigger.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             duskulltrigger.keyword = "";
             duskulltrigger.targetConstraints = new TargetConstraint[0];
-            collection.SetString(duskulltrigger.name + "_text", "<color=#F99C61>Trigger when anything is summoned</color>");
+            collection.SetString(duskulltrigger.name + "_text", "<color=#F99C61> Trigger when anything is summoned </color>");
             duskulltrigger.textKey = collection.GetString(duskulltrigger.name + "_text");
             duskulltrigger.textOrder = 0;
             duskulltrigger.textInsert = "";
@@ -563,7 +563,7 @@ namespace Pokefrost
             teethtrigger.keyword = "";
             teethtrigger.targetConstraints = new TargetConstraint[0];
             teethtrigger.triggerdamagetype = "spikes";
-            collection.SetString(teethtrigger.name + "_text", "<color=#F99C61>Trigger when <keyword=teeth> damage is dealt</color>");
+            collection.SetString(teethtrigger.name + "_text", "<color=#F99C61> Trigger when <keyword=teeth> damage is taken </color>");
             teethtrigger.textKey = collection.GetString(teethtrigger.name + "_text");
             teethtrigger.textOrder = 0;
             teethtrigger.textInsert = "";
