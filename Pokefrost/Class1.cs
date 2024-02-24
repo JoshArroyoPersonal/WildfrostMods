@@ -659,7 +659,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("magneton", "Magneton")
-                    .SetStats(6, 0, 3)
+                    .SetStats(3, 0, 3)
                     .SetSprites("magneton.png", "magnetonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Apply Shroom Overburn Or Bom"), 3))
                     .AddPool()
@@ -806,7 +806,7 @@ namespace Pokefrost
                     .SetStats(6, 3, 4)
                     .SetSprites("carvanha.png", "carvanhaBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3))
-                    .AddPool()
+                    .AddPool("MagicUnitPool")
                 );
 
             list.Add(
@@ -815,7 +815,6 @@ namespace Pokefrost
                     .SetStats(7, 3, 4)
                     .SetSprites("sharpedo.png", "sharpedoBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Teeth Damage"), 1))
-                    .AddPool("MagicUnitPool")
                 );
 
             list.Add(
@@ -897,7 +896,7 @@ namespace Pokefrost
                     .CreateUnit("croagunk", "Croagunk")
                     .SetStats(5, 2, 4)
                     .SetSprites("croagunk.png", "croagunkBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Hit Equal Shroom To Target"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Croagunk"), 40))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Hit Equal Shroom To Target"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Croagunk"), 80))
                     .AddPool("BasicUnitPool")
                 );
 
