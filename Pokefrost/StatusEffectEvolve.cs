@@ -17,8 +17,10 @@ namespace Pokefrost
         public static List<string> evolvedPokemonLastBattle = new List<string>(3);
 
         public static List<string> pokemonEvolvedIntoLastBattle = new List<string>(3);
+
         public virtual void Autofill(string n, string descrip, WildfrostMod mod)
         {
+            canBeBoosted = false;
             targetConstraints = new TargetConstraint[0];
             name = n;
             UnityEngine.Localization.Tables.StringTable collection = LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);

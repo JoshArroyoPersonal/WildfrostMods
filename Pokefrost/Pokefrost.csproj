@@ -234,6 +234,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="StatusEffectEvolveFromStatusApplied.cs" />
     <Compile Include="StatusEffectFreeTrait.cs" />
     <Compile Include="Class3.cs" />
     <Compile Include="Class4.cs" />
