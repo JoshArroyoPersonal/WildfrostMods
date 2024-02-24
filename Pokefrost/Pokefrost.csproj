@@ -241,6 +241,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatusEffectApplyRandomOnCardPlayed.cs" />
     <Compile Include="StatusEffectApplyXOnEffect.cs" />
+    <Compile Include="StatusEffectTriggerWhenDamageType.cs" />
     <Compile Include="StatusEffectTriggerWhenSummonDeployed.cs" />
     <Compile Include="StatusEffectEvolve.cs" />
     <Compile Include="StatusEffectEvolveEevee.cs" />
