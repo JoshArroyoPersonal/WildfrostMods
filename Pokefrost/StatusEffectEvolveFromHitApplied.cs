@@ -9,14 +9,16 @@ using UnityEngine;
 
 namespace Pokefrost
 {
-    internal class StatusEffectEvolveFromStatusApplied : StatusEffectEvolve
+    internal class StatusEffectEvolveFromHitApplied : StatusEffectEvolve
     {
 
         public static Dictionary<string, string> upgradeMap = new Dictionary<string, string>();
-        public Func<StatusEffectApply, bool> constraint = ReturnTrue;
+        public Func<Hit, bool> constraint = ReturnTrue;
         public string faction;
         public string targetType; //shroom
         public bool persist = true;
+
+        public override bool HasPostHitRoutine => true;
 
         public override void Init()
         {
@@ -25,18 +27,18 @@ namespace Pokefrost
             {
                 if (statuses.data.name == this.name)
                 {
-                    constraint = ((StatusEffectEvolveFromStatusApplied)statuses.data).constraint;
+                    constraint = ((StatusEffectEvolveFromHitApplied)statuses.data).constraint;
                     return;
                 }
             }
         }
 
-        public static bool ReturnTrue(StatusEffectApply apply)
+        public static bool ReturnTrue(Hit hit)
         {
             return true;
         }
 
-        public virtual void SetConstraints(Func<StatusEffectApply, bool> f)
+        public virtual void SetConstraints(Func<Hit, bool> f)
         {
             constraint = f;
         }
@@ -51,26 +53,27 @@ namespace Pokefrost
             textKey = collection.GetString(name + "_text");
         }
 
-        public override bool RunPostApplyStatusEvent(StatusEffectApply apply)
+        public override bool RunPostHitEvent(Hit hit)
         {
-            bool result1 = constraint(apply);
+            base.RunPostHitEvent(hit);
+            bool result1 = constraint(hit);
             bool result2 = false;
-            bool result3 = (apply?.effectData?.type == targetType);
+            bool result3 = (hit.damageType == targetType);
             if (faction == "ally")
             {
-                result2 = (apply?.applier?.owner == target?.owner);
+                result2 = (hit?.attacker?.owner == target?.owner);
             }
             if (result1 && result2 && result3)
             {
-                UnityEngine.Debug.Log("[Debug] Confrimed Status!");
+                UnityEngine.Debug.Log("[Pokefrost] Confrimed Hit!");
                 foreach (StatusEffectData statuses in target.statusEffects)
                 {
                     if (statuses.name == this.name && this.count > 0)
                     {
-                        this.count -= Math.Min(this.count, apply.count);
+                        this.count -= Math.Min(this.count, hit.damage);
                         target.display.promptUpdateDescription = true;
                         target.PromptUpdate();
-                        UnityEngine.Debug.Log("[Debug] Updated card on board!");
+                        UnityEngine.Debug.Log("[Pokefrost] Updated card on board!");
                     }
                 }
                 if (!persist && this.count != 0)
@@ -86,7 +89,7 @@ namespace Pokefrost
                             if (statuses.data.name == this.name && statuses.count > 0)
                             {
                                 statuses.count = this.count;
-                                UnityEngine.Debug.Log("[Debug] Updated deck copy!");
+                                UnityEngine.Debug.Log("[Pokefrost] Updated deck copy!");
                             }
                         }
                     }
