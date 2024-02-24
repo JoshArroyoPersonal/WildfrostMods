@@ -19,6 +19,8 @@ namespace Pokefrost
 
         private List<CardDataBuilder> list;
         private List<CardUpgradeDataBuilder> charmlist;
+        private List<StatusEffectData> statusList = new List<StatusEffectData>(30);
+        private bool preLoaded = false;
         private static float shinyrate = 1/400f;
 
         public Pokefrost(string modDirectory) : base(modDirectory) 
@@ -75,6 +77,7 @@ namespace Pokefrost
             //wilder.textKey = this.Get<StatusEffectData>("Instant Gain Aimless").textKey;
             wilder.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wilder);
+            statusList.Add(wilder);
 
             StatusEffectApplyXWhenHitFree supergreed = ScriptableObject.CreateInstance<StatusEffectApplyXWhenHitFree>();
             supergreed.attackerConstraints = new TargetConstraint[0];
@@ -103,6 +106,7 @@ namespace Pokefrost
             supergreed.textOrder = 0;
             supergreed.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", supergreed);
+            statusList.Add(supergreed);
 
             StatusEffectApplyXOnTurn hazeall = ScriptableObject.CreateInstance<StatusEffectApplyXOnTurn>();
             hazeall.applyConstraints = new TargetConstraint[0];
@@ -125,6 +129,7 @@ namespace Pokefrost
             hazeall.textOrder = 0;
             hazeall.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", hazeall);
+            statusList.Add(hazeall);
 
             StatusEffectApplyXOnTurn selfheal = ScriptableObject.CreateInstance<StatusEffectApplyXOnTurn>();
             selfheal.applyConstraints = new TargetConstraint[0];
@@ -147,6 +152,7 @@ namespace Pokefrost
             selfheal.textOrder = 0;
             selfheal.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", selfheal);
+            statusList.Add(selfheal);
 
             StatusEffectApplyXOnTurn restoreall = ScriptableObject.CreateInstance<StatusEffectApplyXOnTurn>();
             restoreall.applyConstraints = new TargetConstraint[0];
@@ -169,6 +175,7 @@ namespace Pokefrost
             restoreall.textOrder = 0;
             restoreall.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", restoreall);
+            statusList.Add(restoreall);
 
             StatusEffectWhileActiveX boostallies = ScriptableObject.CreateInstance<StatusEffectWhileActiveX>();
             boostallies.applyConstraints = new TargetConstraint[0];
@@ -190,6 +197,7 @@ namespace Pokefrost
             boostallies.textOrder = 0;
             boostallies.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", boostallies);
+            statusList.Add(boostallies);
 
             StatusEffectWhileActiveX unmovable = ScriptableObject.CreateInstance<StatusEffectWhileActiveX>();
             unmovable.applyConstraints = new TargetConstraint[0];
@@ -210,6 +218,7 @@ namespace Pokefrost
             unmovable.textOrder = 0;
             unmovable.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", unmovable);
+            statusList.Add(unmovable);
 
             StatusEffectApplyXOnCardPlayed hitrow = ScriptableObject.CreateInstance<StatusEffectApplyXOnCardPlayed>();
             hitrow.applyConstraints = new TargetConstraint[0];
@@ -229,6 +238,7 @@ namespace Pokefrost
             hitrow.textOrder = 0;
             hitrow.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", hitrow);
+            statusList.Add(hitrow);
 
             StatusEffectApplyXOnCardPlayed sundrum = ScriptableObject.CreateInstance<StatusEffectApplyXOnCardPlayed>();
             sundrum.applyConstraints = new TargetConstraint[0];
@@ -249,6 +259,7 @@ namespace Pokefrost
             sundrum.textOrder = 0;
             sundrum.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", sundrum);
+            statusList.Add(sundrum);
 
             StatusEffectMultEffects tea = ScriptableObject.CreateInstance<StatusEffectMultEffects>();
             tea.effects = new List<StatusEffectData> { Get<StatusEffectData>("Increase Max Counter"), Get<StatusEffectData>("MultiHit") };
@@ -266,6 +277,7 @@ namespace Pokefrost
             tea.type = "";
             tea.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tea);
+            statusList.Add(tea);
 
             StatusEffectApplyXOnCardPlayed blazetea = ScriptableObject.CreateInstance<StatusEffectApplyXOnCardPlayed>();
             blazetea.applyConstraints = new TargetConstraint[0];
@@ -286,6 +298,7 @@ namespace Pokefrost
             blazetea.textOrder = 0;
             blazetea.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", blazetea);
+            statusList.Add(blazetea);
 
             StatusEffectSummon scrap1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             scrap1.summonCard = Get<CardData>("ScrapPile");
@@ -294,6 +307,7 @@ namespace Pokefrost
             scrap1.textKey = collection.GetString(scrap1.name + "_text");
             scrap1.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", scrap1);
+            statusList.Add(scrap1);
             StatusEffectInstantSummon scrap2 = Get<StatusEffectData>("Instant Summon Junk In Hand").InstantiateKeepName() as StatusEffectInstantSummon;
             scrap2.targetSummon = Get<StatusEffectData>("Summon Scrap Pile") as StatusEffectSummon;
             scrap2.name = "Instant Summon Scrap Pile In Hand";
@@ -301,6 +315,7 @@ namespace Pokefrost
             scrap2.textKey = collection.GetString(scrap2.name + "_text");
             scrap2.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", scrap2);
+            statusList.Add(scrap2);
             StatusEffectApplyXWhenHit scrap3 = Get<StatusEffectData>("When Hit Add Junk To Hand").InstantiateKeepName() as StatusEffectApplyXWhenHit;
             scrap3.effectToApply = Get<StatusEffectData>("Instant Summon Scrap Pile In Hand") as StatusEffectInstantSummon;
             scrap3.canBeBoosted = false;
@@ -309,6 +324,7 @@ namespace Pokefrost
             scrap3.textKey = collection.GetString(scrap3.name + "_text");
             scrap3.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", scrap3);
+            statusList.Add(scrap3);
 
             StatusEffectSummon askull1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             askull1.summonCard = Get<CardData>("ZapOrb");
@@ -317,6 +333,7 @@ namespace Pokefrost
             askull1.textKey = collection.GetString(askull1.name + "_text");
             askull1.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", askull1);
+            statusList.Add(askull1);
             StatusEffectInstantSummon askull2 = Get<StatusEffectData>("Instant Summon Junk In Hand").InstantiateKeepName() as StatusEffectInstantSummon;
             askull2.targetSummon = Get<StatusEffectData>("Summon Azul Skull") as StatusEffectSummon;
             askull2.name = "Instant Summon Azul Skull In Hand";
@@ -324,6 +341,7 @@ namespace Pokefrost
             askull2.textKey = collection.GetString(askull2.name + "_text");
             askull2.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", askull2);
+            statusList.Add(askull2);
             StatusEffectSummon tskull1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             tskull1.summonCard = Get<CardData>("SharkTooth");
             tskull1.name = "Summon Tiger Skull";
@@ -331,6 +349,7 @@ namespace Pokefrost
             tskull1.textKey = collection.GetString(tskull1.name + "_text");
             tskull1.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tskull1);
+            statusList.Add(tskull1);
             StatusEffectInstantSummon tskull2 = Get<StatusEffectData>("Instant Summon Junk In Hand").InstantiateKeepName() as StatusEffectInstantSummon;
             tskull2.targetSummon = Get<StatusEffectData>("Summon Tiger Skull") as StatusEffectSummon;
             tskull2.name = "Instant Summon Tiger Skull In Hand";
@@ -338,6 +357,7 @@ namespace Pokefrost
             tskull2.textKey = collection.GetString(tskull2.name + "_text");
             tskull2.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tskull2);
+            statusList.Add(tskull2);
             StatusEffectSummon yskull1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             yskull1.summonCard = Get<CardData>("SnowMaul");
             yskull1.name = "Summon Yeti Skull";
@@ -345,6 +365,7 @@ namespace Pokefrost
             yskull1.textKey = collection.GetString(yskull1.name + "_text");
             yskull1.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", yskull1);
+            statusList.Add(yskull1);
             StatusEffectInstantSummon yskull2 = Get<StatusEffectData>("Instant Summon Junk In Hand").InstantiateKeepName() as StatusEffectInstantSummon;
             yskull2.targetSummon = Get<StatusEffectData>("Summon Yeti Skull") as StatusEffectSummon;
             yskull2.name = "Instant Summon Yeti Skull In Hand";
@@ -352,6 +373,7 @@ namespace Pokefrost
             yskull2.textKey = collection.GetString(yskull2.name + "_text");
             yskull2.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", yskull2);
+            statusList.Add(yskull2);
             StatusEffectApplyRandomOnCardPlayed duskulleffect = ScriptableObject.CreateInstance<StatusEffectApplyRandomOnCardPlayed>();
             duskulleffect.type = "duskull";
             duskulleffect.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
@@ -368,6 +390,7 @@ namespace Pokefrost
             duskulleffect.textInsert = "";
             duskulleffect.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", duskulleffect);
+            statusList.Add(duskulleffect);
             StatusEffectTriggerWhenSummonDeployed duskulltrigger = ScriptableObject.CreateInstance<StatusEffectTriggerWhenSummonDeployed>();
             duskulltrigger.name = "Trigger When Summon";
             duskulltrigger.isReaction = true;
@@ -381,6 +404,7 @@ namespace Pokefrost
             duskulltrigger.textInsert = "";
             duskulltrigger.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", duskulltrigger);
+            statusList.Add(duskulltrigger);
 
             StatusEffectApplyXOnCardPlayed demonizeally = Get<StatusEffectData>("On Card Played Apply Spice To RandomAlly").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
             demonizeally.effectToApply = Get<StatusEffectData>("Demonize");
@@ -389,6 +413,7 @@ namespace Pokefrost
             demonizeally.textKey = collection.GetString(demonizeally.name + "_text");
             demonizeally.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", demonizeally);
+            statusList.Add(demonizeally);
 
             StatusEffectApplyRandomOnCardPlayed triattack = ScriptableObject.CreateInstance<StatusEffectApplyRandomOnCardPlayed>();
             triattack.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
@@ -406,6 +431,7 @@ namespace Pokefrost
             triattack.textInsert = "<keyword=shroom>, <keyword=overload>, <keyword=weakness>";
             triattack.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triattack);
+            statusList.Add(triattack);
 
             StatusEffectApplyXPreTurn overburnself = Get<StatusEffectData>("Pre Turn Take Gold").InstantiateKeepName() as StatusEffectApplyXPreTurn;
             overburnself.effectToApply = Get<StatusEffectData>("Overload");
@@ -415,6 +441,7 @@ namespace Pokefrost
             overburnself.textKey = collection.GetString(overburnself.name + "_text");
             overburnself.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overburnself);
+            statusList.Add(overburnself);
 
             StatusEffectApplyXOnEffect overoverburn = ScriptableObject.CreateInstance<StatusEffectApplyXOnEffect>();
             overoverburn.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
@@ -432,6 +459,7 @@ namespace Pokefrost
             overoverburn.textInsert = "";
             overoverburn.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overoverburn);
+            statusList.Add(overoverburn);
 
 
             StatusEffectChangeTargetMode taunteffect = Get<StatusEffectData>("Hit All Enemies").InstantiateKeepName() as StatusEffectChangeTargetMode;
@@ -484,6 +512,7 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", taunteffect);
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", hittaunt);
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", imtaunted);
+            statusList.Add(taunteffect); statusList.Add(hittaunt); statusList.Add(imtaunted);
             AddressableLoader.AddToGroup<TraitData>("TraitData", taunttrait);
             AddressableLoader.AddToGroup<TraitData>("TraitData", tauntedtrait);
 
@@ -494,6 +523,7 @@ namespace Pokefrost
             shroomhit.textKey = collection.GetString(shroomhit.name + "_text");
             shroomhit.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", shroomhit);
+            statusList.Add(shroomhit);
 
             StatusEffectTemporaryTrait gainexplode = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             gainexplode.name = "Temporary Explode";
@@ -501,6 +531,7 @@ namespace Pokefrost
             gainexplode.ModAdded = this;
             gainexplode.targetConstraints = new TargetConstraint[0];
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", gainexplode);
+            statusList.Add(gainexplode);
 
             StatusEffectApplyXOnCardPlayed explodeself = Get<StatusEffectData>("On Card Played Apply Attack To Self").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
             explodeself.effectToApply = gainexplode;
@@ -511,6 +542,7 @@ namespace Pokefrost
             explodeself.textKey = collection.GetString(explodeself.name + "_text");
             explodeself.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", explodeself);
+            statusList.Add(explodeself);
 
             StatusEffectApplyXPreTurn bomall = Get<StatusEffectData>("Pre Turn Take Gold").InstantiateKeepName() as StatusEffectApplyXPreTurn;
             bomall.effectToApply = Get<StatusEffectData>("Weakness");
@@ -520,22 +552,26 @@ namespace Pokefrost
             bomall.textKey = collection.GetString(bomall.name + "_text");
             bomall.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", bomall);
+            statusList.Add(bomall);
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
             ev1.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardTypeIsBossOrMiniboss);
             ev1.Confirm();
+            statusList.Add(ev1);
 
             StatusEffectEvolve ev2 = ScriptableObject.CreateInstance<StatusEffectEvolveEevee>();
             ev2.Autofill("Evolve Eevee", "<keyword=evolve>: Equip charm" , this);
             ev2.SetEvolution("f");
             ev2.Confirm();
+            statusList.Add(ev2);
 
             StatusEffectEvolve ev3 = ScriptableObject.CreateInstance<StatusEffectEvolveFromMoney>();
             ev3.Autofill("Evolve Meowth", "<keyword=evolve>: Have <{a}><keyword=blings>", this);
             ev3.SetEvolution("websiteofsites.wildfrost.pokefrost.persian");
             ev3.Confirm();
+            statusList.Add(ev3);
 
             StatusEffectEvolveFromKill ev4 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev4.Autofill("Evolve Lickitung", "<keyword=evolve>: Consume <{a}> cards", this);
@@ -543,12 +579,14 @@ namespace Pokefrost
             ev4.anyKill = true;
             ev4.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardWasConsumed);
             ev4.Confirm();
+            statusList.Add(ev4);
 
             StatusEffectEvolveFromMoney ev5 = ScriptableObject.CreateInstance<StatusEffectEvolveFromMoney>();
             ev5.Autofill("Evolve Munchlax", "<keyword=evolve>: Have an empty deck", this);
             ev5.SetEvolution("websiteofsites.wildfrost.pokefrost.snorlax");
             ev5.SetConstraint(StatusEffectEvolveFromMoney.ReturnTrueIfEmptyDeck);
             ev5.Confirm();
+            statusList.Add(ev5);
 
             collection.SetString(Get<StatusEffectData>("Double Negative Effects").name + "_text", "Double the target's negative effects");
             Get<StatusEffectData>("Double Negative Effects").textKey = collection.GetString(Get<StatusEffectData>("Double Negative Effects").name + "_text");
@@ -961,28 +999,13 @@ namespace Pokefrost
                     .WithTitle("Tyrunt Charm")
                     .WithText("Gain <keyword=wild>\nApply <keyword=wild>")
             );*/
-            
+
+            preLoaded = true;
         }
 
-        private void Wildparty(CardData cardData)
+        private void LoadStatusEffects()
         {
-            if (cardData != null && cardData.cardType.name == "Leader")
-            {
-                Debug.Log("Start overriding Leader effects");
-                StatusEffectData leadereffect = Get<StatusEffectData>("Drop Bling on Hit");
-                Debug.Log("Got effect data");
-                if (leadereffect == null)
-                {
-                    Debug.Log("No Effect!! Spelling mistake?");
-                }
-
-                if (cardData.attackEffects == null)
-                {
-                    UnityEngine.Debug.Log("[Michael] Add attack array.");
-                }
-                cardData.startWithEffects = cardData.startWithEffects.AddItem(new CardData.StatusEffectStacks(leadereffect, 25)).ToArray();
-                UnityEngine.Debug.Log("[Michael] Success? " + leadereffect.name);
-            }
+            AddressableLoader.AddRangeToGroup("StatusEffectData", statusList);
         }
 
         private void NosepassAttach()

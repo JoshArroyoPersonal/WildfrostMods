@@ -15,13 +15,11 @@ namespace Pokefrost
         public override void Init()
         {
             base.Init();
-            UnityEngine.Debug.Log("[Josh] Init Random");
             Events.OnActionQueued += DetermineEffect;
         }
 
         private void DetermineEffect(PlayAction arg)
         {
-            UnityEngine.Debug.Log("[Josh] Rolling for random effects");
             int r = UnityEngine.Random.Range(0, effectsToapply.Length);
             effectToApply = effectsToapply[r];
         }
