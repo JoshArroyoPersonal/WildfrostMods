@@ -620,6 +620,14 @@ namespace Pokefrost
             ev7.Confirm();
             statusList.Add(ev7);
 
+            StatusEffectEvolveFromHitApplied ev8 = ScriptableObject.CreateInstance<StatusEffectEvolveFromHitApplied>();
+            ev8.Autofill("Evolve Carvanha", "<keyword=evolve>: Apply <{a}> <keyword=teeth> damage", this);
+            ev8.SetEvolution("websiteofsites.wildfrost.pokefrost.sharpedo");
+            ev8.targetType = "spikes";
+            ev8.faction = "ally";
+            ev8.Confirm();
+            statusList.Add(ev8);
+
             collection.SetString(Get<StatusEffectData>("Double Negative Effects").name + "_text", "Double the target's negative effects");
             Get<StatusEffectData>("Double Negative Effects").textKey = collection.GetString(Get<StatusEffectData>("Double Negative Effects").name + "_text");
 
@@ -804,7 +812,7 @@ namespace Pokefrost
                     .CreateUnit("carvanha", "Carvanha")
                     .SetStats(6, 3, 4)
                     .SetSprites("carvanha.png", "carvanhaBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Carvanha"), 10))
                     .AddPool()
                 );
 
