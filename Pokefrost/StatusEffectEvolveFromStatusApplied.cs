@@ -9,13 +9,13 @@ using UnityEngine;
 
 namespace Pokefrost
 {
-    internal class StatusEffectEvolveFromKill : StatusEffectEvolve
+    internal class StatusEffectEvolveFromStatusApplied : StatusEffectEvolve
     {
 
         public static Dictionary<string, string> upgradeMap = new Dictionary<string, string>();
-        public Action<Entity, DeathType> constraint = ReturnTrue;
-        public static bool result = false;
-        public bool anyKill = false;
+        public Func<StatusEffectApply, bool> constraint = ReturnTrue;
+        public string faction;
+        public string targetType; //shroom
         public bool persist = true;
 
         public override void Init()
@@ -25,48 +25,20 @@ namespace Pokefrost
             {
                 if (statuses.data.name == this.name)
                 {
-                    //typeConditions = ((StatusEffectEvolveFromKill)statuses.data).typeConditions;
-                    constraint = ((StatusEffectEvolveFromKill)statuses.data).constraint;
+                    constraint = ((StatusEffectEvolveFromStatusApplied)statuses.data).constraint;
                     return;
                 }
             }
         }
 
-        public static void ReturnTrue(Entity entity, DeathType deathType)
+        public static bool ReturnTrue(StatusEffectApply apply)
         {
-            StatusEffectEvolveFromKill.result = true;
-            return;
+            return true;
         }
 
-        public static void ReturnTrueIfCardTypeIsBossOrMiniboss(Entity entity, DeathType deathType)
+        public virtual void SetConstraints(Func<StatusEffectApply, bool> f)
         {
-            switch (entity.data.cardType.name)
-            {
-                case "Boss":
-                case "Miniboss":
-                case "BossSmall":
-                    StatusEffectEvolveFromKill.result = true;
-                    return;
-            }
-            StatusEffectEvolveFromKill.result = false;
-        }
-
-        public static void ReturnTrueIfCardWasConsumed(Entity entity, DeathType deathType)
-        {
-            if (deathType == DeathType.Consume)
-            {
-                StatusEffectEvolveFromKill.result = true;
-                return;
-            }
-            else
-            {
-                StatusEffectEvolveFromKill.result = false;
-            }
-        }
-
-        public virtual void SetConstraints(Action<Entity, DeathType> c)
-        {
-            constraint = c;
+            constraint = f;
         }
 
         public override void Autofill(string n, string descrip, WildfrostMod mod)
@@ -79,21 +51,24 @@ namespace Pokefrost
             textKey = collection.GetString(name + "_text");
         }
 
-        public override bool RunEntityDestroyedEvent(Entity entity, DeathType deathType)
+        public override bool RunPostApplyStatusEvent(StatusEffectApply apply)
         {
-            UnityEngine.Debug.Log(entity.data.title + ", " + deathType.ToString());
-            UnityEngine.Debug.Log(entity.data.title + ", " + deathType.ToString());
-            constraint(entity, deathType);
-            //if (entity.lastHit != null && entity.lastHit.attacker == target && typeConditions.Contains<string>(entity.data.cardType.name))
-            bool deserving = anyKill || (entity.lastHit != null && entity.lastHit.attacker == target);
-            if (deserving && result)
+            UnityEngine.Debug.Log("[Pokefrost] Post Apply Status");
+            bool result1 = constraint(apply);
+            bool result2 = false;
+            bool result3 = (apply?.effectData?.type == targetType);
+            if (faction == "ally")
             {
-                UnityEngine.Debug.Log("[Debug] Confrimed Kill!");
+                result2 = (apply?.applier?.owner == target?.owner);
+            }
+            if (result1 && result2 && result3)
+            {
+                UnityEngine.Debug.Log("[Debug] Confrimed Status!");
                 foreach (StatusEffectData statuses in target.statusEffects)
                 {
                     if (statuses.name == this.name && this.count > 0)
                     {
-                        this.count--;
+                        this.count -= Math.Min(this.count, apply.count);
                         target.display.promptUpdateDescription = true;
                         target.PromptUpdate();
                         UnityEngine.Debug.Log("[Debug] Updated card on board!");

@@ -588,6 +588,22 @@ namespace Pokefrost
             ev5.Confirm();
             statusList.Add(ev5);
 
+            StatusEffectEvolveFromStatusApplied ev6 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
+            ev6.Autofill("Evolve Croagunk", "<keyword=evolve>: Apply <{a}> <keyword=shroom>",this);
+            ev6.SetEvolution("websiteofsites.wildfrost.pokefrost.toxicroak");
+            ev6.targetType = "shroom";
+            ev6.faction = "ally";
+            ev6.Confirm();
+            statusList.Add(ev6);
+
+            StatusEffectEvolveFromKill ev7 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
+            ev7.Autofill("Evolve Voltorb", "<keyword=evolve>: Kill 3 in a battle", this);
+            ev7.SetEvolution("websiteofsites.wildfrost.pokefrost.electrode");
+            ev7.SetConstraints(StatusEffectEvolveFromKill.ReturnTrue);
+            ev7.persist = false;
+            ev7.Confirm();
+            statusList.Add(ev7);
+
             collection.SetString(Get<StatusEffectData>("Double Negative Effects").name + "_text", "Double the target's negative effects");
             Get<StatusEffectData>("Double Negative Effects").textKey = collection.GetString(Get<StatusEffectData>("Double Negative Effects").name + "_text");
 
@@ -637,7 +653,7 @@ namespace Pokefrost
                     .CreateUnit("voltorb", "Voltorb")
                     .SetStats(4, null, 1)
                     .SetSprites("voltorb.png", "voltorbBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Give Self Explode"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Give Self Explode"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Voltorb"), 3))
                     .WithValue(50)
                     .AddPool("GeneralItemPool")
                 );
@@ -845,7 +861,7 @@ namespace Pokefrost
                     .CreateUnit("croagunk", "Croagunk")
                     .SetStats(5, 2, 4)
                     .SetSprites("croagunk.png", "croagunkBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Hit Equal Shroom To Target"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Hit Equal Shroom To Target"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Croagunk"), 40))
                     .AddPool("BasicUnitPool")
                 );
 
