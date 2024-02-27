@@ -1031,7 +1031,7 @@ namespace Pokefrost
                     .WithTitle("Magnemite Charm")
                     .WithText("Apply <1> <keyword=shroom>/<keyword=overload>/<keyword=weakness>")
             );
-            /*
+            
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeTaunt")
@@ -1057,7 +1057,7 @@ namespace Pokefrost
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1])
                     .WithTitle("Tyrunt Charm")
                     .WithText("Gain <keyword=wild>\nApply <keyword=wild>")
-            );*/
+            );
 
             preLoaded = true;
         }
