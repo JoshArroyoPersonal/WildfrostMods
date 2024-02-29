@@ -248,6 +248,7 @@
     <Compile Include="StatusEffectEvolveEevee.cs" />
     <Compile Include="StatusEffectEvolveFromKill.cs" />
     <Compile Include="StatusEffectEvolveFromMoney.cs" />
+    <Compile Include="TargetModeTaunt.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />

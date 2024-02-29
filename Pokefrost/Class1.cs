@@ -131,6 +131,15 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", hazeall);
             statusList.Add(hazeall);
 
+            StatusEffectApplyXOnTurn inkall = hazeall.InstantiateKeepName();
+            inkall.effectToApply = Get<StatusEffectData>("Null");
+            inkall.name = "Apply Ink to All";
+            inkall.textInsert = "<{a}><keyword=null>";
+            collection.SetString(inkall.name + "_text", "Apply <{a}><keyword=null> to all");
+            inkall.textKey = collection.GetString(inkall.name + "_text");
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", inkall);
+            statusList.Add(inkall);
+
             StatusEffectApplyXOnTurn selfheal = ScriptableObject.CreateInstance<StatusEffectApplyXOnTurn>();
             selfheal.applyConstraints = new TargetConstraint[0];
             selfheal.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
@@ -465,11 +474,12 @@ namespace Pokefrost
 
             StatusEffectChangeTargetMode taunteffect = Get<StatusEffectData>("Hit All Enemies").InstantiateKeepName() as StatusEffectChangeTargetMode;
             taunteffect.name = "Hit All Taunt";
+            taunteffect.targetMode = ScriptableObject.CreateInstance<TargetModeTaunt>();
             //collection.SetString(taunteffect.name + "_text", "");
             taunteffect.textKey = new UnityEngine.Localization.LocalizedString();
             taunteffect.ModAdded = this;
 
-            TargetModeAll taunttargetmode = taunteffect.targetMode.InstantiateKeepName() as TargetModeAll;
+            //TargetModeAll taunttargetmode = taunteffect.targetMode.InstantiateKeepName() as TargetModeAll;
 
             StatusEffectWhileActiveX hittaunt = Get<StatusEffectData>("While Active Aimless To Enemies").InstantiateKeepName() as StatusEffectWhileActiveX;
             hittaunt.name = "Target Mode Taunt";
@@ -498,8 +508,8 @@ namespace Pokefrost
             tauntconstraint.name = "Has Taunt Trait";
             tauntconstraint.trait = taunttrait;
             TargetConstraint[] temptaunteffect = {tauntconstraint};
-            taunttargetmode.constraints = temptaunteffect;
-            taunteffect.targetMode = taunttargetmode;
+            //taunttargetmode.constraints = temptaunteffect;
+            //taunteffect.targetMode = taunttargetmode;
 
             StatusEffectTemporaryTrait imtaunted = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             imtaunted.name = "Temporary Taunted";
@@ -516,6 +526,9 @@ namespace Pokefrost
             statusList.Add(taunteffect); statusList.Add(hittaunt); statusList.Add(imtaunted);
             AddressableLoader.AddToGroup<TraitData>("TraitData", taunttrait);
             AddressableLoader.AddToGroup<TraitData>("TraitData", tauntedtrait);
+
+            StatusEffectInstantEat woollydrekeat = Get<StatusEffectData>("Eat (Health, Attack & Effects)") as StatusEffectInstantEat;
+            woollydrekeat.illegalEffects = woollydrekeat.illegalEffects.AddItem<StatusEffectData>(imtaunted).ToArray();
 
             StatusEffectApplyXOnHit shroomhit = Get<StatusEffectData>("On Hit Equal Snow To Target").InstantiateKeepName() as StatusEffectApplyXOnHit;
             shroomhit.effectToApply = Get<StatusEffectData>("Shroom");
@@ -699,6 +712,15 @@ namespace Pokefrost
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Longshot"), 1), new CardData.TraitStacks(Get<TraitData>("Pull"), 1))
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Lickitung"), 5))
                     .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("weezing", "Weezing")
+                    .SetStats(8, 2, 3)
+                    .SetSprites("weezing.png", "weezingBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Ink to All"), 4))
+                    .AddPool("ClunkUnitPool")
                 );
 
             list.Add(
@@ -1042,7 +1064,7 @@ namespace Pokefrost
                     .ChangeHP(3)
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeHeart").targetConstraints)
                     .WithTitle("Shieldon Charm")
-                    .WithText("Gain <keyword=taunt>\n<+{a}> <keyword=health>")
+                    .WithText("Gain <keyword=taunt>\n<+3> <keyword=health>")
             );
             
             
@@ -1056,7 +1078,7 @@ namespace Pokefrost
                     .SetAttackEffects(new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Wild Trait"), 1))
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1])
                     .WithTitle("Tyrunt Charm")
-                    .WithText("Gain <keyword=wild>\nApply <keyword=wild>")
+                    .WithText("Gain <keyword=wild>\nApply <keyword=wild>\nBE <WILD>")
             );
 
             preLoaded = true;
@@ -1178,7 +1200,9 @@ namespace Pokefrost
             {
                 string[] splitName = entity.data.name.Split('.');
                 string trueName = splitName[3];
-                if(!System.IO.File.Exists("shiny_" + trueName + ".png"))
+                string fileName = this.ImagePath("shiny_" + trueName + ".png");
+                Debug.Log("shiny_" + trueName);
+                if(!System.IO.File.Exists(fileName))
                 {
                     Debug.Log("[Pokefrost] Oops, shiny file not found. Contact devs.");
                     return;
