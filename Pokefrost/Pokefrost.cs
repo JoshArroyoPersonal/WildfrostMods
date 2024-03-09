@@ -35,12 +35,26 @@ namespace Pokefrost
 
         private void CreateModAssets()
         {
+            /*
+            FloatingText floating = GameObject.FindObjectOfType<FloatingText>(true);
+            Debug.Log("Got Icon sheet"+floating.name.ToString());
+            TMP_SpriteAsset iconsheet = floating.GetComponentInChildren<TextMeshProUGUI>().spriteAsset;
+            for(int i = 0; i < 144; i++)
+            {
+                TMP_Sprite testaroo = new TMP_Sprite { sprite = iconsheet.spriteGlyphTable[i].sprite };
+                iconsheet.spriteInfoList.Add(testaroo);
+            }
+            TMP_Sprite testaroo2 = new TMP_Sprite { sprite = this.ImagePath("overshroomicon.png").ToSprite() };
+            iconsheet.spriteInfoList.Add(testaroo2);
+            Debug.Log("Got Glyph");
+            Debug.Log("[Josh] Changed icon_sheet");*/
+
             StringTable keycollection = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
             KeywordData evolvekey = Get<KeywordData>("explode").InstantiateKeepName();
             evolvekey.name = "Evolve";
             keycollection.SetString(evolvekey.name + "_text", "Evolve");
             evolvekey.titleKey = keycollection.GetString(evolvekey.name + "_text");
-            keycollection.SetString(evolvekey.name + "_desc", "If the condition is met at the end of battle evolve into a new Pokemon|Cannot be in reserve");
+            keycollection.SetString(evolvekey.name + "_desc", "If the condition is met at the end of battle evolve into a new Pokemon|Inactive while in reserve");
             evolvekey.descKey = keycollection.GetString(evolvekey.name + "_desc");
             evolvekey.panelSprite = this.ImagePath("panel.png").ToSprite();
             evolvekey.panelColor = new Color(1f, 1f, 1f);
