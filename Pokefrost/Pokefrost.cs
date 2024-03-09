@@ -6,11 +6,15 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.Localization.Tables;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using HarmonyLib;
 using AssortedPatchesCollection;
 using Rewired;
 using UnityEngine.Localization;
 using System.IO;
+using TMPro;
+using Rewired.Utils.Attributes;
+using System.Runtime.CompilerServices;
 
 namespace Pokefrost
 {
@@ -22,10 +26,11 @@ namespace Pokefrost
         private List<StatusEffectData> statusList = new List<StatusEffectData>(30);
         private bool preLoaded = false;
         private static float shinyrate = 1/400f;
+        public static WildfrostMod instance;
 
         public Pokefrost(string modDirectory) : base(modDirectory) 
         {
-            
+            instance = this;
         }
 
         private void CreateModAssets()
@@ -35,7 +40,7 @@ namespace Pokefrost
             evolvekey.name = "Evolve";
             keycollection.SetString(evolvekey.name + "_text", "Evolve");
             evolvekey.titleKey = keycollection.GetString(evolvekey.name + "_text");
-            keycollection.SetString(evolvekey.name + "_desc", "If the condition is met at the end of battle evolve into a new Pokemon");
+            keycollection.SetString(evolvekey.name + "_desc", "If the condition is met at the end of battle evolve into a new Pokemon|Cannot be in reserve");
             evolvekey.descKey = keycollection.GetString(evolvekey.name + "_desc");
             evolvekey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", evolvekey);
@@ -53,7 +58,7 @@ namespace Pokefrost
             tauntedkey.name = "Taunted";
             keycollection.SetString(tauntedkey.name + "_text", "Taunted");
             tauntedkey.titleKey = keycollection.GetString(tauntedkey.name + "_text");
-            keycollection.SetString(tauntedkey.name + "_desc", "Target only enemies with <keyword=taunt>");
+            keycollection.SetString(tauntedkey.name + "_desc", "Target only enemies with <keyword=taunt>|Hits them all!");
             tauntedkey.descKey = keycollection.GetString(tauntedkey.name + "_desc");
             tauntedkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntedkey);
@@ -78,6 +83,138 @@ namespace Pokefrost
             wilder.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wilder);
             statusList.Add(wilder);
+
+            //Overshroom Start
+            GameObject gameObject = new GameObject("OvershroomIcon");
+            UnityEngine.Object.DontDestroyOnLoad(gameObject);
+            StatusIcon overshroomicon = gameObject.AddComponent<StatusIcon>();
+            Dictionary<string, GameObject> dicty = CardManager.cardIcons;
+            GameObject text = dicty["shroom"].GetComponentInChildren<TextMeshProUGUI>().gameObject.InstantiateKeepName();
+            text.transform.SetParent(gameObject.transform);
+            overshroomicon.textElement = text.GetComponent<TextMeshProUGUI>();
+            overshroomicon.onCreate = new UnityEngine.Events.UnityEvent();
+            overshroomicon.onDestroy = new UnityEngine.Events.UnityEvent();
+            overshroomicon.onValueDown = new UnityEventStatStat();
+            overshroomicon.onValueUp = new UnityEventStatStat();
+            overshroomicon.textColour = dicty["shroom"].GetComponent<StatusIcon>().textColour;
+            overshroomicon.textColourAboveMax = overshroomicon.textColour;
+            overshroomicon.textColourBelowMax = overshroomicon.textColour;
+            UnityEngine.Events.UnityEvent afterupdate = new UnityEngine.Events.UnityEvent();
+            overshroomicon.afterUpdate = afterupdate;
+            UnityEngine.UI.Image image = gameObject.AddComponent<UnityEngine.UI.Image>();
+            gameObject.SetActive(false);
+            image.sprite = this.ImagePath("overshroomicon.png").ToSprite();
+            CardHover cardHover = gameObject.AddComponent<CardHover>();
+            cardHover.enabled = false;
+            cardHover.IsMaster = false;
+            CardPopUpTarget cardPopUp = gameObject.AddComponent<CardPopUpTarget>();
+
+            cardHover.pop = cardPopUp;
+            RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
+            rectTransform.anchorMin = Vector2.zero;
+            rectTransform.anchorMax = Vector2.zero;
+            rectTransform.sizeDelta *= 0.01f;
+            gameObject.SetActive(true);
+            overshroomicon.type = "overshroom";
+            dicty["overshroom"] = gameObject;
+
+            KeywordData overshroomkey = Get<KeywordData>("shroom").InstantiateKeepName();
+            overshroomkey.name = "Overshroom";
+            keycollection.SetString(overshroomkey.name + "_text", "Overshroom");
+            overshroomkey.titleKey = keycollection.GetString(overshroomkey.name + "_text");
+            keycollection.SetString(overshroomkey.name + "_desc", "Acts like both <sprite name=overload> and <sprite name=shroom>|Counts as both too!");
+            overshroomkey.descKey = keycollection.GetString(overshroomkey.name + "_desc");
+            overshroomkey.ModAdded = this;
+            overshroomkey.iconName = "icon_sheet_131";
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", overshroomkey);
+
+            cardPopUp.keywords = new KeywordData[1] { overshroomkey };
+
+            StatusEffectDummy dummyoverload = ScriptableObject.CreateInstance<StatusEffectDummy>();
+            dummyoverload.name = "Overload";
+            dummyoverload.type = "overload";
+            dummyoverload.iconGroupName = "health";
+            dummyoverload.visible = false;
+            dummyoverload.targetConstraints = new TargetConstraint[0];
+            dummyoverload.applyFormat = "";
+            dummyoverload.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            dummyoverload.keyword = "";
+            dummyoverload.textOrder = 0;
+            dummyoverload.textInsert = "";
+            dummyoverload.ModAdded = this;
+
+            StatusEffectDummy dummyshroom = ScriptableObject.CreateInstance<StatusEffectDummy>();
+            dummyshroom.name = "Shroom";
+            dummyshroom.type = "shroom";
+            dummyshroom.iconGroupName = "health";
+            dummyshroom.visible = false;
+            dummyshroom.targetConstraints = new TargetConstraint[0];
+            dummyshroom.applyFormat = "";
+            dummyshroom.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            dummyshroom.keyword = "";
+            dummyshroom.textOrder = 0;
+            dummyshroom.textInsert = "";
+            dummyshroom.ModAdded = this;
+
+            StatusEffectOvershroom overshroom = ScriptableObject.CreateInstance<StatusEffectOvershroom>();
+            overshroom.name = "Overshroom";
+            overshroom.type = "overshroom";
+            overshroom.dummy1 = dummyoverload;
+            overshroom.dummy2 = dummyshroom;
+            overshroom.visible = true;
+            overshroom.stackable = true;
+            overshroom.buildupAnimation = ((StatusEffectOverload)Get<StatusEffectData>("Overload")).buildupAnimation;
+            overshroom.iconGroupName = "health";
+            overshroom.offensive = true;
+            overshroom.applyFormat = "";
+            overshroom.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            overshroom.keyword = "";
+            overshroom.targetConstraints = new TargetConstraint[1] { new TargetConstraintCanBeHit() };
+            overshroom.textOrder = 0;
+            overshroom.textInsert = "{a}";
+            overshroom.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overshroom);
+            statusList.Add(overshroom);
+
+            StatusEffectBecomeOvershroom giveovershroom = ScriptableObject.CreateInstance<StatusEffectBecomeOvershroom>();
+            giveovershroom.name = "Turn Overload and Shroom to Overshroom";
+            giveovershroom.applyFormat = "";
+            giveovershroom.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            giveovershroom.keyword = "";
+            giveovershroom.targetConstraints = new TargetConstraint[0];
+            giveovershroom.textKey = new UnityEngine.Localization.LocalizedString();
+            giveovershroom.type = "";
+            giveovershroom.textOrder = 0;
+            giveovershroom.textInsert = "";
+            giveovershroom.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", giveovershroom);
+            statusList.Add(giveovershroom);
+
+            StatusEffectWhileActiveX activeovershroom = ScriptableObject.CreateInstance<StatusEffectWhileActiveX>();
+            activeovershroom.applyConstraints = new TargetConstraint[0];
+            activeovershroom.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            activeovershroom.doPing = true;
+            activeovershroom.effectToApply = giveovershroom;
+            activeovershroom.pauseAfter = 0;
+            activeovershroom.targetMustBeAlive = true;
+            activeovershroom.applyFormat = "";
+            activeovershroom.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            activeovershroom.keyword = "";
+            activeovershroom.hiddenKeywords = new KeywordData[0];
+            activeovershroom.targetConstraints = new TargetConstraint[0];
+            activeovershroom.textInsert = "";
+            activeovershroom.name = "While Active It Is Overshroom";
+            collection.SetString(activeovershroom.name + "_text", "While active, your <keyword=overload> and <keyword=shroom> become <keyword=overshroom>");
+            activeovershroom.textKey = collection.GetString(activeovershroom.name + "_text");
+            activeovershroom.textOrder = 0;
+            activeovershroom.type = "";
+            activeovershroom.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", activeovershroom);
+            statusList.Add(activeovershroom);
+            //Overshroom End
+
+
+
 
             StatusEffectApplyXWhenHitFree supergreed = ScriptableObject.CreateInstance<StatusEffectApplyXWhenHitFree>();
             supergreed.attackerConstraints = new TargetConstraint[0];
@@ -584,6 +721,114 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", teethtrigger);
             statusList.Add(teethtrigger);
 
+            StatusEffectIncreaseAttackBasedOnCardsDrawnThisTurn drawattack = ScriptableObject.CreateInstance<StatusEffectIncreaseAttackBasedOnCardsDrawnThisTurn>();
+            drawattack.name = "Increase Attack Based on Cards Drawn";
+            drawattack.effectToGain = Get<StatusEffectData>("Ongoing Increase Attack");
+            drawattack.canBeBoosted = true;
+            drawattack.applyFormat = "";
+            drawattack.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            drawattack.keyword = "";
+            drawattack.targetConstraints = new TargetConstraint[0];
+            collection.SetString(drawattack.name + "_text", "<+{a}><keyword=attack> for each card drawn this turn");
+            drawattack.textKey = collection.GetString(drawattack.name + "_text");
+            drawattack.textOrder = 0;
+            drawattack.textInsert = "";
+            drawattack.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", drawattack);
+            statusList.Add(drawattack);
+
+            StatusEffectApplyXWhenClunkerDestroyed clunkertrash = ScriptableObject.CreateInstance<StatusEffectApplyXWhenClunkerDestroyed>();
+            clunkertrash.name = "When Clunker Destroyed Add Junk To Hand";
+            clunkertrash.effectToApply = Get<StatusEffectData>("Instant Summon Junk In Hand");
+            clunkertrash.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            clunkertrash.waitForAnimationEnd = true;
+            clunkertrash.canBeBoosted = true;
+            clunkertrash.applyFormat = "";
+            clunkertrash.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            clunkertrash.keyword = "";
+            clunkertrash.targetConstraints = new TargetConstraint[0];
+            collection.SetString(clunkertrash.name + "_text", "<keyword=trash> <{a}> when a <Clunker> is destroyed");
+            clunkertrash.textKey = collection.GetString(clunkertrash.name + "_text");
+            clunkertrash.textOrder = 0;
+            clunkertrash.textInsert = "";
+            clunkertrash.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", clunkertrash);
+            statusList.Add(clunkertrash);
+
+            StatusEffectApplyXWhenClunkerDestroyed clunkerscrap = ScriptableObject.CreateInstance<StatusEffectApplyXWhenClunkerDestroyed>();
+            clunkerscrap.name = "When Clunker Destroyed Gain Scrap";
+            clunkerscrap.effectToApply = Get<StatusEffectData>("Scrap");
+            clunkerscrap.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            clunkerscrap.waitForAnimationEnd = true;
+            clunkerscrap.canBeBoosted = true;
+            clunkerscrap.applyFormat = "";
+            clunkerscrap.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            clunkerscrap.keyword = "";
+            clunkerscrap.targetConstraints = new TargetConstraint[0];
+            collection.SetString(clunkerscrap.name + "_text", "Gain <{a}><keyword=scrap> when a <Clunker> is destroyed");
+            clunkerscrap.textKey = collection.GetString(clunkerscrap.name + "_text");
+            clunkerscrap.textOrder = 0;
+            clunkerscrap.textInsert = "";
+            clunkerscrap.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", clunkerscrap);
+            statusList.Add(clunkerscrap);
+
+            StatusEffectApplyXOnCardPlayed increasehandattack = ScriptableObject.CreateInstance<StatusEffectApplyXOnCardPlayed>();
+            increasehandattack.name = "On Card Played Increase Attack Of Cards In Hand";
+            increasehandattack.effectToApply = Get<StatusEffectData>("Increase Attack");
+            increasehandattack.applyToFlags = StatusEffectApplyX.ApplyToFlags.Hand;
+            increasehandattack.canBeBoosted = true;
+            increasehandattack.applyFormat = "";
+            increasehandattack.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            increasehandattack.keyword = "";
+            increasehandattack.targetConstraints = new TargetConstraint[] { new TargetConstraintDoesDamage() };
+            collection.SetString(increasehandattack.name + "_text", "Add +<{a}><keyword=attack> to <Cards> in your hand");
+            increasehandattack.textKey = collection.GetString(increasehandattack.name + "_text");
+            increasehandattack.textOrder = 0;
+            increasehandattack.textInsert = "";
+            increasehandattack.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", increasehandattack);
+            statusList.Add(increasehandattack);
+
+            StatusEffectApplyXWhenHit cleanseteamonhit = ScriptableObject.CreateInstance<StatusEffectApplyXWhenHit>();
+            cleanseteamonhit.name = "When Hit Cleanse Team";
+            cleanseteamonhit.effectToApply = Get<StatusEffectData>("Cleanse");
+            cleanseteamonhit.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Self;
+            cleanseteamonhit.waitForAnimationEnd = true;
+            cleanseteamonhit.applyFormat = "";
+            cleanseteamonhit.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            cleanseteamonhit.keyword = "";
+            cleanseteamonhit.targetConstraints = new TargetConstraint[0];
+            collection.SetString(cleanseteamonhit.name + "_text", "<keyword=cleanse> self and allies when hit");
+            cleanseteamonhit.textKey = collection.GetString(cleanseteamonhit.name + "_text");
+            cleanseteamonhit.textOrder = 0;
+            cleanseteamonhit.textInsert = "";
+            cleanseteamonhit.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", cleanseteamonhit);
+            statusList.Add(cleanseteamonhit);
+
+            StatusEffectApplyXWhenCardDestroyed triggerwhencarddestroyed = Get<StatusEffectData>("Trigger When Enemy Is Killed").InstantiateKeepName() as StatusEffectApplyXWhenCardDestroyed;
+            triggerwhencarddestroyed.name = "Trigger When Card Destroyed";
+            triggerwhencarddestroyed.canBeAlly = true;
+            triggerwhencarddestroyed.mustBeOnBoard = false;
+            collection.SetString(triggerwhencarddestroyed.name + "_text", "<color=#F99C61>Trigger when a card is destroyed</color>");
+            triggerwhencarddestroyed.textKey = collection.GetString(triggerwhencarddestroyed.name + "_text");
+            triggerwhencarddestroyed.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerwhencarddestroyed);
+            statusList.Add(cleanseteamonhit);
+
+            StatusEffectApplyXOnCardPlayed triggerclunker = Get<StatusEffectData>("On Card Played Trigger RandomAlly").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
+            triggerclunker.name = "Trigger Clunker Ahead";
+            triggerclunker.applyToFlags = StatusEffectApplyX.ApplyToFlags.AllyInFrontOf;
+            TargetConstraintIsCardType clunkerconstraint = new TargetConstraintIsCardType();
+            clunkerconstraint.allowedTypes = new CardType[] {Get<CardType>("Clunker")};
+            triggerclunker.applyConstraints = triggerclunker.applyConstraints.Append(clunkerconstraint).ToArray();
+            collection.SetString(triggerclunker.name + "_text", "Trigger <Clunker> ahead");
+            triggerclunker.textKey = collection.GetString(triggerclunker.name + "_text");
+            triggerclunker.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerclunker);
+            statusList.Add(triggerclunker);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -642,11 +887,35 @@ namespace Pokefrost
             ev8.Confirm();
             statusList.Add(ev8);
 
+            StatusEffectEvolveFromMoney ev9 = ScriptableObject.CreateInstance<StatusEffectEvolveFromMoney>();
+            ev9.Autofill("Evolve Trubbish", "<keyword=evolve>: Have <5> <card=Junk> on battle end",this);
+            ev9.SetEvolution("websiteofsites.wildfrost.pokefrost.garbodor");
+            ev9.SetConstraint(StatusEffectEvolveFromMoney.ReturnTrueIfEnoughJunk);
+            ev9.Confirm();
+            statusList.Add(ev9);
+
+            StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
+            shiny.name = "Shiny";
+            shiny.type = "shiny";
+            shiny.applyFormat = "";
+            shiny.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            shiny.textKey = new UnityEngine.Localization.LocalizedString();
+            shiny.targetConstraints = new TargetConstraint[0];
+            shiny.keyword = "";
+            shiny.textOrder = 0;
+            shiny.textInsert = "";
+            shiny.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", shiny);
+            statusList.Add(shiny);
+
             collection.SetString(Get<StatusEffectData>("Double Negative Effects").name + "_text", "Double the target's negative effects");
             Get<StatusEffectData>("Double Negative Effects").textKey = collection.GetString(Get<StatusEffectData>("Double Negative Effects").name + "_text");
 
             collection.SetString(Get<StatusEffectData>("While Active Increase Effects To Hand").name + "_text", "While active, boost effects of cards in hand by <{a}>");
             Get<StatusEffectData>("While Active Increase Effects To Hand").textKey = collection.GetString(Get<StatusEffectData>("While Active Increase Effects To Hand").name + "_text");
+
+            collection.SetString(Get<StatusEffectData>("Redraw Cards").name + "_text", "<Redraw>");
+            Get<StatusEffectData>("Redraw Cards").textKey = collection.GetString(Get<StatusEffectData>("Redraw Cards").name + "_text");
 
             list = new List<CardDataBuilder>();
             //Add our cards here
@@ -744,7 +1013,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("eevee", "Eevee")
-                    .SetStats(3, 3, 3)
+                    .SetStats(4, 3, 3)
                     .SetSprites("eevee.png", "eeveeBG.png")
                     .IsPet((ChallengeData) null, true)
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Eevee"), 1))
@@ -753,7 +1022,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("vaporeon", "Vaporeon")
-                    .SetStats(3, 3, 3)
+                    .SetStats(4, 3, 3)
                     .SetSprites("vaporeon.png", "vaporeonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Block"), 1))
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Null"), 2))
@@ -762,7 +1031,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("jolteon", "Jolteon")
-                    .SetStats(3, 2, 3)
+                    .SetStats(4, 2, 3)
                     .SetSprites("jolteon.png", "jolteonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("MultiHit"), 1))
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Draw"), 1))
@@ -771,7 +1040,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("flareon", "Flareon")
-                    .SetStats(3, 1, 3)
+                    .SetStats(4, 1, 3)
                     .SetSprites("flareon.png", "flareonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("While Active Increase Attack To Allies"), 2))
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload"), 2))
@@ -783,6 +1052,7 @@ namespace Pokefrost
                     .SetStats(14, 6, 5)
                     .SetSprites("snorlax.png", "snorlaxBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("While Active Consume To Items In Hand"), 1))
+                    .WithFlavour("Its stomach can digest any kind of food, even if it happens to be a durain fruit")
                 );
 
             list.Add(
@@ -800,6 +1070,15 @@ namespace Pokefrost
                     .SetSprites("umbreon.png", "umbreonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 2))
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Demonize"), 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("sneasel", "Sneasel")
+                    .SetStats(6, 2, 3)
+                    .SetSprites("sneasel.png", "sneaselBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(drawattack, 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Draw"), 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -949,7 +1228,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("leafeon", "Leafeon")
-                    .SetStats(3, 1, 3)
+                    .SetStats(4, 1, 3)
                     .SetSprites("leafeon.png", "leafeonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Turn Apply Shell To AllyInFrontOf"), 2))
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Shroom"), 2))
@@ -958,7 +1237,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("glaceon", "Glaceon")
-                    .SetStats(3, 3, 3)
+                    .SetStats(4, 3, 3)
                     .SetSprites("glaceon.png", "glaceonBG.png")
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Snow"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Frost"), 1))
                 );
@@ -975,11 +1254,76 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("rotom", "Rotom")
+                    .SetStats(8, 3, 4)
+                    .SetSprites("rotom.png", "rotomBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger Clunker Ahead"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Damage To Self"), 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("rotomheat", "Rotom Heat")
+                    .SetStats(5, 5, 4)
+                    .SetSprites("rotomheat.png", "rotomBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Increase Attack Of Cards In Hand"), 3))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("rotomwash", "Rotom Wash")
+                    .SetStats(10, 5, 4)
+                    .SetSprites("rotomwash.png", "rotomBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Cleanse Team"), 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("rotomfrost", "Rotom Frost")
+                    .SetStats(10, 2, 4)
+                    .SetSprites("rotomfrost.png", "rotomBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Apply Frost To RandomEnemy"), 3))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("rotomfan", "Rotom Fan")
+                    .SetStats(6, 4, 4)
+                    .SetSprites("rotomfan.png", "rotomBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Redraw Cards"), 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("rotommow", "Rotom Mow")
+                    .SetStats(7, 3, 4)
+                    .SetSprites("rotommow.png", "rotomBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Card Destroyed"), 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("crustle", "Crustle")
                     .SetStats(8, 3, 4)
                     .SetSprites("crustle.png", "crustleBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Add Scrap Pile To Hand"), 1))
                     .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("trubbish", "Trubbish")
+                    .SetStats(6, 3, 4)
+                    .SetSprites("trubbish.png", "trubbishBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Clunker Destroyed Add Junk To Hand"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Trubbish"), 5))
+                    .AddPool("ClunkUnitPool")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("garbodor", "Garbodor")
+                    .SetStats(6, 3, 4)
+                    .SetSprites("garbodor.png", "garbodorBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Clunker Destroyed Gain Scrap"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Pre Trigger Gain Frenzy Equal To Scrap"), 1))
                 );
 
             list.Add(
@@ -1015,7 +1359,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("sylveon", "Sylveon")
-                    .SetStats(3, 3, 3)
+                    .SetStats(4, 3, 3)
                     .SetSprites("sylveon.png", "sylveonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Turn Heal & Cleanse Allies"), 3))
                 );
@@ -1031,12 +1375,58 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("salazzle", "Salazzle")
+                    .SetStats(7, 1, 3)
+                    .SetSprites("salazzle.png", "salazzleBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("While Active It Is Overshroom"), 1))
+                    .AddPool("BasicUnitPool")
+                    .AddPool("MagicUnitPool")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("polteageist", "Polteageist")
                     .SetStats(6, null, 5)
                     .SetSprites("polteageist.png", "polteageistBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Blaze Tea Random Ally"), 1))
                     .AddPool()
                 );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("microwave", "Microwave")
+                    .SetSprites("microwave.png", "rotomBG.png")
+                    .WithFlavour("Appears to be a safe without a lock. What use is that?")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("washingmachine", "Washing Machine")
+                    .SetSprites("washingmachine.png", "rotomBG.png")
+                    .WithFlavour("A device that spins and makes loud noises. What use is that?")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("fridge", "Fridge")
+                    .SetSprites("fridge.png", "rotomBG.png")
+                    .WithFlavour("This strange device seems to... keep things cold? What use is that?")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("fan", "Fan")
+                    .SetSprites("fan.png", "rotomBG.png")
+                    .WithFlavour("A strange saw sealed by an even stranger cage. What use is that?")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("lawnmower", "Lawnmower")
+                    .SetSprites("lawnmower.png", "rotomBG.png")
+                    .WithFlavour("Seems to be some sort of vehicle, but lacks seating. What use is that?")
+                );
+
             //
 
             charmlist = new List<CardUpgradeDataBuilder>();
@@ -1076,7 +1466,7 @@ namespace Pokefrost
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Wild"), 1))
                     .SetAttackEffects(new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Wild Trait"), 1))
-                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1])
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
                     .WithTitle("Tyrunt Charm")
                     .WithText("Gain <keyword=wild>\nApply <keyword=wild>\nBE <WILD>")
             );
@@ -1189,6 +1579,8 @@ namespace Pokefrost
                     Sprite sprite = this.ImagePath("shiny_" + trueName + ".png").ToSprite();
                     sprite.name = "shiny";
                     card.mainSprite = sprite;
+                    CardData.StatusEffectStacks[] shinystatus = { new CardData.StatusEffectStacks(Get<StatusEffectData>("Shiny"), 1) };
+                    card.startWithEffects = card.startWithEffects.Concat(shinystatus).ToArray();
                 }
             }
         }
@@ -1211,6 +1603,8 @@ namespace Pokefrost
                 sprite.name = "shiny";
                 entity.data.mainSprite = sprite;
                 entity.GetComponent<Card>().mainImage.sprite = sprite;
+                CardData.StatusEffectStacks[] shinystatus = { new CardData.StatusEffectStacks(Get<StatusEffectData>("Shiny"), 1) };
+                entity.data.startWithEffects = entity.data.startWithEffects.Concat(shinystatus).ToArray();
             }
         }
 
@@ -1236,15 +1630,20 @@ namespace Pokefrost
         {
             CreateModAssets();
             base.Load();
-            Events.OnCardDataCreated += PokemonEdits;
+            //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += NosepassAttach;
             Events.OnBattleEnd += CheckEvolve;
             Events.PostBattle += DisplayEvolutions;
             Events.OnEntityOffered += GetShiny;
             Events.OnCampaignStart += ShinyPet;
+            Events.OnCardDraw += HowManyCardsDrawn;
+            Events.OnBattlePhaseStart += ResetCardsDrawn;
+            Events.OnStatusIconCreated += PatchOvershroom;
             References.instance.classes[0] = Get<ClassData>("Basic");
             References.instance.classes[1] = Get<ClassData>("Magic");
             References.instance.classes[2] = Get<ClassData>("Clunk");
+            Get<CardData>("websiteofsites.wildfrost.pokefrost.klefki").charmSlots = 100;
+
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
 
@@ -1260,22 +1659,103 @@ namespace Pokefrost
         public override void Unload()
         {
             base.Unload();
-            Events.OnCardDataCreated -= PokemonEdits;
+            //Events.OnSceneLoaded -= PokemonEdits;
             Events.OnBattleEnd -= NosepassAttach;
             Events.OnBattleEnd -= CheckEvolve;
             Events.PostBattle -= DisplayEvolutions;
             Events.OnEntityOffered -= GetShiny;
             Events.OnCampaignStart -= ShinyPet;
+            Events.OnCardDraw -= HowManyCardsDrawn;
+            Events.OnBattlePhaseStart -= ResetCardsDrawn;
+            Events.OnStatusIconCreated -= PatchOvershroom;
             //Events.OnCardDataCreated -= Wildparty;
 
         }
-
-        private void PokemonEdits(CardData card)
+        public static int cardsdrawn = 0;
+        private void HowManyCardsDrawn(int arg)
         {
-            if (card.name == "websiteofsites.wildfrost.pokefrost.klefki") 
+            if (cardsdrawn == 0)
             {
-                card.charmSlots = 100;
-                Debug.Log("Klefkei is :D");
+                cardsdrawn = arg;
+            }
+            
+        }
+
+        private void ResetCardsDrawn(Battle.Phase arg0)
+        {
+            cardsdrawn = 0;
+        }
+
+        private void PokemonEdits(Scene arg0)
+        {
+            if(arg0.name != "MapNew")
+            {
+                return;
+            }
+            Debug.Log("Fixing Shinies");
+            CardDataList playerdeck = References.PlayerData.inventory.deck;
+            CardDataList playerreserve = References.PlayerData.inventory.reserve;
+
+            foreach(CardData card in playerdeck)
+            {
+                if (card.name.Contains("websiteofsites.wildfrost.pokefrost"))
+                {
+                    bool shinyflag = false;
+                    foreach (CardData.StatusEffectStacks status in card.startWithEffects)
+                    {
+                        if (status.data.name == "Shiny")
+                        {
+                            shinyflag = true;
+                            break;
+                        }
+                    }
+                    if (shinyflag)
+                    {
+                        string[] splitName = card.name.Split('.');
+                        string trueName = splitName[3];
+                        string fileName = this.ImagePath("shiny_" + trueName + ".png");
+                        Debug.Log("shiny_" + trueName);
+                        if (!System.IO.File.Exists(fileName))
+                        {
+                            Debug.Log("[Pokefrost] Oops, shiny file not found. Contact devs.");
+                            return;
+                        }
+                        Sprite sprite = this.ImagePath("shiny_" + trueName + ".png").ToSprite();
+                        sprite.name = "shiny";
+                        card.mainSprite = sprite;
+                    }
+                }
+            }
+
+            foreach (CardData card in playerreserve)
+            {
+                if (card.name.Contains("websiteofsites.wildfrost.pokefrost"))
+                {
+                    bool shinyflag = false;
+                    foreach (CardData.StatusEffectStacks status in card.startWithEffects)
+                    {
+                        if (status.data.name == "Shiny")
+                        {
+                            shinyflag = true;
+                            break;
+                        }
+                    }
+                    if (shinyflag)
+                    {
+                        string[] splitName = card.name.Split('.');
+                        string trueName = splitName[3];
+                        string fileName = this.ImagePath("shiny_" + trueName + ".png");
+                        Debug.Log("shiny_" + trueName);
+                        if (!System.IO.File.Exists(fileName))
+                        {
+                            Debug.Log("[Pokefrost] Oops, shiny file not found. Contact devs.");
+                            return;
+                        }
+                        Sprite sprite = this.ImagePath("shiny_" + trueName + ".png").ToSprite();
+                        sprite.name = "shiny";
+                        card.mainSprite = sprite;
+                    }
+                }
             }
         }
 
@@ -1284,6 +1764,19 @@ namespace Pokefrost
             if (StatusEffectEvolve.evolvedPokemonLastBattle.Count > 0)
             {
                 References.instance.StartCoroutine(StatusEffectEvolve.EvolutionPopUp(this));
+            }
+        }
+
+        private void PatchOvershroom(StatusIcon icon)
+        {
+            if (icon.type == "overshroom")
+            {
+                icon.SetText();
+                icon.Ping();
+                icon.onValueDown.AddListener(delegate { icon.Ping(); });
+                icon.onValueUp.AddListener(delegate { icon.Ping(); });
+                icon.afterUpdate.AddListener(icon.SetText);
+                icon.onValueDown.AddListener(icon.CheckDestroy);
             }
         }
 

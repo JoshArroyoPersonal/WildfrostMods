@@ -233,7 +233,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Pokefrost.cs" />
     <Compile Include="StatusEffectEvolveFromHitApplied.cs" />
     <Compile Include="StatusEffectEvolveFromStatusApplied.cs" />
     <Compile Include="StatusEffectFreeTrait.cs" />
@@ -242,6 +242,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatusEffectApplyRandomOnCardPlayed.cs" />
     <Compile Include="StatusEffectApplyXOnEffect.cs" />
+    <Compile Include="StatusEffectIncreaseAttackBasedOnCardsDrawnThisTurn.cs" />
+    <Compile Include="StatusEffectOvershroom.cs" />
     <Compile Include="StatusEffectTriggerWhenDamageType.cs" />
     <Compile Include="StatusEffectTriggerWhenSummonDeployed.cs" />
     <Compile Include="StatusEffectEvolve.cs" />

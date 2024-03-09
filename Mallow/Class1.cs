@@ -42,7 +42,12 @@ namespace Mallow
                 case "Boss":
                 case "BossSmall":
 
-                    cardData.startWithEffects = cardData.startWithEffects.Concat(Get<CardData>("Spyke").startWithEffects).ToArray();
+
+                    CardData.StatusEffectStacks[] marroweffect = { new CardData.StatusEffectStacks(Get<StatusEffectData>("While Active Teeth To Allies"), 2) };
+
+                    cardData.startWithEffects = cardData.startWithEffects.Concat(marroweffect).ToArray();
+
+                    //cardData.startWithEffects = cardData.startWithEffects.Concat(Get<CardData>("Spyke").startWithEffects).ToArray();
 
                     cardData.mainSprite = this.ImagePath("Bonesby.png").ToSprite();
 

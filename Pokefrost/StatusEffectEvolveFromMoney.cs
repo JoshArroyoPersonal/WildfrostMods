@@ -27,6 +27,32 @@ namespace Pokefrost
         {
             result = (References.Player.drawContainer.Count + References.Player.handContainer.Count + References.Player.discardContainer.Count == 0);
         }
+        public static void ReturnTrueIfEnoughJunk(int t)
+        {
+            int junk = 0;
+            foreach(Entity card in References.Player.drawContainer)
+            {
+                if(card.name == "Junk")
+                {
+                    junk += 1;
+                }
+            }
+            foreach (Entity card in References.Player.handContainer)
+            {
+                if (card.name == "Junk")
+                {
+                    junk += 1;
+                }
+            }
+            foreach (Entity card in References.Player.discardContainer)
+            {
+                if (card.name == "Junk")
+                {
+                    junk += 1;
+                }
+            }
+            result = (junk >= t);
+        }
 
         public void SetConstraint(Action<int> c)
         {
