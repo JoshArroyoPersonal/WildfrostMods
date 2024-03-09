@@ -15,6 +15,7 @@ using System.IO;
 using TMPro;
 using Rewired.Utils.Attributes;
 using System.Runtime.CompilerServices;
+using static CombineCardSystem;
 
 namespace Pokefrost
 {
@@ -1638,7 +1639,9 @@ namespace Pokefrost
             Events.OnBattleEnd += CheckEvolve;
             Events.PostBattle += DisplayEvolutions;
             Events.OnEntityOffered += GetShiny;
+            Events.OnEntityEnterBackpack += RotomFuse;
             Events.OnCampaignStart += ShinyPet;
+            Events.OnCampaignGenerated += ApplianceSpawns;
             Events.OnCardDraw += HowManyCardsDrawn;
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnStatusIconCreated += PatchOvershroom;
@@ -1667,13 +1670,106 @@ namespace Pokefrost
             Events.OnBattleEnd -= CheckEvolve;
             Events.PostBattle -= DisplayEvolutions;
             Events.OnEntityOffered -= GetShiny;
+            Events.OnEntityEnterBackpack -= RotomFuse;
             Events.OnCampaignStart -= ShinyPet;
+            Events.OnCampaignGenerated -= ApplianceSpawns;
             Events.OnCardDraw -= HowManyCardsDrawn;
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
             Events.OnStatusIconCreated -= PatchOvershroom;
             //Events.OnCardDataCreated -= Wildparty;
 
         }
+
+        private async Task ApplianceSpawns()
+        {
+            if (References.PlayerData.inventory.deck.FirstOrDefault((CardData c) => { return c.name == "websiteofsites.wildfrost.pokefrost.rotom"; }) == null)
+            {
+                return;
+            }
+            string[] order = rotomAppliances.InRandomOrder().ToArray();
+            for (int i = 0; i < References.Campaign.nodes.Count; i++)
+            {
+                CampaignNode node = References.Campaign.nodes[i];
+                if (node.tier >=2 && node.type.name == "CampaignNodeItem")
+                {
+                    SaveCollection<string> collection = (SaveCollection<string>)node.data["cards"];
+                    collection.Add(order[i%5]);
+                    node.data["cards"] = collection;
+                }
+            }
+        }
+
+
+
+        private readonly string[] rotomAppliances = { "websiteofsites.wildfrost.pokefrost.microwave", "websiteofsites.wildfrost.pokefrost.washingmachine", "websiteofsites.wildfrost.pokefrost.fridge", "websiteofsites.wildfrost.pokefrost.fan", "websiteofsites.wildfrost.pokefrost.lawnmower" };
+        private readonly string[] rotomForms = { "websiteofsites.wildfrost.pokefrost.rotomheat", "websiteofsites.wildfrost.pokefrost.rotomwash", "websiteofsites.wildfrost.pokefrost.rotomfrost", "websiteofsites.wildfrost.pokefrost.rotomfan", "websiteofsites.wildfrost.pokefrost.rotommow" };
+        private CardData fusedRotom;
+
+        private void RotomFuse(Entity entity)
+        {
+            for(int i=0; i<rotomAppliances.Length; i++)
+            {
+                if (entity.data.name == rotomAppliances[i])
+                {
+                    CardData rotom = References.PlayerData.inventory.deck.FirstOrDefault((CardData c) => { return c.name == "websiteofsites.wildfrost.pokefrost.rotom"; });
+                    if (rotom == null)
+                    {
+                        rotom = References.PlayerData.inventory.reserve.FirstOrDefault((CardData c) => { return c.name == "websiteofsites.wildfrost.pokefrost.rotom"; });
+                        if (rotom == null) { return; }
+                        References.PlayerData.inventory.reserve.Remove(rotom);
+                        References.PlayerData.inventory.deck.Add(rotom);
+                    }
+
+                    if ((bool)rotom)
+                    {
+                        fusedRotom = rotom;
+                        CombineCardSystem combineCardSystem = GameObject.FindObjectOfType<CombineCardSystem>();
+                        CombineCardSystem.Combo c = new CombineCardSystem.Combo
+                        {
+                            cardNames = new string[2] { "websiteofsites.wildfrost.pokefrost.rotom", rotomAppliances[i] },
+                            resultingCardName = rotomForms[i]
+                        };
+                        Events.OnEntityEnterBackpack += RotomAdjust;
+                        combineCardSystem.StopAllCoroutines();
+                        combineCardSystem.StartCoroutine(combineCardSystem.CombineSequence(c));
+                    }
+                }
+            }
+        }
+
+        private void RotomAdjust(Entity entity)
+        {
+            if (fusedRotom.mainSprite.name == "shiny")
+            {
+                string[] splitName = entity.data.name.Split('.');
+                string trueName = splitName[splitName.Length - 1];
+                Sprite sprite = Pokefrost.instance.ImagePath("shiny_" + trueName + ".png").ToSprite();
+                sprite.name = "shiny";
+                entity.data.mainSprite = sprite;
+                entity.GetComponent<Card>().mainImage.sprite = sprite;
+                CardData.StatusEffectStacks[] shinystatus = { new CardData.StatusEffectStacks(Get<StatusEffectData>("Shiny"), 1) };
+                entity.data.startWithEffects = entity.data.startWithEffects.Concat(shinystatus).ToArray();
+            }
+
+            foreach (CardUpgradeData upgrade in fusedRotom.upgrades)
+            {
+                if (upgrade.CanAssign(entity.data))
+                {
+                    upgrade.Assign(entity.data);
+                }
+            }
+            //Checks for renames
+            CardData basePreEvo = Pokefrost.instance.Get<CardData>(fusedRotom.name);
+            if (basePreEvo.title != fusedRotom.title)
+            {
+                entity.data.forceTitle = fusedRotom.title;
+                entity.GetComponent<Card>().SetName(fusedRotom.title);
+                    UnityEngine.Debug.Log("[Pokefrost] renamed evolution to " + fusedRotom.title);
+                Events.InvokeRename(entity, fusedRotom.title);
+            }
+            Events.OnEntityEnterBackpack -= RotomAdjust;
+        }
+
         public static int cardsdrawn = 0;
         private void HowManyCardsDrawn(int arg)
         {
