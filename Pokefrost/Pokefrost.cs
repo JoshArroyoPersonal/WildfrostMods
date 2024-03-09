@@ -42,6 +42,8 @@ namespace Pokefrost
             evolvekey.titleKey = keycollection.GetString(evolvekey.name + "_text");
             keycollection.SetString(evolvekey.name + "_desc", "If the condition is met at the end of battle evolve into a new Pokemon|Cannot be in reserve");
             evolvekey.descKey = keycollection.GetString(evolvekey.name + "_desc");
+            evolvekey.panelSprite = this.ImagePath("panel.png").ToSprite();
+            evolvekey.panelColor = new Color(1f, 1f, 1f);
             evolvekey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", evolvekey);
 
