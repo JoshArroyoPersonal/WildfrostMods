@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Pokefrost
 {
-    internal class StatusEffectEvolve : StatusEffectData
+    public class StatusEffectEvolve : StatusEffectData
     {
         public string evolutionCardName;
 

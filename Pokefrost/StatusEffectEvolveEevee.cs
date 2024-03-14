@@ -8,9 +8,22 @@ using UnityEngine;
 
 namespace Pokefrost
 {
-    internal class StatusEffectEvolveEevee : StatusEffectEvolve
+    public class StatusEffectEvolveEevee : StatusEffectEvolve
     {
         public static Dictionary<string, string> upgradeMap = new Dictionary<string, string>();
+
+        public static readonly string[] eeveelutions = new string[8] { "flareon", "vaporeon", "jolteon", "espeon", "umbreon", "glaceon", "leafeon", "sylveon" };
+        public enum eeveeEnum
+        {
+            Flareon = 0,
+            Vaporeon = 1,
+            Jolteon = 2,
+            Espeon = 3,
+            Umbreon = 4,
+            Glaceon = 5,
+            Leafeon = 6,
+            Sylveon = 7
+        }
 
         public override void Autofill(string n, string descrip, WildfrostMod mod)
         {
@@ -69,44 +82,6 @@ namespace Pokefrost
             {
                 if (upgrade.type == CardUpgradeData.Type.Charm)
                 {
-                    if(upgradeMap.ContainsKey(upgrade.name))
-                    {
-                        evolutionCardName = upgradeMap[upgrade.name];
-                    }
-                    else
-                    {
-                        UnityEngine.Debug.Log("[[Michael]] Unrecognized/neutral charm: randomizing evolution.");
-                        int r = UnityEngine.Random.Range(0, 7);
-                        switch(r)
-                        {
-                            case 0:
-                                evolutionCardName = "flareon";
-                                break;
-                            case 1:
-                                evolutionCardName = "vaporeon";
-                                break;
-                            case 2:
-                                evolutionCardName = "jolteon";
-                                break;
-                            case 3:
-                                evolutionCardName = "espeon";
-                                break;
-                            case 4:
-                                evolutionCardName = "umbreon";
-                                break;
-                            case 5:
-                                evolutionCardName = "leafeon";
-                                break;
-                            case 6:
-                                evolutionCardName = "glaceon";
-                                break;
-                            case 7:
-                                evolutionCardName = "sylveon";
-                                break;
-                        }
-                        
-                    }
-                    UnityEngine.Debug.Log("[[Michael]] Evolving into " + evolutionCardName);
                     return true;
                 }
             }
@@ -127,36 +102,10 @@ namespace Pokefrost
                     {
                         UnityEngine.Debug.Log("[[Michael]] Unrecognized/neutral charm: randomizing evolution.");
                         int r = UnityEngine.Random.Range(0, 7);
-                        switch (r)
-                        {
-                            case 0:
-                                evolutionCardName = "flareon";
-                                break;
-                            case 1:
-                                evolutionCardName = "vaporeon";
-                                break;
-                            case 2:
-                                evolutionCardName = "jolteon";
-                                break;
-                            case 3:
-                                evolutionCardName = "espeon";
-                                break;
-                            case 4:
-                                evolutionCardName = "umbreon";
-                                break;
-                            case 5:
-                                evolutionCardName = "leafeon";
-                                break;
-                            case 6:
-                                evolutionCardName = "glaceon";
-                                break;
-                            case 7:
-                                evolutionCardName = "sylveon";
-                                break;
-                        }
+                        evolutionCardName = eeveelutions[r];
 
                     }
-                    UnityEngine.Debug.Log("[[Michael]] Evolving into " + evolutionCardName);
+                    UnityEngine.Debug.Log("[Pokefrost] Evolving into " + evolutionCardName);
                 }
             }
         }
@@ -165,7 +114,7 @@ namespace Pokefrost
         {
             FindEvolution(preEvo);
             evolutionCardName = Extensions.PrefixGUID(evolutionCardName, mod);
-            Debug.Log("[[Michael]] " + evolutionCardName);
+            Debug.Log("[Pokefrost] " + evolutionCardName);
             base.Evolve(mod, preEvo);
         }
     }
