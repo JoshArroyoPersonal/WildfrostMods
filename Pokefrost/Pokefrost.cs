@@ -26,7 +26,7 @@ namespace Pokefrost
         private List<CardUpgradeDataBuilder> charmlist;
         private List<StatusEffectData> statusList = new List<StatusEffectData>(30);
         private bool preLoaded = false;
-        private static float shinyrate = 1/400f;
+        private static float shinyrate = 1/100f;
         public static WildfrostMod instance;
 
         public Pokefrost(string modDirectory) : base(modDirectory) 
@@ -49,6 +49,9 @@ namespace Pokefrost
             iconsheet.spriteInfoList.Add(testaroo2);
             Debug.Log("Got Glyph");
             Debug.Log("[Josh] Changed icon_sheet");*/
+
+            TMP_SpriteAsset tempSpriteAsset = (Resources.FindObjectsOfTypeAll(typeof(TMP_SpriteAsset)) as TMP_SpriteAsset[])[1];
+            TextMeshProUGUI.OnSpriteAssetRequest += new Func<int, string, TMP_SpriteAsset>((i, s) => { return s == "test" ? tempSpriteAsset : null; });
 
             StringTable keycollection = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
             KeywordData evolvekey = Get<KeywordData>("explode").InstantiateKeepName();
@@ -79,6 +82,18 @@ namespace Pokefrost
             tauntedkey.descKey = keycollection.GetString(tauntedkey.name + "_desc");
             tauntedkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntedkey);
+
+            KeywordData randomkey = Get<KeywordData>("hit").InstantiateKeepName();
+            randomkey.name = "Random Effect";
+            keycollection.SetString(randomkey.name + "_text", "Random Effect");
+            randomkey.titleKey = keycollection.GetString(randomkey.name + "_text");
+            keycollection.SetString(randomkey.name + "_desc", "Does a random effect from the listed options");
+            randomkey.descKey = keycollection.GetString(randomkey.name + "_desc");
+            randomkey.panelColor = new Color(0.75f, 0.42f, 0.94f);
+            randomkey.bodyColour = new Color(0.1f, 0.1f, 0.1f);
+            randomkey.titleColour = new Color(0, 0, 0);
+            randomkey.ModAdded = this;
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", randomkey);
 
             StatusEffectFreeTrait wilder = ScriptableObject.CreateInstance<StatusEffectFreeTrait>();
             wilder.trait = this.Get<TraitData>("Wild");
@@ -141,6 +156,10 @@ namespace Pokefrost
             overshroomkey.titleKey = keycollection.GetString(overshroomkey.name + "_text");
             keycollection.SetString(overshroomkey.name + "_desc", "Acts like both <sprite name=overload> and <sprite name=shroom>|Counts as both too!");
             overshroomkey.descKey = keycollection.GetString(overshroomkey.name + "_desc");
+            overshroomkey.noteColour = new Color(0, 0.6f, 0.6f);
+            overshroomkey.titleColour = new Color(0, 0.6f, 0.6f);
+            overshroomkey.showIcon = false;
+            overshroomkey.showName = true;
             overshroomkey.ModAdded = this;
             overshroomkey.iconName = "icon_sheet_131";
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", overshroomkey);
@@ -586,7 +605,7 @@ namespace Pokefrost
             triattack.applyFormat = "";
             triattack.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             triattack.keyword = "";
-            triattack.hiddenKeywords = new KeywordData[] { Get<KeywordData>("shroom"), Get<KeywordData>("overload"), Get<KeywordData>("weakness") };
+            triattack.hiddenKeywords = new KeywordData[] {Get<KeywordData>("random effect")};
             triattack.targetConstraints = new TargetConstraint[0];
             collection.SetString(triattack.name + "_text", "Apply <{a}> <keyword=shroom>/<keyword=overload>/<keyword=weakness>");
             triattack.textKey = collection.GetString(triattack.name + "_text");
@@ -704,6 +723,7 @@ namespace Pokefrost
             StatusEffectApplyXOnCardPlayed explodeself = Get<StatusEffectData>("On Card Played Apply Attack To Self").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
             explodeself.effectToApply = gainexplode;
             explodeself.canBeBoosted = true;
+            explodeself.doesDamage = true;
             explodeself.targetConstraints = new TargetConstraint[0];
             explodeself.name = "On Card Played Give Self Explode";
             collection.SetString(explodeself.name + "_text", "Gain <keyword=explode> <{a}>");
@@ -1092,7 +1112,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("sneasel", "Sneasel", idleAnim:"PingAnimationProfile")
-                    .SetStats(6, 2, 3)
+                    .SetStats(6, 0, 2)
                     .SetSprites("sneasel.png", "sneaselBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(drawattack, 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Draw"), 1))
                     .AddPool()
@@ -1896,7 +1916,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\n Adds 27 new companions and one new pet.";
+        public override string Description => "Pokemon Companions\r\n\r\n Adds 30 new companions, 2 new pets, and 3 new charms.";
 
         public override List<T> AddAssets<T, Y>()
         {
