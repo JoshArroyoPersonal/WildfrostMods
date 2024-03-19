@@ -16,26 +16,32 @@ using TMPro;
 using Rewired.Utils.Attributes;
 using System.Runtime.CompilerServices;
 using static CombineCardSystem;
+using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
+using static Text;
 
 namespace Pokefrost
 {
     public class Pokefrost : WildfrostMod
     {
+        public static string[] basicPool = new string[] {"croagunk", "salazzle", "magcargo" };
+        public static string[] magicPool = new string[] { "carvanha", "duskull", "chandelure" };
+        public static string[] clunkPool = new string[] { "weezing", "hippowdon", "trubbish" };
 
         private List<CardDataBuilder> list;
         private List<CardUpgradeDataBuilder> charmlist;
-        private List<StatusEffectData> statusList = new List<StatusEffectData>(30);
+        private List<StatusEffectData> statusList;
         private bool preLoaded = false;
         private static float shinyrate = 1/100f;
         public static WildfrostMod instance;
 
-        public Pokefrost(string modDirectory) : base(modDirectory) 
+        public Pokefrost(string modDirectory) : base(modDirectory)
         {
             instance = this;
         }
 
         private void CreateModAssets()
         {
+            statusList = new List<StatusEffectData>(30);
             /*
             FloatingText floating = GameObject.FindObjectOfType<FloatingText>(true);
             Debug.Log("Got Icon sheet"+floating.name.ToString());
@@ -116,6 +122,7 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wilder);
             statusList.Add(wilder);
 
+            Debug.Log("[Pokefrost] Before Overshroom");
             //Overshroom Start
             GameObject gameObject = new GameObject("OvershroomIcon");
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
@@ -141,6 +148,8 @@ namespace Pokefrost
             cardHover.IsMaster = false;
             CardPopUpTarget cardPopUp = gameObject.AddComponent<CardPopUpTarget>();
 
+            Debug.Log("[Pokefrost] Overshroom 1");
+
             cardHover.pop = cardPopUp;
             RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
@@ -149,6 +158,8 @@ namespace Pokefrost
             gameObject.SetActive(true);
             overshroomicon.type = "overshroom";
             dicty["overshroom"] = gameObject;
+
+            Debug.Log("[Pokefrost] Overshroom 2");
 
             KeywordData overshroomkey = Get<KeywordData>("shroom").InstantiateKeepName();
             overshroomkey.name = "Overshroom";
@@ -177,7 +188,7 @@ namespace Pokefrost
             dummyoverload.keyword = "";
             dummyoverload.textOrder = 0;
             dummyoverload.textInsert = "";
-            dummyoverload.ModAdded = this;
+            //dummyoverload.ModAdded = this;
 
             StatusEffectDummy dummyshroom = ScriptableObject.CreateInstance<StatusEffectDummy>();
             dummyshroom.name = "Shroom";
@@ -190,7 +201,9 @@ namespace Pokefrost
             dummyshroom.keyword = "";
             dummyshroom.textOrder = 0;
             dummyshroom.textInsert = "";
-            dummyshroom.ModAdded = this;
+            //dummyshroom.ModAdded = this;
+
+            Debug.Log("[Pokefrost] Overshroom 3");
 
             StatusEffectOvershroom overshroom = ScriptableObject.CreateInstance<StatusEffectOvershroom>();
             overshroom.name = "Overshroom";
@@ -212,6 +225,8 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overshroom);
             statusList.Add(overshroom);
 
+            Debug.Log("[Pokefrost] Overshroom 4");
+
             StatusEffectBecomeOvershroom giveovershroom = ScriptableObject.CreateInstance<StatusEffectBecomeOvershroom>();
             giveovershroom.name = "Turn Overload and Shroom to Overshroom";
             giveovershroom.applyFormat = "";
@@ -225,6 +240,8 @@ namespace Pokefrost
             giveovershroom.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", giveovershroom);
             statusList.Add(giveovershroom);
+
+            Debug.Log("[Pokefrost] Overshroom 5");
 
             StatusEffectWhileActiveX activeovershroom = ScriptableObject.CreateInstance<StatusEffectWhileActiveX>();
             activeovershroom.applyConstraints = new TargetConstraint[0];
@@ -249,7 +266,7 @@ namespace Pokefrost
             statusList.Add(activeovershroom);
             //Overshroom End
 
-
+            Debug.Log("[Pokefrost] After Overshroom");
 
 
             StatusEffectApplyXWhenHitFree supergreed = ScriptableObject.CreateInstance<StatusEffectApplyXWhenHitFree>();
@@ -664,14 +681,14 @@ namespace Pokefrost
             TraitData taunttrait = Get<TraitData>("Hellbent").InstantiateKeepName();
             taunttrait.name = "Taunt";
             taunttrait.keyword = tauntkey;
-            StatusEffectData[] taunttemp = {hittaunt};
+            StatusEffectData[] taunttemp = { hittaunt };
             taunttrait.effects = taunttemp;
             taunttrait.ModAdded = this;
 
             TraitData tauntedtrait = Get<TraitData>("Hellbent").InstantiateKeepName();
             tauntedtrait.name = "Taunted";
             tauntedtrait.keyword = tauntedkey;
-            StatusEffectData[] tauntedtemp = {taunteffect};
+            StatusEffectData[] tauntedtemp = { taunteffect };
             tauntedtrait.effects = tauntedtemp;
             TraitData[] tempoverrides = { Get<TraitData>("Aimless"), Get<TraitData>("Barrage"), Get<TraitData>("Longshot") };
             tauntedtrait.overrides = tempoverrides;
@@ -680,7 +697,7 @@ namespace Pokefrost
             TargetConstraintHasTrait tauntconstraint = ScriptableObject.CreateInstance<TargetConstraintHasTrait>();
             tauntconstraint.name = "Has Taunt Trait";
             tauntconstraint.trait = taunttrait;
-            TargetConstraint[] temptaunteffect = {tauntconstraint};
+            TargetConstraint[] temptaunteffect = { tauntconstraint };
             //taunttargetmode.constraints = temptaunteffect;
             //taunteffect.targetMode = taunttargetmode;
 
@@ -757,6 +774,8 @@ namespace Pokefrost
             teethtrigger.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", teethtrigger);
             statusList.Add(teethtrigger);
+
+            Debug.Log("[Pokefrost] Before Sneasel Effect");
 
             StatusEffectIncreaseAttackBasedOnCardsDrawnThisTurn drawattack = ScriptableObject.CreateInstance<StatusEffectIncreaseAttackBasedOnCardsDrawnThisTurn>();
             drawattack.name = "Increase Attack Based on Cards Drawn";
@@ -858,13 +877,15 @@ namespace Pokefrost
             triggerclunker.name = "Trigger Clunker Ahead";
             triggerclunker.applyToFlags = StatusEffectApplyX.ApplyToFlags.AllyInFrontOf;
             TargetConstraintIsCardType clunkerconstraint = new TargetConstraintIsCardType();
-            clunkerconstraint.allowedTypes = new CardType[] {Get<CardType>("Clunker")};
+            clunkerconstraint.allowedTypes = new CardType[] { Get<CardType>("Clunker") };
             triggerclunker.applyConstraints = triggerclunker.applyConstraints.Append(clunkerconstraint).ToArray();
             collection.SetString(triggerclunker.name + "_text", "Trigger <Clunker> ahead");
             triggerclunker.textKey = collection.GetString(triggerclunker.name + "_text");
             triggerclunker.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerclunker);
             statusList.Add(triggerclunker);
+
+            Debug.Log("[Pokefrost] Before Evolves");
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
@@ -874,7 +895,7 @@ namespace Pokefrost
             statusList.Add(ev1);
 
             StatusEffectEvolve ev2 = ScriptableObject.CreateInstance<StatusEffectEvolveEevee>();
-            ev2.Autofill("Evolve Eevee", "<keyword=evolve>: Equip charm" , this);
+            ev2.Autofill("Evolve Eevee", "<keyword=evolve>: Equip charm", this);
             ev2.SetEvolution("f");
             ev2.Confirm();
             statusList.Add(ev2);
@@ -901,7 +922,7 @@ namespace Pokefrost
             statusList.Add(ev5);
 
             StatusEffectEvolveFromStatusApplied ev6 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev6.Autofill("Evolve Croagunk", "<keyword=evolve>: Apply <{a}> <keyword=shroom>",this);
+            ev6.Autofill("Evolve Croagunk", "<keyword=evolve>: Apply <{a}> <keyword=shroom>", this);
             ev6.SetEvolution("websiteofsites.wildfrost.pokefrost.toxicroak");
             ev6.targetType = "shroom";
             ev6.faction = "ally";
@@ -925,7 +946,7 @@ namespace Pokefrost
             statusList.Add(ev8);
 
             StatusEffectEvolveFromMoney ev9 = ScriptableObject.CreateInstance<StatusEffectEvolveFromMoney>();
-            ev9.Autofill("Evolve Trubbish", "<keyword=evolve>: Have <5> <card=Junk> on battle end",this);
+            ev9.Autofill("Evolve Trubbish", "<keyword=evolve>: Have <5> <card=Junk> on battle end", this);
             ev9.SetEvolution("websiteofsites.wildfrost.pokefrost.garbodor");
             ev9.SetConstraint(StatusEffectEvolveFromMoney.ReturnTrueIfEnoughJunk);
             ev9.Confirm();
@@ -954,11 +975,17 @@ namespace Pokefrost
             collection.SetString(Get<StatusEffectData>("Redraw Cards").name + "_text", "<Redraw>");
             Get<StatusEffectData>("Redraw Cards").textKey = collection.GetString(Get<StatusEffectData>("Redraw Cards").name + "_text");
 
+        }
+
+        private void CreateModAssetsCards()
+        {
             list = new List<CardDataBuilder>();
+
+            Debug.Log("[Pokefrost] Loading Cards");
             //Add our cards here
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("alolansandslash", "Alolan Sandslash", bloodProfile:"Blood Profile Snow")
+                    .CreateUnit("alolansandslash", "Alolan Sandslash", bloodProfile: "Blood Profile Snow")
                     .SetStats(6, 2, 4)
                     .SetSprites("alolansandslash.png", "alolansandslashBG.png")
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Snow"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Block"), 1))
@@ -985,7 +1012,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("magneton", "Magneton", idleAnim:"FloatAnimationProfile", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("magneton", "Magneton", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(3, 0, 3)
                     .SetSprites("magneton.png", "magnetonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Apply Shroom Overburn Or Bom"), 3))
@@ -994,7 +1021,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("voltorb", "Voltorb", idleAnim:"PulseAnimationProfile", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("voltorb", "Voltorb", idleAnim: "PulseAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(4, null, 1)
                     .SetSprites("voltorb.png", "voltorbBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Give Self Explode"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Voltorb"), 3))
@@ -1004,7 +1031,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("electrode", "Electrode", idleAnim:"PulseAnimationProfile", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("electrode", "Electrode", idleAnim: "PulseAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(6, null, 1)
                     .SetSprites("electrode.png", "electrodeBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Give Self Explode"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Trigger To Self"), 1))
@@ -1012,7 +1039,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("lickitung", "Lickitung", bloodProfile:"Blood Profile Berry")
+                    .CreateUnit("lickitung", "Lickitung", bloodProfile: "Blood Profile Berry")
                     .SetStats(7, 3, 3)
                     .SetSprites("lickitung.png", "lickitungBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Longshot"), 1), new CardData.TraitStacks(Get<TraitData>("Pull"), 1))
@@ -1022,7 +1049,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("weezing", "Weezing", idleAnim:"FloatAnimationProfile", bloodProfile:"Blood Profile Husk")
+                    .CreateUnit("weezing", "Weezing", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(8, 2, 3)
                     .SetSprites("weezing.png", "weezingBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Ink to All"), 4))
@@ -1031,7 +1058,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("magikarp", "Magikarp", idleAnim:"ShakeAnimationProfile")
+                    .CreateUnit("magikarp", "Magikarp", idleAnim: "ShakeAnimationProfile")
                     .SetStats(1, 0, 4)
                     .SetSprites("magikarp.png", "magikarpBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Magikarp"), 2))
@@ -1040,7 +1067,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("gyarados", "Gyarados", idleAnim:"GiantAnimationProfile")
+                    .CreateUnit("gyarados", "Gyarados", idleAnim: "GiantAnimationProfile")
                     .SetStats(8, 4, 4)
                     .SetSprites("gyarados.png", "gyaradosBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Fury"), 4))
@@ -1052,13 +1079,13 @@ namespace Pokefrost
                     .CreateUnit("eevee", "Eevee")
                     .SetStats(4, 3, 3)
                     .SetSprites("eevee.png", "eeveeBG.png")
-                    .IsPet((ChallengeData) null, true)
+                    .IsPet((ChallengeData)null, true)
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Eevee"), 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("vaporeon", "Vaporeon", bloodProfile:"Blood Profile Blue (x2)")
+                    .CreateUnit("vaporeon", "Vaporeon", bloodProfile: "Blood Profile Blue (x2)")
                     .SetStats(4, 3, 3)
                     .SetSprites("vaporeon.png", "vaporeonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Block"), 1))
@@ -1085,7 +1112,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("snorlax", "Snorlax", idleAnim:"SquishAnimationProfile")
+                    .CreateUnit("snorlax", "Snorlax", idleAnim: "SquishAnimationProfile")
                     .SetStats(14, 6, 5)
                     .SetSprites("snorlax.png", "snorlaxBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("While Active Consume To Items In Hand"), 1))
@@ -1109,18 +1136,20 @@ namespace Pokefrost
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Demonize"), 1))
                 );
 
+            Debug.Log("[Pokefrost] Before Sneasel Effect");
+
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("sneasel", "Sneasel", idleAnim:"PingAnimationProfile")
                     .SetStats(6, 0, 2)
                     .SetSprites("sneasel.png", "sneaselBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(drawattack, 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Draw"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Increase Attack Based on Cards Drawn"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Draw"), 1))
                     .AddPool()
                 );
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("magcargo", "Magcargo", idleAnim:"GoopAnimationProfile")
+                    .CreateUnit("magcargo", "Magcargo", idleAnim: "GoopAnimationProfile")
                     .SetStats(15, 0, 6)
                     .SetSprites("magcargo.png", "magcargoBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Apply Spice To Allies & Enemies & Self"), 1))
@@ -1129,7 +1158,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("nosepass", "Nosepass", bloodProfile:"Blood Profile Husk")
+                    .CreateUnit("nosepass", "Nosepass", bloodProfile: "Blood Profile Husk")
                     .SetStats(8, 4, 4)
                     .SetSprites("nosepass.png", "nosepassBG.png")
                     .WithFlavour("My magnetic field attracts tons of charms from the sidelines")
@@ -1138,7 +1167,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("sableye", "Sableye", bloodProfile:"Blood Profile Pink Wisp")
+                    .CreateUnit("sableye", "Sableye", bloodProfile: "Blood Profile Pink Wisp")
                     .SetStats(10, 0, 3)
                     .SetSprites("sableye.png", "sableyeBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Drop Bling on Hit"), 25))
@@ -1148,7 +1177,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("carvanha", "Carvanha", idleAnim:"FloatAnimationProfile")
+                    .CreateUnit("carvanha", "Carvanha", idleAnim: "FloatAnimationProfile")
                     .SetStats(6, 3, 4)
                     .SetSprites("carvanha.png", "carvanhaBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Carvanha"), 50))
@@ -1157,7 +1186,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("sharpedo", "Sharpedo", idleAnim:"FloatAnimationProfile")
+                    .CreateUnit("sharpedo", "Sharpedo", idleAnim: "FloatAnimationProfile")
                     .SetStats(7, 3, 4)
                     .SetSprites("sharpedo.png", "sharpedoBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Teeth"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Teeth Damage"), 1))
@@ -1165,7 +1194,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("spinda", "Spinda", idleAnim:"Heartbeat2AnimationProfile")
+                    .CreateUnit("spinda", "Spinda", idleAnim: "Heartbeat2AnimationProfile")
                     .SetStats(5, 4, 4)
                     .SetSprites("spinda.png", "spindaBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Haze to All"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Haze"), 1))
@@ -1174,7 +1203,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("cradily", "Cradily", idleAnim:"GoopAnimationProfile", bloodProfile:"Blood Profile Fungus")
+                    .CreateUnit("cradily", "Cradily", idleAnim: "GoopAnimationProfile", bloodProfile: "Blood Profile Fungus")
                     .SetStats(12, null, 5)
                     .SetSprites("cradily.png", "cradilyBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Heal Self"), 6))
@@ -1184,7 +1213,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("duskull", "Duskull", idleAnim:"FloatAnimationProfile", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("duskull", "Duskull", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(8, 3, 0)
                     .SetSprites("duskull.png", "duskullBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Ally Summoned Add Skull To Hand"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Summon"), 1))
@@ -1203,7 +1232,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("bastiodon", "Bastiodon", idleAnim:"SquishAnimationProfile")
+                    .CreateUnit("bastiodon", "Bastiodon", idleAnim: "SquishAnimationProfile")
                     .SetStats(12, 4, 6)
                     .SetSprites("bastiodon.png", "bastiodonBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Taunt"), 1))
@@ -1212,7 +1241,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("chingling", "Chingling", idleAnim:"HangAnimationProfile")
+                    .CreateUnit("chingling", "Chingling", idleAnim: "HangAnimationProfile")
                     .SetStats(6, 3, 0)
                     .SetSprites("chingling.png", "chinglingBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Redraw Hit"), 1))
@@ -1221,7 +1250,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("hippowdon", "Hippowdon", idleAnim:"SquishAnimationProfile")
+                    .CreateUnit("hippowdon", "Hippowdon", idleAnim: "SquishAnimationProfile")
                     .SetStats(8, 3, 5)
                     .SetSprites("hippowdon.png", "hippowdonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Pre Turn Weakness All Enemies"), 1))
@@ -1239,7 +1268,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("croagunk", "Croagunk", bloodProfile:"Blood Profile Fungus")
+                    .CreateUnit("croagunk", "Croagunk", bloodProfile: "Blood Profile Fungus")
                     .SetStats(5, 2, 4)
                     .SetSprites("croagunk.png", "croagunkBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Hit Equal Shroom To Target"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Croagunk"), 80))
@@ -1248,7 +1277,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("toxicroak", "Toxicroak", bloodProfile:"Blood Profile Fungus")
+                    .CreateUnit("toxicroak", "Toxicroak", bloodProfile: "Blood Profile Fungus")
                     .SetStats(7, 3, 4)
                     .SetSprites("toxicroak.png", "toxicroakBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Hit Equal Shroom To Target"), 1))
@@ -1256,7 +1285,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("lickilicky", "Lickilicky", idleAnim:"SquishAnimationProfile", bloodProfile:"Blood Profile Berry")
+                    .CreateUnit("lickilicky", "Lickilicky", idleAnim: "SquishAnimationProfile", bloodProfile: "Blood Profile Berry")
                     .SetStats(8, 3, 3)
                     .SetSprites("lickilicky.png", "lickilickyBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Barrage"), 1), new CardData.TraitStacks(Get<TraitData>("Pull"), 1))
@@ -1264,7 +1293,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("leafeon", "Leafeon", bloodProfile:"Blood Profile Fungus")
+                    .CreateUnit("leafeon", "Leafeon", bloodProfile: "Blood Profile Fungus")
                     .SetStats(4, 1, 3)
                     .SetSprites("leafeon.png", "leafeonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Turn Apply Shell To AllyInFrontOf"), 2))
@@ -1273,7 +1302,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("glaceon", "Glaceon", bloodProfile:"Blood Profile Snow")
+                    .CreateUnit("glaceon", "Glaceon", bloodProfile: "Blood Profile Snow")
                     .SetStats(4, 3, 3)
                     .SetSprites("glaceon.png", "glaceonBG.png")
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Snow"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Frost"), 1))
@@ -1281,7 +1310,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("froslass", "Froslass", idleAnim:"FloatAnimationProfile", bloodProfile:"Blood Profile Pink Wisp")
+                    .CreateUnit("froslass", "Froslass", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Pink Wisp")
                     .SetStats(4, 1, 4)
                     .SetSprites("froslass.png", "froslassBG.png")
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Frost"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Double Negative Effects"), 1))
@@ -1291,7 +1320,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("rotom", "Rotom", idleAnim:"Heartbeat2AnimationProfile", bloodProfile:"Blood Profile Blue (x2)")
+                    .CreateUnit("rotom", "Rotom", idleAnim: "Heartbeat2AnimationProfile", bloodProfile: "Blood Profile Blue (x2)")
                     .SetStats(8, 3, 4)
                     .SetSprites("rotom.png", "rotomBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger Clunker Ahead"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Damage To Self"), 1))
@@ -1300,7 +1329,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("rotomheat", "Rotom Heat", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("rotomheat", "Rotom Heat", bloodProfile: "Blood Profile Black")
                     .SetStats(5, 5, 4)
                     .SetSprites("rotomheat.png", "rotomBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Increase Attack Of Cards In Hand"), 3))
@@ -1308,7 +1337,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("rotomwash", "Rotom Wash", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("rotomwash", "Rotom Wash", bloodProfile: "Blood Profile Black")
                     .SetStats(10, 5, 4)
                     .SetSprites("rotomwash.png", "rotomBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Cleanse Team"), 1))
@@ -1316,7 +1345,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("rotomfrost", "Rotom Frost", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("rotomfrost", "Rotom Frost", bloodProfile: "Blood Profile Black")
                     .SetStats(10, 2, 4)
                     .SetSprites("rotomfrost.png", "rotomBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Apply Frost To RandomEnemy"), 3))
@@ -1324,7 +1353,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("rotomfan", "Rotom Fan", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("rotomfan", "Rotom Fan", bloodProfile: "Blood Profile Black")
                     .SetStats(6, 4, 4)
                     .SetSprites("rotomfan.png", "rotomBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Redraw Cards"), 1))
@@ -1332,7 +1361,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("rotommow", "Rotom Mow", idleAnim:"ShakeAnimationProfile", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("rotommow", "Rotom Mow", idleAnim: "ShakeAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(7, 3, 4)
                     .SetSprites("rotommow.png", "rotomBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Card Destroyed"), 1))
@@ -1340,7 +1369,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("crustle", "Crustle", idleAnim:"GiantAnimationProfile", bloodProfile:"Blood Profile Husk")
+                    .CreateUnit("crustle", "Crustle", idleAnim: "GiantAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(8, 3, 4)
                     .SetSprites("crustle.png", "crustleBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Add Scrap Pile To Hand"), 1))
@@ -1349,7 +1378,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("trubbish", "Trubbish", idleAnim:"SquishAnimationProfile", bloodProfile:"Blood Profile Husk")
+                    .CreateUnit("trubbish", "Trubbish", idleAnim: "SquishAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(6, 3, 4)
                     .SetSprites("trubbish.png", "trubbishBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Clunker Destroyed Add Junk To Hand"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Trubbish"), 5))
@@ -1358,7 +1387,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("garbodor", "Garbodor", idleAnim:"GiantAnimationProfile", bloodProfile:"Blood Profile Husk")
+                    .CreateUnit("garbodor", "Garbodor", idleAnim: "GiantAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(6, 3, 4)
                     .SetSprites("garbodor.png", "garbodorBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Clunker Destroyed Gain Scrap"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Pre Trigger Gain Frenzy Equal To Scrap"), 1))
@@ -1366,7 +1395,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("chandelure", "Chandelure", idleAnim:"HangAnimationProfile", bloodProfile:"Blood Profile Black")
+                    .CreateUnit("chandelure", "Chandelure", idleAnim: "HangAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(10, 0, 4)
                     .SetSprites("chandelure.png", "chandelureBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Barrage"), 1))
@@ -1376,7 +1405,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("volcarona", "Volcarona", idleAnim:"FlyAnimationProfile")
+                    .CreateUnit("volcarona", "Volcarona", idleAnim: "FlyAnimationProfile")
                     .SetStats(6, 4, 4)
                     .SetSprites("volcarona.png", "volcaronaBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Reduce Counter Row"), 1))
@@ -1385,7 +1414,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("tyrantrum", "Tyrantrum", idleAnim:"GiantAnimationProfile")
+                    .CreateUnit("tyrantrum", "Tyrantrum", idleAnim: "GiantAnimationProfile")
                     .SetStats(7, 4, 4)
                     .SetSprites("tyrantrum.png", "tyrantrumBG.png")
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Wild Trait"), 1))
@@ -1396,7 +1425,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("sylveon", "Sylveon", bloodProfile:"Blood Profile Berry")
+                    .CreateUnit("sylveon", "Sylveon", bloodProfile: "Blood Profile Berry")
                     .SetStats(4, 3, 3)
                     .SetSprites("sylveon.png", "sylveonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Turn Heal & Cleanse Allies"), 3))
@@ -1404,7 +1433,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("klefki", "Klefki", idleAnim:"ShakeAnimationProfile", bloodProfile:"Blood Profile Husk")
+                    .CreateUnit("klefki", "Klefki", idleAnim: "ShakeAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(6, 2, 2)
                     .SetSprites("klefki.png", "klefkiBG.png")
                     .WithFlavour("I can hold all of your charms for safe keeping ;)")
@@ -1423,7 +1452,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("polteageist", "Polteageist", idleAnim:"FloatAnimationProfile", bloodProfile:"Blood Profile Husk")
+                    .CreateUnit("polteageist", "Polteageist", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(6, null, 5)
                     .SetSprites("polteageist.png", "polteageistBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Blaze Tea Random Ally"), 1))
@@ -1466,6 +1495,11 @@ namespace Pokefrost
                 );
 
             //
+        }
+
+        private void CreateModAssetsCharms()
+        {
+            Debug.Log("[Pokefrost] Loading Charms");
 
             charmlist = new List<CardUpgradeDataBuilder>();
             //Add our cards here
@@ -1481,7 +1515,7 @@ namespace Pokefrost
                     .WithTitle("Magnemite Charm")
                     .WithText("Apply <1> <keyword=shroom>/<keyword=overload>/<keyword=weakness>")
             );
-            
+
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeTaunt")
@@ -1494,8 +1528,8 @@ namespace Pokefrost
                     .WithTitle("Shieldon Charm")
                     .WithText("Gain <keyword=taunt>\n<+3> <keyword=health>")
             );
-            
-            
+
+
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeTyrunt")
@@ -1522,13 +1556,13 @@ namespace Pokefrost
             CardDataList bench = References.PlayerData.inventory.reserve;
             foreach (CardData cardData in bench)
             {
-                if(cardData.name == "websiteofsites.wildfrost.pokefrost.nosepass")
+                if (cardData.name == "websiteofsites.wildfrost.pokefrost.nosepass")
                 {
                     Debug.Log("Nosepass's magentic field attrached a charm to it");
                     Debug.Log(cardData.name);
                     List<CardUpgradeData> options = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData").Clone();
                     Debug.Log("Found charm list");
-                    for(int i = 0; i < 30;i++)
+                    for (int i = 0; i < 30; i++)
                     {
                         var r = UnityEngine.Random.Range(0, options.Count);
                         CardUpgradeData charm = options[r].Clone();
@@ -1608,7 +1642,7 @@ namespace Pokefrost
             {
                 return;
             }
-            foreach(CardData card in References.PlayerData.inventory.deck)
+            foreach (CardData card in References.PlayerData.inventory.deck)
             {
                 if (card.name.Contains("websiteofsites.wildfrost.pokefrost") && card.cardType.name == "Friendly" && UnityEngine.Random.Range(0, 1f) < shinyrate)
                 {
@@ -1625,14 +1659,14 @@ namespace Pokefrost
 
         private void GetShiny(Entity entity)
         {
-            Debug.Log("[Pokefrost] Offering "+entity.data.name.ToString());
-            if (entity.data.name.Contains("websiteofsites.wildfrost.pokefrost") && entity.data.cardType.name == "Friendly" && UnityEngine.Random.Range(0,1f) < shinyrate)
+            Debug.Log("[Pokefrost] Offering " + entity.data.name.ToString());
+            if (entity.data.name.Contains("websiteofsites.wildfrost.pokefrost") && entity.data.cardType.name == "Friendly" && UnityEngine.Random.Range(0, 1f) < shinyrate)
             {
                 string[] splitName = entity.data.name.Split('.');
                 string trueName = splitName[3];
                 string fileName = this.ImagePath("shiny_" + trueName + ".png");
                 Debug.Log("shiny_" + trueName);
-                if(!System.IO.File.Exists(fileName))
+                if (!System.IO.File.Exists(fileName))
                 {
                     Debug.Log("[Pokefrost] Oops, shiny file not found. Contact devs.");
                     return;
@@ -1667,6 +1701,8 @@ namespace Pokefrost
         public override void Load()
         {
             CreateModAssets();
+            CreateModAssetsCards();
+            CreateModAssetsCharms();
             base.Load();
             //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += NosepassAttach;
@@ -1679,9 +1715,9 @@ namespace Pokefrost
             Events.OnCardDraw += HowManyCardsDrawn;
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnStatusIconCreated += PatchOvershroom;
-            References.instance.classes[0] = Get<ClassData>("Basic");
-            References.instance.classes[1] = Get<ClassData>("Magic");
-            References.instance.classes[2] = Get<ClassData>("Clunk");
+            //References.instance.classes[0] = Get<ClassData>("Basic");
+            //References.instance.classes[1] = Get<ClassData>("Magic");
+            //References.instance.classes[2] = Get<ClassData>("Clunk");
             Get<CardData>("websiteofsites.wildfrost.pokefrost.klefki").charmSlots = 100;
 
             //DebugShiny();
@@ -1710,8 +1746,35 @@ namespace Pokefrost
             Events.OnCardDraw -= HowManyCardsDrawn;
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
             Events.OnStatusIconCreated -= PatchOvershroom;
+            CardManager.cardIcons["overshroom"].Destroy();
+            CardManager.cardIcons.Remove("overshroom");
+            //RemoveFromPools();
             //Events.OnCardDataCreated -= Wildparty;
 
+        }
+
+        private void RemoveFromPools()
+        {
+            string[] poolsToCheck = { "GeneralUnitPool", "BasicUnitPool", "GeneralItemPool", "MagicUnitPool", "ClunkUnitPool", "GeneralCharmPool" };
+            RewardPool pool;
+            foreach (string poolName in poolsToCheck)
+            {
+                pool = Extensions.GetRewardPool(poolName);
+                if (pool == null)
+                {
+                    Debug.Log($"[Pokefrost] Unknown pool name: {poolName}");
+                    continue;
+                }
+                Debug.Log($"[Pokefrost] {poolName}");
+                for (int i = pool.list.Count - 1; i >= 0; i--)
+                {
+                    Debug.Log($"[Pokefrost] {i}$");
+                    if (pool.list[i]?.name == null)
+                    {
+                        pool.list.RemoveAt(i);
+                    }
+                }
+            }
         }
 
         private async Task ApplianceSpawns()
@@ -1724,10 +1787,10 @@ namespace Pokefrost
             for (int i = 0; i < References.Campaign.nodes.Count; i++)
             {
                 CampaignNode node = References.Campaign.nodes[i];
-                if (node.tier >=2 && node.type.name == "CampaignNodeItem")
+                if (node.tier >= 2 && node.type.name == "CampaignNodeItem")
                 {
                     SaveCollection<string> collection = (SaveCollection<string>)node.data["cards"];
-                    collection.Add(order[i%5]);
+                    collection.Add(order[i % 5]);
                     node.data["cards"] = collection;
                 }
             }
@@ -1741,7 +1804,7 @@ namespace Pokefrost
 
         private void RotomFuse(Entity entity)
         {
-            for(int i=0; i<rotomAppliances.Length; i++)
+            for (int i = 0; i < rotomAppliances.Length; i++)
             {
                 if (entity.data.name == rotomAppliances[i])
                 {
@@ -1798,7 +1861,7 @@ namespace Pokefrost
             {
                 entity.data.forceTitle = fusedRotom.title;
                 entity.GetComponent<Card>().SetName(fusedRotom.title);
-                    UnityEngine.Debug.Log("[Pokefrost] renamed evolution to " + fusedRotom.title);
+                UnityEngine.Debug.Log("[Pokefrost] renamed evolution to " + fusedRotom.title);
                 Events.InvokeRename(entity, fusedRotom.title);
             }
             Events.OnEntityEnterBackpack -= RotomAdjust;
@@ -1811,7 +1874,7 @@ namespace Pokefrost
             {
                 cardsdrawn = arg;
             }
-            
+
         }
 
         private void ResetCardsDrawn(Battle.Phase arg0)
@@ -1819,9 +1882,9 @@ namespace Pokefrost
             cardsdrawn = 0;
         }
 
-        private void PokemonEdits(Scene arg0)
+        private void PokemonEdits(Scene scene)
         {
-            if(arg0.name != "MapNew")
+            if (scene.name != "MapNew")
             {
                 return;
             }
@@ -1829,7 +1892,7 @@ namespace Pokefrost
             CardDataList playerdeck = References.PlayerData.inventory.deck;
             CardDataList playerreserve = References.PlayerData.inventory.reserve;
 
-            foreach(CardData card in playerdeck)
+            foreach (CardData card in playerdeck)
             {
                 if (card.name.Contains("websiteofsites.wildfrost.pokefrost"))
                 {
@@ -1923,11 +1986,52 @@ namespace Pokefrost
             var typeName = typeof(Y).Name;
             switch (typeName)
             {
-                case "CardData":return list.Cast<T>().ToList();
-                case "CardUpgradeData":return charmlist.Cast<T>().ToList();
+                case "CardData": return list.Cast<T>().ToList();
+                case "CardUpgradeData": return charmlist.Cast<T>().ToList();
             }
 
             return base.AddAssets<T, Y>();
+        }
+    }
+
+    [HarmonyPatch(typeof(InspectSystem), "GetClass", new Type[]
+        {
+            typeof(CardData),
+        })]
+    internal static class FixTribeFlags
+    {
+        internal static bool Prefix(ref ClassData __result, CardData cardData)
+        {
+            string cardName = cardData.name;
+            if (cardName.Contains("websiteofsites.wildfrost.pokefrost"))
+            {
+                foreach(string cardName2 in Pokefrost.basicPool)
+                {
+                    if(cardName.Contains(cardName2))
+                    {
+                        __result = References.Classes[0];
+                        return false;
+                    }
+                }
+                foreach (string cardName2 in Pokefrost.magicPool)
+                {
+                    if (cardName.Contains(cardName2))
+                    {
+                        __result = References.Classes[1];
+                        return false;
+                    }
+                }
+                foreach (string cardName2 in Pokefrost.clunkPool)
+                {
+                    if (cardName.Contains(cardName2))
+                    {
+                        __result = References.Classes[2];
+                        return false;
+                    }
+                }
+                return false;
+            }
+            return true;
         }
     }
 
