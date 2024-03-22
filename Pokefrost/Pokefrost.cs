@@ -308,6 +308,7 @@ namespace Pokefrost
             inkall.textInsert = "<{a}><keyword=null>";
             collection.SetString(inkall.name + "_text", "Apply <{a}><keyword=null> to all");
             inkall.textKey = collection.GetString(inkall.name + "_text");
+            inkall.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", inkall);
             statusList.Add(inkall);
 
@@ -1728,7 +1729,7 @@ namespace Pokefrost
             Events.OnStatusIconCreated -= PatchOvershroom;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
-            //RemoveFromPools();
+            RemoveFromPools();
             //Events.OnCardDataCreated -= Wildparty;
 
         }
@@ -1748,8 +1749,7 @@ namespace Pokefrost
                 Debug.Log($"[Pokefrost] {poolName}");
                 for (int i = pool.list.Count - 1; i >= 0; i--)
                 {
-                    Debug.Log($"[Pokefrost] {i}$");
-                    if (pool.list[i]?.name == null)
+                    if (pool.list[i] == null || pool.list[i]?.ModAdded == this)
                     {
                         pool.list.RemoveAt(i);
                     }
