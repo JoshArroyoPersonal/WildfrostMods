@@ -57,6 +57,7 @@ namespace Pokefrost
             upgradeMap.Add("CardUpgradeTeethWhenHit", "umbreon");
             upgradeMap.Add("CardUpgradeSpiky", "umbreon");
             upgradeMap.Add("CardUpgradeDemonize", "umbreon");
+            upgradeMap.Add("websiteofsites.wildfrost.pokefrost.CardUpgradePluck", "umbreon");
 
             upgradeMap.Add("CardUpgradeSnowball", "glaceon");
             upgradeMap.Add("CardUpgradeFrosthand", "glaceon");

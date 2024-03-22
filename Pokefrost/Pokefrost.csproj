@@ -251,6 +251,7 @@
     <Compile Include="StatusEffectEvolveEevee.cs" />
     <Compile Include="StatusEffectEvolveFromKill.cs" />
     <Compile Include="StatusEffectEvolveFromMoney.cs" />
+    <Compile Include="TargetModeLowHealth.cs" />
     <Compile Include="TargetModeTaunt.cs" />
   </ItemGroup>
   <ItemGroup>
