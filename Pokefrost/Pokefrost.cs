@@ -930,6 +930,40 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", reduceowncounter);
             statusList.Add(reduceowncounter);
 
+            StatusEffectXActsLikeShell snowActsLikeShell = ScriptableObject.CreateInstance<StatusEffectXActsLikeShell>();
+            snowActsLikeShell.name = "Snow Acts Like Shell";
+            snowActsLikeShell.targetType = "snow";
+            snowActsLikeShell.imagePath = ImagePath("shnell.png");
+            collection.SetString(snowActsLikeShell.name + "_text", "<keyword=snow> also acts like <keyword=shell>");
+            snowActsLikeShell.textKey = collection.GetString(snowActsLikeShell.name + "_text");
+            snowActsLikeShell.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", snowActsLikeShell);
+            statusList.Add(snowActsLikeShell);
+
+            StatusEffectInstantApplyXCardInDeck buffCardInDeck = ScriptableObject.CreateInstance<StatusEffectInstantApplyXCardInDeck>();
+            buffCardInDeck.name = "Instant Buff Card In Deck";
+            collection.SetString(buffCardInDeck.name + "_text", "");
+            buffCardInDeck.textKey = collection.GetString(buffCardInDeck.name + "_text");
+            buffCardInDeck.type = "";
+            buffCardInDeck.effectToApply = Get<StatusEffectData>("Increase Attack");
+            buffCardInDeck.targetConstraints = new TargetConstraint[0];
+            buffCardInDeck.constraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintDoesDamage>() };
+            buffCardInDeck.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", buffCardInDeck);
+            statusList.Add(buffCardInDeck);
+
+            StatusEffectApplyXOnKill buffCardInDeckOnKill = ScriptableObject.CreateInstance<StatusEffectApplyXOnKill>();
+            buffCardInDeckOnKill.name = "Buff Card In Deck On Kill";
+            collection.SetString(buffCardInDeckOnKill.name + "_text", "<i>Permamently</i> give <+{a}> <keyword=attack> to a card on kill");
+            buffCardInDeckOnKill.textKey = collection.GetString(buffCardInDeckOnKill.name + "_text");
+            buffCardInDeckOnKill.canBeBoosted = true;
+            buffCardInDeckOnKill.type = "";
+            buffCardInDeckOnKill.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            buffCardInDeckOnKill.ModAdded = this;
+            buffCardInDeckOnKill.effectToApply = Get<StatusEffectData>("Instant Buff Card In Deck");
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", buffCardInDeckOnKill);
+            statusList.Add(buffCardInDeckOnKill);
+
             Debug.Log("[Pokefrost] Before Evolves");
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -1330,7 +1364,8 @@ namespace Pokefrost
                     .CreateUnit("prinplup", "Prinplup")
                     .SetStats(6, 3, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
-                );
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Snow Acts Like Shell"), 1))
+                ) ;
 
             list.Add(
                 new CardDataBuilder(this)
@@ -1354,6 +1389,7 @@ namespace Pokefrost
                     .SetStats(7, 4, 4)
                     .SetSprites("honchkrow.png", "honchkrowBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Pluck"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Buff Card In Deck On Kill"), 1))
                 );
 
             list.Add(

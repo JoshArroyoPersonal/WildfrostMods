@@ -234,6 +234,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StatusEffectInstantApplyXCardInDeck.cs" />
+    <Compile Include="StatusEffectXActsLikeShell.cs" />
     <Compile Include="Pokefrost.cs" />
     <Compile Include="StatusEffectEvolveFromHitApplied.cs" />
     <Compile Include="StatusEffectEvolveFromStatusApplied.cs" />
