@@ -235,6 +235,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="StatusEffectInstantApplyXCardInDeck.cs" />
+    <Compile Include="StatusEffectImmuneToDamage.cs" />
     <Compile Include="StatusEffectXActsLikeShell.cs" />
     <Compile Include="Pokefrost.cs" />
     <Compile Include="StatusEffectEvolveFromHitApplied.cs" />

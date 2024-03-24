@@ -934,7 +934,7 @@ namespace Pokefrost
             snowActsLikeShell.name = "Snow Acts Like Shell";
             snowActsLikeShell.targetType = "snow";
             snowActsLikeShell.imagePath = ImagePath("shnell.png");
-            collection.SetString(snowActsLikeShell.name + "_text", "<keyword=snow> also acts like <keyword=shell>");
+            collection.SetString(snowActsLikeShell.name + "_text", "Uses <keyword=snow> as <keyword=shell>");
             snowActsLikeShell.textKey = collection.GetString(snowActsLikeShell.name + "_text");
             snowActsLikeShell.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", snowActsLikeShell);
@@ -963,6 +963,68 @@ namespace Pokefrost
             buffCardInDeckOnKill.effectToApply = Get<StatusEffectData>("Instant Buff Card In Deck");
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", buffCardInDeckOnKill);
             statusList.Add(buffCardInDeckOnKill);
+
+            StatusEffectApplyXWhenYAppliedTo snowWhenSnowed = ScriptableObject.CreateInstance<StatusEffectApplyXWhenYAppliedTo>();
+            snowWhenSnowed.name = "When Snowed Snow Random Enemy";
+            collection.SetString(snowWhenSnowed.name + "_text", "When <keyword=snow>'d, apply equal <keyword=snow> to a random enemy");
+            snowWhenSnowed.textKey = collection.GetString(snowWhenSnowed.name + "_text");
+            snowWhenSnowed.type = "";
+            snowWhenSnowed.applyToFlags = StatusEffectApplyX.ApplyToFlags.RandomEnemy;
+            snowWhenSnowed.ModAdded = this;
+            snowWhenSnowed.effectToApply = Get<StatusEffectData>("Snow");
+            snowWhenSnowed.applyEqualAmount = true;
+            snowWhenSnowed.queue = true;
+            snowWhenSnowed.targetMustBeAlive = true;
+            snowWhenSnowed.doPing = true;
+            snowWhenSnowed.whenAppliedToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            snowWhenSnowed.whenAppliedType = "snow";
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", snowWhenSnowed);
+            statusList.Add(snowWhenSnowed);
+
+            StatusEffectApplyXWhenUnitIsKilled frenzyDeath = ScriptableObject.CreateInstance<StatusEffectApplyXWhenUnitIsKilled>();
+            frenzyDeath.name = "Gain Frenzy When Companion Is Killed";
+            collection.SetString(frenzyDeath.name + "_text", "When a <Companion> is killed, gain <x{a}><keyword=frenzy>");
+            frenzyDeath.textKey = collection.GetString(frenzyDeath.name + "_text");
+            frenzyDeath.canBeBoosted = true;
+            frenzyDeath.type = "";
+            frenzyDeath.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            frenzyDeath.ModAdded = this;
+            frenzyDeath.effectToApply = Get<StatusEffectData>("MultiHit");
+            TargetConstraintIsCardType frenzyDeathTarget = ScriptableObject.CreateInstance<TargetConstraintIsCardType>();
+            frenzyDeathTarget.name = "Must be Friendly";
+            frenzyDeathTarget.allowedTypes = new CardType[] { Get<CardType>("Friendly") };
+            frenzyDeath.unitConstraints = new TargetConstraint[] { frenzyDeathTarget };
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", frenzyDeath);
+            statusList.Add(frenzyDeath);
+
+            KeywordData wonderGuardKey = ScriptableObject.CreateInstance<KeywordData>();
+            wonderGuardKey.name = "WonderGuard";
+            keycollection.SetString(wonderGuardKey.name + "_text", "Wonder Guard");
+            wonderGuardKey.titleKey = keycollection.GetString(wonderGuardKey.name + "_text");
+            keycollection.SetString(wonderGuardKey.name + "_desc", "Immune to direct damage");
+            wonderGuardKey.descKey = keycollection.GetString(wonderGuardKey.name + "_desc");
+            wonderGuardKey.showIcon = false;
+            wonderGuardKey.showName = true;
+            wonderGuardKey.ModAdded = this;
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", wonderGuardKey);
+
+            StatusEffectImmuneToDamage wonderGuard = ScriptableObject.CreateInstance<StatusEffectImmuneToDamage>();
+            wonderGuard.name = "Wonder Guard";
+            collection.SetString(wonderGuard.name + "_text", "<keyword=wonderguard>");
+            wonderGuard.textKey = collection.GetString(wonderGuard.name + "_text");
+            wonderGuard.immuneTypes = new List<string> { "basic" };
+            wonderGuard.type = "";
+            wonderGuard.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wonderGuard);
+            statusList.Add(wonderGuard);
+
+            StatusEffectSummon summonShedinja = Get<StatusEffectData>("Summon Plep").InstantiateKeepName() as StatusEffectSummon;
+            summonShedinja.name = "Summon Shedinja";
+            collection.SetString(summonShedinja.name + "_text", "Summon <card=websiteofsites.wildfrost.pokefrost.shedinja>");
+            summonShedinja.textKey = collection.GetString(summonShedinja.name + "_text");
+            summonShedinja.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", summonShedinja);
+            statusList.Add(summonShedinja);
 
             Debug.Log("[Pokefrost] Before Evolves");
 
@@ -1030,6 +1092,13 @@ namespace Pokefrost
             ev9.SetConstraint(StatusEffectEvolveFromMoney.ReturnTrueIfEnoughJunk);
             ev9.Confirm();
             statusList.Add(ev9);
+
+            StatusEffectEvolveFromKill ev10 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
+            ev10.Autofill("Evolve Litwick", "<keyword=evolve>: Kill an enemy", this);
+            ev10.SetEvolution("websiteofsites.wildfrost.pokefrost.litwick");
+            ev10.SetConstraints(StatusEffectEvolveFromKill.ReturnTrue);
+            ev10.Confirm();
+            statusList.Add(ev10);
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -1221,6 +1290,7 @@ namespace Pokefrost
                     .SetStats(7, 4, 4)
                     .SetSprites("murkrow.png", "murkrowBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Pluck"), 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -1246,6 +1316,7 @@ namespace Pokefrost
                     .CreateUnit("smeargle", "Smeargle")
                     .SetStats(1, 1, 4)
                     .SetSprites("smeargle.png", "smeargleBG.png")
+                    .AddPool()
                 );
 
             list.Add(
@@ -1253,6 +1324,7 @@ namespace Pokefrost
                     .CreateUnit("nincada", "Nincada")
                     .SetStats(6, 2, 5)
                     .SetSprites("nincada.png", "nincadaBG.png")
+                    .AddPool("MagicUnitPool")
                 );
 
             list.Add(
@@ -1266,8 +1338,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("shedinja", "Shedinja")
+                    .WithCardType("Summoned")
                     .SetStats(1, 1, 5)
                     .SetSprites("shedinja.png", "shedinjaBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Wonder Guard"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Destroy Self After Turn"), 1))
                 );
 
             list.Add(
@@ -1357,6 +1431,8 @@ namespace Pokefrost
                     .CreateUnit("piplup", "Piplup")
                     .SetStats(4, 2, 3)
                     .SetSprites("piplup.png", "piplupBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -1364,7 +1440,7 @@ namespace Pokefrost
                     .CreateUnit("prinplup", "Prinplup")
                     .SetStats(6, 3, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Snow Acts Like Shell"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Snow Acts Like Shell"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1))
                 ) ;
 
             list.Add(
@@ -1372,6 +1448,7 @@ namespace Pokefrost
                     .CreateUnit("empoleon", "Empoleon")
                     .SetStats(8, 4, 3)
                     .SetSprites("empoleon.png", "empoleonBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Snow Acts Like Shell"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snowed Snow Random Enemy"), 1))
                 );
 
             list.Add(
@@ -1404,7 +1481,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("hippowdon", "Hippowdon", idleAnim: "SquishAnimationProfile")
-                    .SetStats(8, 3, 5)
+                    .SetStats(12, 3, 5)
                     .SetSprites("hippowdon.png", "hippowdonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Pre Turn Weakness All Enemies"), 1))
                     .AddPool("ClunkUnitPool")
@@ -1549,8 +1626,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("litwick", "Litwick", bloodProfile: "Blood Profile Black")
-                    .SetStats(1, 0, 2)
+                    .SetStats(3, 0, 2)
                     .SetSprites("litwick.png", "litwickBG.png")
+                    .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Litwick"), 1))
+                    .AddPool("MagicUnitPool")
                 );
 
             list.Add(
@@ -1558,6 +1637,7 @@ namespace Pokefrost
                     .CreateUnit("lampent", "Lampent", idleAnim: "HangAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(10, 0, 4)
                     .SetSprites("lampent.png", "lampentBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload Self"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Overload Equal To Overload"), 1))
                 );
 
             list.Add(
@@ -1567,7 +1647,6 @@ namespace Pokefrost
                     .SetSprites("chandelure.png", "chandelureBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Barrage"), 1))
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload Self"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Overload Equal To Overload"), 1))
-                    .AddPool("MagicUnitPool")
                 );
 
             list.Add(
@@ -1640,6 +1719,22 @@ namespace Pokefrost
                     .CreateUnit("kingambit", "Kingambit")
                     .SetStats(10, 5, 5)
                     .SetSprites("kingambit.png", "kingambitBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Gain Frenzy When Companion Is Killed"), 1))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("shedinjamask", "Shedinja Mask", idleAnim: "FloatAnimationProfile")
+                    .SetSprites("shedinja_mask.png", "shedinja_maskBG.png")
+                    .CanPlayOnBoard(true)
+                    .CanPlayOnEnemy(false)
+                    .FreeModify(delegate(CardData c)
+                    {
+                        c.playOnSlot = true;
+                    })
+                    .SetTraits(new CardData.TraitStacks(Get<TraitData>("Consume"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Summon Shedinja"), 1))
                 );
 
             list.Add(
@@ -1647,6 +1742,8 @@ namespace Pokefrost
                     .CreateItem("microwave", "Microwave")
                     .SetSprites("microwave.png", "rotomBG.png")
                     .WithFlavour("Appears to be a safe without a lock. What use is that?")
+                    .CanPlayOnFriendly(false)
+                    .CanPlayOnEnemy(false)
                 );
 
             list.Add(
@@ -1654,6 +1751,8 @@ namespace Pokefrost
                     .CreateItem("washingmachine", "Washing Machine")
                     .SetSprites("washingmachine.png", "rotomBG.png")
                     .WithFlavour("A device that spins and makes loud noises. What use is that?")
+                    .CanPlayOnFriendly(false)
+                    .CanPlayOnEnemy(false)
                 );
 
             list.Add(
@@ -1661,6 +1760,8 @@ namespace Pokefrost
                     .CreateItem("fridge", "Fridge")
                     .SetSprites("fridge.png", "rotomBG.png")
                     .WithFlavour("This strange device seems to... keep things cold? What use is that?")
+                    .CanPlayOnFriendly(false)
+                    .CanPlayOnEnemy(false)
                 );
 
             list.Add(
@@ -1668,6 +1769,8 @@ namespace Pokefrost
                     .CreateItem("fan", "Fan")
                     .SetSprites("fan.png", "rotomBG.png")
                     .WithFlavour("A strange saw sealed by an even stranger cage. What use is that?")
+                    .CanPlayOnFriendly(false)
+                    .CanPlayOnEnemy(false)
                 );
 
             list.Add(
@@ -1675,6 +1778,8 @@ namespace Pokefrost
                     .CreateItem("lawnmower", "Lawnmower")
                     .SetSprites("lawnmower.png", "rotomBG.png")
                     .WithFlavour("Seems to be some sort of vehicle, but lacks seating. What use is that?")
+                    .CanPlayOnFriendly(false)
+                    .CanPlayOnEnemy(false)
                 );
 
             //
@@ -1933,6 +2038,7 @@ namespace Pokefrost
             //References.instance.classes[1] = Get<ClassData>("Magic");
             //References.instance.classes[2] = Get<ClassData>("Clunk");
             Get<CardData>("websiteofsites.wildfrost.pokefrost.klefki").charmSlots = 100;
+            ((StatusEffectSummon)Get<StatusEffectData>("Summon Shedinja")).summonCard = Get<CardData>("websiteofsites.wildfrost.pokefrost.shedinja");
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
