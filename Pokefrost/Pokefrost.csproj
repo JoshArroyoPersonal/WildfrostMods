@@ -234,6 +234,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StatusEffectSketch.cs" />
+    <Compile Include="StatusEffectNincadaAndMurkrow.cs" />
     <Compile Include="StatusEffectInstantApplyXCardInDeck.cs" />
     <Compile Include="StatusEffectImmuneToDamage.cs" />
     <Compile Include="StatusEffectXActsLikeShell.cs" />
@@ -253,7 +255,7 @@
     <Compile Include="StatusEffectEvolve.cs" />
     <Compile Include="StatusEffectEvolveEevee.cs" />
     <Compile Include="StatusEffectEvolveFromKill.cs" />
-    <Compile Include="StatusEffectEvolveFromMoney.cs" />
+    <Compile Include="StatusEffectEvolveExternalFactor.cs" />
     <Compile Include="TargetModeLowHealth.cs" />
     <Compile Include="TargetModeTaunt.cs" />
   </ItemGroup>
