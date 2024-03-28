@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Pokefrost
 {
-    internal class StatusEffectEvolveFromMoney : StatusEffectEvolve
+    internal class StatusEffectEvolveExternalFactor : StatusEffectEvolve
     {
 
         public static Dictionary<string, string> upgradeMap = new Dictionary<string, string>();
@@ -27,6 +27,7 @@ namespace Pokefrost
         {
             result = (References.Player.drawContainer.Count + References.Player.handContainer.Count + References.Player.discardContainer.Count == 0);
         }
+
         public static void ReturnTrueIfEnoughJunk(int t)
         {
             int junk = 0;
@@ -66,7 +67,7 @@ namespace Pokefrost
             {
                 if (statuses.data.name == this.name)
                 {
-                    threshold = ((StatusEffectEvolveFromMoney)statuses.data).threshold;
+                    threshold = ((StatusEffectEvolveExternalFactor)statuses.data).threshold;
                     return;
                 }
             }

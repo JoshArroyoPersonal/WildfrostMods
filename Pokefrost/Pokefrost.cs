@@ -639,7 +639,7 @@ namespace Pokefrost
             overburnself.effectToApply = Get<StatusEffectData>("Overload");
             overburnself.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
             overburnself.name = "Overload Self";
-            collection.SetString(overburnself.name + "_text", "Gain <{a}> <keyword=overload>");
+            collection.SetString(overburnself.name + "_text", "Gain <{a}><keyword=overload>");
             overburnself.textKey = collection.GetString(overburnself.name + "_text");
             overburnself.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overburnself);
@@ -954,7 +954,7 @@ namespace Pokefrost
 
             StatusEffectApplyXOnKill buffCardInDeckOnKill = ScriptableObject.CreateInstance<StatusEffectApplyXOnKill>();
             buffCardInDeckOnKill.name = "Buff Card In Deck On Kill";
-            collection.SetString(buffCardInDeckOnKill.name + "_text", "<i>Permamently</i> give <+{a}> <keyword=attack> to a card on kill");
+            collection.SetString(buffCardInDeckOnKill.name + "_text", "<i>Permamently</i> give <+{a}><keyword=attack> to a card on kill");
             buffCardInDeckOnKill.textKey = collection.GetString(buffCardInDeckOnKill.name + "_text");
             buffCardInDeckOnKill.canBeBoosted = true;
             buffCardInDeckOnKill.type = "";
@@ -1026,6 +1026,29 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", summonShedinja);
             statusList.Add(summonShedinja);
 
+            StatusEffectSketch sketch = ScriptableObject.CreateInstance<StatusEffectSketch>();
+            sketch.name = "Sketch";
+            sketch.type = "";
+            collection.SetString(sketch.name + "_text", "");
+            sketch.textKey = collection.GetString(sketch.name + "_text");
+            sketch.ModAdded = this;
+            sketch.targetConstraints = new TargetConstraint[0];
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", sketch);
+            statusList.Add(sketch);
+
+            StatusEffectSketchOnDeploy sketchOnDeploy = ScriptableObject.CreateInstance<StatusEffectSketchOnDeploy>();
+            sketchOnDeploy.name = "When Deployed Sketch";
+            sketchOnDeploy.type = "";
+            sketchOnDeploy.canBeBoosted = false;
+            sketchOnDeploy.queue = true;
+            sketchOnDeploy.applyToFlags = StatusEffectApplyX.ApplyToFlags.RandomEnemyInRow;
+            collection.SetString(sketchOnDeploy.name + "_text", "<Sketch {a}>");
+            sketchOnDeploy.textKey = collection.GetString(sketchOnDeploy.name + "_text");
+            sketchOnDeploy.ModAdded = this;
+            sketchOnDeploy.effectToApply = Get<StatusEffectData>("Sketch");
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", sketchOnDeploy);
+            statusList.Add(sketchOnDeploy);
+
             Debug.Log("[Pokefrost] Before Evolves");
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -1041,7 +1064,7 @@ namespace Pokefrost
             ev2.Confirm();
             statusList.Add(ev2);
 
-            StatusEffectEvolve ev3 = ScriptableObject.CreateInstance<StatusEffectEvolveFromMoney>();
+            StatusEffectEvolve ev3 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
             ev3.Autofill("Evolve Meowth", "<keyword=evolve>: Have <{a}><keyword=blings>", this);
             ev3.SetEvolution("websiteofsites.wildfrost.pokefrost.persian");
             ev3.Confirm();
@@ -1055,10 +1078,10 @@ namespace Pokefrost
             ev4.Confirm();
             statusList.Add(ev4);
 
-            StatusEffectEvolveFromMoney ev5 = ScriptableObject.CreateInstance<StatusEffectEvolveFromMoney>();
+            StatusEffectEvolveExternalFactor ev5 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
             ev5.Autofill("Evolve Munchlax", "<keyword=evolve>: Have an empty deck", this);
             ev5.SetEvolution("websiteofsites.wildfrost.pokefrost.snorlax");
-            ev5.SetConstraint(StatusEffectEvolveFromMoney.ReturnTrueIfEmptyDeck);
+            ev5.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfEmptyDeck);
             ev5.Confirm();
             statusList.Add(ev5);
 
@@ -1086,10 +1109,10 @@ namespace Pokefrost
             ev8.Confirm();
             statusList.Add(ev8);
 
-            StatusEffectEvolveFromMoney ev9 = ScriptableObject.CreateInstance<StatusEffectEvolveFromMoney>();
+            StatusEffectEvolveExternalFactor ev9 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
             ev9.Autofill("Evolve Trubbish", "<keyword=evolve>: Have <5> <card=Junk> on battle end", this);
             ev9.SetEvolution("websiteofsites.wildfrost.pokefrost.garbodor");
-            ev9.SetConstraint(StatusEffectEvolveFromMoney.ReturnTrueIfEnoughJunk);
+            ev9.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfEnoughJunk);
             ev9.Confirm();
             statusList.Add(ev9);
 
@@ -1099,6 +1122,18 @@ namespace Pokefrost
             ev10.SetConstraints(StatusEffectEvolveFromKill.ReturnTrue);
             ev10.Confirm();
             statusList.Add(ev10);
+
+            StatusEffectEvolveNincada ev11 = ScriptableObject.CreateInstance<StatusEffectEvolveNincada>();
+            ev11.Autofill("Evolve Nincada", "<keyword=evolve>: <{a}> battles", this);
+            ev11.SetEvolution("websiteofsites.wildfrost.pokefrost.ninjask");
+            ev11.Confirm();
+            statusList.Add(ev11);
+
+            StatusEffectEvolveCrown ev12 = ScriptableObject.CreateInstance<StatusEffectEvolveCrown>();
+            ev12.Autofill("Evolve Murkrow", "<keyword=evolve>: Wear <sprite name=crown>", this);
+            ev12.SetEvolution("websiteofsites.wildfrost.pokefrost.honchkrow");
+            ev12.Confirm();
+            statusList.Add(ev12);
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -1289,6 +1324,7 @@ namespace Pokefrost
                     .CreateUnit("murkrow", "Murkrow")
                     .SetStats(7, 4, 4)
                     .SetSprites("murkrow.png", "murkrowBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Murkrow"), 1))
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Pluck"), 1))
                     .AddPool()
                 );
@@ -1316,6 +1352,8 @@ namespace Pokefrost
                     .CreateUnit("smeargle", "Smeargle")
                     .SetStats(1, 1, 4)
                     .SetSprites("smeargle.png", "smeargleBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Deployed Sketch"), 4))
+                    .SetTraits(new CardData.TraitStacks(Get<TraitData>("Pigheaded"),1))
                     .AddPool()
                 );
 
@@ -1324,6 +1362,7 @@ namespace Pokefrost
                     .CreateUnit("nincada", "Nincada")
                     .SetStats(6, 2, 5)
                     .SetSprites("nincada.png", "nincadaBG.png")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Nincada"), 1))
                     .AddPool("MagicUnitPool")
                 );
 
@@ -1628,7 +1667,8 @@ namespace Pokefrost
                     .CreateUnit("litwick", "Litwick", bloodProfile: "Blood Profile Black")
                     .SetStats(3, 0, 2)
                     .SetSprites("litwick.png", "litwickBG.png")
-                    .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Litwick"), 1))
+                    .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Litwick"), 1))
                     .AddPool("MagicUnitPool")
                 );
 
@@ -1666,6 +1706,7 @@ namespace Pokefrost
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Wild Trait"), 1))
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("MultiHit"), 1))
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Aimless"), 1), new CardData.TraitStacks(Get<TraitData>("Wild"), 1))
+                    .WithFlavour("")
                     .AddPool()
                 );
 

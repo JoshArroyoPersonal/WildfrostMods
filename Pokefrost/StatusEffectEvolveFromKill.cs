@@ -81,14 +81,11 @@ namespace Pokefrost
 
         public override bool RunEntityDestroyedEvent(Entity entity, DeathType deathType)
         {
-            UnityEngine.Debug.Log(entity.data.title + ", " + deathType.ToString());
-            UnityEngine.Debug.Log(entity.data.title + ", " + deathType.ToString());
             constraint(entity, deathType);
             //if (entity.lastHit != null && entity.lastHit.attacker == target && typeConditions.Contains<string>(entity.data.cardType.name))
             bool deserving = anyKill || (entity.lastHit != null && entity.lastHit.attacker == target);
             if (deserving && result)
             {
-                UnityEngine.Debug.Log("[Debug] Confrimed Kill!");
                 foreach (StatusEffectData statuses in target.statusEffects)
                 {
                     if (statuses.name == this.name && this.count > 0)
@@ -96,7 +93,6 @@ namespace Pokefrost
                         this.count--;
                         target.display.promptUpdateDescription = true;
                         target.PromptUpdate();
-                        UnityEngine.Debug.Log("[Debug] Updated card on board!");
                     }
                 }
                 if (!persist && this.count != 0)
@@ -112,7 +108,6 @@ namespace Pokefrost
                             if (statuses.data.name == this.name && statuses.count > 0)
                             {
                                 statuses.count = this.count;
-                                UnityEngine.Debug.Log("[Debug] Updated deck copy!");
                             }
                         }
                     }
