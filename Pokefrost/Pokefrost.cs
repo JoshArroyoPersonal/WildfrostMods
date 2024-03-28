@@ -1094,7 +1094,7 @@ namespace Pokefrost
             statusList.Add(ev9);
 
             StatusEffectEvolveFromKill ev10 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev10.Autofill("Evolve Litwick", "<keyword=evolve>: Kill an enemy", this);
+            ev10.Autofill("Evolve Litwick", "<keyword=evolve>: Kill <{a}> enemy", this);
             ev10.SetEvolution("websiteofsites.wildfrost.pokefrost.lampent");
             ev10.SetConstraints(StatusEffectEvolveFromKill.ReturnTrue);
             ev10.Confirm();
