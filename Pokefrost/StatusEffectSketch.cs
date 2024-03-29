@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Deadpan.Enums.Engine.Components.Modding;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -56,7 +57,7 @@ namespace Pokefrost
             {
                 if (trueCopy != null)
                 {
-                    trueCopy.startWithEffects = CardData.StatusEffectStacks.Stack(trueCopy.startWithEffects, new CardData.StatusEffectStacks[1] { new CardData.StatusEffectStacks(item, item.count - item.temporary) });
+                    trueCopy.startWithEffects = CardData.StatusEffectStacks.Stack(trueCopy.startWithEffects, new CardData.StatusEffectStacks[1] { new CardData.StatusEffectStacks(AddressableLoader.Get<StatusEffectData>("StatusEffectData",item.name), item.count - item.temporary) });
                 }
                 yield return StatusEffectSystem.Apply(applier, item.applier, item, item.count - item.temporary);
             }
@@ -69,23 +70,27 @@ namespace Pokefrost
 
             applier.attackEffects = (from a in CardData.StatusEffectStacks.Stack(applier.attackEffects, target.attackEffects)
                                      select a.Clone()).ToList();
+
+            applier.statusEffects[0].count--; //Hardcoded
+            if (applier.statusEffects[0].count == 0)
+            {
+                yield return applier.statusEffects[0].Remove();
+            }
+
             yield return applier.UpdateTraits();
+
+
         }
     }
 
     internal class StatusEffectSketchOnDeploy : StatusEffectApplyXWhenDeployed
     {
+
         public override bool RunEnableEvent(Entity entity)
         {
             if (base.RunEnableEvent(entity))
             {
-                count--;
-                if (count == 0)
-                {
-                    target.StartCoroutine("Remove");
-                    
-                }
-                return true;
+                return CountDown();
             }
             return false;
         }
@@ -94,15 +99,34 @@ namespace Pokefrost
         {
             if (base.RunCardMoveEvent(entity))
             {
-                count--;
-                if (count == 0)
-                {
-                    target.StartCoroutine("Remove");
-
-                }
-                return true;
+                return CountDown();
             }
             return false;
         }
+
+        public bool CountDown()
+        {
+            foreach (CardData card in References.PlayerData.inventory.deck)
+            {
+                if (target.data.id == card.id)
+                {
+                    for(int i=0; i<card.startWithEffects.Length; i++)
+                    {
+                        CardData.StatusEffectStacks stack = card.startWithEffects[i];
+                        if(stack.data.name == name)
+                        {
+                            stack.count--;
+                            if (stack.count == 0)
+                            {
+                                card.startWithEffects = card.startWithEffects.RemoveFromArray(stack);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return true;
+        }
+       
     }
 }
