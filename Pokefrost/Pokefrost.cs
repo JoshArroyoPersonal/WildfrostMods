@@ -23,9 +23,9 @@ namespace Pokefrost
 {
     public class Pokefrost : WildfrostMod
     {
-        public static string[] basicPool = new string[] {"croagunk", "salazzle", "magcargo" };
-        public static string[] magicPool = new string[] { "carvanha", "duskull", "chandelure" };
-        public static string[] clunkPool = new string[] { "weezing", "hippowdon", "trubbish" };
+        public static string[] basicPool = new string[] {"croagunk", "toxicroak", "salazzle", "magcargo" };
+        public static string[] magicPool = new string[] { "carvanha", "sharpedo", "duskull", "dusclops", "litwick", "lampent", "chandelure" };
+        public static string[] clunkPool = new string[] { "weezing", "hippowdon", "trubbish", "garbodor" };
 
         private List<CardDataBuilder> list;
         private List<CardUpgradeDataBuilder> charmlist;
@@ -1026,6 +1026,21 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", summonShedinja);
             statusList.Add(summonShedinja);
 
+            KeywordData sketchkey = Get<KeywordData>("hit").InstantiateKeepName();
+            sketchkey.name = "Sketch";
+            keycollection.SetString(sketchkey.name + "_text", "Sketch");
+            sketchkey.titleKey = keycollection.GetString(sketchkey.name + "_text");
+            keycollection.SetString(sketchkey.name + "_desc", "When deployed, permanently copy the effects of a random enemy in the row|Counts down");
+            sketchkey.descKey = keycollection.GetString(sketchkey.name + "_desc");
+            sketchkey.panelSprite = this.ImagePath("sketchpaint.png").ToSprite();
+            //sketchkey.panelColor = new Color(1f, 1f, 1f);
+            sketchkey.bodyColour = new Color(0f, 0f, 0f);
+            sketchkey.noteColour = new Color(0f, 0f, 0f);
+            sketchkey.show = true;
+            sketchkey.showName = true;
+            sketchkey.ModAdded = this;
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", sketchkey);
+
             StatusEffectSketch sketch = ScriptableObject.CreateInstance<StatusEffectSketch>();
             sketch.name = "Sketch";
             sketch.type = "";
@@ -1042,7 +1057,7 @@ namespace Pokefrost
             sketchOnDeploy.canBeBoosted = false;
             sketchOnDeploy.queue = true;
             sketchOnDeploy.applyToFlags = StatusEffectApplyX.ApplyToFlags.RandomEnemyInRow;
-            collection.SetString(sketchOnDeploy.name + "_text", "<Sketch {a}>");
+            collection.SetString(sketchOnDeploy.name + "_text", "<keyword=sketch> <{a}>");
             sketchOnDeploy.textKey = collection.GetString(sketchOnDeploy.name + "_text");
             sketchOnDeploy.ModAdded = this;
             sketchOnDeploy.effectToApply = Get<StatusEffectData>("Sketch");
@@ -1362,8 +1377,8 @@ namespace Pokefrost
                     .CreateUnit("nincada", "Nincada")
                     .SetStats(6, 2, 5)
                     .SetSprites("nincada.png", "nincadaBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Nincada"), 1))
-                    .AddPool("MagicUnitPool")
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Nincada"), 2))
+                    .AddPool()
                 );
 
             list.Add(
@@ -2339,7 +2354,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\n Adds 30 new companions, 2 new pets, and 3 new charms.";
+        public override string Description => "Pokemon Companions\r\n\r\n Adds 36 new companions, 2 new pets, and 5 new charms.";
 
         public override List<T> AddAssets<T, Y>()
         {
