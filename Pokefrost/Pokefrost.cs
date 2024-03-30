@@ -1150,6 +1150,14 @@ namespace Pokefrost
             ev12.Confirm();
             statusList.Add(ev12);
 
+            StatusEffectEvolveFromStatusApplied ev13 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
+            ev13.Autofill("Evolve Piplup", "<keyword=evolve>: Apply <{a}> <keyword=snow>", this);
+            ev13.SetEvolution("websiteofsites.wildfrost.pokefrost.prinplup");
+            ev13.targetType = "snow";
+            ev13.faction = "ally";
+            ev13.Confirm();
+            statusList.Add(ev13);
+
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
             shiny.type = "shiny";
@@ -1485,7 +1493,7 @@ namespace Pokefrost
                     .CreateUnit("piplup", "Piplup")
                     .SetStats(4, 2, 3)
                     .SetSprites("piplup.png", "piplupBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Piplup"), 10))
                     .AddPool()
                 );
 
