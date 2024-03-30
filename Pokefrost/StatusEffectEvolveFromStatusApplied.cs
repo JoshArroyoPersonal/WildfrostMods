@@ -18,6 +18,8 @@ namespace Pokefrost
         public string targetType; //shroom
         public bool persist = true;
 
+        public bool threshold = false;
+
         public override void Init()
         {
             base.Init();
@@ -53,7 +55,6 @@ namespace Pokefrost
 
         public override bool RunPostApplyStatusEvent(StatusEffectApply apply)
         {
-            UnityEngine.Debug.Log("[Pokefrost] Post Apply Status");
             bool result1 = constraint(apply);
             bool result2 = false;
             bool result3 = (apply?.effectData?.type == targetType);
@@ -61,17 +62,30 @@ namespace Pokefrost
             {
                 result2 = (apply?.applier?.owner == target?.owner);
             }
+            if (faction == "toSelf")
+            {
+                result2 = (apply?.target == target);
+            }
             if (result1 && result2 && result3)
             {
-                UnityEngine.Debug.Log("[Debug] Confrimed Status!");
+                UnityEngine.Debug.Log("[Pokefrost] Confirmed Status!");
                 foreach (StatusEffectData statuses in target.statusEffects)
                 {
                     if (statuses.name == this.name && this.count > 0)
                     {
-                        this.count -= Math.Min(this.count, apply.count);
+                        if (threshold)
+                        {
+                            if(target.FindStatus("overload")?.count >= count)
+                            {
+                                this.count = 0;
+                            }
+                        }
+                        else
+                        {
+                            this.count -= Math.Min(this.count, apply.count);
+                        }
                         target.display.promptUpdateDescription = true;
                         target.PromptUpdate();
-                        UnityEngine.Debug.Log("[Debug] Updated card on board!");
                     }
                 }
                 if (!persist && this.count != 0)
@@ -87,7 +101,7 @@ namespace Pokefrost
                             if (statuses.data.name == this.name && statuses.count > 0)
                             {
                                 statuses.count = this.count;
-                                UnityEngine.Debug.Log("[Debug] Updated deck copy!");
+                                UnityEngine.Debug.Log("[Pokefrost] Updated deck copy!");
                             }
                         }
                     }

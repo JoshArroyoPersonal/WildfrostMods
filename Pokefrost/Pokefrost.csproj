@@ -234,6 +234,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="StatusEffectEvolvePlayCards.cs" />
     <Compile Include="StatusEffectSketch.cs" />
     <Compile Include="StatusEffectNincadaAndMurkrow.cs" />
     <Compile Include="StatusEffectInstantApplyXCardInDeck.cs" />

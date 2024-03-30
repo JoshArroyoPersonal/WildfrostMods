@@ -34,6 +34,8 @@ namespace Pokefrost
         private static float shinyrate = 1/100f;
         public static WildfrostMod instance;
 
+        private CardData.StatusEffectStacks SStack(string name, int count) => new CardData.StatusEffectStacks(Get<StatusEffectData>(name), count);
+
         public Pokefrost(string modDirectory) : base(modDirectory)
         {
             instance = this;
@@ -588,6 +590,7 @@ namespace Pokefrost
             collection.SetString(duskulleffect.name + "_text", "Add a random skull to hand");
             duskulleffect.textKey = collection.GetString(duskulleffect.name + "_text");
             duskulleffect.textOrder = 0;
+            duskulleffect.doPing = false;
             duskulleffect.textInsert = "";
             duskulleffect.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", duskulleffect);
@@ -1151,12 +1154,38 @@ namespace Pokefrost
             statusList.Add(ev12);
 
             StatusEffectEvolveFromStatusApplied ev13 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev13.Autofill("Evolve Piplup", "<keyword=evolve>: Apply <{a}> <keyword=snow>", this);
+            ev13.Autofill("Evolve Piplup", "<keyword=evolve>: Apply <{a}><keyword=snow>", this);
             ev13.SetEvolution("websiteofsites.wildfrost.pokefrost.prinplup");
             ev13.targetType = "snow";
             ev13.faction = "ally";
             ev13.Confirm();
             statusList.Add(ev13);
+
+            StatusEffectEvolveFromStatusApplied ev14 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
+            ev14.Autofill("Evolve Prinplup", "<keyword=evolve>: Apply <{a}><keyword=snow> to self", this);
+            ev14.SetEvolution("websiteofsites.wildfrost.pokefrost.empoleon");
+            ev14.targetType = "snow";
+            ev14.faction = "toSelf";
+            ev14.Confirm();
+            statusList.Add(ev14);
+
+            StatusEffectEvolvePlayCards ev15 = ScriptableObject.CreateInstance<StatusEffectEvolvePlayCards>();
+            ev15.Autofill("Evolve Duskull", "<keyword=evolve>: Play {0} skulls", this);
+            ev15.SetEvolution("websiteofsites.wildfrost.pokefrost.dusclops");
+            ev15.SetCardNames("ZapOrb", "SharkTooth", "SnowMaul");
+            ev15.SetDispalyedNames("Azul", "Tiger", "Yeti");
+            ev15.SetTextTemplate("{0}, {1}, and {2}");
+            ev15.Confirm();
+            statusList.Add(ev15);
+
+            StatusEffectEvolveFromStatusApplied ev16 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
+            ev16.Autofill("Evolve Lampent", "<keyword=evolve>: Reach <{a}><keyword=overload>", this);
+            ev16.SetEvolution("websiteofsites.wildfrost.pokefrost.chandelure");
+            ev16.targetType = "overload";
+            ev16.faction = "toSelf";
+            ev16.threshold = true;
+            ev16.Confirm();
+            statusList.Add(ev16);
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -1403,7 +1432,7 @@ namespace Pokefrost
                     .WithCardType("Summoned")
                     .SetStats(1, 1, 5)
                     .SetSprites("shedinja.png", "shedinjaBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Wonder Guard"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Destroy Self After Turn"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Wonder Guard"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Destroy Self After Turn"), 1), SStack("ImmuneToSnow",1))
                 );
 
             list.Add(
@@ -1466,7 +1495,7 @@ namespace Pokefrost
                     .CreateUnit("duskull", "Duskull", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(8, null, 0)
                     .SetSprites("duskull.png", "duskullBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Ally Summoned Add Skull To Hand"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Summon"), 1))
+                    .SetStartWithEffect( SStack("When Ally Summoned Add Skull To Hand",1), SStack("Trigger When Summon", 1), SStack("Evolve Duskull",7))
                     .AddPool("MagicUnitPool")
                 );
 
@@ -1502,7 +1531,7 @@ namespace Pokefrost
                     .CreateUnit("prinplup", "Prinplup")
                     .SetStats(6, 3, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Snow Acts Like Shell"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1))
+                    .SetStartWithEffect(SStack("Snow Acts Like Shell", 1), SStack("When Snow Applied To Self Gain Equal Attack", 1), SStack("Evolve Prinplup", 10))
                 ) ;
 
             list.Add(
@@ -1700,7 +1729,7 @@ namespace Pokefrost
                     .CreateUnit("lampent", "Lampent", idleAnim: "HangAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(10, 0, 4)
                     .SetSprites("lampent.png", "lampentBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload Self"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Overload Equal To Overload"), 1))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload Self"), 3), new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Overload Equal To Overload"), 1), SStack("Evolve Lampent",9))
                 );
 
             list.Add(

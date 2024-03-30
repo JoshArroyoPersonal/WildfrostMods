@@ -12,7 +12,6 @@ namespace Pokefrost
     internal class StatusEffectEvolveFromKill : StatusEffectEvolve
     {
 
-        public static Dictionary<string, string> upgradeMap = new Dictionary<string, string>();
         public Action<Entity, DeathType> constraint = ReturnTrue;
         public static bool result = false;
         public bool anyKill = false;

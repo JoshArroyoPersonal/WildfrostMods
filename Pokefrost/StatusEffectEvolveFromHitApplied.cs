@@ -11,8 +11,6 @@ namespace Pokefrost
 {
     internal class StatusEffectEvolveFromHitApplied : StatusEffectEvolve
     {
-
-        public static Dictionary<string, string> upgradeMap = new Dictionary<string, string>();
         public Func<Hit, bool> constraint = ReturnTrue;
         public string faction;
         public string targetType; //shroom

@@ -15,20 +15,20 @@ namespace Pokefrost
         public static Dictionary<string, string> upgradeMap = new Dictionary<string, string>();
         public int threshold;
 
-        public Action<int> constraint = ReturnTrueIfMoneyIsAboveThreshold;
+        public Action<int, CardData> constraint = ReturnTrueIfMoneyIsAboveThreshold;
         public static bool result = false;
 
-        public static void ReturnTrueIfMoneyIsAboveThreshold(int t)
+        public static void ReturnTrueIfMoneyIsAboveThreshold(int t, CardData target)
         {
             result = (References.Player.data.inventory.gold >= t);
         }
 
-        public static void ReturnTrueIfEmptyDeck(int t)
+        public static void ReturnTrueIfEmptyDeck(int t, CardData target)
         {
             result = (References.Player.drawContainer.Count + References.Player.handContainer.Count + References.Player.discardContainer.Count == 0);
         }
 
-        public static void ReturnTrueIfEnoughJunk(int t)
+        public static void ReturnTrueIfEnoughJunk(int t, CardData target)
         {
             int junk = 0;
             foreach(Entity card in References.Player.drawContainer)
@@ -55,7 +55,21 @@ namespace Pokefrost
             result = (junk >= t);
         }
 
-        public void SetConstraint(Action<int> c)
+        public static void ReturnTrueIfEnoughOverload(int t, CardData target)
+        {
+            foreach(Entity entity in Battle.GetAllUnits())
+            {
+                Debug.Log("[Pokefrost] Found Lampent!");
+                if (entity.data.id == target.id && entity.FindStatus("overload").count >= t)
+                {
+                    result = true;
+                    return;
+                }
+            }
+            result = false;
+        }
+
+        public void SetConstraint(Action<int, CardData> c)
         {
             constraint = c;
         }
@@ -89,7 +103,7 @@ namespace Pokefrost
             {
                 if (statuses.data.name == this.name)
                 {
-                    constraint(statuses.count);
+                    constraint(statuses.count, target.data);
                     return result;
                 }
             }
