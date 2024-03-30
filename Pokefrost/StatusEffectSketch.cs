@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -34,7 +35,7 @@ namespace Pokefrost
                     break;
                 }
             }
-            List<StatusEffectData> list = target.statusEffects.Where((StatusEffectData e) => e.count > e.temporary && !e.isStatus && e != this && e.HasDescOrIsKeyword).ToList();
+            List<StatusEffectData> list = target.statusEffects.Where((StatusEffectData e) => e.count > e.temporary && !e.isStatus && e != this && (e.HasDescOrIsKeyword || e.name== "While Active Increase Attack To Allies (No Desc)" || e.name== "While Active Reduce Attack To Enemies(No Ping, No Desc)")).ToList();
             foreach (Entity.TraitStacks trait in target.traits)
             {
                 foreach (StatusEffectData passiveEffect in trait.passiveEffects)
@@ -71,9 +72,9 @@ namespace Pokefrost
             applier.attackEffects = (from a in CardData.StatusEffectStacks.Stack(applier.attackEffects, target.attackEffects)
                                      select a.Clone()).ToList();
 
-            for(int i=0; i<applier.statusEffects.Count; i++)
+            for(int i=0; i<applier.statusEffects.Count; i++) //Hardcoded
             {
-                if (applier.statusEffects[i].name == "Sketch On Deploy")
+                if (applier.statusEffects[i].name == "When Deployed Sketch")
                 {
                     applier.statusEffects[i].count--;
                     if (applier.statusEffects[i].count == 0)

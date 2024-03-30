@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Pokefrost
 {
@@ -12,7 +13,10 @@ namespace Pokefrost
         public string shedinjaMask = "websiteofsites.wildfrost.pokefrost.shedinjamask";
         public override void Evolve(WildfrostMod mod, CardData preEvo)
         {
-            References.PlayerData.inventory.deck.Add(mod.Get<CardData>(shedinjaMask).Clone());
+            CardData mask = mod.Get<CardData>(shedinjaMask).Clone();
+            References.PlayerData.inventory.deck.Add(mask);
+            Card card = CardManager.Get(mask, null, References.Player, false, true);
+            Events.InvokeEntityShowUnlocked(card.entity);
             base.Evolve(mod, preEvo);
         }
     }
