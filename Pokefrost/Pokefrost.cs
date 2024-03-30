@@ -1520,7 +1520,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("piplup", "Piplup", bloodProfile: "Blood Profile Snow")
-                    .SetStats(4, 2, 3)
+                    .SetStats(6, 2, 3)
                     .SetSprites("piplup.png", "piplupBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Piplup"), 10))
                     .AddPool()
@@ -1529,9 +1529,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("prinplup", "Prinplup", bloodProfile: "Blood Profile Snow")
-                    .SetStats(6, 3, 3)
+                    .SetStats(7, 3, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
-                    .SetStartWithEffect(SStack("Snow Acts Like Shell", 1), SStack("When Snow Applied To Self Gain Equal Attack", 1), SStack("Evolve Prinplup", 20))
+                    .SetStartWithEffect(SStack("Snow Acts Like Shell", 1), SStack("When Snow Applied To Self Gain Equal Attack", 1), SStack("Evolve Prinplup", 8))
                 ) ;
 
             list.Add(
