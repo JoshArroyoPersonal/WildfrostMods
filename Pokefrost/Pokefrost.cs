@@ -1411,8 +1411,8 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("nincada", "Nincada")
-                    .SetStats(6, 2, 5)
+                    .CreateUnit("nincada", "Nincada", idleAnim: "PingAnimationProfile", bloodProfile: "Blood Profile Fungus")
+                    .SetStats(6, 2, 4)
                     .SetSprites("nincada.png", "nincadaBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Nincada"), 2))
                     .AddPool()
@@ -1420,17 +1420,17 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("ninjask", "Ninjask")
-                    .SetStats(6, 2, 5)
+                    .CreateUnit("ninjask", "Ninjask", idleAnim: "FlyAnimationProfile", bloodProfile: "Blood Profile Fungus")
+                    .SetStats(6, 2, 4)
                     .SetSprites("ninjask.png", "ninjaskBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Reduce Own Max Counter"), 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("shedinja", "Shedinja")
+                    .CreateUnit("shedinja", "Shedinja", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .WithCardType("Summoned")
-                    .SetStats(1, 1, 5)
+                    .SetStats(1, 2, 4)
                     .SetSprites("shedinja.png", "shedinjaBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Wonder Guard"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Destroy Self After Turn"), 1), SStack("ImmuneToSnow",1))
                 );
@@ -1502,7 +1502,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("dusclops", "Dusclops", bloodProfile: "Blood Profile Black")
-                    .SetStats(10, 4, 0) 
+                    .SetStats(10, 4, 0)
                     .SetSprites("dusclops.png", "dusclopsBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Ally Summoned Add Skull To Hand"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Summon"), 1))
                 );
@@ -1519,7 +1519,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("piplup", "Piplup")
+                    .CreateUnit("piplup", "Piplup", bloodProfile: "Blood Profile Snow")
                     .SetStats(4, 2, 3)
                     .SetSprites("piplup.png", "piplupBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Piplup"), 10))
@@ -1528,15 +1528,15 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("prinplup", "Prinplup")
+                    .CreateUnit("prinplup", "Prinplup", bloodProfile: "Blood Profile Snow")
                     .SetStats(6, 3, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
-                    .SetStartWithEffect(SStack("Snow Acts Like Shell", 1), SStack("When Snow Applied To Self Gain Equal Attack", 1), SStack("Evolve Prinplup", 10))
+                    .SetStartWithEffect(SStack("Snow Acts Like Shell", 1), SStack("When Snow Applied To Self Gain Equal Attack", 1), SStack("Evolve Prinplup", 20))
                 ) ;
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("empoleon", "Empoleon")
+                    .CreateUnit("empoleon", "Empoleon", bloodProfile: "Blood Profile Snow")
                     .SetStats(8, 4, 3)
                     .SetSprites("empoleon.png", "empoleonBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Snow Acts Like Shell"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snowed Snow Random Enemy"), 1))
@@ -1553,7 +1553,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("honchkrow", "Honchkrow")
+                    .CreateUnit("honchkrow", "Honchkrow", idleAnim: "SquishAnimationProfile")
                     .SetStats(7, 4, 4)
                     .SetSprites("honchkrow.png", "honchkrowBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Pluck"), 1))
@@ -1716,7 +1716,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("litwick", "Litwick", bloodProfile: "Blood Profile Black")
+                    .CreateUnit("litwick", "Litwick", idleAnim: "SquishAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(3, 0, 2)
                     .SetSprites("litwick.png", "litwickBG.png")
                     .SetAttackEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Overload"), 1))
@@ -1772,7 +1772,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("goomy", "Goomy")
+                    .CreateUnit("goomy", "Goomy", idleAnim: "SquishAnimationProfile", bloodProfile: "Blood Profile Blue (x2)")
                     .SetStats(13, 1, 3)
                     .SetSprites("goomy.png", "goomyBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When X Health Lost Split"), 3))
@@ -1809,7 +1809,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("kingambit", "Kingambit")
+                    .CreateUnit("kingambit", "Kingambit", idleAnim: "GiantAnimationProfile")
                     .SetStats(10, 5, 5)
                     .SetSprites("kingambit.png", "kingambitBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Gain Frenzy When Companion Is Killed"), 1))
