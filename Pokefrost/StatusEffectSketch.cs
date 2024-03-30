@@ -71,10 +71,16 @@ namespace Pokefrost
             applier.attackEffects = (from a in CardData.StatusEffectStacks.Stack(applier.attackEffects, target.attackEffects)
                                      select a.Clone()).ToList();
 
-            applier.statusEffects[0].count--; //Hardcoded
-            if (applier.statusEffects[0].count == 0)
+            for(int i=0; i<applier.statusEffects.Count; i++)
             {
-                yield return applier.statusEffects[0].Remove();
+                if (applier.statusEffects[i].name == "Sketch On Deploy")
+                {
+                    applier.statusEffects[i].count--;
+                    if (applier.statusEffects[i].count == 0)
+                    {
+                        yield return applier.statusEffects[i].Remove();
+                    }
+                }
             }
 
             yield return applier.UpdateTraits();
