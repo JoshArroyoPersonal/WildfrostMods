@@ -1532,7 +1532,7 @@ namespace Pokefrost
                     .SetStats(7, 3, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
                     .SetStartWithEffect(SStack("Snow Acts Like Shell", 1), SStack("When Snow Applied To Self Gain Equal Attack", 1), SStack("Evolve Prinplup", 10))
-                ) ;
+                );
 
             list.Add(
                 new CardDataBuilder(this)
@@ -1926,6 +1926,18 @@ namespace Pokefrost
                     .ChangeDamage(1)
                     .WithTitle("Murkrow Charm")
                     .WithText("Gain <keyword=pluck>\n<+1><keyword=attack>\nCA-CAW")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
+                    .CreateCharm("CardUpgradeSketch")
+                    .WithTier(3)
+                    .WithImage("smeargleCharm.png")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .SetEffects(SStack("When Deployed Sketch", 1))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeBlock").targetConstraints)
+                    .WithTitle("Smeargle Charm")
+                    .WithText("Gain <keyword=sketch> <1>")
             );
 
             charmlist.Add(
