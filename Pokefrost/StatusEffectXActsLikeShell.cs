@@ -39,11 +39,12 @@ namespace Pokefrost
 
         public override IEnumerator HitRoutine(Hit hit)
         {
-            if (hit?.target?.owner == target.owner && hit.target.FindStatus(targetType))
+            if (hit?.target == target && hit.target.FindStatus(targetType))
             {
                 StatusEffectData targetEffect = hit.target.FindStatus(targetType);
                 while (targetEffect.count > 0 && hit.damage > 0)
                 {
+
                     targetEffect.count--;
                     hit.damage--;
                     hit.damageBlocked++;

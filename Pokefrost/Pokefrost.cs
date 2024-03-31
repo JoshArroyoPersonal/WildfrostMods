@@ -1128,7 +1128,7 @@ namespace Pokefrost
             statusList.Add(ev8);
 
             StatusEffectEvolveExternalFactor ev9 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
-            ev9.Autofill("Evolve Trubbish", "<keyword=evolve>: Have <5> <card=Junk> on battle end", this);
+            ev9.Autofill("Evolve Trubbish", "<keyword=evolve>: Have <4> <card=Junk> on battle end", this);
             ev9.SetEvolution("websiteofsites.wildfrost.pokefrost.garbodor");
             ev9.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfEnoughJunk);
             ev9.Confirm();
@@ -1520,7 +1520,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("piplup", "Piplup", bloodProfile: "Blood Profile Snow")
-                    .SetStats(4, 2, 3)
+                    .SetStats(6, 2, 3)
                     .SetSprites("piplup.png", "piplupBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Piplup"), 10))
                     .AddPool()
@@ -1529,7 +1529,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("prinplup", "Prinplup", bloodProfile: "Blood Profile Snow")
-                    .SetStats(6, 3, 3)
+                    .SetStats(7, 3, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
                     .SetStartWithEffect(SStack("Snow Acts Like Shell", 1), SStack("When Snow Applied To Self Gain Equal Attack", 1), SStack("Evolve Prinplup", 10))
                 );
@@ -1702,7 +1702,7 @@ namespace Pokefrost
                     .CreateUnit("trubbish", "Trubbish", idleAnim: "SquishAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(6, 3, 4)
                     .SetSprites("trubbish.png", "trubbishBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Clunker Destroyed Add Junk To Hand"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Trubbish"), 5))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Clunker Destroyed Add Junk To Hand"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Trubbish"), 4))
                     .AddPool("ClunkUnitPool")
                 );
 
