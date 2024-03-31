@@ -18,6 +18,7 @@ using System.Runtime.CompilerServices;
 using static CombineCardSystem;
 using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
 using static Text;
+using System.Collections;
 
 namespace Pokefrost
 {
@@ -1522,7 +1523,7 @@ namespace Pokefrost
                     .CreateUnit("piplup", "Piplup", bloodProfile: "Blood Profile Snow")
                     .SetStats(6, 2, 3)
                     .SetSprites("piplup.png", "piplupBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Piplup"), 10))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Snow Applied To Self Gain Equal Attack"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Evolve Piplup"), 8))
                     .AddPool()
                 );
 
@@ -2139,6 +2140,7 @@ namespace Pokefrost
             Events.OnCardDraw += HowManyCardsDrawn;
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnStatusIconCreated += PatchOvershroom;
+            
             //References.instance.classes[0] = Get<ClassData>("Basic");
             //References.instance.classes[1] = Get<ClassData>("Magic");
             //References.instance.classes[2] = Get<ClassData>("Clunk");
@@ -2147,6 +2149,7 @@ namespace Pokefrost
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
+            Events.OnSceneChanged += PokemonPhoto;
 
             //for (int i = 0; i < References.Classes.Length; i++)
             //{
@@ -2175,7 +2178,35 @@ namespace Pokefrost
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
             //Events.OnCardDataCreated -= Wildparty;
+            Events.OnSceneChanged -= PokemonPhoto;
 
+        }
+
+        private void PokemonPhoto(Scene scene)
+        {
+            if (scene.name == "Town")
+            {
+                References.instance.StartCoroutine(Pokefrost.PokemonPhoto2());
+            }
+        }
+
+        private static IEnumerator PokemonPhoto2()
+        {
+            string[] everyGeneration = { };
+            string[] everyType = { };
+            yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
+            yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
+            CardFramesUnlockedSequence sequence = GameObject.FindObjectOfType<CardFramesUnlockedSequence>();
+            TextMeshProUGUI titleObject = sequence.GetComponentInChildren<TextMeshProUGUI>(true);
+            titleObject.text = $"Pokemon From Every Generation";
+            yield return sequence.StartCoroutine("CreateCards", everyGeneration);
+
+            yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
+            yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
+            sequence = GameObject.FindObjectOfType<CardFramesUnlockedSequence>();
+            titleObject = sequence.GetComponentInChildren<TextMeshProUGUI>(true);
+            titleObject.text = $"Pokemon From Every Generation";
+            yield return sequence.StartCoroutine("CreateCards", everyType);
         }
 
         private void RemoveFromPools()
