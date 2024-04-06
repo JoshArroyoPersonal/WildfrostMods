@@ -71,6 +71,9 @@
     <Reference Include="GameAnalyticsSDK">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Wildfrost_Data\Managed\GameAnalyticsSDK.dll</HintPath>
     </Reference>
+    <Reference Include="gif2textures">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3157544232\gif2textures.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Cecil">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Wildfrost_Data\Managed\Mono.Cecil.dll</HintPath>
     </Reference>
@@ -263,8 +266,16 @@
     <Reference Include="UnityEngine.XRModule">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Wildfrost_Data\Managed\UnityEngine.XRModule.dll</HintPath>
     </Reference>
+    <Reference Include="VFX_Tests">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3157544232\VFX_Tests.dll</HintPath>
+    </Reference>
+    <Reference Include="WildfrostHopeMod.Utils">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3157544232\WildfrostHopeMod.Utils.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ScriptableAmounts.cs" />
+    <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
     <Compile Include="StatusEffectSketch.cs" />
     <Compile Include="StatusEffectNincadaAndMurkrow.cs" />
