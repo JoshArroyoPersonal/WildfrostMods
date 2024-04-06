@@ -82,6 +82,10 @@ namespace Pokefrost
                 Sprite sprite = mod.ImagePath("shiny_" + trueName + ".png").ToSprite();
                 sprite.name = "shiny";
                 evolution.mainSprite = sprite;
+                evolution.startWithEffects = CardData.StatusEffectStacks.Stack(evolution.startWithEffects, new CardData.StatusEffectStacks[]
+                {
+                    new CardData.StatusEffectStacks(mod.Get<StatusEffectData>("Shiny"),1)
+                });
             }
 
             foreach (CardUpgradeData upgrade in preEvo.upgrades)
