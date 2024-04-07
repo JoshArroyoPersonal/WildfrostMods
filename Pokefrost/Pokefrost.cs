@@ -34,7 +34,7 @@ namespace Pokefrost
         private List<CardUpgradeDataBuilder> charmlist;
         private List<StatusEffectData> statusList;
         private bool preLoaded = false;
-        private static float shinyrate = 1/2f;
+        private static float shinyrate = 1/100f;
         public static WildfrostMod instance;
         public TMP_SpriteAsset pokefrostSprites;
         public override TMP_SpriteAsset SpriteAsset => pokefrostSprites;
