@@ -20,6 +20,7 @@ using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
 using static Text;
 using System.Collections;
 using WildfrostHopeMod.Utils;
+using UnityEngine.UI;
 
 namespace Pokefrost
 {
@@ -2346,7 +2347,52 @@ namespace Pokefrost
 
             if (scene.name == "Town")
             {
-                References.instance.StartCoroutine(Pokefrost.PokemonPhoto2());
+                References.instance.StartCoroutine(Pokefrost.PokemonTradeEvent());
+            }
+        }
+
+        private static IEnumerator PokemonTradeEvent()
+        {
+            GameObject controller = new GameObject("CardController");
+            controller.SetActive(false);
+            controller.AddComponent<CardControllerSelectCard>();
+            GameObject background = new GameObject("Background");
+            background.SetActive(false);
+            background.transform.SetParent(controller.transform, false);
+            background.AddComponent<Image>().sprite = Pokefrost.instance.ImagePath("nosepass.png").ToSprite();
+            background.transform.localScale = new Vector3(100f, 100f, 1f);
+            GameObject lane1 = new GameObject("CardLane1");
+            lane1.SetActive(false);
+            lane1.AddComponent<CardLane>();
+            lane1.transform.SetParent(controller.transform);
+            yield return CreateCards("Yuki", controller.GetComponent<CardControllerSelectCard>(), lane1.GetComponent<CardLane>());
+            yield return CreateCards("Bear", controller.GetComponent<CardControllerSelectCard>(), lane1.GetComponent<CardLane>());
+            yield return CreateCards("Flash", controller.GetComponent<CardControllerSelectCard>(), lane1.GetComponent<CardLane>());
+            GameObject lane2 = new GameObject("CardLane2");
+            lane2.SetActive(false);
+            lane2.AddComponent<CardLane>();
+            lane2.transform.SetParent(controller.transform);
+            yield return CreateCards("websiteofsites.wildfrost.pokefrost.nosepass", controller.GetComponent<CardControllerSelectCard>(), lane2.GetComponent<CardLane>());
+            yield return CreateCards("websiteofsites.wildfrost.pokefrost.goomy", controller.GetComponent<CardControllerSelectCard>(), lane2.GetComponent<CardLane>());
+            yield return CreateCards("websiteofsites.wildfrost.pokefrost.absol", controller.GetComponent<CardControllerSelectCard>(), lane2.GetComponent<CardLane>());
+            GameObject.DontDestroyOnLoad(controller);
+            yield break;
+        }
+
+        private static IEnumerator CreateCards(string cardName, CardController cardController, CardContainer cardContainer, bool startFlipped = true)
+        {
+            CardData cardData = AddressableLoader.Get<CardData>("CardData", cardName);
+            Card card = CardManager.Get(cardData, cardController, null, inPlay: false, isPlayerCard: true);
+            if (startFlipped)
+            {
+                card.entity.flipper.FlipDownInstant();
+            }
+
+            cardContainer.Add(card.entity);
+            yield return card.UpdateData();
+            if (startFlipped)
+            {
+                card.entity.flipper.FlipUp(force: true);
             }
         }
 
