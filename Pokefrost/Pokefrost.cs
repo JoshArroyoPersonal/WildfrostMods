@@ -21,6 +21,7 @@ using static Text;
 using System.Collections;
 using WildfrostHopeMod.Utils;
 using UnityEngine.UI;
+using System.Runtime.Remoting.Messaging;
 
 namespace Pokefrost
 {
@@ -2355,39 +2356,64 @@ namespace Pokefrost
         {
             GameObject controller = new GameObject("CardController");
             controller.SetActive(false);
-            controller.AddComponent<CardControllerSelectCard>();
+            CardControllerSelectCard cc = controller.AddComponent<CardControllerSelectCard>();
+            cc.pressEvent = new UnityEventEntity();
+            cc.hoverEvent = new UnityEventEntity();
+            cc.unHoverEvent = new UnityEventEntity();
             GameObject background = new GameObject("Background");
             background.SetActive(false);
             background.transform.SetParent(controller.transform, false);
             background.AddComponent<Image>().sprite = Pokefrost.instance.ImagePath("nosepass.png").ToSprite();
-            background.transform.localScale = new Vector3(100f, 100f, 1f);
+            background.transform.localScale = new Vector3(0.1f, 0.1f, 1f);
             GameObject lane1 = new GameObject("CardLane1");
             lane1.SetActive(false);
-            lane1.AddComponent<CardLane>();
+            lane1.AddComponent<Image>();
+            lane1.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+            CardLane cardLane1 = lane1.AddComponent<CardLane>();
+            cardLane1.holder = lane1.GetComponent<RectTransform>();
+            cardLane1.onAdd = new UnityEventEntity();
             lane1.transform.SetParent(controller.transform);
             yield return CreateCards("Yuki", controller.GetComponent<CardControllerSelectCard>(), lane1.GetComponent<CardLane>());
             yield return CreateCards("Bear", controller.GetComponent<CardControllerSelectCard>(), lane1.GetComponent<CardLane>());
             yield return CreateCards("Flash", controller.GetComponent<CardControllerSelectCard>(), lane1.GetComponent<CardLane>());
+            cardLane1.gap = new Vector3(0.5f, 0f, 0f);
+            cardLane1.SetSize(5, 0.5f);
+            cardLane1.SetChildPositions();
             GameObject lane2 = new GameObject("CardLane2");
             lane2.SetActive(false);
-            lane2.AddComponent<CardLane>();
+            lane2.AddComponent<Image>();
+            lane2.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+            CardLane cardLane2 = lane2.AddComponent<CardLane>();
+            cardLane2.holder = lane2.GetComponent<RectTransform>();
+            cardLane2.onAdd = new UnityEventEntity();
             lane2.transform.SetParent(controller.transform);
+            lane2.transform.Translate(new Vector3(0f, 3f, 0f));
             yield return CreateCards("websiteofsites.wildfrost.pokefrost.nosepass", controller.GetComponent<CardControllerSelectCard>(), lane2.GetComponent<CardLane>());
             yield return CreateCards("websiteofsites.wildfrost.pokefrost.goomy", controller.GetComponent<CardControllerSelectCard>(), lane2.GetComponent<CardLane>());
             yield return CreateCards("websiteofsites.wildfrost.pokefrost.absol", controller.GetComponent<CardControllerSelectCard>(), lane2.GetComponent<CardLane>());
-            GameObject.DontDestroyOnLoad(controller);
+            cardLane2.gap = new Vector3(0.5f, 0f, 0f);
+            cardLane2.SetSize(5, 0.5f);
+            cardLane2.SetChildPositions();
+            controller.transform.SetParent(GameObject.Find("Town Gate Layer").transform.parent);
+            controller.SetActive(true);
+            background.SetActive(true);
+            lane1.SetActive(true);
+            lane2.SetActive(true);
             yield break;
         }
 
         private static IEnumerator CreateCards(string cardName, CardController cardController, CardContainer cardContainer, bool startFlipped = true)
         {
-            CardData cardData = AddressableLoader.Get<CardData>("CardData", cardName);
+            CardData cardData = AddressableLoader.Get<CardData>("CardData", cardName).Clone();
             Card card = CardManager.Get(cardData, cardController, null, inPlay: false, isPlayerCard: true);
             if (startFlipped)
             {
                 card.entity.flipper.FlipDownInstant();
             }
 
+            Debug.Log("Trading!");
+            Debug.Log(cardName);
+            Debug.Log(cardContainer != null);
             cardContainer.Add(card.entity);
             yield return card.UpdateData();
             if (startFlipped)
