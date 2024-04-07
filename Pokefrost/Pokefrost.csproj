@@ -274,6 +274,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CampaignNodeTypeBetterEvent.cs" />
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />

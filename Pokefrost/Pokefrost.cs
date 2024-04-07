@@ -2130,6 +2130,27 @@ namespace Pokefrost
             preLoaded = true;
         }
 
+        private void ReplaceAllTierZero()
+        {
+            CampaignNodeTypeBetterEvent cn = ScriptableObject.CreateInstance<CampaignNodeTypeBetterEvent>();
+            cn.name = "Great Event Here";
+            cn.canEnter = true;
+            cn.canLink = true;
+            cn.interactable = true;
+            cn.canSkip = true;
+            cn.letter = "t";
+            cn.mapNodePrefab = Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab;
+            cn.mapNodeSprite = ImagePath("shiny_klefki.png").ToSprite();
+            AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);
+            GameMode gm = Get<GameMode>("GameModeNormal");
+            CampaignTier tier = gm.populator.tiers[0];
+            for(int i=0; i<tier.rewardPool.Length; i++)
+            {
+                tier.rewardPool[i] = cn.InstantiateKeepName();
+            }
+
+        }
+
         private void LoadStatusEffects()
         {
             AddressableLoader.AddRangeToGroup("StatusEffectData", statusList);
@@ -2288,6 +2309,7 @@ namespace Pokefrost
             CreateModAssetsCards();
             CreateModAssetsCharms();
             base.Load();
+            ReplaceAllTierZero();
             //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += NosepassAttach;
             Events.OnBattleEnd += CheckEvolve;
