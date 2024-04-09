@@ -2133,6 +2133,7 @@ namespace Pokefrost
         private void ReplaceAllTierZero()
         {
             CampaignNodeTypeBetterEvent cn = ScriptableObject.CreateInstance<CampaignNodeTypeBetterEvent>();
+            cn.key = "Trade";
             cn.name = "Great Event Here";
             cn.canEnter = true;
             cn.canLink = true;
@@ -2376,7 +2377,7 @@ namespace Pokefrost
 
         private static IEnumerator PokemonTradeEvent()
         {
-            GameObject controller = new GameObject("CardController");
+            GameObject controller = new GameObject("TradeEventManager");
             controller.SetActive(false);
             CardControllerSelectCard cc = controller.AddComponent<CardControllerSelectCard>();
             cc.pressEvent = new UnityEventEntity();
@@ -2386,62 +2387,38 @@ namespace Pokefrost
             background.SetActive(false);
             background.transform.SetParent(controller.transform, false);
             background.AddComponent<Image>().sprite = Pokefrost.instance.ImagePath("nosepass.png").ToSprite();
-            background.transform.localScale = new Vector3(0.1f, 0.1f, 1f);
+            background.transform.localScale = new Vector3(10f, 10f, 1f);
             GameObject lane1 = new GameObject("CardLane1");
             lane1.SetActive(false);
             lane1.AddComponent<Image>();
-            lane1.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+            lane1.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.1f);
             CardLane cardLane1 = lane1.AddComponent<CardLane>();
             cardLane1.holder = lane1.GetComponent<RectTransform>();
             cardLane1.onAdd = new UnityEventEntity();
             lane1.transform.SetParent(controller.transform);
-            yield return CreateCards("Yuki", controller.GetComponent<CardControllerSelectCard>(), lane1.GetComponent<CardLane>());
-            yield return CreateCards("Bear", controller.GetComponent<CardControllerSelectCard>(), lane1.GetComponent<CardLane>());
-            yield return CreateCards("Flash", controller.GetComponent<CardControllerSelectCard>(), lane1.GetComponent<CardLane>());
+            lane1.transform.Translate(new Vector3(0f, 2.3f, 0f));
             cardLane1.gap = new Vector3(0.5f, 0f, 0f);
-            cardLane1.SetSize(5, 0.5f);
-            cardLane1.SetChildPositions();
             GameObject lane2 = new GameObject("CardLane2");
             lane2.SetActive(false);
             lane2.AddComponent<Image>();
-            lane2.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+            lane2.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0.1f);
             CardLane cardLane2 = lane2.AddComponent<CardLane>();
             cardLane2.holder = lane2.GetComponent<RectTransform>();
             cardLane2.onAdd = new UnityEventEntity();
             lane2.transform.SetParent(controller.transform);
-            lane2.transform.Translate(new Vector3(0f, 3f, 0f));
-            yield return CreateCards("websiteofsites.wildfrost.pokefrost.nosepass", controller.GetComponent<CardControllerSelectCard>(), lane2.GetComponent<CardLane>());
-            yield return CreateCards("websiteofsites.wildfrost.pokefrost.goomy", controller.GetComponent<CardControllerSelectCard>(), lane2.GetComponent<CardLane>());
-            yield return CreateCards("websiteofsites.wildfrost.pokefrost.absol", controller.GetComponent<CardControllerSelectCard>(), lane2.GetComponent<CardLane>());
+            lane2.transform.Translate(new Vector3(0f, -2.3f, 0f));
             cardLane2.gap = new Vector3(0.5f, 0f, 0f);
-            cardLane2.SetSize(5, 0.5f);
-            cardLane2.SetChildPositions();
-            controller.transform.SetParent(GameObject.Find("Town Gate Layer").transform.parent);
-            controller.SetActive(true);
+            //controller.transform.SetParent(GameObject.Find("Town Gate Layer").transform.parent);
+            EventRoutineTrade trade = controller.AddComponent<EventRoutineTrade>();
+            trade.cc = cc;
+            trade.topRow = cardLane1;
+            trade.bottomRow = cardLane2;
+            GameObject.DontDestroyOnLoad(controller);
             background.SetActive(true);
             lane1.SetActive(true);
             lane2.SetActive(true);
+            CampaignNodeTypeBetterEvent.Prefabs.Add("Trade", controller);
             yield break;
-        }
-
-        private static IEnumerator CreateCards(string cardName, CardController cardController, CardContainer cardContainer, bool startFlipped = true)
-        {
-            CardData cardData = AddressableLoader.Get<CardData>("CardData", cardName).Clone();
-            Card card = CardManager.Get(cardData, cardController, null, inPlay: false, isPlayerCard: true);
-            if (startFlipped)
-            {
-                card.entity.flipper.FlipDownInstant();
-            }
-
-            Debug.Log("Trading!");
-            Debug.Log(cardName);
-            Debug.Log(cardContainer != null);
-            cardContainer.Add(card.entity);
-            yield return card.UpdateData();
-            if (startFlipped)
-            {
-                card.entity.flipper.FlipUp(force: true);
-            }
         }
 
         private static IEnumerator PokemonPhoto2()

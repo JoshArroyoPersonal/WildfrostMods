@@ -275,6 +275,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
+    <Compile Include="EventRoutineTrade.cs" />
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
