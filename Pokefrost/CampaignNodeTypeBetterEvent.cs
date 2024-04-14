@@ -31,6 +31,16 @@ namespace Pokefrost
             return null;
         }
 
+        public override IEnumerator SetUp(CampaignNode node)
+        {
+            node.data = new Dictionary<string, object> {
+        {
+            "amount",
+            3
+        } };
+            yield return null;
+        }
+
         public CampaignNodeTypeBetterEvent()
         {
         }

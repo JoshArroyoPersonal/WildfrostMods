@@ -1139,6 +1139,58 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerslowking);
             statusList.Add(triggerslowking);
 
+            StatusEffectApplyXInstant doubleattacker = ScriptableObject.CreateInstance<StatusEffectApplyXInstant>();
+            doubleattacker.name = "Instant Double Attack of Attacker";
+            doubleattacker.effectToApply = Get<StatusEffectData>("Double Attack");
+            doubleattacker.applyToFlags = StatusEffectApplyX.ApplyToFlags.Applier;
+            doubleattacker.canBeBoosted = false;
+            doubleattacker.type = "";
+            doubleattacker.targetConstraints = new TargetConstraint[0];
+            doubleattacker.textKey = null;
+            doubleattacker.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", doubleattacker);
+            statusList.Add(doubleattacker);
+
+            StatusEffectApplyXOnHit iceball = ScriptableObject.CreateInstance<StatusEffectApplyXOnHit>();
+            iceball.name = "On Hit Snowed Target Double Attack";
+            iceball.addDamageFactor = 0;
+            iceball.multiplyDamageFactor = 1f;
+            iceball.effectToApply = doubleattacker;
+            TargetConstraintHasStatus snowconstraint = new TargetConstraintHasStatus();
+            snowconstraint.status = Get<StatusEffectData>("Snow");
+            iceball.applyConstraints = new TargetConstraint[] { snowconstraint };
+            iceball.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
+            iceball.canBeBoosted = false;
+            iceball.type = "";
+            iceball.postHit = true;
+            collection.SetString(iceball.name + "_text", "Double <keyword=attack> after hitting a <keyword=snow>'d target");
+            iceball.textKey = collection.GetString(iceball.name + "_text");
+            iceball.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", iceball);
+            statusList.Add(iceball);
+
+            KeywordData revivekey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            revivekey.name = "Revive";
+            keycollection.SetString(revivekey.name + "_text", "Revive");
+            revivekey.titleKey = keycollection.GetString(revivekey.name + "_text");
+            keycollection.SetString(revivekey.name + "_desc", "Cut <keyword=health> and <keyword=attack> in half instead of dying|Once per run!");
+            revivekey.noteColour = new Color(0.8f, 0.3f, 0.3f);
+            revivekey.descKey = keycollection.GetString(revivekey.name + "_desc");
+            revivekey.ModAdded = this;
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", revivekey);
+
+            StatusEffectRevive revive = ScriptableObject.CreateInstance<StatusEffectRevive>();
+            revive.name = "Revive";
+            revive.canBeBoosted = false;
+            revive.type = "";
+            revive.preventDeath = true;
+            revive.eventPriority = -999998;
+            collection.SetString(revive.name + "_text", "<keyword=revive>");
+            revive.textKey = collection.GetString(revive.name + "_text");
+            revive.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", revive);
+            statusList.Add(revive);
+
             Debug.Log("[Pokefrost] Before Evolves");
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -1667,6 +1719,15 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("spheal", "Spheal")
+                    .SetStats(5, 2, 3)
+                    .SetSprites("spheal.png", "sphealBG.png")
+                    .SetStartWithEffect(SStack("On Hit Snowed Target Double Attack", 1))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("piplup", "Piplup", bloodProfile: "Blood Profile Snow")
                     .SetStats(6, 2, 3)
                     .SetSprites("piplup.png", "piplupBG.png")
@@ -2117,6 +2178,18 @@ namespace Pokefrost
 
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
+                    .CreateCharm("CardUpgradeRevive")
+                    .WithTier(3)
+                    .WithImage("reviveCharm.png")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .SetEffects(SStack("Revive",1))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .WithTitle("Revive Charm")
+                    .WithText("Gain <keyword=revive>")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
                     .Create("CrownSlowking")
                     .WithType(CardUpgradeData.Type.Crown)
                     .WithImage("slowking_crown.png")
@@ -2139,14 +2212,15 @@ namespace Pokefrost
             cn.interactable = true;
             cn.canSkip = true;
             cn.letter = "t";
-            cn.mapNodePrefab = Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab;
+            cn.mapNodePrefab = Get<CampaignNodeType>("CampaignNodeGold").mapNodePrefab;
             cn.mapNodeSprite = ImagePath("shiny_klefki.png").ToSprite();
+            cn.zoneName = "Charms";
             AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);
             GameMode gm = Get<GameMode>("GameModeNormal");
-            CampaignTier tier = gm.populator.tiers[0];
+            CampaignTier tier = gm.populator.tiers[1];
             for(int i=0; i<tier.rewardPool.Length; i++)
             {
-                tier.rewardPool[i] = cn.InstantiateKeepName();
+                tier.rewardPool[i] = cn;//Get<CampaignNodeType>("CampaignNodeCharm");
             }
 
         }
@@ -2309,7 +2383,7 @@ namespace Pokefrost
             CreateModAssetsCards();
             CreateModAssetsCharms();
             base.Load();
-            ReplaceAllTierZero();
+            //ReplaceAllTierZero();
             //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += NosepassAttach;
             Events.OnBattleEnd += CheckEvolve;
@@ -2370,7 +2444,8 @@ namespace Pokefrost
 
             if (scene.name == "Town")
             {
-                References.instance.StartCoroutine(Pokefrost.PokemonTradeEvent());
+                //References.instance.StartCoroutine(Pokefrost.PokemonTradeEvent());
+                References.instance.StartCoroutine(Pokefrost.PokemonPhoto2());
             }
         }
 
@@ -2416,11 +2491,13 @@ namespace Pokefrost
             cardLane2.gap = new Vector3(0.5f, 0f, 0f);
             cardLane2.SetSize(5, 0.5f);
             cardLane2.SetChildPositions();
-            controller.transform.SetParent(GameObject.Find("Town Gate Layer").transform.parent);
-            controller.SetActive(true);
+            //controller.transform.SetParent(GameObject.Find("Town Gate Layer").transform.parent);
+            GameObject.DontDestroyOnLoad(controller);
+            //controller.SetActive(true);
             background.SetActive(true);
             lane1.SetActive(true);
             lane2.SetActive(true);
+            AddressableLoader.Get<CampaignNodeTypeBetterEvent>("CampaignNodeType", "Great Event Here").Prefab = controller;
             yield break;
         }
 
@@ -2446,7 +2523,7 @@ namespace Pokefrost
 
         private static IEnumerator PokemonPhoto2()
         {
-            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.machamp", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.slowbro", "websiteofsites.wildfrost.pokefrost.slowking", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.gengar", "websiteofsites.wildfrost.pokefrost.ludicolo", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.hariyama" };
+            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.machamp", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.slowbro", "websiteofsites.wildfrost.pokefrost.slowking", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.gengar", "websiteofsites.wildfrost.pokefrost.ludicolo", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.hariyama", "websiteofsites.wildfrost.pokefrost.spheal" };
             //string[] everyType = { "websiteofsites.wildfrost.pokefrost.crustle", "websiteofsites.wildfrost.pokefrost.goomy", "websiteofsites.wildfrost.pokefrost.absol", "websiteofsites.wildfrost.pokefrost.magneton", "websiteofsites.wildfrost.pokefrost.klefki", "websiteofsites.wildfrost.pokefrost.croagunk", "websiteofsites.wildfrost.pokefrost.litwick", "websiteofsites.wildfrost.pokefrost.murkrow", "websiteofsites.wildfrost.pokefrost.duskull", "websiteofsites.wildfrost.pokefrost.hippowdon", "websiteofsites.wildfrost.pokefrost.cradily", "websiteofsites.wildfrost.pokefrost.froslass", "websiteofsites.wildfrost.pokefrost.munchlax", "websiteofsites.wildfrost.pokefrost.weezing", "websiteofsites.wildfrost.pokefrost.chingling", "websiteofsites.wildfrost.pokefrost.magcargo", "websiteofsites.wildfrost.pokefrost.bastiodon", "websiteofsites.wildfrost.pokefrost.magikarp" };
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
@@ -2688,7 +2765,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\n Adds 36 new companions, 2 new pets, and 5 new charms.";
+        public override string Description => "Pokemon Companions\r\n\r\nAdds 36 new companions, 2 new pets, and 5 new charms.";
 
         public override List<T> AddAssets<T, Y>()
         {

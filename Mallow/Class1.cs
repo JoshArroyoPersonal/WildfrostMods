@@ -45,6 +45,7 @@ namespace Mallow
 
                     CardData.StatusEffectStacks[] marroweffect = { new CardData.StatusEffectStacks(Get<StatusEffectData>("While Active Teeth To Allies"), 2) };
 
+
                     cardData.startWithEffects = cardData.startWithEffects.Concat(marroweffect).ToArray();
 
                     //cardData.startWithEffects = cardData.startWithEffects.Concat(Get<CardData>("Spyke").startWithEffects).ToArray();
