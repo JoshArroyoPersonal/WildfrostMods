@@ -275,6 +275,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
+    <Compile Include="EventRoutineTrade.cs" />
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
@@ -303,6 +304,7 @@
     <Compile Include="StatusEffectEvolveExternalFactor.cs" />
     <Compile Include="TargetModeLowHealth.cs" />
     <Compile Include="TargetModeTaunt.cs" />
+    <Compile Include="UICollector.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Connected Services\" />
