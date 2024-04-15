@@ -2215,8 +2215,8 @@ namespace Pokefrost
             cn.canSkip = true;
             cn.letter = "t";
             cn.mapNodePrefab = Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab;
-            cn.mapNodePrefab.spriteOptions[0] = ImagePath("shiny_klefki.png").ToSprite();
-            cn.mapNodeSprite = ImagePath("shiny_klefki.png").ToSprite();
+            cn.mapNodePrefab.spriteOptions[0] = ImagePath("shnell.png").ToSprite();
+            cn.mapNodeSprite = ImagePath("shnell.png").ToSprite();
             cn.zoneName = "Charms";
             AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);
             GameMode gm = Get<GameMode>("GameModeNormal");
@@ -2391,7 +2391,7 @@ namespace Pokefrost
             CreateModAssetsCards();
             CreateModAssetsCharms();
             base.Load();
-            //ReplaceAllTierZero();
+            ReplaceAllTierZero();
             //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += NosepassAttach;
             Events.OnBattleEnd += CheckEvolve;
