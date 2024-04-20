@@ -72,6 +72,22 @@ namespace Pokefrost
                 character.scale = 1.3f;
             }
 
+            TargetConstraintHasStatus snowconstraint = new TargetConstraintHasStatus();
+            snowconstraint.status = Get<StatusEffectData>("Snow");
+            TargetConstraintHasStatus demonconstraint = new TargetConstraintHasStatus();
+            demonconstraint.status = Get<StatusEffectData>("Demonize");
+            TargetConstraintHasStatus bomconstraint = new TargetConstraintHasStatus();
+            bomconstraint.status = Get<StatusEffectData>("Weakness");
+            TargetConstraintHasStatus frostconstraint = new TargetConstraintHasStatus();
+            frostconstraint.status = Get<StatusEffectData>("Frost");
+            TargetConstraintHasStatus hazeconstraint = new TargetConstraintHasStatus();
+            hazeconstraint.status = Get<StatusEffectData>("Haze");
+            TargetConstraintHasStatus inkconstraint = new TargetConstraintHasStatus();
+            inkconstraint.status = Get<StatusEffectData>("Null");
+            TargetConstraintHasStatus overburnconstraint = new TargetConstraintHasStatus();
+            overburnconstraint.status = Get<StatusEffectData>("Overload");
+            TargetConstraintHasStatus shroomconstraint = new TargetConstraintHasStatus();
+            shroomconstraint.status = Get<StatusEffectData>("Shroom");
 
             StringTable keycollection = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
             KeywordData evolvekey = Get<KeywordData>("explode").InstantiateKeepName();
@@ -1157,8 +1173,6 @@ namespace Pokefrost
             iceball.addDamageFactor = 0;
             iceball.multiplyDamageFactor = 1f;
             iceball.effectToApply = doubleattacker;
-            TargetConstraintHasStatus snowconstraint = new TargetConstraintHasStatus();
-            snowconstraint.status = Get<StatusEffectData>("Snow");
             iceball.applyConstraints = new TargetConstraint[] { snowconstraint };
             iceball.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
             iceball.canBeBoosted = false;
@@ -1191,6 +1205,47 @@ namespace Pokefrost
             revive.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", revive);
             statusList.Add(revive);
+
+            StatusEffectApplyXOnHit hex = ScriptableObject.CreateInstance<StatusEffectApplyXOnHit>();
+            hex.name = "On Hit Deal Double Damage To Statused Targets";
+            hex.addDamageFactor = 0;
+            hex.multiplyDamageFactor = 2f;
+            TargetConstraintOr sufferingfromstatus = new TargetConstraintOr();
+            sufferingfromstatus.constraints = new TargetConstraint[] { snowconstraint, bomconstraint, demonconstraint, frostconstraint, hazeconstraint, inkconstraint, overburnconstraint, shroomconstraint };
+            hex.applyConstraints = new TargetConstraint[] { sufferingfromstatus };
+            hex.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
+            hex.canBeBoosted = false;
+            hex.type = "";
+            hex.postHit = true;
+            collection.SetString(hex.name + "_text", "Deal double damage to targets suffering from a status");
+            hex.textKey = collection.GetString(hex.name + "_text");
+            hex.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", hex);
+            statusList.Add(hex);
+
+            StatusEffectImmuneToDamage immuneindirect = ScriptableObject.CreateInstance<StatusEffectImmuneToDamage>();
+            immuneindirect.name = "Immune to Indirect Damage";
+            collection.SetString(immuneindirect.name + "_text", "Immune to indirect damage");
+            immuneindirect.textKey = collection.GetString(immuneindirect.name + "_text");
+            immuneindirect.immuneTypes = new List<string> { "basic" };
+            immuneindirect.reverse = true;
+            immuneindirect.type = "";
+            immuneindirect.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", immuneindirect);
+            statusList.Add(immuneindirect);
+
+            StatusEffectApplyXEveryTurn endturndraw = ScriptableObject.CreateInstance<StatusEffectApplyXEveryTurn>();
+            endturndraw.name = "End of Turn Draw a Card";
+            endturndraw.mode = StatusEffectApplyXEveryTurn.Mode.AfterTurn;
+            endturndraw.canBeBoosted = true;
+            endturndraw.effectToApply = Get<StatusEffectData>("Instant Draw");
+            endturndraw.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            endturndraw.type = "";
+            collection.SetString(endturndraw.name + "_text", "Draw <{a}> card at the end of each turn");
+            endturndraw.textKey = collection.GetString(endturndraw.name + "_text");
+            endturndraw.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", endturndraw);
+            statusList.Add(endturndraw);
 
             Debug.Log("[Pokefrost] Before Evolves");
 
@@ -1415,6 +1470,8 @@ namespace Pokefrost
                     .CreateUnit("haunter", "Haunter")
                     .SetStats(8, 2, 3)
                     .SetSprites("haunter.png", "haunterBG.png")
+                    .SetStartWithEffect(SStack("On Hit Deal Double Damage To Statused Targets", 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -1422,6 +1479,7 @@ namespace Pokefrost
                     .CreateUnit("gengar", "Gengar")
                     .SetStats(8, 2, 3)
                     .SetSprites("gengar.png", "gengarBG.png")
+                    .SetStartWithEffect(SStack("On Hit Deal Double Damage To Statused Targets", 1), SStack("Immune to Indirect Damage", 1))
                 );
 
             list.Add(
@@ -1962,6 +2020,15 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("espurr", "Espurr")
+                    .SetStats(6, null, 0)
+                    .SetSprites("espurr.png", "espurrBG.png")
+                    .SetStartWithEffect(SStack("End of Turn Draw a Card", 1))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("tyrantrum", "Tyrantrum", idleAnim: "GiantAnimationProfile")
                     .SetStats(7, 4, 4)
                     .SetSprites("tyrantrum.png", "tyrantrumBG.png")
@@ -2172,6 +2239,7 @@ namespace Pokefrost
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Wild"), 1))
                     .SetAttackEffects(new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Wild Trait"), 1))
+                    .SetBecomesTarget(true)
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
                     .WithTitle("Tyrunt Charm")
                     .WithText("Gain <keyword=wild>\nApply <keyword=wild>\nBE <WILD>")
@@ -2215,9 +2283,9 @@ namespace Pokefrost
             cn.canSkip = true;
             cn.letter = "t";
             cn.mapNodePrefab = Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab;
-            cn.mapNodePrefab.spriteOptions[0] = ImagePath("shnell.png").ToSprite();
-            cn.mapNodeSprite = ImagePath("shnell.png").ToSprite();
-            cn.zoneName = "Charms";
+            cn.mapNodePrefab.spriteOptions[0] = ImagePath("trade_event.png").ToSprite();
+            cn.mapNodeSprite = ImagePath("trade_event.png").ToSprite();
+            cn.zoneName = "Trade";
             AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);
             GameMode gm = Get<GameMode>("GameModeNormal");
             CampaignTier tier = gm.populator.tiers[1];
