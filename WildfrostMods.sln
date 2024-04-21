@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomTextBoxes", "RandomTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMod", "TestMod\TestMod.csproj", "{3D30A47E-C8BF-412D-BF6E-02360E82C6D1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robo", "Robo\Robo.csproj", "{8C506072-D31C-4B47-8846-341966706EA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3D30A47E-C8BF-412D-BF6E-02360E82C6D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D30A47E-C8BF-412D-BF6E-02360E82C6D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D30A47E-C8BF-412D-BF6E-02360E82C6D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C506072-D31C-4B47-8846-341966706EA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C506072-D31C-4B47-8846-341966706EA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C506072-D31C-4B47-8846-341966706EA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C506072-D31C-4B47-8846-341966706EA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

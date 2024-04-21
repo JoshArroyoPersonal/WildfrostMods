@@ -279,6 +279,7 @@
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
+    <Compile Include="StatusEffectRevive.cs" />
     <Compile Include="StatusEffectSketch.cs" />
     <Compile Include="StatusEffectNincadaAndMurkrow.cs" />
     <Compile Include="StatusEffectInstantApplyXCardInDeck.cs" />

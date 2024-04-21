@@ -72,6 +72,22 @@ namespace Pokefrost
                 character.scale = 1.3f;
             }
 
+            TargetConstraintHasStatus snowconstraint = new TargetConstraintHasStatus();
+            snowconstraint.status = Get<StatusEffectData>("Snow");
+            TargetConstraintHasStatus demonconstraint = new TargetConstraintHasStatus();
+            demonconstraint.status = Get<StatusEffectData>("Demonize");
+            TargetConstraintHasStatus bomconstraint = new TargetConstraintHasStatus();
+            bomconstraint.status = Get<StatusEffectData>("Weakness");
+            TargetConstraintHasStatus frostconstraint = new TargetConstraintHasStatus();
+            frostconstraint.status = Get<StatusEffectData>("Frost");
+            TargetConstraintHasStatus hazeconstraint = new TargetConstraintHasStatus();
+            hazeconstraint.status = Get<StatusEffectData>("Haze");
+            TargetConstraintHasStatus inkconstraint = new TargetConstraintHasStatus();
+            inkconstraint.status = Get<StatusEffectData>("Null");
+            TargetConstraintHasStatus overburnconstraint = new TargetConstraintHasStatus();
+            overburnconstraint.status = Get<StatusEffectData>("Overload");
+            TargetConstraintHasStatus shroomconstraint = new TargetConstraintHasStatus();
+            shroomconstraint.status = Get<StatusEffectData>("Shroom");
 
             StringTable keycollection = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
             KeywordData evolvekey = Get<KeywordData>("explode").InstantiateKeepName();
@@ -1140,6 +1156,97 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerslowking);
             statusList.Add(triggerslowking);
 
+            StatusEffectApplyXInstant doubleattacker = ScriptableObject.CreateInstance<StatusEffectApplyXInstant>();
+            doubleattacker.name = "Instant Double Attack of Attacker";
+            doubleattacker.effectToApply = Get<StatusEffectData>("Double Attack");
+            doubleattacker.applyToFlags = StatusEffectApplyX.ApplyToFlags.Applier;
+            doubleattacker.canBeBoosted = false;
+            doubleattacker.type = "";
+            doubleattacker.targetConstraints = new TargetConstraint[0];
+            doubleattacker.textKey = null;
+            doubleattacker.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", doubleattacker);
+            statusList.Add(doubleattacker);
+
+            StatusEffectApplyXOnHit iceball = ScriptableObject.CreateInstance<StatusEffectApplyXOnHit>();
+            iceball.name = "On Hit Snowed Target Double Attack";
+            iceball.addDamageFactor = 0;
+            iceball.multiplyDamageFactor = 1f;
+            iceball.effectToApply = doubleattacker;
+            iceball.applyConstraints = new TargetConstraint[] { snowconstraint };
+            iceball.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
+            iceball.canBeBoosted = false;
+            iceball.type = "";
+            iceball.postHit = true;
+            collection.SetString(iceball.name + "_text", "Double <keyword=attack> after hitting a <keyword=snow>'d target");
+            iceball.textKey = collection.GetString(iceball.name + "_text");
+            iceball.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", iceball);
+            statusList.Add(iceball);
+
+            KeywordData revivekey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            revivekey.name = "Revive";
+            keycollection.SetString(revivekey.name + "_text", "Revive");
+            revivekey.titleKey = keycollection.GetString(revivekey.name + "_text");
+            keycollection.SetString(revivekey.name + "_desc", "Cut <keyword=health> and <keyword=attack> in half instead of dying|Once per run!");
+            revivekey.noteColour = new Color(0.8f, 0.3f, 0.3f);
+            revivekey.descKey = keycollection.GetString(revivekey.name + "_desc");
+            revivekey.ModAdded = this;
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", revivekey);
+
+            StatusEffectRevive revive = ScriptableObject.CreateInstance<StatusEffectRevive>();
+            revive.name = "Revive";
+            revive.canBeBoosted = false;
+            revive.type = "";
+            revive.preventDeath = true;
+            revive.eventPriority = -999998;
+            collection.SetString(revive.name + "_text", "<keyword=revive>");
+            revive.textKey = collection.GetString(revive.name + "_text");
+            revive.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", revive);
+            statusList.Add(revive);
+
+            StatusEffectApplyXOnHit hex = ScriptableObject.CreateInstance<StatusEffectApplyXOnHit>();
+            hex.name = "On Hit Deal Double Damage To Statused Targets";
+            hex.addDamageFactor = 0;
+            hex.multiplyDamageFactor = 2f;
+            TargetConstraintOr sufferingfromstatus = new TargetConstraintOr();
+            sufferingfromstatus.constraints = new TargetConstraint[] { snowconstraint, bomconstraint, demonconstraint, frostconstraint, hazeconstraint, inkconstraint, overburnconstraint, shroomconstraint };
+            hex.applyConstraints = new TargetConstraint[] { sufferingfromstatus };
+            hex.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
+            hex.canBeBoosted = false;
+            hex.type = "";
+            hex.postHit = true;
+            collection.SetString(hex.name + "_text", "Deal double damage to targets suffering from a status");
+            hex.textKey = collection.GetString(hex.name + "_text");
+            hex.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", hex);
+            statusList.Add(hex);
+
+            StatusEffectImmuneToDamage immuneindirect = ScriptableObject.CreateInstance<StatusEffectImmuneToDamage>();
+            immuneindirect.name = "Immune to Indirect Damage";
+            collection.SetString(immuneindirect.name + "_text", "Immune to indirect damage");
+            immuneindirect.textKey = collection.GetString(immuneindirect.name + "_text");
+            immuneindirect.immuneTypes = new List<string> { "basic" };
+            immuneindirect.reverse = true;
+            immuneindirect.type = "";
+            immuneindirect.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", immuneindirect);
+            statusList.Add(immuneindirect);
+
+            StatusEffectApplyXEveryTurn endturndraw = ScriptableObject.CreateInstance<StatusEffectApplyXEveryTurn>();
+            endturndraw.name = "End of Turn Draw a Card";
+            endturndraw.mode = StatusEffectApplyXEveryTurn.Mode.AfterTurn;
+            endturndraw.canBeBoosted = true;
+            endturndraw.effectToApply = Get<StatusEffectData>("Instant Draw");
+            endturndraw.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            endturndraw.type = "";
+            collection.SetString(endturndraw.name + "_text", "Draw <{a}> card at the end of each turn");
+            endturndraw.textKey = collection.GetString(endturndraw.name + "_text");
+            endturndraw.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", endturndraw);
+            statusList.Add(endturndraw);
+
             Debug.Log("[Pokefrost] Before Evolves");
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -1363,6 +1470,8 @@ namespace Pokefrost
                     .CreateUnit("haunter", "Haunter")
                     .SetStats(8, 2, 3)
                     .SetSprites("haunter.png", "haunterBG.png")
+                    .SetStartWithEffect(SStack("On Hit Deal Double Damage To Statused Targets", 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -1370,6 +1479,7 @@ namespace Pokefrost
                     .CreateUnit("gengar", "Gengar")
                     .SetStats(8, 2, 3)
                     .SetSprites("gengar.png", "gengarBG.png")
+                    .SetStartWithEffect(SStack("On Hit Deal Double Damage To Statused Targets", 1), SStack("Immune to Indirect Damage", 1))
                 );
 
             list.Add(
@@ -1668,6 +1778,15 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("spheal", "Spheal")
+                    .SetStats(5, 2, 3)
+                    .SetSprites("spheal.png", "sphealBG.png")
+                    .SetStartWithEffect(SStack("On Hit Snowed Target Double Attack", 1))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("piplup", "Piplup", bloodProfile: "Blood Profile Snow")
                     .SetStats(6, 2, 3)
                     .SetSprites("piplup.png", "piplupBG.png")
@@ -1901,6 +2020,15 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("espurr", "Espurr")
+                    .SetStats(6, null, 0)
+                    .SetSprites("espurr.png", "espurrBG.png")
+                    .SetStartWithEffect(SStack("End of Turn Draw a Card", 1))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("tyrantrum", "Tyrantrum", idleAnim: "GiantAnimationProfile")
                     .SetStats(7, 4, 4)
                     .SetSprites("tyrantrum.png", "tyrantrumBG.png")
@@ -2111,9 +2239,22 @@ namespace Pokefrost
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Wild"), 1))
                     .SetAttackEffects(new CardData.StatusEffectStacks(Get<StatusEffectData>("Apply Wild Trait"), 1))
+                    .SetBecomesTarget(true)
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
                     .WithTitle("Tyrunt Charm")
                     .WithText("Gain <keyword=wild>\nApply <keyword=wild>\nBE <WILD>")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
+                    .CreateCharm("CardUpgradeRevive")
+                    .WithTier(3)
+                    .WithImage("reviveCharm.png")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .SetEffects(SStack("Revive",1))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .WithTitle("Revive Charm")
+                    .WithText("Gain <keyword=revive>")
             );
 
             charmlist.Add(
@@ -2142,14 +2283,15 @@ namespace Pokefrost
             cn.canSkip = true;
             cn.letter = "t";
             cn.mapNodePrefab = Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab;
-            cn.mapNodePrefab.spriteOptions[0] = ImagePath("shiny_klefki.png").ToSprite();
-            cn.mapNodeSprite = ImagePath("shiny_klefki.png").ToSprite();
+            cn.mapNodePrefab.spriteOptions[0] = ImagePath("trade_event.png").ToSprite();
+            cn.mapNodeSprite = ImagePath("trade_event.png").ToSprite();
+            cn.zoneName = "Trade";
             AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);
             GameMode gm = Get<GameMode>("GameModeNormal");
-            CampaignTier tier = gm.populator.tiers[0];
+            CampaignTier tier = gm.populator.tiers[1];
             for(int i=0; i<tier.rewardPool.Length; i++)
             {
-                tier.rewardPool[i] = cn.InstantiateKeepName();
+                tier.rewardPool[i] = cn;//Get<CampaignNodeType>("CampaignNodeCharm");
             }
             tier = gm.populator.tiers[1];
             for (int i = 0; i < tier.rewardPool.Length; i++)
@@ -2395,7 +2537,7 @@ namespace Pokefrost
 
         private static IEnumerator PokemonPhoto2()
         {
-            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.machamp", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.slowbro", "websiteofsites.wildfrost.pokefrost.slowking", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.gengar", "websiteofsites.wildfrost.pokefrost.ludicolo", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.hariyama" };
+            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.machamp", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.slowbro", "websiteofsites.wildfrost.pokefrost.slowking", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.gengar", "websiteofsites.wildfrost.pokefrost.ludicolo", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.hariyama", "websiteofsites.wildfrost.pokefrost.spheal" };
             //string[] everyType = { "websiteofsites.wildfrost.pokefrost.crustle", "websiteofsites.wildfrost.pokefrost.goomy", "websiteofsites.wildfrost.pokefrost.absol", "websiteofsites.wildfrost.pokefrost.magneton", "websiteofsites.wildfrost.pokefrost.klefki", "websiteofsites.wildfrost.pokefrost.croagunk", "websiteofsites.wildfrost.pokefrost.litwick", "websiteofsites.wildfrost.pokefrost.murkrow", "websiteofsites.wildfrost.pokefrost.duskull", "websiteofsites.wildfrost.pokefrost.hippowdon", "websiteofsites.wildfrost.pokefrost.cradily", "websiteofsites.wildfrost.pokefrost.froslass", "websiteofsites.wildfrost.pokefrost.munchlax", "websiteofsites.wildfrost.pokefrost.weezing", "websiteofsites.wildfrost.pokefrost.chingling", "websiteofsites.wildfrost.pokefrost.magcargo", "websiteofsites.wildfrost.pokefrost.bastiodon", "websiteofsites.wildfrost.pokefrost.magikarp" };
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
@@ -2637,7 +2779,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\n Adds 36 new companions, 2 new pets, and 5 new charms.";
+        public override string Description => "Pokemon Companions\r\n\r\nAdds 36 new companions, 2 new pets, and 5 new charms.";
 
         public override List<T> AddAssets<T, Y>()
         {

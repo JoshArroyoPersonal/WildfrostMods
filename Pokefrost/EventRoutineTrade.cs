@@ -46,6 +46,7 @@ namespace Pokefrost
         public override IEnumerator Populate()
         {
             string[] saveCollection = base.data.GetSaveCollection<string>("cards");
+            string[] upgradeCollection = base.data.GetSaveCollection<string>("charms");
             int size = saveCollection.Count();
             if (!data.ContainsKey("currentcompanions"))
             {
@@ -76,7 +77,7 @@ namespace Pokefrost
             Routine.Clump clump = new Routine.Clump();
             for (int i = 0; i < size; i++)
             {
-                clump.Add(CreateCardsFromLoader(saveCollection[i], cc, topRow));
+                clump.Add(CreateCardsFromLoader(saveCollection[i], new List<string> { upgradeCollection[2 * i], upgradeCollection[2 * i + 1] }, cc, topRow)); //Edit Save Collection to remember charms
                 clump.Add(CreateCardsFromDeck(savedOffers[i], cc, bottomRow));
             }
 
@@ -185,9 +186,19 @@ namespace Pokefrost
             return null;
         }
 
-        private static IEnumerator CreateCardsFromLoader(string cardName, CardController cardController, CardContainer cardContainer, bool startFlipped = true)
+        private static IEnumerator CreateCardsFromLoader(string cardName, List<string> upgrades, CardController cardController, CardContainer cardContainer, bool startFlipped = true)
         {
             CardData cardData = AddressableLoader.Get<CardData>("CardData", cardName).Clone();
+
+            foreach(string upgrade in upgrades)
+            {
+                CardUpgradeData upgradeData = AddressableLoader.Get<CardUpgradeData>("CardUpgradeData", upgrade);
+                if (upgradeData.CanAssign(cardData))
+                {
+                    upgradeData.Clone().Assign(cardData);
+                }
+            }
+
             return CreateCards(cardData,cardController, cardContainer, startFlipped);
         }
 

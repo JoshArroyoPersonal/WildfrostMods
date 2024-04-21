@@ -11,6 +11,7 @@ namespace Pokefrost
     {
 
         public List<string> immuneTypes;
+        public bool reverse = false;
 
         public override void Init()
         {
@@ -19,9 +20,12 @@ namespace Pokefrost
 
         public override bool RunHitEvent(Hit hit)
         {
-            if (hit.target == target && hit.Offensive && hit.canBeNullified && immuneTypes.Contains(hit.damageType))
+            if (hit.target == target && hit.Offensive && hit.canBeNullified)
             {
-                return hit.damage > 0;
+                if (reverse ^ immuneTypes.Contains(hit.damageType))
+                {
+                    return hit.damage > 0;
+                }
             }
 
             return false;
