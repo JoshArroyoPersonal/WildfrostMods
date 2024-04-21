@@ -13,6 +13,8 @@ namespace Pokefrost
         public List<string> immuneTypes;
         public bool reverse = false;
 
+        public bool ignoreReactions;
+
         public override void Init()
         {
             base.OnHit += Check;
@@ -26,6 +28,11 @@ namespace Pokefrost
                 {
                     return hit.damage > 0;
                 }
+            }
+
+            if (hit.attacker == target && ignoreReactions)
+            {
+                hit.canRetaliate = false;
             }
 
             return false;

@@ -26,7 +26,7 @@ namespace Pokefrost
 
             Debug.Log("[Trade]");
             List<CardData> allCards = AddressableLoader.GetGroup<CardData>("CardData").Clone();
-            allCards.RemoveAll(card => card.cardType.name != "Friendly" || card.mainSprite.name == "Nothing");
+            allCards.RemoveAll(card => card.cardType.name != "Friendly" || card.mainSprite?.name == "Nothing");
             List<CardData> list = allCards.TakeRandom(choices).ToList();
             Debug.Log(allCards.Count.ToString());
 
@@ -80,6 +80,7 @@ namespace Pokefrost
             GameObject gameObject = GameObject.Instantiate(Prefabs[key], GameObject.FindObjectOfType<EventManager>(true).transform);
             gameObject.SetActive(true);
             EventRoutine eventRoutine = gameObject.GetComponent<EventRoutine>();
+            GameObject.Find("SnowfallFX").SetActive(false);
             Events.InvokeEventStart(node, eventRoutine);
             yield return Populate(node);
             Events.InvokeEventPopulated(eventRoutine);
