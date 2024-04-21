@@ -162,6 +162,7 @@ namespace Pokefrost
             LeanTween.moveLocal(bottomRow.entities[swapped].gameObject, right, tradeTime).setEase(selectType);
             yield return Sequences.Wait(tradeTime + 0.1f);
             cs.TakeCard(topRow.entities[swapped]);
+            node.SetCleared();
             yield return Sequences.Wait(0.2f);
         }
 
@@ -359,7 +360,7 @@ namespace Pokefrost
                     }
                 }
             }
-            node.SetCleared();
+            
             routineActive = false;
             selected = false;
             Debug.Log("[Pokefrost] Confirm");

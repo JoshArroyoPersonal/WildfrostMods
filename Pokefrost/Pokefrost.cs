@@ -2156,7 +2156,6 @@ namespace Pokefrost
             {
                 tier.rewardPool[i] = cn.InstantiateKeepName();
             }
-
         }
 
         private void LoadStatusEffects()
@@ -2339,7 +2338,7 @@ namespace Pokefrost
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
             Events.OnSceneChanged += PokemonPhoto;
-
+            Events.OnSceneLoaded += SceneLoaded;
             //for (int i = 0; i < References.Classes.Length; i++)
             //{
             //    References.Classes[i].startingInventory.deck.Add(Get<CardData>("tyrantrum"));
@@ -2368,7 +2367,24 @@ namespace Pokefrost
             RemoveFromPools();
             //Events.OnCardDataCreated -= Wildparty;
             Events.OnSceneChanged -= PokemonPhoto;
+            Events.OnSceneLoaded -= SceneLoaded;
 
+        }
+
+        private void SceneLoaded(Scene scene)
+        {
+            if (scene.name == "Campaign")
+            {
+                SpecialEventsSystem specialEvents = GameObject.FindObjectOfType<SpecialEventsSystem>();
+                SpecialEventsSystem.Event eve = default;
+                eve.requiresUnlock = null;
+                eve.nodeType = Get<CampaignNodeType>("Great Event Here");
+                eve.replaceNodeTypes = new string[] { "CampaignNodeReward" };
+                eve.minTier = 2;
+                eve.perTier = new Vector2Int(1, 2);
+                eve.perRun = new Vector2Int(1, 10);
+
+            }
         }
 
         private void PokemonPhoto(Scene scene)
