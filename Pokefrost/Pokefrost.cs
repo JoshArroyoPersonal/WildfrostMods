@@ -1230,6 +1230,8 @@ namespace Pokefrost
             immuneindirect.immuneTypes = new List<string> { "basic" };
             immuneindirect.reverse = true;
             immuneindirect.type = "";
+            immuneindirect.eventPriority = 9999;
+            immuneindirect.ignoreReactions = true;
             immuneindirect.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", immuneindirect);
             statusList.Add(immuneindirect);
@@ -2276,7 +2278,7 @@ namespace Pokefrost
         {
             CampaignNodeTypeBetterEvent cn = ScriptableObject.CreateInstance<CampaignNodeTypeBetterEvent>();
             cn.key = "Trade";
-            cn.name = "Great Event Here";
+            cn.name = "CampaignNodeTrade";
             cn.canEnter = true;
             cn.canLink = true;
             cn.interactable = true;
@@ -2287,6 +2289,7 @@ namespace Pokefrost
             cn.mapNodeSprite = ImagePath("trade_event.png").ToSprite();
             cn.zoneName = "Trade";
             AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);
+            /*
             GameMode gm = Get<GameMode>("GameModeNormal");
             CampaignTier tier = gm.populator.tiers[1];
             for(int i=0; i<tier.rewardPool.Length; i++)
@@ -2298,6 +2301,7 @@ namespace Pokefrost
             {
                 tier.rewardPool[i] = cn.InstantiateKeepName();
             }
+            */
         }
 
         private void LoadStatusEffects()
@@ -2520,12 +2524,12 @@ namespace Pokefrost
                 SpecialEventsSystem specialEvents = GameObject.FindObjectOfType<SpecialEventsSystem>();
                 SpecialEventsSystem.Event eve = default;
                 eve.requiresUnlock = null;
-                eve.nodeType = Get<CampaignNodeType>("Great Event Here");
+                eve.nodeType = Get<CampaignNodeType>("CampaignNodeTrade");
                 eve.replaceNodeTypes = new string[] { "CampaignNodeReward" };
                 eve.minTier = 2;
-                eve.perTier = new Vector2Int(1, 2);
-                eve.perRun = new Vector2Int(1, 10);
-
+                eve.perTier = new Vector2Int(1, 1);
+                eve.perRun = new Vector2Int(1, 2);
+                specialEvents.events = specialEvents.events.AddItem(eve).ToArray();
             }
         }
 
