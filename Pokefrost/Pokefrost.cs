@@ -23,6 +23,7 @@ using WildfrostHopeMod.Utils;
 using UnityEngine.UI;
 using System.Runtime.Remoting.Messaging;
 using System.Configuration;
+using UnityEngine.Localization.Components;
 
 namespace Pokefrost
 {
@@ -43,6 +44,8 @@ namespace Pokefrost
 
         private CardData.StatusEffectStacks SStack(string name, int count) => new CardData.StatusEffectStacks(Get<StatusEffectData>(name), count);
 
+        private static GameObject pokefrostUI;
+
         public Pokefrost(string modDirectory) : base(modDirectory)
         {
             instance = this;
@@ -50,6 +53,10 @@ namespace Pokefrost
 
         private void CreateModAssets()
         {
+            pokefrostUI = new GameObject("PokefrostUI");
+            pokefrostUI.SetActive(false);
+            GameObject.DontDestroyOnLoad(pokefrostUI);
+
             statusList = new List<StatusEffectData>(30);
             /*
             FloatingText floating = GameObject.FindObjectOfType<FloatingText>(true);
@@ -2284,7 +2291,11 @@ namespace Pokefrost
             cn.interactable = true;
             cn.canSkip = true;
             cn.letter = "t";
-            cn.mapNodePrefab = Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab;
+            cn.mapNodePrefab = Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab.InstantiateKeepName();
+            cn.mapNodePrefab.transform.SetParent(pokefrostUI.transform, false);
+            StringTable collection = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
+            collection.SetString("map_"+cn.name, "Trade");
+            cn.mapNodePrefab.label.GetComponentInChildren<LocalizeStringEvent>().StringReference = collection.GetString("map_" + cn.name);
             cn.mapNodePrefab.spriteOptions[0] = ImagePath("trade_event.png").ToSprite();
             cn.mapNodeSprite = ImagePath("trade_event.png").ToSprite();
             cn.zoneName = "Trade";
