@@ -1717,7 +1717,7 @@ namespace Pokefrost
                     .CreateUnit("sableye", "Sableye", bloodProfile: "Blood Profile Pink Wisp")
                     .SetStats(10, 0, 3)
                     .SetSprites("sableye.png", "sableyeBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Drop Bling on Hit"), 25))
+                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Drop Bling on Hit"), 10))
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Greed"), 1))
                     .AddPool()
                 );
@@ -2030,7 +2030,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("espurr", "Espurr")
-                    .SetStats(6, null, 0)
+                    .SetStats(3, null, 0)
                     .SetSprites("espurr.png", "espurrBG.png")
                     .SetStartWithEffect(SStack("End of Turn Draw a Card", 1))
                     .AddPool()
@@ -2297,6 +2297,7 @@ namespace Pokefrost
             collection.SetString("map_"+cn.name, "Trade");
             cn.mapNodePrefab.label.GetComponentInChildren<LocalizeStringEvent>().StringReference = collection.GetString("map_" + cn.name);
             cn.mapNodePrefab.spriteOptions[0] = ImagePath("trade_event.png").ToSprite();
+            cn.mapNodePrefab.clearedSpriteOptions[0] = ImagePath("trade_done.png").ToSprite();
             cn.mapNodeSprite = ImagePath("trade_event.png").ToSprite();
             cn.zoneName = "Trade";
             AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);
