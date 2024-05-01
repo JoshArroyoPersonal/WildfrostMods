@@ -42,6 +42,7 @@ namespace Pokefrost
         public override TMP_SpriteAsset SpriteAsset => pokefrostSprites;
 
         private CardData.StatusEffectStacks SStack(string name, int count) => new CardData.StatusEffectStacks(Get<StatusEffectData>(name), count);
+        private CardData.TraitStacks TStack(string name, int count) => new CardData.TraitStacks(Get<TraitData>(name), count);
 
         public Pokefrost(string modDirectory) : base(modDirectory)
         {
@@ -701,6 +702,8 @@ namespace Pokefrost
             TraitData aimlesstrait = Get<TraitData>("Aimless");
             TraitData barragetrait = Get<TraitData>("Barrage");
             TraitData longshottrait = Get<TraitData>("Longshot");
+            TraitData bombard1trait = Get<TraitData>("Bombard 1");
+            TraitData bombard2trait = Get<TraitData>("Bombard 2");
 
             KeywordData pluckkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             pluckkey.name = "Pluck";
@@ -784,6 +787,9 @@ namespace Pokefrost
             statusList.Add(taunteffect); statusList.Add(hittaunt); statusList.Add(imtaunted);
             AddressableLoader.AddToGroup<TraitData>("TraitData", taunttrait);
             AddressableLoader.AddToGroup<TraitData>("TraitData", tauntedtrait);
+
+            bombard1trait.overrides = bombard1trait.overrides.Append(tauntedtrait).ToArray();
+            bombard2trait.overrides = bombard2trait.overrides.Append(tauntedtrait).ToArray();
 
             StatusEffectInstantEat woollydrekeat = Get<StatusEffectData>("Eat (Health, Attack & Effects)") as StatusEffectInstantEat;
             woollydrekeat.illegalEffects = woollydrekeat.illegalEffects.AddItem<StatusEffectData>(imtaunted).ToArray();
@@ -1078,8 +1084,6 @@ namespace Pokefrost
             StatusEffectSketch sketch = ScriptableObject.CreateInstance<StatusEffectSketch>();
             sketch.name = "Sketch";
             sketch.type = "";
-            collection.SetString(sketch.name + "_text", "");
-            sketch.textKey = collection.GetString(sketch.name + "_text");
             sketch.ModAdded = this;
             sketch.targetConstraints = new TargetConstraint[0];
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", sketch);
@@ -1217,7 +1221,7 @@ namespace Pokefrost
             hex.canBeBoosted = false;
             hex.type = "";
             hex.postHit = true;
-            collection.SetString(hex.name + "_text", "Deal double damage to targets suffering from a status");
+            collection.SetString(hex.name + "_text", "Deal double damage to debuffed enemies");
             hex.textKey = collection.GetString(hex.name + "_text");
             hex.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", hex);
@@ -1225,8 +1229,6 @@ namespace Pokefrost
 
             StatusEffectImmuneToDamage immuneindirect = ScriptableObject.CreateInstance<StatusEffectImmuneToDamage>();
             immuneindirect.name = "Immune to Indirect Damage";
-            collection.SetString(immuneindirect.name + "_text", "Immune to indirect damage");
-            immuneindirect.textKey = collection.GetString(immuneindirect.name + "_text");
             immuneindirect.immuneTypes = new List<string> { "basic" };
             immuneindirect.reverse = true;
             immuneindirect.type = "";
@@ -1235,6 +1237,23 @@ namespace Pokefrost
             immuneindirect.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", immuneindirect);
             statusList.Add(immuneindirect);
+
+            KeywordData immaterialkey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            immaterialkey.name = "Immaterial";
+            keycollection.SetString(immaterialkey.name + "_text", "Immaterial");
+            immaterialkey.titleKey = keycollection.GetString(immaterialkey.name + "_text");
+            keycollection.SetString(immaterialkey.name + "_desc", "Immune to indirect damage and prevents reactions");
+            immaterialkey.descKey = keycollection.GetString(immaterialkey.name + "_desc");
+            immaterialkey.ModAdded = this;
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", immaterialkey);
+
+            TraitData immaterialtrait = ScriptableObject.CreateInstance<TraitData>();
+            immaterialtrait.name = "Immaterial";
+            immaterialtrait.keyword = immaterialkey;
+            StatusEffectData[] immaterialtemp = { immuneindirect };
+            immaterialtrait.effects = immaterialtemp;
+            immaterialtrait.ModAdded = this;
+            AddressableLoader.AddToGroup<TraitData>("TraitData", immaterialtrait);
 
             StatusEffectApplyXEveryTurn endturndraw = ScriptableObject.CreateInstance<StatusEffectApplyXEveryTurn>();
             endturndraw.name = "End of Turn Draw a Card";
@@ -1248,6 +1267,58 @@ namespace Pokefrost
             endturndraw.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", endturndraw);
             statusList.Add(endturndraw);
+
+            KeywordData dreamkey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            dreamkey.name = "Dream";
+            keycollection.SetString(dreamkey.name + "_text", "Dream");
+            dreamkey.titleKey = keycollection.GetString(dreamkey.name + "_text");
+            keycollection.SetString(dreamkey.name + "_desc", "Changes to a random card each turn|Destoryed after use or discard");
+            dreamkey.descKey = keycollection.GetString(dreamkey.name + "_desc");
+            dreamkey.ModAdded = this;
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", dreamkey);
+
+            StatusEffectDreamDummy dreamer = ScriptableObject.CreateInstance<StatusEffectDreamDummy>();
+            dreamer.name = "Trigger When Dream Card Played";
+            dreamer.isReaction = true;
+            dreamer.type = "dream";
+            collection.SetString(dreamer.name + "_text", "Trigger when a <keyword=dream> card is played");
+            dreamer.descColorHex = "F99C61";
+            dreamer.textKey = collection.GetString(dreamer.name + "_text");
+            dreamer.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", dreamer);
+            statusList.Add(dreamer);
+
+            TargetConstraintHasStatus is_dreamer = ScriptableObject.CreateInstance<TargetConstraintHasStatus>();
+            is_dreamer.status = dreamer;
+
+            StatusEffectApplyXOnCardPlayed triggerdreamers = ScriptableObject.CreateInstance<StatusEffectApplyXOnCardPlayed>();
+            triggerdreamers.name = "Trigger Dreamers";
+            triggerdreamers.effectToApply = Get<StatusEffectData>("Trigger (High Prio)");
+            triggerdreamers.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Enemies;
+            triggerdreamers.eventPriority = 999;
+            triggerdreamers.type = "";
+            triggerdreamers.applyConstraints = new TargetConstraint[1] { is_dreamer };
+            triggerdreamers.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerdreamers);
+            statusList.Add(triggerdreamers);
+
+            StatusEffectApplyXWhenDiscarded discardgone = ScriptableObject.CreateInstance<StatusEffectApplyXWhenDiscarded>();
+            discardgone.name = "Destroyed On Discard";
+            discardgone.effectToApply = Get<StatusEffectData>("Sacrifice Card In Hand");
+            discardgone.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+            discardgone.canBeBoosted = false;
+            discardgone.type = "";
+            discardgone.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", discardgone);
+            statusList.Add(discardgone);
+
+            TraitData dreamtrait = ScriptableObject.CreateInstance<TraitData>();
+            dreamtrait.name = "Dream";
+            dreamtrait.keyword = dreamkey;
+            StatusEffectData[] dreamtemp = { discardgone, Get<StatusEffectData>("Destroy After Use"), triggerdreamers };
+            dreamtrait.effects = dreamtemp;
+            dreamtrait.ModAdded = this;
+            AddressableLoader.AddToGroup<TraitData>("TraitData", dreamtrait);
 
             Debug.Log("[Pokefrost] Before Evolves");
 
@@ -1433,6 +1504,7 @@ namespace Pokefrost
                     .SetStats(8, 3, 5)
                     .SetSprites("machoke.png", "machokeBG.png")
                     .SetStartWithEffect(SStack("Increase Attack While Statused",5))
+                    .AddPool()
                 );
 
             list.Add(
@@ -1448,6 +1520,7 @@ namespace Pokefrost
                     .CreateUnit("slowpoke", "Slowpoke")
                     .SetStats(10, 1, 5)
                     .SetSprites("slowpoke.png", "slowpokeBG.png")
+                    .AddPool()
                 );
 
             list.Add(
@@ -1481,7 +1554,8 @@ namespace Pokefrost
                     .CreateUnit("gengar", "Gengar")
                     .SetStats(8, 2, 3)
                     .SetSprites("gengar.png", "gengarBG.png")
-                    .SetStartWithEffect(SStack("On Hit Deal Double Damage To Statused Targets", 1), SStack("Immune to Indirect Damage", 1))
+                    .SetStartWithEffect(SStack("On Hit Deal Double Damage To Statused Targets", 1))
+                    .SetTraits(TStack("Immaterial", 1))
                 );
 
             list.Add(
@@ -1652,6 +1726,7 @@ namespace Pokefrost
                     .CreateUnit("ludicolo", "Ludicolo")
                     .SetStats(10, null, 0)
                     .SetSprites("ludicolo.png", "ludicoloBG.png")
+                    .AddPool()
                 );
 
             list.Add(
@@ -1686,6 +1761,7 @@ namespace Pokefrost
                     .SetStats(8, 0, 4)
                     .SetSprites("makuhita.png", "makuhitaBG.png")
                     .SetStartWithEffect(SStack("Damage Equal To Missing Health", 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -1815,7 +1891,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("bastiodon", "Bastiodon", idleAnim: "SquishAnimationProfile")
-                    .SetStats(12, 4, 6)
+                    .SetStats(10, 4, 6)
                     .SetSprites("bastiodon.png", "bastiodonBG.png")
                     .SetTraits(new CardData.TraitStacks(Get<TraitData>("Taunt"), 1))
                     .AddPool()
@@ -1960,6 +2036,15 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("musharna", "Musharna", idleAnim: "FloatAnimationProfile")
+                    .SetStats(7, 4, 0)
+                    .SetSprites("musharna.png", "musharnaBG.png")
+                    .SetStartWithEffect(SStack("Trigger When Dream Card Played", 1))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("crustle", "Crustle", idleAnim: "GiantAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(8, 3, 4)
                     .SetSprites("crustle.png", "crustleBG.png")
@@ -2023,7 +2108,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("espurr", "Espurr")
-                    .SetStats(3, null, 0)
+                    .SetStats(2, null, 0)
                     .SetSprites("espurr.png", "espurrBG.png")
                     .SetStartWithEffect(SStack("End of Turn Draw a Card", 1))
                     .AddPool()
@@ -2105,7 +2190,7 @@ namespace Pokefrost
                     {
                         c.playOnSlot = true;
                     })
-                    .SetTraits(new CardData.TraitStacks(Get<TraitData>("Consume"), 1))
+                    .SetTraits(new CardData.TraitStacks(Get<TraitData>("Dream"), 1))
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Summon Shedinja"), 1))
                 );
 

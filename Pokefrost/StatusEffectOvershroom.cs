@@ -274,6 +274,8 @@ namespace Pokefrost
 
     }
 
+    public class StatusEffectDreamDummy : StatusEffectData { }
+
 
     public class StatusEffectShiny : StatusEffectData
     {
