@@ -276,8 +276,10 @@
   <ItemGroup>
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
     <Compile Include="EventRoutineTrade.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
+    <Compile Include="StatusEffectChangeData.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
     <Compile Include="StatusEffectRevive.cs" />
     <Compile Include="StatusEffectSketch.cs" />

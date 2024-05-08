@@ -1256,6 +1256,12 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", endturndraw);
             statusList.Add(endturndraw);
 
+            StatusEffectChangeData dreammorph = ScriptableObject.CreateInstance<StatusEffectChangeData>();
+            dreammorph.type = "";
+            dreammorph.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", endturndraw);
+            statusList.Add(dreammorph);
+
             Debug.Log("[Pokefrost] Before Evolves");
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -1403,7 +1409,7 @@ namespace Pokefrost
 
         private void CreateModAssetsCards()
         {
-            list = new List<CardDataBuilder>();
+            list = new List<CardDataBuilder>(100);
 
             Debug.Log("[Pokefrost] Loading Cards");
             //Add our cards here
