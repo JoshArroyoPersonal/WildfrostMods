@@ -1327,6 +1327,40 @@ namespace Pokefrost
             dreamtrait.ModAdded = this;
             AddressableLoader.AddToGroup<TraitData>("TraitData", dreamtrait);
 
+            StatusEffectTemporaryTrait tempcrit = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
+            tempcrit.name = "Temporary Combo";
+            tempcrit.trait = Get<TraitData>("Combo");
+            tempcrit.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tempcrit);
+            statusList.Add(tempcrit);
+
+            StatusEffectApplyXOnCardPlayed givecrit = ScriptableObject.CreateInstance<StatusEffectApplyXOnCardPlayed>();
+            givecrit.name = "Give Combo to Card in Hand";
+            givecrit.effectToApply = tempcrit;
+            givecrit.applyToFlags = StatusEffectApplyX.ApplyToFlags.RandomCardInHand;
+            givecrit.type = "";
+            givecrit.applyConstraints = Get<CardUpgradeData>("CardUpgradeCritical").targetConstraints;
+            collection.SetString(givecrit.name + "_text", "Give a card in hand <keyword=combo>");
+            givecrit.textKey = collection.GetString(givecrit.name + "_text");
+            givecrit.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", givecrit);
+            statusList.Add(givecrit);
+
+            StatusEffectWhileActiveX tripcrit = ScriptableObject.CreateInstance<StatusEffectWhileActiveX>();
+            tripcrit.name = "Combo Triples Instead";
+            tripcrit.effectToApply = Get<StatusEffectData>("While Last In Hand Double Effects To Self");
+            tripcrit.canBeBoosted = true;
+            TargetConstraintHasTrait hasCrit = ScriptableObject.CreateInstance<TargetConstraintHasTrait>();
+            hasCrit.trait = Get<TraitData>("Combo");
+            tripcrit.applyConstraints = new TargetConstraint[1] {  hasCrit };
+            tripcrit.applyToFlags = StatusEffectApplyX.ApplyToFlags.Hand;
+            tripcrit.type = "";
+            collection.SetString(tripcrit.name + "_text", "<keyword=combo> triples effects instead");
+            tripcrit.textKey = collection.GetString(tripcrit.name + "_text");
+            tripcrit.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tripcrit);
+            statusList.Add(tripcrit);
+
             Debug.Log("[Pokefrost] Before Evolves");
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -1604,6 +1638,15 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("seadra", "Seadra")
+                    .SetStats(6,6,5)
+                    .SetSprites("seadra.png", "seadraBG.png")
+                    .SetStartWithEffect(SStack("Give Combo to Card in Hand", 1))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("magikarp", "Magikarp", idleAnim: "ShakeAnimationProfile")
                     .SetStats(1, 0, 4)
                     .SetSprites("magikarp.png", "magikarpBG.png")
@@ -1716,6 +1759,15 @@ namespace Pokefrost
                     .SetSprites("magcargo.png", "magcargoBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Apply Spice To Allies & Enemies & Self"), 1))
                     .AddPool("BasicUnitPool")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("kingdra", "Kingdra")
+                    .SetStats(6, 6, 5)
+                    .SetSprites("kingdra.png", "kingdraBG.png")
+                    .SetStartWithEffect(SStack("Give Combo to Card in Hand", 1), SStack("Combo Triples Instead", 1))
+                    .AddPool()
                 );
 
             list.Add(
