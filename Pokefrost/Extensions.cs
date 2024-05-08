@@ -11,7 +11,7 @@ namespace Pokefrost
     public static class Ext
     {
         public static UnityEngine.Localization.Tables.StringTable Collection => LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);
-        public static T CreateStatus<T>(this T t, string name, string desc = null, string textInsert = null, string type = "", bool boostable = false, bool stackable = true) where T : StatusEffectData
+        public static T CreateStatus<T>(string name, string desc = null, string textInsert = null, string type = "", bool boostable = false, bool stackable = true) where T : StatusEffectData
         {
             T status = ScriptableObject.CreateInstance<T>();
             status.name = name;

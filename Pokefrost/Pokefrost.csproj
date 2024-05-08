@@ -280,6 +280,7 @@
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectChangeData.cs" />
+    <Compile Include="StatusEffectEvolveFromNode.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
     <Compile Include="StatusEffectRevive.cs" />
     <Compile Include="StatusEffectSketch.cs" />

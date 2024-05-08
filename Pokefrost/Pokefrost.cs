@@ -161,7 +161,6 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wilder);
             statusList.Add(wilder);
 
-            Debug.Log("[Pokefrost] Before Overshroom");
             //Overshroom Start
             GameObject gameObject = new GameObject("OvershroomIcon");
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
@@ -187,8 +186,6 @@ namespace Pokefrost
             cardHover.IsMaster = false;
             CardPopUpTarget cardPopUp = gameObject.AddComponent<CardPopUpTarget>();
 
-            Debug.Log("[Pokefrost] Overshroom 1");
-
             cardHover.pop = cardPopUp;
             RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
@@ -197,8 +194,6 @@ namespace Pokefrost
             gameObject.SetActive(true);
             overshroomicon.type = "overshroom";
             dicty["overshroom"] = gameObject;
-
-            Debug.Log("[Pokefrost] Overshroom 2");
 
             KeywordData overshroomkey = Get<KeywordData>("shroom").InstantiateKeepName();
             overshroomkey.name = "Overshroom";
@@ -242,8 +237,6 @@ namespace Pokefrost
             dummyshroom.textInsert = "";
             //dummyshroom.ModAdded = this;
 
-            Debug.Log("[Pokefrost] Overshroom 3");
-
             StatusEffectOvershroom overshroom = ScriptableObject.CreateInstance<StatusEffectOvershroom>();
             overshroom.name = "Overshroom";
             overshroom.type = "overshroom";
@@ -264,8 +257,6 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overshroom);
             statusList.Add(overshroom);
 
-            Debug.Log("[Pokefrost] Overshroom 4");
-
             StatusEffectBecomeOvershroom giveovershroom = ScriptableObject.CreateInstance<StatusEffectBecomeOvershroom>();
             giveovershroom.name = "Turn Overload and Shroom to Overshroom";
             giveovershroom.applyFormat = "";
@@ -279,8 +270,6 @@ namespace Pokefrost
             giveovershroom.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", giveovershroom);
             statusList.Add(giveovershroom);
-
-            Debug.Log("[Pokefrost] Overshroom 5");
 
             StatusEffectWhileActiveX activeovershroom = ScriptableObject.CreateInstance<StatusEffectWhileActiveX>();
             activeovershroom.applyConstraints = new TargetConstraint[0];
@@ -304,8 +293,6 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", activeovershroom);
             statusList.Add(activeovershroom);
             //Overshroom End
-
-            Debug.Log("[Pokefrost] After Overshroom");
 
 
             StatusEffectApplyXWhenHitFree supergreed = ScriptableObject.CreateInstance<StatusEffectApplyXWhenHitFree>();
@@ -857,8 +844,6 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", teethtrigger);
             statusList.Add(teethtrigger);
 
-            Debug.Log("[Pokefrost] Before Sneasel Effect");
-
             StatusEffectIncreaseAttackBasedOnCardsDrawnThisTurn drawattack = ScriptableObject.CreateInstance<StatusEffectIncreaseAttackBasedOnCardsDrawnThisTurn>();
             drawattack.name = "Increase Attack Based on Cards Drawn";
             drawattack.effectToGain = Get<StatusEffectData>("Ongoing Increase Attack");
@@ -1167,6 +1152,15 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerslowking);
             statusList.Add(triggerslowking);
 
+            StatusEffectDreamDummy giveSlowkingCrowns = ScriptableObject.CreateInstance<StatusEffectDreamDummy>();
+            giveSlowkingCrowns.name = "Give Slowking Crown";
+            giveSlowkingCrowns.type = "";
+            collection.SetString(giveSlowkingCrowns.name + "_text", "Gain a <sprite name=slowking_crown> upon evolution or battle end");
+            giveSlowkingCrowns.textKey = collection.GetString(giveSlowkingCrowns.name + "_text");
+            giveSlowkingCrowns.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", giveSlowkingCrowns);
+            statusList.Add(giveSlowkingCrowns);
+
             StatusEffectApplyXInstant doubleattacker = ScriptableObject.CreateInstance<StatusEffectApplyXInstant>();
             doubleattacker.name = "Instant Double Attack of Attacker";
             doubleattacker.effectToApply = Get<StatusEffectData>("Double Attack");
@@ -1367,8 +1361,6 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tripcrit);
             statusList.Add(tripcrit);
 
-            Debug.Log("[Pokefrost] Before Evolves");
-
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -1487,6 +1479,28 @@ namespace Pokefrost
             ev16.Confirm();
             statusList.Add(ev16);
 
+            StatusEffectEvolveFromNode ev17 = ScriptableObject.CreateInstance<StatusEffectEvolveFromNode>();
+            ev17.Autofill("Evolve Haunter", "<keyword=evolve>: Witness a <Trade>", this);
+            ev17.SetEvolution("websiteofsites.wildfrost.pokefrost.gengar");
+            ev17.targetNodeName = "Trade";
+            ev17.Confirm();
+            statusList.Add(ev17);
+
+            StatusEffectEvolveFromNode ev18 = ScriptableObject.CreateInstance<StatusEffectEvolveFromNode>();
+            ev18.Autofill("Evolve Machoke", "<keyword=evolve>: Witness a <Trade>", this);
+            ev18.SetEvolution("websiteofsites.wildfrost.pokefrost.machamp");
+            ev18.targetNodeName = "Trade";
+            ev18.Confirm();
+            statusList.Add(ev18);
+
+            StatusEffectEvolveSlowpoke ev19 = ScriptableObject.CreateInstance<StatusEffectEvolveSlowpoke>();
+            ev19.Autofill("Evolve Slowpoke", "<keyword=evolve>: Visit a <Blingsnail Cave> with or without <sprite name=crown>", this);
+            ev19.evolveUncrowned = "websiteofsites.wildfrost.pokefrost.slowbro";
+            ev19.evolveCrowned = "websiteofsites.wildfrost.pokefrost.slowking";
+            ev19.targetNodeName = "Blingsnail Cave";
+            ev19.Confirm();
+            statusList.Add(ev19);
+
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
             shiny.type = "shiny";
@@ -1550,7 +1564,7 @@ namespace Pokefrost
                     .CreateUnit("machoke", "Machoke")
                     .SetStats(8, 3, 5)
                     .SetSprites("machoke.png", "machokeBG.png")
-                    .SetStartWithEffect(SStack("Increase Attack While Statused",5))
+                    .SetStartWithEffect(SStack("Increase Attack While Statused",5), SStack("Evolve Machoke",1))
                     .AddPool()
                 );
 
@@ -1568,6 +1582,7 @@ namespace Pokefrost
                     .SetStats(10, 1, 5)
                     .SetSprites("slowpoke.png", "slowpokeBG.png")
                     .AddPool()
+                    .SetStartWithEffect(SStack("Evolve Slowpoke", 1))
                 );
 
             list.Add(
@@ -1592,7 +1607,7 @@ namespace Pokefrost
                     .CreateUnit("haunter", "Haunter")
                     .SetStats(8, 2, 3)
                     .SetSprites("haunter.png", "haunterBG.png")
-                    .SetStartWithEffect(SStack("On Hit Deal Double Damage To Statused Targets", 1))
+                    .SetStartWithEffect(SStack("On Hit Deal Double Damage To Statused Targets", 1), SStack("Evolve Haunter", 1))
                     .AddPool()
                 );
 
@@ -1746,7 +1761,7 @@ namespace Pokefrost
                     .CreateUnit("slowking", "Slowking")
                     .SetStats(10, null, 5)
                     .SetSprites("slowking.png", "slowkingBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Trigger All Slowking Crowns", 1))
+                    .SetStartWithEffect(SStack("On Card Played Trigger All Slowking Crowns", 1), SStack("Give Slowking Crown",1))
                 );
 
             list.Add(
@@ -2464,17 +2479,32 @@ namespace Pokefrost
             AddressableLoader.AddRangeToGroup("StatusEffectData", statusList);
         }
 
-        private void NosepassAttach()
+        private void PokemonPostBattle()
         {
+            CardDataList active = References.Player.data.inventory.deck;
+            foreach(CardData cardData in active)
+            {
+                if (cardData.name == "websiteofsites.wildfrost.pokefrost.slowking")
+                {
+                    Debug.Log("[Pokefrost] Slowking bestows a crown(?) to the party.");
+                    foreach (CardData.StatusEffectStacks s in cardData.startWithEffects)
+                    {
+                        if (s.data.name == "Give Slowking Crown")
+                        {
+                            References.Player.data.inventory.upgrades.Add(AddressableLoader.Get<CardUpgradeData>("CardUpgradeData", "websiteofsites.wildfrost.pokefrost.CrownSlowking"));
+                            break;
+                        }
+                    }
+                }
+            }
+
             CardDataList bench = References.PlayerData.inventory.reserve;
             foreach (CardData cardData in bench)
             {
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.nosepass")
                 {
-                    Debug.Log("Nosepass's magentic field attrached a charm to it");
-                    Debug.Log(cardData.name);
+                    Debug.Log("[Pokefrost] Nosepass's magentic field attrached a charm to it.");
                     List<CardUpgradeData> options = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData").Clone();
-                    Debug.Log("Found charm list");
                     for (int i = 0; i < 30; i++)
                     {
                         var r = UnityEngine.Random.Range(0, options.Count);
@@ -2572,7 +2602,6 @@ namespace Pokefrost
 
         private void GetShiny(Entity entity)
         {
-            Debug.Log("[Pokefrost] Offering " + entity.data.name.ToString());
             if (entity.data.name.Contains("websiteofsites.wildfrost.pokefrost") && entity.data.cardType.name == "Friendly" && UnityEngine.Random.Range(0, 1f) < shinyrate)
             {
                 string[] splitName = entity.data.name.Split('.');
@@ -2619,7 +2648,7 @@ namespace Pokefrost
             base.Load();
             ReplaceAllTierZero();
             //Events.OnSceneLoaded += PokemonEdits;
-            Events.OnBattleEnd += NosepassAttach;
+            Events.OnBattleEnd += PokemonPostBattle;
             Events.OnBattleEnd += CheckEvolve;
             Events.PostBattle += DisplayEvolutions;
             Events.OnEntityOffered += GetShiny;
@@ -2648,12 +2677,11 @@ namespace Pokefrost
             References.instance.StartCoroutine(UICollector.CollectPrefabs());
         }
 
-
         public override void Unload()
         {
             base.Unload();
             //Events.OnSceneLoaded -= PokemonEdits;
-            Events.OnBattleEnd -= NosepassAttach;
+            Events.OnBattleEnd -= PokemonPostBattle;
             Events.OnBattleEnd -= CheckEvolve;
             Events.PostBattle -= DisplayEvolutions;
             Events.OnEntityOffered -= GetShiny;
@@ -2914,7 +2942,7 @@ namespace Pokefrost
             }
         }
 
-        private void DisplayEvolutions(CampaignNode whatever)
+        public void DisplayEvolutions(CampaignNode whatever)
         {
             if (StatusEffectEvolve.evolvedPokemonLastBattle.Count > 0)
             {
@@ -2991,6 +3019,76 @@ namespace Pokefrost
                 return false;
             }
             return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(CampaignNode), "SetCleared", new Type[]
+        {
+        })]
+    internal static class AfterNodeCleared
+    {
+        internal static void Prefix(CampaignNode __instance)
+        {
+            Debug.Log($"[Pokefrost] {__instance.name}");
+            CardDataList list = References.Player.data.inventory.deck;
+            List<CardData> slateForEvolution = new List<CardData>();
+            List<StatusEffectEvolve> evolveEffects = new List<StatusEffectEvolve>();
+            foreach (CardData card in list)
+            {
+                foreach (CardData.StatusEffectStacks s in card.startWithEffects)
+                {
+                    if (s.data is StatusEffectEvolveFromNode s2)
+                    {
+                        s2.NodeVisit(__instance.name);
+                        if (s2.ReadyToEvolve(card))
+                        {
+                            Debug.Log("[Pokefrost] Ready for evolution!");
+                            slateForEvolution.Add(card);
+                            evolveEffects.Add(((StatusEffectEvolve)s.data));
+                        }
+                    }
+                }
+            }
+            list = References.Player.data.inventory.reserve;
+            foreach (CardData card in list)
+            {
+                foreach (CardData.StatusEffectStacks s in card.startWithEffects)
+                {
+                    if (s.data is StatusEffectEvolveFromNode s2)
+                    {
+                        s2.NodeVisit(__instance.name);
+                        if (s2.ReadyToEvolve(card))
+                        {
+                            Debug.Log("[Pokefrost] Ready for evolution!");
+                            slateForEvolution.Add(card);
+                            evolveEffects.Add(((StatusEffectEvolve)s.data));
+                        }
+                    }
+                }
+            }
+            int count = slateForEvolution.Count;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (References.Player.data.inventory.deck.RemoveWhere((CardData a) => slateForEvolution[i].id == a.id))
+                {
+                    Debug.Log("[" + slateForEvolution[i].name + "] Removed From [" + References.Player.name + "] deck");
+                    evolveEffects[i].Evolve(Pokefrost.instance, slateForEvolution[i]);
+                }
+                if (References.Player.data.inventory.reserve.RemoveWhere((CardData a) => slateForEvolution[i].id == a.id))
+                {
+                    Debug.Log("[" + slateForEvolution[i].name + "] Removed From [" + References.Player.name + "] reserve");
+                    evolveEffects[i].Evolve(Pokefrost.instance, slateForEvolution[i]);
+                }
+            }
+
+            References.instance.StartCoroutine(ForceEvolvePopup(__instance));
+        }
+
+        internal static IEnumerator ForceEvolvePopup(CampaignNode whatever)
+        {
+            yield return new WaitUntil(() => SceneManager.IsLoaded("MapNew"));
+            ((Pokefrost)Pokefrost.instance).DisplayEvolutions(whatever);
         }
     }
 
