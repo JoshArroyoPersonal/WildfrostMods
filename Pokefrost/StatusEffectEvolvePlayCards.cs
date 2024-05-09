@@ -51,21 +51,7 @@ namespace Pokefrost
                     {
                         count -= amount;
                         UpdateTextInsert();
-                        foreach (CardData card in References.Player.data.inventory.deck)
-                        {
-                            if (card.id == target.data.id)
-                            {
-                                foreach (CardData.StatusEffectStacks statuses in card.startWithEffects)
-                                {
-                                    if (statuses.data.name == this.name && statuses.count > 0)
-                                    {
-                                        statuses.count = this.count;
-                                        UnityEngine.Debug.Log("[Pokefrost] Updated deck copy!");
-                                        return false;
-                                    }
-                                }
-                            }
-                        }
+                        FindDeckCopy();
                     }
                 }
             }

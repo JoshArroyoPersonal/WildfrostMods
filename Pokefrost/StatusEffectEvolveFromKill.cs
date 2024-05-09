@@ -98,19 +98,7 @@ namespace Pokefrost
                 {
                     return false;
                 }
-                foreach (CardData card in References.Player.data.inventory.deck)
-                {
-                    if (card.id == target.data.id)
-                    {
-                        foreach (CardData.StatusEffectStacks statuses in card.startWithEffects)
-                        {
-                            if (statuses.data.name == this.name && statuses.count > 0)
-                            {
-                                statuses.count = this.count;
-                            }
-                        }
-                    }
-                }
+                FindDeckCopy();
             }
             return false;
         }
