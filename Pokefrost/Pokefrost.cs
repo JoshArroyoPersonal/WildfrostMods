@@ -2658,7 +2658,8 @@ namespace Pokefrost
             Events.OnCardDraw += HowManyCardsDrawn;
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnStatusIconCreated += PatchOvershroom;
-            
+            Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
+
             //References.instance.classes[0] = Get<ClassData>("Basic");
             //References.instance.classes[1] = Get<ClassData>("Magic");
             //References.instance.classes[2] = Get<ClassData>("Clunk");
@@ -2691,6 +2692,7 @@ namespace Pokefrost
             Events.OnCardDraw -= HowManyCardsDrawn;
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
             Events.OnStatusIconCreated -= PatchOvershroom;
+            Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
