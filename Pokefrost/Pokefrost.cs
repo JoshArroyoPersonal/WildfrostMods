@@ -1614,7 +1614,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("gengar", "Gengar")
-                    .SetStats(8, 2, 3)
+                    .SetStats(8, 3, 3)
                     .SetSprites("gengar.png", "gengarBG.png")
                     .SetStartWithEffect(SStack("On Hit Deal Double Damage To Statused Targets", 1))
                     .SetTraits(TStack("Immaterial", 1))
