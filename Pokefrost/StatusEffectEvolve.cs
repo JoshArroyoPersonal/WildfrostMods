@@ -44,6 +44,30 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", this);
         }
 
+        public virtual void FindDeckCopy()
+        {
+            FindDeckCopy((card, status) => { status.count = count; });
+        }
+
+        public virtual void FindDeckCopy(Action<CardData, CardData.StatusEffectStacks> action)
+        {
+            foreach(CardData card in References.Player.data.inventory.deck)
+            {
+                if (card.id == target.data.id)
+                {
+                    foreach (CardData.StatusEffectStacks status in card.startWithEffects)
+                    {
+                        if (status.data.name == this.name)
+                        {
+                            action(card, status);
+                            UnityEngine.Debug.Log("[Pokefrost] Updated deck copy!");
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         public virtual bool ReadyToEvolve(CardData cardData)
         {
             return true;
