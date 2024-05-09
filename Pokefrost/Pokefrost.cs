@@ -3081,8 +3081,10 @@ namespace Pokefrost
                     evolveEffects[i].Evolve(Pokefrost.instance, slateForEvolution[i]);
                 }
             }
-
-            References.instance.StartCoroutine(ForceEvolvePopup(__instance));
+            if (count > 0)
+            {
+                References.instance.StartCoroutine(ForceEvolvePopup(__instance));
+            }  
         }
 
         internal static IEnumerator ForceEvolvePopup(CampaignNode whatever)

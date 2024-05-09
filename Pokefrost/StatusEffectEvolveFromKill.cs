@@ -111,7 +111,6 @@ namespace Pokefrost
                         }
                     }
                 }
-
             }
             return false;
         }
