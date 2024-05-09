@@ -183,8 +183,29 @@ namespace Pokefrost
 
             }
             yield return Run(GetTargets(), fixedAmount);
+            List<StatusTokenApplyXListener> listeners = FindListeners();
+            foreach(StatusTokenApplyXListener listener in listeners)
+            {
+                yield return listener.Run();
+            }
             target.display.promptUpdateDescription = true;
             yield return PostClick();
+        }
+
+        public List<StatusTokenApplyXListener> FindListeners()
+        {
+            List<StatusTokenApplyXListener> listeners = new List<StatusTokenApplyXListener>();
+            foreach (StatusEffectData status in target.statusEffects)
+            {
+                if (status is StatusTokenApplyXListener status2)
+                {
+                    if (status2.type == type + "_listener")
+                    {
+                        listeners.Add(status2);
+                    }
+                }
+            }
+            return listeners;
         }
 
         public virtual IEnumerator PostClick()
@@ -208,6 +229,14 @@ namespace Pokefrost
         public void ButtonCreate(StatusIconExt icon)
         {
             return;
+        }
+    }
+
+    public class StatusTokenApplyXListener : StatusEffectApplyX
+    {
+        public IEnumerator Run()
+        {
+            yield return Run(GetTargets());
         }
     }
 }

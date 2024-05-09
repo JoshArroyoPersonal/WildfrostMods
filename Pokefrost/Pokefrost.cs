@@ -1361,6 +1361,34 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tripcrit);
             statusList.Add(tripcrit);
 
+            this.CreateBasicKeyword("teeterdance", "Teeter Dance", "<End Turn>: Trigger everyone in the battle|Click to activate\nOnce per battle");
+            this.CreateButtonIcon("ludicoloTeeterDance", ImagePath("pokeball.png").ToSprite(), "teeterDance", "snow", Color.gray, new KeywordData[] {Get<KeywordData>("teeterdance")});
+
+            StatusTokenApplyX teeter = this.CreateStatusButton<StatusTokenApplyX>("Trigger All Button", type: "teeterDance")
+                .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Enemies)
+                .Register(this);
+            teeter.endTurn = true;
+            teeter.finiteUses = true;
+            statusList.Add(teeter);
+
+            StatusTokenApplyXListener teeter2 = Ext.CreateStatus<StatusTokenApplyXListener>("Trigger All Listener_1", type: "teeterDance_listener")
+                .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(teeter2);
+
+            this.CreateBasicKeyword("focusenergy", "Focus Energy", "<Free Action>: Discard the rightmost card in hand|Click to activate\nOnce per turn");
+            this.CreateButtonIcon("kingdraFocusEnergy", ImagePath("pokeball.png").ToSprite(), "focusEnergy", "", Color.white, new KeywordData[] { Get<KeywordData>("focusenergy") });
+
+            StatusEffectMoveCard discard = Ext.CreateStatus<StatusEffectMoveCard>("Discard Self")
+                .Register(this);
+
+            StatusTokenApplyX focusEnergy = this.CreateStatusButton<StatusTokenApplyX>("Discard Rightmost Button", "focusEnergy")
+                .ApplyX(Get<StatusEffectData>("Discard Self"), StatusEffectApplyX.ApplyToFlags.RightCardInHand)
+                .Register(this);
+            focusEnergy.oncePerTurn = true;
+            statusList.Add(teeter);
+
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -1787,7 +1815,7 @@ namespace Pokefrost
                     .CreateUnit("kingdra", "Kingdra")
                     .SetStats(6, 6, 5)
                     .SetSprites("kingdra.png", "kingdraBG.png")
-                    .SetStartWithEffect(SStack("Give Combo to Card in Hand", 1), SStack("Combo Triples Instead", 1))
+                    .SetStartWithEffect(SStack("Give Combo to Card in Hand", 1), SStack("Discard Rightmost Button",1))
                     .AddPool()
                 );
 
@@ -1806,6 +1834,7 @@ namespace Pokefrost
                     .CreateUnit("ludicolo", "Ludicolo")
                     .SetStats(10, null, 0)
                     .SetSprites("ludicolo.png", "ludicoloBG.png")
+                    .SetStartWithEffect(SStack("Trigger All Button",1), SStack("Trigger All Listener_1", 1))
                     .AddPool()
                 );
 

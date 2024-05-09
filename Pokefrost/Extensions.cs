@@ -2,16 +2,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Tables;
 
 namespace Pokefrost
 {
     public static class Ext
     {
-        public static UnityEngine.Localization.Tables.StringTable Collection => LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);
+        public static StringTable Collection => LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);
+        public static StringTable KeyCollection => LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
         public static T CreateStatus<T>(string name, string desc = null, string textInsert = null, string type = "", bool boostable = false, bool stackable = true) where T : StatusEffectData
         {
             T status = ScriptableObject.CreateInstance<T>();
@@ -45,13 +48,14 @@ namespace Pokefrost
             return t;
         }
 
-        public static void Register(this StatusEffectData status, WildfrostMod mod)
+        public static T Register<T>(this T status, WildfrostMod mod) where T : StatusEffectData
         {
             status.ModAdded = mod;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", status);
+            return status;
         }
 
-        public static GameObject CreateTokenIcon(this WildfrostMod mod, string name, Sprite sprite, string type, string copyTextFrom, Color textColor)
+        public static GameObject CreateButtonIcon(this WildfrostMod mod, string name, Sprite sprite, string type, string copyTextFrom, Color textColor, KeywordData[] keys)
         {
             GameObject gameObject = new GameObject(name);
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
@@ -81,6 +85,7 @@ namespace Pokefrost
             cardHover.enabled = false;
             cardHover.IsMaster = false;
             CardPopUpTarget cardPopUp = gameObject.AddComponent<CardPopUpTarget>();
+            cardPopUp.keywords = keys;
             cardHover.pop = cardPopUp;
             RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
@@ -91,6 +96,32 @@ namespace Pokefrost
             cardIcons[type] = gameObject;
 
             return gameObject;
+        }
+
+        public static KeywordData CreateBasicKeyword(this WildfrostMod mod, string name, string title, string desc)
+        {
+            KeywordData data = ScriptableObject.CreateInstance<KeywordData>();
+            data.name = name;
+            KeyCollection.SetString(data.name + "_text", title);
+            data.titleKey = KeyCollection.GetString(data.name + "_text");
+            KeyCollection.SetString(data.name + "_desc", desc);
+            data.descKey = KeyCollection.GetString(data.name + "_desc");
+            data.ModAdded = mod;
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", data);
+            return data;
+        }
+
+        public static T CreateStatusButton<T>(this WildfrostMod mod, string name, string type, string iconGroup = "counter") where T : StatusEffectData
+        {
+            T status = ScriptableObject.CreateInstance<T>();
+            status.name = name;
+            status.targetConstraints = new TargetConstraint[0];
+            status.type = type;
+            status.isStatus = true;
+            status.iconGroupName = iconGroup;
+            status.visible = true;
+            status.stackable = false;
+            return status;
         }
     }
 
