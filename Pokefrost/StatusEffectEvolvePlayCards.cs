@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Unity.Burst;
 
 namespace Pokefrost
 {
@@ -11,7 +12,10 @@ namespace Pokefrost
     {
         public string[] cardNames;
         public string[] displayedNames;
+        public Func<Entity, Entity[], bool> cardConstraint;
         public string textInsertTemplate = "";
+
+
         public override void Autofill(string n, string descrip, WildfrostMod mod)
         {
             base.Autofill(n, descrip, mod);
@@ -33,27 +37,77 @@ namespace Pokefrost
             textInsert = string.Format(textInsertTemplate, displayedNames);
         }
 
+        public void SetCardConstraint(Func<Entity, Entity[], bool> constraint)
+        {
+            this.cardConstraint = constraint;
+        }
+
+        public static bool ReturnTrueIfTrait(string name, Entity entity)
+        {
+            foreach(Entity.TraitStacks t in entity.traits)
+            {
+                if (t.data.name == name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public override void Init()
         {
             base.Init();
+            foreach (CardData.StatusEffectStacks statuses in target.data.startWithEffects)
+            {
+                if (statuses.data.name == this.name)
+                {
+                    cardConstraint = ((StatusEffectEvolvePlayCards)statuses.data).cardConstraint;
+                    return;
+                }
+            }
             UpdateTextInsert();
         }
 
         public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
         {
-            for(int i=0; i<cardNames.Length; i++)
+            if (cardConstraint != null && cardConstraint(entity,targets))
+            {
+                return GeneralCardPlayed(entity, targets);
+            }
+            if (cardNames != null && cardNames.Length > 0)
+            {
+                return SpecificCardPlayed(entity, targets);
+            }
+            return false;
+        }
+
+        public virtual bool SpecificCardPlayed(Entity entity, Entity[] targets)
+        {
+            for (int i = 0; i < cardNames.Length; i++)
             {
                 if (entity.name == cardNames[i])
                 {
                     UnityEngine.Debug.Log("[Pokefrost] Played corresponding card");
                     int amount = (int)Math.Round(Math.Pow(2, i));
-                    if ( (count/amount)%2 == 1)
+                    if ((count / amount) % 2 == 1)
                     {
                         count -= amount;
                         UpdateTextInsert();
                         FindDeckCopy();
                     }
                 }
+            }
+            return false;
+        }
+
+        public virtual bool GeneralCardPlayed(Entity entity, Entity[] targets)
+        {
+            if(count > 0)
+            {
+                count -= 1;
+                target.display.promptUpdateDescription = true;
+                target.PromptUpdate();
+                FindDeckCopy();
             }
             return false;
         }
@@ -76,6 +130,17 @@ namespace Pokefrost
 
         public override bool ReadyToEvolve(CardData cardData)
         {
+            if (cardConstraint != null)
+            {
+                foreach (CardData.StatusEffectStacks statuses in cardData.startWithEffects)
+                {
+                    if (statuses.data.name == this.name)
+                    {
+                        return (statuses.count == 0);
+                    }
+                }
+                return false;
+            }
             foreach (CardData.StatusEffectStacks statuses in cardData.startWithEffects)
             {
                 if (statuses.data.name == this.name)

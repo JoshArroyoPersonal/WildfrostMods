@@ -1346,21 +1346,6 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", givecrit);
             statusList.Add(givecrit);
 
-            StatusEffectWhileActiveX tripcrit = ScriptableObject.CreateInstance<StatusEffectWhileActiveX>();
-            tripcrit.name = "Combo Triples Instead";
-            tripcrit.effectToApply = Get<StatusEffectData>("While Last In Hand Double Effects To Self");
-            tripcrit.canBeBoosted = true;
-            TargetConstraintHasTrait hasCrit = ScriptableObject.CreateInstance<TargetConstraintHasTrait>();
-            hasCrit.trait = Get<TraitData>("Combo");
-            tripcrit.applyConstraints = new TargetConstraint[1] {  hasCrit };
-            tripcrit.applyToFlags = StatusEffectApplyX.ApplyToFlags.Hand;
-            tripcrit.type = "";
-            collection.SetString(tripcrit.name + "_text", "<keyword=combo> triples effects instead");
-            tripcrit.textKey = collection.GetString(tripcrit.name + "_text");
-            tripcrit.ModAdded = this;
-            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tripcrit);
-            statusList.Add(tripcrit);
-
             this.CreateBasicKeyword("teeterdance", "Teeter Dance", "<End Turn>: Trigger everyone in the battle|Click to activate\nOnce per battle");
             this.CreateButtonIcon("ludicoloTeeterDance", ImagePath("pokeball.png").ToSprite(), "teeterDance", "snow", Color.gray, new KeywordData[] {Get<KeywordData>("teeterdance")});
 
@@ -1529,6 +1514,20 @@ namespace Pokefrost
             ev19.Confirm();
             statusList.Add(ev19);
 
+            StatusEffectEvolvePlayCards ev20 = ScriptableObject.CreateInstance<StatusEffectEvolvePlayCards>();
+            ev20.Autofill("Evolve Seadra", "<keyword=evolve>: Play <{a}> <keyword=combo> cards", this);
+            ev20.SetEvolution("websiteofsites.wildfrost.pokefrost.kingdra");
+            ev20.SetCardConstraint((entity, entities) => { return StatusEffectEvolvePlayCards.ReturnTrueIfTrait("Combo",entity); });
+            ev20.Confirm();
+            statusList.Add(ev20);
+
+            StatusEffectEvolveFromHitApplied ev21 = ScriptableObject.CreateInstance<StatusEffectEvolveFromHitApplied>();
+            ev21.Autofill("Evolve Makuhita", "<keyword=evolve>: Deal <{a}> damage", this);
+            ev21.Autofill2("self", "all");
+            ev21.SetEvolution("websiteofsites.wildfrost.pokefrost.hariyama");
+            ev21.Confirm();
+            statusList.Add(ev21);
+
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
             shiny.type = "shiny";
@@ -1690,7 +1689,7 @@ namespace Pokefrost
                     .CreateUnit("seadra", "Seadra")
                     .SetStats(6,6,5)
                     .SetSprites("seadra.png", "seadraBG.png")
-                    .SetStartWithEffect(SStack("Give Combo to Card in Hand", 1))
+                    .SetStartWithEffect(SStack("Give Combo to Card in Hand", 1), SStack("Evolve Seadra", 4))
                     .AddPool()
                 );
 
@@ -1869,7 +1868,7 @@ namespace Pokefrost
                     .CreateUnit("makuhita", "Makuhita")
                     .SetStats(8, 0, 4)
                     .SetSprites("makuhita.png", "makuhitaBG.png")
-                    .SetStartWithEffect(SStack("Damage Equal To Missing Health", 1))
+                    .SetStartWithEffect(SStack("Damage Equal To Missing Health", 1), SStack("Evolve Makuhita", 60))
                     .AddPool()
                 );
 

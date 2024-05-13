@@ -13,10 +13,16 @@ namespace Pokefrost
     {
         public Func<Hit, bool> constraint = ReturnTrue;
         public string faction;
-        public string targetType; //shroom
+        public string targetType; //shroom, basic
         public bool persist = true;
 
         public override bool HasPostHitRoutine => true;
+
+        public void Autofill2(string faction, string targetType)
+        {
+            this.faction = faction;
+            this.targetType = targetType;
+        }
 
         public override void Init()
         {
@@ -57,10 +63,15 @@ namespace Pokefrost
             //UnityEngine.Debug.Log("[Pokefrost] Post Hit Event");
             bool result1 = constraint(hit);
             bool result2 = false;
-            bool result3 = (hit.damageType == targetType);
-            if (faction == "ally")
+            bool result3 = (hit.damageType == targetType || targetType == "all");
+            switch(faction)
             {
-                result2 = (hit?.attacker?.owner == target?.owner);
+                case "ally":
+                    result2 = (hit?.attacker?.owner == target?.owner);
+                    break;
+                case "self":
+                    result2 = (hit?.attacker == target);
+                    break;
             }
             //UnityEngine.Debug.Log("[Pokefrost] " + result1.ToString() + " " + result2.ToString() + " " + result3.ToString());
             //UnityEngine.Debug.Log(hit.damageType);
@@ -71,7 +82,7 @@ namespace Pokefrost
                 {
                     if (statuses.name == this.name && this.count > 0)
                     {
-                        this.count -= Math.Min(this.count, hit.damage);
+                        this.count -= Math.Min(this.count, hit.damage + hit.damageBlocked);
                         target.display.promptUpdateDescription = true;
                         target.PromptUpdate();
                         //UnityEngine.Debug.Log("[Pokefrost] Updated card on board!");
@@ -82,7 +93,6 @@ namespace Pokefrost
                     return false;
                 }
                 FindDeckCopy();
-
             }
             return false;
         }
