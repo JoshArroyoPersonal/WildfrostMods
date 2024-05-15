@@ -30,7 +30,7 @@ namespace Pokefrost
     public class Pokefrost : WildfrostMod
     {
         public static string[] basicPool = new string[] {"croagunk", "toxicroak", "salazzle", "magcargo" };
-        public static string[] magicPool = new string[] { "carvanha", "sharpedo", "duskull", "dusclops", "litwick", "lampent", "chandelure" };
+        public static string[] magicPool = new string[] { "cubone", "marowak", "alolanmarowak", "carvanha", "sharpedo", "duskull", "dusclops", "litwick", "lampent", "chandelure" };
         public static string[] clunkPool = new string[] { "weezing", "hippowdon", "trubbish", "garbodor" };
 
         private List<CardDataBuilder> list;
