@@ -1406,6 +1406,9 @@ namespace Pokefrost
             focusEnergy.oncePerTurn = true;
             statusList.Add(teeter);
 
+            StatusEffectDreamDummy giveThickClub = Ext.CreateStatus<StatusEffectDreamDummy>("Give Thick Club", "Gain a <Thick Club> upon battle end")
+                .Register(this);
+            statusList.Add(giveThickClub);
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
@@ -1560,6 +1563,12 @@ namespace Pokefrost
             ev21.SetEvolution("websiteofsites.wildfrost.pokefrost.hariyama");
             ev21.Confirm();
             statusList.Add(ev21);
+
+            StatusEffectEvolveCubone ev22 = ScriptableObject.CreateInstance<StatusEffectEvolveCubone>();
+            ev22.Autofill("Evolve Cubone", "<keyword=evolve>: Injury", this);
+            ev22.SetEvolutions("websiteofsites.wildfrost.pokefrost.marowak", "websiteofsites.wildfrost.pokefrost.alolanmarowak");
+            ev22.Confirm();
+            statusList.Add(ev22);
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -2547,6 +2556,15 @@ namespace Pokefrost
             {
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.slowking")
                 {
+                    Debug.Log("[Pokefrost] Marowak found a bone lying on the battlefield.");
+                    foreach (CardData.StatusEffectStacks s in cardData.startWithEffects)
+                    {
+                        if (s.data.name == "Give Thick Club")
+                        {
+                            References.Player.data.inventory.upgrades.Add(AddressableLoader.Get<CardUpgradeData>("CardUpgradeData", "websiteofsites.wildfrost.pokefrost.CardUpgradeThickClub"));
+                            break;
+                        }
+                    }
                     Debug.Log("[Pokefrost] Slowking bestows a crown(?) to the party.");
                     foreach (CardData.StatusEffectStacks s in cardData.startWithEffects)
                     {

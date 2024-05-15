@@ -23,6 +23,7 @@ namespace Pokefrost
         {
             target.data.backgroundSprite = sprite;
             target.data.playType = Card.PlayType.Play;
+            target.StartCoroutine(target.display.UpdateData(true));
             return false;
         }
         private IEnumerator TurnStart(Entity entity)

@@ -12,8 +12,7 @@ namespace Pokefrost
     internal class StatusEffectEvolveFromKill : StatusEffectEvolve
     {
 
-        public Action<Entity, DeathType> constraint = ReturnTrue;
-        public static bool result = false;
+        public Func<Entity, DeathType, bool> constraint = ReturnTrue;
         public bool anyKill = false;
         public bool persist = true;
 
@@ -31,39 +30,36 @@ namespace Pokefrost
             }
         }
 
-        public static void ReturnTrue(Entity entity, DeathType deathType)
+        public static bool ReturnTrue(Entity entity, DeathType deathType)
         {
-            StatusEffectEvolveFromKill.result = true;
-            return;
+            return true;
         }
 
-        public static void ReturnTrueIfCardTypeIsBossOrMiniboss(Entity entity, DeathType deathType)
+        public static bool ReturnTrueIfCardTypeIsBossOrMiniboss(Entity entity, DeathType deathType)
         {
             switch (entity.data.cardType.name)
             {
                 case "Boss":
                 case "Miniboss":
                 case "BossSmall":
-                    StatusEffectEvolveFromKill.result = true;
-                    return;
+                    return true;
             }
-            StatusEffectEvolveFromKill.result = false;
+            return false;
         }
 
-        public static void ReturnTrueIfCardWasConsumed(Entity entity, DeathType deathType)
+        public static bool ReturnTrueIfCardWasConsumed(Entity entity, DeathType deathType)
         {
             if (deathType == DeathType.Consume)
             {
-                StatusEffectEvolveFromKill.result = true;
-                return;
+                return true;
             }
             else
             {
-                StatusEffectEvolveFromKill.result = false;
+                return false;
             }
         }
 
-        public virtual void SetConstraints(Action<Entity, DeathType> c)
+        public virtual void SetConstraints(Func<Entity, DeathType, bool> c)
         {
             constraint = c;
         }
@@ -80,10 +76,9 @@ namespace Pokefrost
 
         public override bool RunEntityDestroyedEvent(Entity entity, DeathType deathType)
         {
-            constraint(entity, deathType);
             //if (entity.lastHit != null && entity.lastHit.attacker == target && typeConditions.Contains<string>(entity.data.cardType.name))
             bool deserving = anyKill || (entity.lastHit != null && entity.lastHit.attacker == target);
-            if (deserving && result)
+            if (deserving && constraint(entity, deathType))
             {
                 foreach (StatusEffectData statuses in target.statusEffects)
                 {
@@ -113,6 +108,55 @@ namespace Pokefrost
                 }
             }
             return false;
+        }
+    }
+
+    internal class StatusEffectEvolveCubone : StatusEffectEvolveFromKill
+    {
+        public string normalEvolution;
+        public string sacEvolution;
+        public override void Init()
+        {
+            base.Init();
+            
+        }
+
+        public void SetEvolutions(string normal, string sac)
+        {
+            evolutionCardName = normal;
+            normalEvolution = normal;
+            sacEvolution = sac;
+        }
+
+        public override bool RunBeginEvent()
+        {
+            anyKill = true;
+            constraint = (entity, death) => { return entity == target; };
+            return false;
+        }
+
+        public override bool RunEntityDestroyedEvent(Entity entity, DeathType deathType)
+        {
+            if (count > 1)
+            {
+                base.RunEntityDestroyedEvent(entity, deathType);
+                if (count == 0)
+                {
+                    switch (deathType)
+                    {
+                        case DeathType.Sacrifice:
+                            FindDeckCopy((card, stack) => { evolutionCardName = sacEvolution; });
+                            break;
+                        case DeathType.Normal:
+                        case DeathType.Eaten:
+                        case DeathType.Consume:
+                            FindDeckCopy((card, stack) => { evolutionCardName = normalEvolution; });
+                            break;
+                    }
+                }
+            }
+            return false;
+            
         }
     }
 }
