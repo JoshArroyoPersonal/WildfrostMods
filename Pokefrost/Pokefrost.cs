@@ -1582,7 +1582,7 @@ namespace Pokefrost
             statusList.Add(ev21);
 
             StatusEffectEvolveCubone ev22 = ScriptableObject.CreateInstance<StatusEffectEvolveCubone>();
-            ev22.Autofill("Evolve Cubone", "<keyword=evolve>: Injury", this);
+            ev22.Autofill("Evolve Cubone", "<keyword=evolve>: Injury <{a}>", this);
             ev22.SetEvolutions("websiteofsites.wildfrost.pokefrost.marowak", "websiteofsites.wildfrost.pokefrost.alolanmarowak");
             ev22.Confirm();
             statusList.Add(ev22);
@@ -1729,6 +1729,7 @@ namespace Pokefrost
                     .CreateUnit("cubone", "Cubone")
                     .SetStats(4, 2, 4)
                     .SetSprites("cubone.png", "cuboneBG.png")
+                    .SetStartWithEffect(SStack("Evolve Cubone",1))
                     .AddPool("MagicUnitPool")
                 );
 
@@ -1737,6 +1738,7 @@ namespace Pokefrost
                     .CreateUnit("marowak", "Marowak")
                     .SetStats(4, 2, 4)
                     .SetSprites("marowak.png", "marowakBG.png")
+                    .SetStartWithEffect(SStack("Give Thick Club", 1))
                 );
 
             list.Add(
@@ -2605,7 +2607,7 @@ namespace Pokefrost
             CardDataList active = References.Player.data.inventory.deck;
             foreach(CardData cardData in active)
             {
-                if (cardData.name == "websiteofsites.wildfrost.pokefrost.slowking")
+                if (cardData.name == "websiteofsites.wildfrost.pokefrost.marowak")
                 {
                     Debug.Log("[Pokefrost] Marowak found a bone lying on the battlefield.");
                     foreach (CardData.StatusEffectStacks s in cardData.startWithEffects)
@@ -2616,6 +2618,10 @@ namespace Pokefrost
                             break;
                         }
                     }
+                }
+                if (cardData.name == "websiteofsites.wildfrost.pokefrost.slowking")
+                {
+                    
                     Debug.Log("[Pokefrost] Slowking bestows a crown(?) to the party.");
                     foreach (CardData.StatusEffectStacks s in cardData.startWithEffects)
                     {

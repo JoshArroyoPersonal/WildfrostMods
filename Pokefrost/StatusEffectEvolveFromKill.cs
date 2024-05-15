@@ -118,7 +118,6 @@ namespace Pokefrost
         public override void Init()
         {
             base.Init();
-            
         }
 
         public void SetEvolutions(string normal, string sac)
@@ -137,26 +136,51 @@ namespace Pokefrost
 
         public override bool RunEntityDestroyedEvent(Entity entity, DeathType deathType)
         {
-            if (count > 1)
+            if (count > 0)
             {
                 base.RunEntityDestroyedEvent(entity, deathType);
                 if (count == 0)
                 {
-                    switch (deathType)
+                    if (entity?.lastHit?.attacker?.owner == target.owner || deathType == DeathType.Sacrifice)
                     {
-                        case DeathType.Sacrifice:
-                            FindDeckCopy((card, stack) => { evolutionCardName = sacEvolution; });
-                            break;
-                        case DeathType.Normal:
-                        case DeathType.Eaten:
-                        case DeathType.Consume:
-                            FindDeckCopy((card, stack) => { evolutionCardName = normalEvolution; });
-                            break;
+                        FindDeckCopy((card, status) => { status.count = 2; });
                     }
                 }
             }
             return false;
-            
+        }
+
+        public override bool ReadyToEvolve(CardData cardData)
+        {
+            foreach (CardData.StatusEffectStacks stack in cardData.startWithEffects)
+            {
+                if (stack.data.name == name)
+                {
+                    if (stack.count == 0 || stack.count == 2)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public override void Evolve(WildfrostMod mod, CardData preEvo)
+        {
+            foreach (CardData.StatusEffectStacks stack in preEvo.startWithEffects)
+            {
+                if (stack.data.name == name)
+                {
+                    if (stack.count == 2)
+                    {
+                        evolutionCardName = sacEvolution;
+                        base.Evolve(mod, preEvo);
+                        return;
+                    }
+                }
+            }
+            evolutionCardName = normalEvolution;
+            base.Evolve(mod, preEvo);
         }
     }
 }
