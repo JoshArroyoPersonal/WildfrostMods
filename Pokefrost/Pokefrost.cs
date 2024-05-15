@@ -1347,7 +1347,7 @@ namespace Pokefrost
             statusList.Add(givecrit);
 
             this.CreateBasicKeyword("teeterdance", "Teeter Dance", "<End Turn>: Trigger everyone in the battle|Click to activate\nOnce per battle");
-            this.CreateButtonIcon("ludicoloTeeterDance", ImagePath("pokeball.png").ToSprite(), "teeterDance", "snow", Color.gray, new KeywordData[] {Get<KeywordData>("teeterdance")});
+            this.CreateButtonIcon("ludicoloTeeterDance", ImagePath("ludicolobutton.png").ToSprite(), "teeterDance", "counter", Color.black, new KeywordData[] {Get<KeywordData>("teeterdance")});
 
             StatusTokenApplyX teeter = this.CreateStatusButton<StatusTokenApplyX>("Trigger All Button", type: "teeterDance")
                 .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Enemies)
@@ -1362,7 +1362,7 @@ namespace Pokefrost
             statusList.Add(teeter2);
 
             this.CreateBasicKeyword("focusenergy", "Focus Energy", "<Free Action>: Discard the rightmost card in hand|Click to activate\nOnce per turn");
-            this.CreateButtonIcon("kingdraFocusEnergy", ImagePath("pokeball.png").ToSprite(), "focusEnergy", "", Color.white, new KeywordData[] { Get<KeywordData>("focusenergy") });
+            this.CreateButtonIcon("kingdraFocusEnergy", ImagePath("kingdrabutton.png").ToSprite(), "focusEnergy", "", Color.white, new KeywordData[] { Get<KeywordData>("focusenergy") });
 
             StatusEffectMoveCard discard = Ext.CreateStatus<StatusEffectMoveCard>("Discard Self")
                 .Register(this);
@@ -1372,6 +1372,23 @@ namespace Pokefrost
                 .Register(this);
             focusEnergy.oncePerTurn = true;
             statusList.Add(teeter);
+
+            StatusEffectApplyRandomOnCardPlayed buffmarowak = ScriptableObject.CreateInstance<StatusEffectApplyRandomOnCardPlayed>();
+            buffmarowak.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Self;
+            buffmarowak.effectsToapply = new StatusEffectData[] { Get<StatusEffectData>("Increase Max Health"), Get<StatusEffectData>("Increase Attack") };
+            buffmarowak.canBeBoosted = true;
+            buffmarowak.name = "On Card Played Buff Marowak";
+            buffmarowak.applyFormat = "";
+            buffmarowak.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            buffmarowak.keyword = "";
+            buffmarowak.hiddenKeywords = new KeywordData[] { Get<KeywordData>("random effect") };
+            buffmarowak.targetConstraints = new TargetConstraint[0];
+            collection.SetString(triattack.name + "_text", "Increase <Marowak's> <keyword=health> or <keyword=attack> by <{a}>");
+            buffmarowak.textKey = collection.GetString(triattack.name + "_text");
+            buffmarowak.textOrder = 0;
+            buffmarowak.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", buffmarowak);
+            statusList.Add(buffmarowak);
 
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -1608,8 +1625,8 @@ namespace Pokefrost
                     .CreateUnit("slowpoke", "Slowpoke")
                     .SetStats(10, 1, 5)
                     .SetSprites("slowpoke.png", "slowpokeBG.png")
-                    .AddPool()
                     .SetStartWithEffect(SStack("Evolve Slowpoke", 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -1663,6 +1680,29 @@ namespace Pokefrost
                     .SetStats(6, null, 1)
                     .SetSprites("electrode.png", "electrodeBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("On Card Played Give Self Explode"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("When Hit Trigger To Self"), 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("cubone", "Cubone")
+                    .SetStats(4, 2, 4)
+                    .SetSprites("cubone.png", "cuboneBG.png")
+                    .AddPool("MagicUnitPool")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("marowak", "Marowak")
+                    .SetStats(4, 2, 4)
+                    .SetSprites("marowak.png", "marowakBG.png")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("alolanmarowak", "Alolan Marowak")
+                    .SetStats(4, null, 0)
+                    .SetSprites("alolanmarowak.png", "alolanmarowakBG.png")
+                    .SetStartWithEffect(SStack("When Ally Is Sacrificed Trigger To Self", 1), SStack("Summon Beepop", 1))
                 );
 
             list.Add(
@@ -1812,10 +1852,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("kingdra", "Kingdra")
-                    .SetStats(6, 6, 5)
+                    .SetStats(7, 7, 5)
                     .SetSprites("kingdra.png", "kingdraBG.png")
                     .SetStartWithEffect(SStack("Give Combo to Card in Hand", 1), SStack("Discard Rightmost Button",1))
-                    .AddPool()
                 );
 
             list.Add(
@@ -1866,7 +1905,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("makuhita", "Makuhita")
-                    .SetStats(8, 0, 4)
+                    .SetStats(6, 0, 4)
                     .SetSprites("makuhita.png", "makuhitaBG.png")
                     .SetStartWithEffect(SStack("Damage Equal To Missing Health", 1), SStack("Evolve Makuhita", 60))
                     .AddPool()
@@ -2454,6 +2493,18 @@ namespace Pokefrost
 
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
+                    .Create("CardUpgradeThickClub")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(-1)
+                    .WithImage("thickclubCharm.png")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .SetEffects(SStack("On Card Played Buff Marowak", 1))
+                    .WithTitle("Thick Club")
+                    .WithText("Gain increase <Marowak's> <keyword=health> or <keyword=attack> by <1>\n\nRandomly each trigger")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
                     .Create("CrownSlowking")
                     .WithType(CardUpgradeData.Type.Crown)
                     .WithImage("slowking_crown.png")
@@ -2693,6 +2744,9 @@ namespace Pokefrost
             //References.instance.classes[2] = Get<ClassData>("Clunk");
             Get<CardData>("websiteofsites.wildfrost.pokefrost.klefki").charmSlots = 100;
             ((StatusEffectSummon)Get<StatusEffectData>("Summon Shedinja")).summonCard = Get<CardData>("websiteofsites.wildfrost.pokefrost.shedinja");
+            TargetConstraintIsSpecificCard onlymarowak = new TargetConstraintIsSpecificCard();
+            onlymarowak.allowedCards = new CardData[1] { Get<CardData>("websiteofsites.wildfrost.pokefrost.marowak") };
+            ((StatusEffectApplyRandomOnCardPlayed)Get<StatusEffectData>("On Card Played Buff Marowak")).applyConstraints = new TargetConstraint[1] { onlymarowak };
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
@@ -2750,11 +2804,15 @@ namespace Pokefrost
         {
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
+            if(scene.name == "MainMenu")
+            {
+                References.instance.StartCoroutine(PokemonPhoto2());
+            }
         }
 
         private static IEnumerator PokemonPhoto2()
         {
-            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.machamp", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.slowbro", "websiteofsites.wildfrost.pokefrost.slowking", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.gengar", "websiteofsites.wildfrost.pokefrost.ludicolo", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.hariyama", "websiteofsites.wildfrost.pokefrost.spheal" };
+            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.machamp", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.slowbro", "websiteofsites.wildfrost.pokefrost.slowking", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.gengar", "websiteofsites.wildfrost.pokefrost.ludicolo", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.hariyama", "websiteofsites.wildfrost.pokefrost.spheal", "websiteofsites.wildfrost.pokefrost.espurr", "websiteofsites.wildfrost.pokefrost.musharna", "websiteofsites.wildfrost.pokefrost.seadra", "websiteofsites.wildfrost.pokefrost.kingdra", "websiteofsites.wildfrost.pokefrost.cubone", "websiteofsites.wildfrost.pokefrost.marowak", "websiteofsites.wildfrost.pokefrost.alolanmarowak" };
             //string[] everyType = { "websiteofsites.wildfrost.pokefrost.crustle", "websiteofsites.wildfrost.pokefrost.goomy", "websiteofsites.wildfrost.pokefrost.absol", "websiteofsites.wildfrost.pokefrost.magneton", "websiteofsites.wildfrost.pokefrost.klefki", "websiteofsites.wildfrost.pokefrost.croagunk", "websiteofsites.wildfrost.pokefrost.litwick", "websiteofsites.wildfrost.pokefrost.murkrow", "websiteofsites.wildfrost.pokefrost.duskull", "websiteofsites.wildfrost.pokefrost.hippowdon", "websiteofsites.wildfrost.pokefrost.cradily", "websiteofsites.wildfrost.pokefrost.froslass", "websiteofsites.wildfrost.pokefrost.munchlax", "websiteofsites.wildfrost.pokefrost.weezing", "websiteofsites.wildfrost.pokefrost.chingling", "websiteofsites.wildfrost.pokefrost.magcargo", "websiteofsites.wildfrost.pokefrost.bastiodon", "websiteofsites.wildfrost.pokefrost.magikarp" };
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
