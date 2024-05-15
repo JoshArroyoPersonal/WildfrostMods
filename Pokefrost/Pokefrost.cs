@@ -1233,6 +1233,7 @@ namespace Pokefrost
             immuneindirect.immuneTypes = new List<string> { "basic" };
             immuneindirect.reverse = true;
             immuneindirect.type = "";
+            immuneindirect.invis = true;
             immuneindirect.eventPriority = 9999;
             immuneindirect.ignoreReactions = true;
             immuneindirect.ModAdded = this;
@@ -1268,12 +1269,6 @@ namespace Pokefrost
             endturndraw.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", endturndraw);
             statusList.Add(endturndraw);
-
-            StatusEffectChangeData dreammorph = ScriptableObject.CreateInstance<StatusEffectChangeData>();
-            dreammorph.type = "";
-            dreammorph.ModAdded = this;
-            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", endturndraw);
-            statusList.Add(dreammorph);
 
             KeywordData dreamkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             dreamkey.name = "Dream";
@@ -1319,13 +1314,51 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", discardgone);
             statusList.Add(discardgone);
 
+            StatusEffectChangeData dreammorph = ScriptableObject.CreateInstance<StatusEffectChangeData>();
+            dreammorph.name = "Change Card Data";
+            dreammorph.type = "";
+            dreammorph.sprite = ImagePath("musharnaBG.png").ToSprite();
+            dreammorph.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", dreammorph);
+            statusList.Add(dreammorph);
+
             TraitData dreamtrait = ScriptableObject.CreateInstance<TraitData>();
             dreamtrait.name = "Dream";
             dreamtrait.keyword = dreamkey;
-            StatusEffectData[] dreamtemp = { discardgone, Get<StatusEffectData>("Destroy After Use"), triggerdreamers };
+            StatusEffectData[] dreamtemp = { discardgone, Get<StatusEffectData>("Destroy After Use"), triggerdreamers, dreammorph };
             dreamtrait.effects = dreamtemp;
             dreamtrait.ModAdded = this;
             AddressableLoader.AddToGroup<TraitData>("TraitData", dreamtrait);
+
+            StatusEffectTemporaryTrait tempdream = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
+            tempdream.targetConstraints = new TargetConstraint[0];
+            tempdream.name = "Temporary Dream";
+            tempdream.trait = dreamtrait;
+            tempdream.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tempdream);
+            statusList.Add(tempdream);
+
+            StatusEffectSummon goop1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
+            goop1.summonCard = Get<CardData>("LuminSealant");
+            goop1.name = "Summon Lumin Goop";
+            goop1.gainTrait = tempdream;
+            collection.SetString(goop1.name + "_text", "Summon Lumin Goop");
+            goop1.textKey = collection.GetString(goop1.name + "_text");
+            goop1.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", goop1);
+            statusList.Add(goop1);
+            StatusEffectInstantSummon goop2 = Get<StatusEffectData>("Instant Summon Junk In Hand").InstantiateKeepName() as StatusEffectInstantSummon;
+            goop2.targetSummon = goop1;
+            goop2.name = "Instant Summon Dream Base In Hand";
+            collection.SetString(goop2.name + "_text", "Add a <keyword=dream> card to hand");
+            goop2.textKey = collection.GetString(goop2.name + "_text");
+            goop2.ModAdded = this;
+            statusList.Add(goop2);
+
+            StatusEffectGiveDreamCard givedream = Ext.CreateStatus<StatusEffectGiveDreamCard>("When Deployed Or Redraw, Gain Dream Card To Hand", "Gain a <keyword=dream> card on deploy and redraw", stackable: false)
+                .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(givedream);
 
             StatusEffectTemporaryTrait tempcrit = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             tempcrit.name = "Temporary Combo";
@@ -2186,7 +2219,7 @@ namespace Pokefrost
                     .CreateUnit("musharna", "Musharna", idleAnim: "FloatAnimationProfile")
                     .SetStats(7, 4, 0)
                     .SetSprites("musharna.png", "musharnaBG.png")
-                    .SetStartWithEffect(SStack("Trigger When Dream Card Played", 1))
+                    .SetStartWithEffect(SStack("Trigger When Dream Card Played", 1), SStack("When Deployed Or Redraw, Gain Dream Card To Hand",1))
                     .AddPool()
                 );
 
@@ -2337,7 +2370,7 @@ namespace Pokefrost
                     {
                         c.playOnSlot = true;
                     })
-                    .SetTraits(new CardData.TraitStacks(Get<TraitData>("Dream"), 1))
+                    .SetTraits(new CardData.TraitStacks(Get<TraitData>("Consume"), 1))
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Summon Shedinja"), 1))
                 );
 

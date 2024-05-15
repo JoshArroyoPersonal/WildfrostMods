@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static NexPlugin.Ranking;
 
 namespace Pokefrost
 {
@@ -13,11 +14,26 @@ namespace Pokefrost
         public List<string> immuneTypes;
         public bool reverse = false;
 
+        public bool invis = false;
+        public float invisFadeIn = 0.2f;
+        public float invisFadeOut = 0.8f;
+        protected Hit invisHit;
+
         public bool ignoreReactions;
 
         public override void Init()
         {
             base.OnHit += Check;
+            if (invis)
+            {
+                base.OnHit += Invisible;
+            }
+        }
+
+        private IEnumerator Invisible(Hit hit)
+        {
+            invisHit = hit;
+            yield return Fade(1.0f, 0.5f, invisFadeIn);
         }
 
         public override bool RunHitEvent(Hit hit)
@@ -33,8 +49,18 @@ namespace Pokefrost
             if (hit.attacker == target && ignoreReactions)
             {
                 hit.canRetaliate = false;
+                return invis;
             }
 
+            return false;
+        }
+
+        public override bool RunPostHitEvent(Hit hit)
+        {
+            if (invis && hit == invisHit)
+            {
+                target.StartCoroutine(Fade(0.5f, 1.0f, invisFadeOut));
+            }
             return false;
         }
 
@@ -46,6 +72,18 @@ namespace Pokefrost
 
             target.PromptUpdate();
             yield break;
+        }
+
+        private IEnumerator Fade(float start, float end, float dur)
+        {
+            LeanTween.value(target.gameObject, start, end, dur).setEase(LeanTweenType.easeOutQuad).setOnUpdate(UpdateFade);
+            yield return dur;
+        }
+        
+        private void UpdateFade(float alpha)
+        {
+            Card card = target.display as Card;
+            card.canvasGroup.alpha = alpha;
         }
     }
 }
