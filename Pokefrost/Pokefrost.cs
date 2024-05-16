@@ -1264,7 +1264,7 @@ namespace Pokefrost
             endturndraw.effectToApply = Get<StatusEffectData>("Instant Draw");
             endturndraw.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
             endturndraw.type = "";
-            collection.SetString(endturndraw.name + "_text", "Draw <{a}> card at the end of each turn");
+            collection.SetString(endturndraw.name + "_text", "Draw <{a}> at the end of each turn");
             endturndraw.textKey = collection.GetString(endturndraw.name + "_text");
             endturndraw.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", endturndraw);
@@ -2220,7 +2220,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("rotommow", "Rotom Mow", idleAnim: "ShakeAnimationProfile", bloodProfile: "Blood Profile Black")
-                    .SetStats(7, 3, 4)
+                    .SetStats(7, 3, 0)
                     .SetSprites("rotommow.png", "rotomBG.png")
                     .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Card Destroyed"), 1))
                 );
@@ -2869,7 +2869,7 @@ namespace Pokefrost
 
         private static IEnumerator PokemonPhoto2()
         {
-            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.machamp", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.slowbro", "websiteofsites.wildfrost.pokefrost.slowking", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.gengar", "websiteofsites.wildfrost.pokefrost.ludicolo", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.hariyama", "websiteofsites.wildfrost.pokefrost.spheal", "websiteofsites.wildfrost.pokefrost.espurr", "websiteofsites.wildfrost.pokefrost.musharna", "websiteofsites.wildfrost.pokefrost.seadra", "websiteofsites.wildfrost.pokefrost.kingdra", "websiteofsites.wildfrost.pokefrost.cubone", "websiteofsites.wildfrost.pokefrost.marowak", "websiteofsites.wildfrost.pokefrost.alolanmarowak" };
+            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.ludicolo", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.spheal", "websiteofsites.wildfrost.pokefrost.espurr", "websiteofsites.wildfrost.pokefrost.musharna", "websiteofsites.wildfrost.pokefrost.seadra", "websiteofsites.wildfrost.pokefrost.cubone" };
             //string[] everyType = { "websiteofsites.wildfrost.pokefrost.crustle", "websiteofsites.wildfrost.pokefrost.goomy", "websiteofsites.wildfrost.pokefrost.absol", "websiteofsites.wildfrost.pokefrost.magneton", "websiteofsites.wildfrost.pokefrost.klefki", "websiteofsites.wildfrost.pokefrost.croagunk", "websiteofsites.wildfrost.pokefrost.litwick", "websiteofsites.wildfrost.pokefrost.murkrow", "websiteofsites.wildfrost.pokefrost.duskull", "websiteofsites.wildfrost.pokefrost.hippowdon", "websiteofsites.wildfrost.pokefrost.cradily", "websiteofsites.wildfrost.pokefrost.froslass", "websiteofsites.wildfrost.pokefrost.munchlax", "websiteofsites.wildfrost.pokefrost.weezing", "websiteofsites.wildfrost.pokefrost.chingling", "websiteofsites.wildfrost.pokefrost.magcargo", "websiteofsites.wildfrost.pokefrost.bastiodon", "websiteofsites.wildfrost.pokefrost.magikarp" };
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
