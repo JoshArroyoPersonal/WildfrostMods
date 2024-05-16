@@ -45,7 +45,7 @@ namespace Pokefrost
         private CardData.StatusEffectStacks SStack(string name, int count) => new CardData.StatusEffectStacks(Get<StatusEffectData>(name), count);
         private CardData.TraitStacks TStack(string name, int count) => new CardData.TraitStacks(Get<TraitData>(name), count);
 
-        private static GameObject pokefrostUI;
+        internal static GameObject pokefrostUI;
 
         public Pokefrost(string modDirectory) : base(modDirectory)
         {
@@ -1548,14 +1548,14 @@ namespace Pokefrost
             StatusEffectEvolveFromNode ev17 = ScriptableObject.CreateInstance<StatusEffectEvolveFromNode>();
             ev17.Autofill("Evolve Haunter", "<keyword=evolve>: Witness a <Trade>", this);
             ev17.SetEvolution("websiteofsites.wildfrost.pokefrost.gengar");
-            ev17.targetNodeName = "Trade";
+            ev17.targetNodeName = "trade";
             ev17.Confirm();
             statusList.Add(ev17);
 
             StatusEffectEvolveFromNode ev18 = ScriptableObject.CreateInstance<StatusEffectEvolveFromNode>();
             ev18.Autofill("Evolve Machoke", "<keyword=evolve>: Witness a <Trade>", this);
             ev18.SetEvolution("websiteofsites.wildfrost.pokefrost.machamp");
-            ev18.targetNodeName = "Trade";
+            ev18.targetNodeName = "trade";
             ev18.Confirm();
             statusList.Add(ev18);
 
@@ -2562,9 +2562,9 @@ namespace Pokefrost
             preLoaded = true;
         }
 
-        private void ReplaceAllTierZero()
+        private void CreateEvents()
         {
-            CampaignNodeTypeBetterEvent cn = ScriptableObject.CreateInstance<CampaignNodeTypeBetterEvent>();
+            /*CampaignNodeTypeBetterEvent cn = ScriptableObject.CreateInstance<CampaignNodeTypeBetterEvent>();
             cn.key = "Trade";
             cn.name = "CampaignNodeTrade";
             cn.canEnter = true;
@@ -2581,20 +2581,10 @@ namespace Pokefrost
             cn.mapNodePrefab.clearedSpriteOptions[0] = ImagePath("trade_done.png").ToSprite();
             cn.mapNodeSprite = ImagePath("trade_event.png").ToSprite();
             cn.zoneName = "Trade";
-            AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);
-            /*
-            GameMode gm = Get<GameMode>("GameModeNormal");
-            CampaignTier tier = gm.populator.tiers[1];
-            for(int i=0; i<tier.rewardPool.Length; i++)
-            {
-                tier.rewardPool[i] = cn;//Get<CampaignNodeType>("CampaignNodeCharm");
-            }
-            tier = gm.populator.tiers[1];
-            for (int i = 0; i < tier.rewardPool.Length; i++)
-            {
-                tier.rewardPool[i] = cn.InstantiateKeepName();
-            }
-            */
+            AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);*/
+            Ext.CreateCampaignNodeType<CampaignNodeTypeBetterEvent>(this, "trade", "t")
+                .BetterEvent("Trade", this)
+                .Register(this);
         }
 
         private void LoadStatusEffects()
@@ -2781,8 +2771,8 @@ namespace Pokefrost
             CreateModAssets();
             CreateModAssetsCards();
             CreateModAssetsCharms();
+            CreateEvents();
             base.Load();
-            ReplaceAllTierZero();
             //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += PokemonPostBattle;
             Events.OnBattleEnd += CheckEvolve;
@@ -2848,7 +2838,7 @@ namespace Pokefrost
                 SpecialEventsSystem specialEvents = GameObject.FindObjectOfType<SpecialEventsSystem>();
                 SpecialEventsSystem.Event eve = default;
                 eve.requiresUnlock = null;
-                eve.nodeType = Get<CampaignNodeType>("CampaignNodeTrade");
+                eve.nodeType = Get<CampaignNodeType>("trade");
                 eve.replaceNodeTypes = new string[] { "CampaignNodeReward" };
                 eve.minTier = 2;
                 eve.perTier = new Vector2Int(1, 1);
