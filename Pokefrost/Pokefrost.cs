@@ -33,12 +33,12 @@ namespace Pokefrost
         public static string[] magicPool = new string[] { "cubone", "marowak", "alolanmarowak", "carvanha", "sharpedo", "duskull", "dusclops", "litwick", "lampent", "chandelure" };
         public static string[] clunkPool = new string[] { "weezing", "hippowdon", "trubbish", "garbodor" };
 
-        private List<CardDataBuilder> list;
-        private List<CardUpgradeDataBuilder> charmlist;
-        private List<StatusEffectData> statusList;
+        internal List<CardDataBuilder> list;
+        internal List<CardUpgradeDataBuilder> charmlist;
+        internal List<StatusEffectData> statusList;
         private bool preLoaded = false;
         private static float shinyrate = 1/100f;
-        public static WildfrostMod instance;
+        public static Pokefrost instance;
         public TMP_SpriteAsset pokefrostSprites;
         public override TMP_SpriteAsset SpriteAsset => pokefrostSprites;
 
@@ -1916,7 +1916,7 @@ namespace Pokefrost
                     .CreateUnit("ludicolo", "Ludicolo")
                     .SetStats(10, null, 0)
                     .SetSprites("ludicolo.png", "ludicoloBG.png")
-                    .SetStartWithEffect(SStack("Trigger All Button",1), SStack("Trigger All Listener_1", 1))
+                    .SetStartWithEffect(SStack("Trigger All Button",2), SStack("Trigger All Listener_1", 1))
                     .AddPool()
                 );
 
@@ -2433,6 +2433,17 @@ namespace Pokefrost
             //
         }
 
+        private void AddGreetings()
+        {
+            foreach(CardDataBuilder builder in list)
+            {
+                builder.FreeModify((data) =>
+                {
+                    data.greetMessages = new string[] { "Oh! A wild <name> appeared!", "Hey! <name> wants to join your team!", "\"<name>?\" (This Pokemon is waiting for a response.)" };
+                });
+            }
+        }
+
         private void CreateModAssetsCharms()
         {
             Debug.Log("[Pokefrost] Loading Charms");
@@ -2770,6 +2781,7 @@ namespace Pokefrost
         {
             CreateModAssets();
             CreateModAssetsCards();
+            AddGreetings();
             CreateModAssetsCharms();
             CreateEvents();
             base.Load();
@@ -3229,4 +3241,45 @@ namespace Pokefrost
         }
     }
 
+    [HarmonyPatch(typeof(FinalBossGenerationSettings), "ReplaceCards", new Type[]
+        {
+            typeof(IList<CardData>)
+        })]
+    internal static class AppendFinalBossGenerationSettings
+    {
+        internal static void Prefix(FinalBossGenerationSettings __instance)
+        {
+            foreach(FinalBossGenerationSettings.ReplaceCard replacement in __instance.replaceCards)
+            {
+                if (replacement.card.name == "websiteofsites.wildfrost.pokefrost.eevee")
+                {
+                    return;
+                }
+            }
+
+            List<FinalBossGenerationSettings.ReplaceCard> replaceCards = new List<FinalBossGenerationSettings.ReplaceCard> ();
+            foreach(CardDataBuilder builder in Pokefrost.instance.list)
+            {
+                CardData card = Pokefrost.instance.Get<CardData>(builder._data.name);
+                foreach(CardData.StatusEffectStacks stack in card.startWithEffects)
+                {
+                    if (stack.data is StatusEffectEvolve ev)
+                    {
+                        Debug.Log($"[Pokefrost] Replacing {card.name}");
+                        CardData[] cards = ev.EvolveForFinalBoss(Pokefrost.instance);
+                        if (cards != null)
+                        {
+                            FinalBossGenerationSettings.ReplaceCard replacement = new FinalBossGenerationSettings.ReplaceCard
+                            {
+                                card = card,
+                                options = cards
+                            };
+                            replaceCards.Add(replacement);
+                        }
+                    }
+                }
+            }
+            __instance.replaceCards = __instance.replaceCards.AddRangeToArray(replaceCards.ToArray()).ToArray();
+        }
+    }
 }

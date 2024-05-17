@@ -111,6 +111,12 @@ namespace Pokefrost
             }
         }
 
+        public override CardData[] EvolveForFinalBoss(WildfrostMod mod)
+        {
+            CardData[] cards = eeveelutions.Select((s) => mod.Get<CardData>(s)).ToArray();
+            return cards;
+        }
+
         public override void Evolve(WildfrostMod mod, CardData preEvo)
         {
             FindEvolution(preEvo);
