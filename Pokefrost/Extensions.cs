@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Components;
 using UnityEngine.Localization.Tables;
 
 namespace Pokefrost
@@ -122,6 +123,41 @@ namespace Pokefrost
             status.visible = true;
             status.stackable = false;
             return status;
+        }
+
+        public static CampaignNodeTypeBuilder CreateCampaignNodeType<T>(WildfrostMod mod, string name, string letter, bool canSkip = true) where T : CampaignNodeType
+        {
+            return new CampaignNodeTypeBuilder(mod)
+                .Create<T>(name)
+                .WithCanEnter(true)
+                .WithCanLink(true)
+                .WithInteractable(true)
+                .WithCanSkip(canSkip)
+                .WithLetter(letter)
+                .WithZoneName(name);
+        }
+
+        public static CampaignNodeTypeBuilder BetterEvent(this CampaignNodeTypeBuilder cn, string key, WildfrostMod mod)
+        {
+            MapNode mapNode = mod.Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab.InstantiateKeepName();
+            mapNode.transform.SetParent(Pokefrost.pokefrostUI.transform, false);
+            StringTable collection = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
+            collection.SetString("map_" + mapNode.name, key);
+            mapNode.label.GetComponentInChildren<LocalizeStringEvent>().StringReference = collection.GetString("map_" + mapNode.name);
+            mapNode.spriteOptions[0] = mod.ImagePath("trade_event.png").ToSprite();
+            mapNode.clearedSpriteOptions[0] = mod.ImagePath("trade_done.png").ToSprite();
+            return cn.WithMapNodePrefab(mapNode)
+                .FreeModify<CampaignNodeTypeBetterEvent>((data) =>
+                {
+                    data.key = key;
+                });
+        }
+
+        public static void Register(this CampaignNodeTypeBuilder cn, WildfrostMod mod)
+        {
+            CampaignNodeType c = cn.Build();
+            c.ModAdded = mod;
+            AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", c);
         }
     }
 
