@@ -1416,7 +1416,7 @@ namespace Pokefrost
             buffmarowak.keyword = "";
             buffmarowak.hiddenKeywords = new KeywordData[] { Get<KeywordData>("random effect") };
             buffmarowak.targetConstraints = new TargetConstraint[0];
-            collection.SetString(triattack.name + "_text", "Increase <Marowak's> <keyword=health> or <keyword=attack> by <{a}>");
+            collection.SetString(buffmarowak.name + "_text", "Increase <Marowak's> <keyword=health> or <keyword=attack> by <{a}>");
             buffmarowak.textKey = collection.GetString(triattack.name + "_text");
             buffmarowak.textOrder = 0;
             buffmarowak.ModAdded = this;
@@ -1462,7 +1462,7 @@ namespace Pokefrost
             statusList.Add(ev5);
 
             StatusEffectEvolveFromStatusApplied ev6 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev6.Autofill("Evolve Croagunk", "<keyword=evolve>: Apply <{a}> <keyword=shroom>", this);
+            ev6.Autofill("Evolve Croagunk", "<keyword=evolve>: Team applies <{a}> <keyword=shroom>", this);
             ev6.SetEvolution("websiteofsites.wildfrost.pokefrost.toxicroak");
             ev6.targetType = "shroom";
             ev6.faction = "ally";
@@ -1478,7 +1478,7 @@ namespace Pokefrost
             statusList.Add(ev7);
 
             StatusEffectEvolveFromHitApplied ev8 = ScriptableObject.CreateInstance<StatusEffectEvolveFromHitApplied>();
-            ev8.Autofill("Evolve Carvanha", "<keyword=evolve>: Apply <{a}> <keyword=teeth> damage", this);
+            ev8.Autofill("Evolve Carvanha", "<keyword=evolve>: Team deals <{a}> <keyword=teeth> damage", this);
             ev8.SetEvolution("websiteofsites.wildfrost.pokefrost.sharpedo");
             ev8.targetType = "spikes";
             ev8.faction = "ally";
@@ -1512,7 +1512,7 @@ namespace Pokefrost
             statusList.Add(ev12);
 
             StatusEffectEvolveFromStatusApplied ev13 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev13.Autofill("Evolve Piplup", "<keyword=evolve>: Apply <{a}><keyword=snow>", this);
+            ev13.Autofill("Evolve Piplup", "<keyword=evolve>: Team applies <{a}><keyword=snow>", this);
             ev13.SetEvolution("websiteofsites.wildfrost.pokefrost.prinplup");
             ev13.targetType = "snow";
             ev13.faction = "ally";
@@ -1582,7 +1582,7 @@ namespace Pokefrost
             statusList.Add(ev21);
 
             StatusEffectEvolveCubone ev22 = ScriptableObject.CreateInstance<StatusEffectEvolveCubone>();
-            ev22.Autofill("Evolve Cubone", "<keyword=evolve>: Injury <{a}>", this);
+            ev22.Autofill("Evolve Cubone", "<keyword=evolve>: Become injured", this);
             ev22.SetEvolutions("websiteofsites.wildfrost.pokefrost.marowak", "websiteofsites.wildfrost.pokefrost.alolanmarowak");
             ev22.Confirm();
             statusList.Add(ev22);
@@ -2869,13 +2869,13 @@ namespace Pokefrost
 
         private static IEnumerator PokemonPhoto2()
         {
-            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.ludicolo", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.spheal", "websiteofsites.wildfrost.pokefrost.espurr", "websiteofsites.wildfrost.pokefrost.musharna", "websiteofsites.wildfrost.pokefrost.seadra", "websiteofsites.wildfrost.pokefrost.cubone" };
+            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.cubone", "websiteofsites.wildfrost.pokefrost.spheal", "websiteofsites.wildfrost.pokefrost.seadra", "websiteofsites.wildfrost.pokefrost.makuhita", "websiteofsites.wildfrost.pokefrost.espurr", "websiteofsites.wildfrost.pokefrost.musharna", "websiteofsites.wildfrost.pokefrost.machoke", "websiteofsites.wildfrost.pokefrost.slowpoke", "websiteofsites.wildfrost.pokefrost.haunter", "websiteofsites.wildfrost.pokefrost.ludicolo" };
             //string[] everyType = { "websiteofsites.wildfrost.pokefrost.crustle", "websiteofsites.wildfrost.pokefrost.goomy", "websiteofsites.wildfrost.pokefrost.absol", "websiteofsites.wildfrost.pokefrost.magneton", "websiteofsites.wildfrost.pokefrost.klefki", "websiteofsites.wildfrost.pokefrost.croagunk", "websiteofsites.wildfrost.pokefrost.litwick", "websiteofsites.wildfrost.pokefrost.murkrow", "websiteofsites.wildfrost.pokefrost.duskull", "websiteofsites.wildfrost.pokefrost.hippowdon", "websiteofsites.wildfrost.pokefrost.cradily", "websiteofsites.wildfrost.pokefrost.froslass", "websiteofsites.wildfrost.pokefrost.munchlax", "websiteofsites.wildfrost.pokefrost.weezing", "websiteofsites.wildfrost.pokefrost.chingling", "websiteofsites.wildfrost.pokefrost.magcargo", "websiteofsites.wildfrost.pokefrost.bastiodon", "websiteofsites.wildfrost.pokefrost.magikarp" };
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
             CardFramesUnlockedSequence sequence = GameObject.FindObjectOfType<CardFramesUnlockedSequence>();
             TextMeshProUGUI titleObject = sequence.GetComponentInChildren<TextMeshProUGUI>(true);
-            titleObject.text = $"New Pokemon";
+            titleObject.text = $"10 New Companions";
             yield return sequence.StartCoroutine("CreateCards", everyGeneration);
 
             //yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
@@ -3111,7 +3111,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\nAdds 36 new companions, 2 new pets, and 5 new charms.";
+        public override string Description => "Pokemon Companions\r\n\r\nAdds 46 new companions, 2 new pets, 6 new charms, and a new map event.";
 
         public override List<T> AddAssets<T, Y>()
         {

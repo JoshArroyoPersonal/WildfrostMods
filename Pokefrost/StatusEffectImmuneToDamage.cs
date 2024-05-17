@@ -40,9 +40,16 @@ namespace Pokefrost
         {
             if (hit.target == target && hit.Offensive && hit.canBeNullified)
             {
+                UnityEngine.Debug.Log(hit.damageType);
+
                 if (reverse ^ immuneTypes.Contains(hit.damageType))
                 {
-                    return hit.damage > 0;
+                    UnityEngine.Debug.Log("here");
+                    SfxSystem.OneShot("event:/sfx/status_icon/block_decrease");
+                    hit.damageBlocked = hit.damage;
+                    hit.damage = 0;
+
+                    target.PromptUpdate();
                 }
             }
 
@@ -66,6 +73,7 @@ namespace Pokefrost
 
         private IEnumerator Check(Hit hit)
         {
+            UnityEngine.Debug.Log("here");
             SfxSystem.OneShot("event:/sfx/status_icon/block_decrease");
             hit.damageBlocked = hit.damage;
             hit.damage = 0;
