@@ -61,7 +61,7 @@ namespace Pokefrost
             foreach (CardData card in cards)
             {
                 Debug.Log($"[Test] {card.title}");
-                if (card.cardType.name == "Item" && card.traits != null && !card.traits.Exists((CardData.TraitStacks b) => (b.data.name == "Consume" || b.data.name == "Recycle") ))
+                if (card.cardType.name == "Item" && card.traits != null && card.mainSprite?.name != "Nothing" && !card.traits.Exists((CardData.TraitStacks b) => (b.data.name == "Consume" || b.data.name == "Recycle") ))
                 {
                     cardBase = card;
                     break;
