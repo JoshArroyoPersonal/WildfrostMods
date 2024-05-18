@@ -39,7 +39,7 @@ namespace Pokefrost
         public override void Autofill(string n, string descrip, WildfrostMod mod)
         {
             base.Autofill(n, descrip, mod);
-            targetNodeName = "Salty Spicelands";
+            evolutionCardName = "websiteofsites.pokefrost.slowbro";
         }
 
         public override void Evolve(WildfrostMod mod, CardData preEvo)

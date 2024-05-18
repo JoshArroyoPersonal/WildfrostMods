@@ -95,6 +95,26 @@ namespace Pokefrost
             pokemonEvolvedIntoLastBattle.Clear();
         }
 
+        public virtual CardData[] EvolveForFinalBoss(WildfrostMod mod)
+        {
+            CardData evolution = mod.Get<CardData>(evolutionCardName);
+            if (evolution == null)
+            {
+                return null;
+            }
+            else
+            {
+                foreach(CardData.StatusEffectStacks stack in evolution.startWithEffects)
+                {
+                    if (stack.data is StatusEffectEvolve ev)
+                    {
+                        return (ev.EvolveForFinalBoss(mod) ?? new CardData[] { evolution });
+                    }
+                }
+            }
+            return new CardData[] { evolution };
+        }
+
         public virtual void Evolve(WildfrostMod mod, CardData preEvo)
         {
             CardData evolution = mod.Get<CardData>(evolutionCardName).Clone();
@@ -117,6 +137,10 @@ namespace Pokefrost
                 if (upgrade.CanAssign(evolution))
                 {
                     upgrade.Assign(evolution);
+                }
+                else
+                {
+                    References.PlayerData.inventory.upgrades.Add(mod.Get<CardUpgradeData>(upgrade.name).Clone());
                 }
             }
             Card card = CardManager.Get(evolution, null, References.Player, false, true);
