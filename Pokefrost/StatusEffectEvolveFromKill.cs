@@ -180,6 +180,7 @@ namespace Pokefrost
                 }
             }
             evolutionCardName = normalEvolution;
+            References.PlayerData.inventory.upgrades.Add(mod.Get<CardUpgradeData>("CardUpgradeThickClub").Clone());
             base.Evolve(mod, preEvo);
         }
     }

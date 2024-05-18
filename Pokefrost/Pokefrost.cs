@@ -1379,18 +1379,18 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", givecrit);
             statusList.Add(givecrit);
 
-            this.CreateBasicKeyword("teeterdance", "Teeter Dance", "<End Turn>: Trigger everyone in the battle|Click to activate\nOnce per battle");
+            this.CreateBasicKeyword("teeterdance", "Teeter Dance", "<End Turn>: Trigger self, then enemies, then allies |Click to activate\nTwice per battle");
             this.CreateButtonIcon("ludicoloTeeterDance", ImagePath("ludicolobutton.png").ToSprite(), "teeterDance", "counter", Color.black, new KeywordData[] {Get<KeywordData>("teeterdance")});
 
             StatusTokenApplyX teeter = this.CreateStatusButton<StatusTokenApplyX>("Trigger All Button", type: "teeterDance")
-                .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Enemies)
+                .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Enemies | StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             teeter.endTurn = true;
             teeter.finiteUses = true;
             statusList.Add(teeter);
 
             StatusTokenApplyXListener teeter2 = Ext.CreateStatus<StatusTokenApplyXListener>("Trigger All Listener_1", type: "teeterDance_listener")
-                .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Self)
+                .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
             statusList.Add(teeter2);
 
@@ -1914,7 +1914,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("ludicolo", "Ludicolo")
-                    .SetStats(10, null, 0)
+                    .SetStats(10, 4, 0)
                     .SetSprites("ludicolo.png", "ludicoloBG.png")
                     .SetStartWithEffect(SStack("Trigger All Button",2), SStack("Trigger All Listener_1", 1))
                     .AddPool()
