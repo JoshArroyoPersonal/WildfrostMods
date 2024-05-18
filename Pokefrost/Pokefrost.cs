@@ -1141,12 +1141,12 @@ namespace Pokefrost
 
             StatusEffectApplyXOnCardPlayed triggerslowking = ScriptableObject.CreateInstance<StatusEffectApplyXOnCardPlayed>();
             triggerslowking.name = "On Card Played Trigger All Slowking Crowns";
-            triggerslowking.effectToApply = Get<StatusEffectData>("Trigger");
+            triggerslowking.effectToApply = Get<StatusEffectData>("Trigger (High Prio)");
             triggerslowking.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies;
             triggerslowking.applyConstraints = new TargetConstraint[] { new TargetConstraintHasSlowkingCrown() };
             triggerslowking.canBeBoosted = false;
             triggerslowking.doPing = true;
-            collection.SetString(triggerslowking.name + "_text", "Trigger allies wearing <sprite name=slowking_crown>");
+            collection.SetString(triggerslowking.name + "_text", "Trigger <sprite name=slowking_crown>'d allies");
             triggerslowking.textKey = collection.GetString(triggerslowking.name + "_text");
             triggerslowking.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerslowking);
