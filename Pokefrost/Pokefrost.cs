@@ -1304,7 +1304,7 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerdreamers);
             statusList.Add(triggerdreamers);
 
-            StatusEffectApplyXWhenDiscarded discardgone = ScriptableObject.CreateInstance<StatusEffectApplyXWhenDiscarded>();
+            StatusEffectApplyXWhenDiscardedFixed discardgone = ScriptableObject.CreateInstance<StatusEffectApplyXWhenDiscardedFixed>();
             discardgone.name = "Destroyed On Discard";
             discardgone.effectToApply = Get<StatusEffectData>("Sacrifice Card In Hand");
             discardgone.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
@@ -2228,7 +2228,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("musharna", "Musharna", idleAnim: "FloatAnimationProfile")
-                    .SetStats(7, 4, 0)
+                    .SetStats(7, 3, 0)
                     .SetSprites("musharna.png", "musharnaBG.png")
                     .SetStartWithEffect(SStack("Trigger When Dream Card Played", 1), SStack("When Deployed Or Redraw, Gain Dream Card To Hand",1))
                     .AddPool()
