@@ -1743,7 +1743,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("alolanmarowak", "Alolan Marowak")
+                    .CreateUnit("alolanmarowak", "Alolan Marowak", bloodProfile: "Blood Profile Husk")
                     .SetStats(4, null, 0)
                     .SetSprites("alolanmarowak.png", "alolanmarowakBG.png")
                     .SetStartWithEffect(SStack("When Ally Is Sacrificed Trigger To Self", 1), SStack("Summon Beepop", 1))
@@ -1770,7 +1770,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("seadra", "Seadra")
+                    .CreateUnit("seadra", "Seadra", idleAnim: "FloatAnimationProfile")
                     .SetStats(6,6,5)
                     .SetSprites("seadra.png", "seadraBG.png")
                     .SetStartWithEffect(SStack("Give Combo to Card in Hand", 1), SStack("Evolve Seadra", 4))
@@ -1957,7 +1957,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("hariyama", "Hariyama")
+                    .CreateUnit("hariyama", "Hariyama", idleAnim: "GiantAnimationProfile")
                     .SetStats(12, 0, 4)
                     .SetSprites("hariyama.png", "hariyamaBG.png")
                     .SetStartWithEffect(SStack("Damage Equal To Missing Health", 1))
@@ -2032,7 +2032,7 @@ namespace Pokefrost
                     .CreateUnit("dusclops", "Dusclops", bloodProfile: "Blood Profile Black")
                     .SetStats(10, 4, 0)
                     .SetSprites("dusclops.png", "dusclopsBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("When Ally Summoned Add Skull To Hand"), 1), new CardData.StatusEffectStacks(Get<StatusEffectData>("Trigger When Summon"), 1))
+                    .SetStartWithEffect(SStack("When Ally Summoned Add Skull To Hand", 1), SStack("Trigger When Summon", 1))
                 );
 
             list.Add(
@@ -2047,7 +2047,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("spheal", "Spheal")
+                    .CreateUnit("spheal", "Spheal", idleAnim: "PingAnimationProfile")
                     .SetStats(5, 2, 3)
                     .SetSprites("spheal.png", "sphealBG.png")
                     .SetStartWithEffect(SStack("On Hit Snowed Target Double Attack", 1))
@@ -2298,7 +2298,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("espurr", "Espurr")
+                    .CreateUnit("espurr", "Espurr", idleAnim: "PulseAnimationProfile")
                     .SetStats(2, null, 0)
                     .SetSprites("espurr.png", "espurrBG.png")
                     .SetStartWithEffect(SStack("End of Turn Draw a Card", 1))
@@ -2348,7 +2348,7 @@ namespace Pokefrost
                     .CreateUnit("salazzle", "Salazzle")
                     .SetStats(7, 1, 3)
                     .SetSprites("salazzle.png", "salazzleBG.png")
-                    .SetStartWithEffect(new CardData.StatusEffectStacks(Get<StatusEffectData>("While Active It Is Overshroom"), 1))
+                    .SetStartWithEffect(SStack("While Active It Is Overshroom", 1))
                     .AddPool("BasicUnitPool")
                     .AddPool("MagicUnitPool")
                 );
@@ -3245,7 +3245,7 @@ namespace Pokefrost
         {
             typeof(IList<CardData>)
         })]
-    internal static class AppendFinalBossGenerationSettings
+    internal static class AppendCardReplacement
     {
         internal static void Prefix(FinalBossGenerationSettings __instance)
         {
@@ -3280,6 +3280,71 @@ namespace Pokefrost
                 }
             }
             __instance.replaceCards = __instance.replaceCards.AddRangeToArray(replaceCards.ToArray()).ToArray();
+        }
+    }
+
+    [HarmonyPatch(typeof(FinalBossGenerationSettings), "ProcessEffects", new Type[]
+        {
+            typeof(IList<CardData>)
+        })]
+    internal static class AppendEffectSwapper
+    {
+        internal static void Prefix(FinalBossGenerationSettings __instance)
+        {
+            foreach (FinalBossEffectSwapper swapper in __instance.effectSwappers)
+            {
+                if (swapper.effect.name == "Buff Card In Deck On Kill")
+                {
+                    return;
+                }
+            }
+
+            List<FinalBossEffectSwapper> swappers = new List<FinalBossEffectSwapper>();
+            swappers.Add(CreateSwapper("While Active Frenzy To Crown Allies", "While Active Frenzy To Allies", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("Give Thick Club", "On Card Played Buff Marowak", minBoost: 0, maxBoost: 1));
+            swappers.Add(CreateSwapper("While Active Increase Effects To Hand", "Ongoing Increase Effects", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("Give Slowking Crown", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("Give Combo to Card in Hand", "On Turn Apply Attack To Self", minBoost: 2, maxBoost: 3));
+            swappers.Add(CreateSwapper("Discard Rightmost Button", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("When Deployed Sketch", attackOption: "Null", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("Trigger All Button", "When Destroyed Trigger To Allies", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("Trigger All Listener_1", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("When Ally Summoned Add Skull To Hand", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("Trigger When Summon", "Trigger When Card Destroyed", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("On Hit Snowed Target Double Attack", attackOption:"Snow", minBoost: 1, maxBoost: 2));
+            swappers.Add(CreateSwapper("Buff Card In Deck On Kill", "On Turn Apply Attack To Self", minBoost: 1, maxBoost: 3));
+            swappers.Add(CreateSwapper("Trigger Clunker Ahead", "On Turn Apply Scrap To RandomAlly", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("On Card Played Increase Attack Of Cards In Hand", "While Active Increase Attack To Allies", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("When Hit Add Scrap Pile To Hand", "On Turn Apply Scrap To RandomAlly", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("End of Turn Draw a Card", "When Hit Add Junk To Hand", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("While Active It Is Overshroom", attackOption: "Overload", minBoost: 4, maxBoost: 4));
+            swappers.Add(CreateSwapper("Gain Frenzy When Companion Is Killed", "MultiHit", minBoost: 2, maxBoost: 3));
+            __instance.effectSwappers = __instance.effectSwappers.AddRangeToArray(swappers.ToArray()).ToArray();
+        }
+
+        internal static FinalBossEffectSwapper CreateSwapper(string effect, string replaceOption = null, string attackOption = null, int minBoost = 0, int maxBoost = 0)
+        {
+            FinalBossEffectSwapper swapper = ScriptableObject.CreateInstance<FinalBossEffectSwapper>();
+            swapper.effect = Pokefrost.instance.Get<StatusEffectData>(effect);
+            swapper.replaceWithOptions = new StatusEffectData[0];
+            String s = "";
+            if (!replaceOption.IsNullOrEmpty())
+            {
+                swapper.replaceWithOptions = swapper.replaceWithOptions.Append(Pokefrost.instance.Get<StatusEffectData>(replaceOption)).ToArray();
+                s += swapper.replaceWithOptions[0].name;
+            }
+            if (!attackOption.IsNullOrEmpty())
+            {
+                swapper.replaceWithAttackEffect = Pokefrost.instance.Get<StatusEffectData>(attackOption);
+                s += swapper.replaceWithAttackEffect.name;
+            }
+            if (s.IsNullOrEmpty())
+            {
+                s = "Nothing";
+            }
+            swapper.boostRange = new Vector2Int(minBoost, maxBoost);
+            Debug.Log($"[Pokefrost] {swapper.effect.name} => {s} + {swapper.boostRange}");
+            return swapper;
         }
     }
 }
