@@ -1412,12 +1412,13 @@ namespace Pokefrost
             buffmarowak.canBeBoosted = true;
             buffmarowak.name = "On Card Played Buff Marowak";
             buffmarowak.applyFormat = "";
+            buffmarowak.type = "marowak";
             buffmarowak.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             buffmarowak.keyword = "";
             buffmarowak.hiddenKeywords = new KeywordData[] { Get<KeywordData>("random effect") };
             buffmarowak.targetConstraints = new TargetConstraint[0];
             collection.SetString(buffmarowak.name + "_text", "Increase <Marowak's> <keyword=health> or <keyword=attack> by <{a}>");
-            buffmarowak.textKey = collection.GetString(triattack.name + "_text");
+            buffmarowak.textKey = collection.GetString(buffmarowak.name + "_text");
             buffmarowak.textOrder = 0;
             buffmarowak.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", buffmarowak);
@@ -2466,6 +2467,11 @@ namespace Pokefrost
             pom.targetConstraints = pom.targetConstraints.Append(nopluck).ToArray();
             gnome.targetConstraints = gnome.targetConstraints.Append(nopluck).ToArray();
 
+            TargetConstraintStatusMoreThan thickclubconstraint = ScriptableObject.CreateInstance<TargetConstraintStatusMoreThan>();
+            thickclubconstraint.not = true;
+            thickclubconstraint.status = Get<StatusEffectData>("On Card Played Buff Marowak");
+            thickclubconstraint.amount = 0;
+
             charmlist = new List<CardUpgradeDataBuilder>();
             //Add our cards here
             charmlist.Add(
@@ -2552,8 +2558,8 @@ namespace Pokefrost
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithTier(-1)
                     .WithImage("thickclubCharm.png")
-                    .WithType(CardUpgradeData.Type.Charm)
                     .SetEffects(SStack("On Card Played Buff Marowak", 1))
+                    .SetConstraints(thickclubconstraint)
                     .WithTitle("Thick Club")
                     .WithText("Gain increase <Marowak's> <keyword=health> or <keyword=attack> by <1>\n\nRandomly each trigger")
             );
@@ -2615,7 +2621,7 @@ namespace Pokefrost
                     {
                         if (s.data.name == "Give Thick Club")
                         {
-                            References.Player.data.inventory.upgrades.Add(AddressableLoader.Get<CardUpgradeData>("CardUpgradeData", "websiteofsites.wildfrost.pokefrost.CardUpgradeThickClub"));
+                            References.Player.data.inventory.upgrades.Add(AddressableLoader.Get<CardUpgradeData>("CardUpgradeData", "websiteofsites.wildfrost.pokefrost.CardUpgradeThickClub").Clone());
                             break;
                         }
                     }
@@ -2628,7 +2634,7 @@ namespace Pokefrost
                     {
                         if (s.data.name == "Give Slowking Crown")
                         {
-                            References.Player.data.inventory.upgrades.Add(AddressableLoader.Get<CardUpgradeData>("CardUpgradeData", "websiteofsites.wildfrost.pokefrost.CrownSlowking"));
+                            References.Player.data.inventory.upgrades.Add(AddressableLoader.Get<CardUpgradeData>("CardUpgradeData", "websiteofsites.wildfrost.pokefrost.CrownSlowking").Clone());
                             break;
                         }
                     }
@@ -2798,6 +2804,9 @@ namespace Pokefrost
             Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
 
+            FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
+            ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
+
             //References.instance.classes[0] = Get<ClassData>("Basic");
             //References.instance.classes[1] = Get<ClassData>("Magic");
             //References.instance.classes[2] = Get<ClassData>("Clunk");
@@ -2809,7 +2818,7 @@ namespace Pokefrost
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
-            Events.OnSceneChanged += PokemonPhoto;
+            //Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             //for (int i = 0; i < References.Classes.Length; i++)
             //{
@@ -2838,7 +2847,7 @@ namespace Pokefrost
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
             //Events.OnCardDataCreated -= Wildparty;
-            Events.OnSceneChanged -= PokemonPhoto;
+            //Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
         }
@@ -2861,8 +2870,6 @@ namespace Pokefrost
 
         private void PokemonPhoto(Scene scene)
         {
-            FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
-            ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
             if(scene.name == "MainMenu")
             {
                 References.instance.StartCoroutine(PokemonPhoto2());
