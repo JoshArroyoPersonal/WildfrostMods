@@ -3186,8 +3186,8 @@ namespace Pokefrost
                 {
                     if (s.data is StatusEffectEvolveFromNode s2)
                     {
-                        s2.NodeVisit(__instance.name);
-                        if (s2.ReadyToEvolve(card))
+                        ;
+                        if (s2.NodeVisit(__instance.name, card))
                         {
                             Debug.Log("[Pokefrost] Ready for evolution!");
                             slateForEvolution.Add(card);
@@ -3203,8 +3203,7 @@ namespace Pokefrost
                 {
                     if (s.data is StatusEffectEvolveFromNode s2)
                     {
-                        s2.NodeVisit(__instance.name);
-                        if (s2.ReadyToEvolve(card))
+                        if (s2.NodeVisit(__instance.name, card))
                         {
                             Debug.Log("[Pokefrost] Ready for evolution!");
                             slateForEvolution.Add(card);

@@ -18,17 +18,19 @@ namespace Pokefrost
             type = "evolve3";
         }
 
-        public virtual void NodeVisit(string nodeName)
+        //This method is effectively ReadyToEvolve
+        public virtual bool NodeVisit(string nodeName, CardData cardData)
         {
             if (nodeName == targetNodeName)
             {
-                readyToEvolve = true;
+                return true;
             }
+            return false;
         }
 
         public override bool ReadyToEvolve(CardData cardData)
         {
-            return readyToEvolve;
+            return false;
         }
     }
 

@@ -22,6 +22,10 @@ namespace Pokefrost
         public override bool RunBeginEvent()
         {
             target.data.backgroundSprite = sprite;
+            if (cardBase != null )
+            {
+                target.data.mainSprite = cardBase.mainSprite;
+            }
             target.data.playType = Card.PlayType.Play;
             target.StartCoroutine(target.display.UpdateData(true));
             return false;
@@ -83,6 +87,7 @@ namespace Pokefrost
             trueData.mainSprite = cardBase.mainSprite;
             trueData.hasAttack = cardBase.hasAttack;
             //trueData.backgroundSprite = cardBase.backgroundSprite;
+            trueData.targetConstraints = cardBase.targetConstraints;
             trueData.canPlayOnBoard = cardBase.canPlayOnBoard;
             trueData.canPlayOnEnemy = cardBase.canPlayOnEnemy;
             trueData.canPlayOnHand = cardBase.canPlayOnHand;
