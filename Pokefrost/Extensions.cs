@@ -49,6 +49,12 @@ namespace Pokefrost
             return t;
         }
 
+        public static T SetApplyConstraints<T>(this T t, params TargetConstraint[] ts) where T : StatusEffectApplyX
+        {
+            t.applyConstraints = ts;
+            return t;
+        }
+
         public static T Register<T>(this T status, WildfrostMod mod) where T : StatusEffectData
         {
             status.ModAdded = mod;

@@ -24,6 +24,7 @@ using UnityEngine.UI;
 using System.Runtime.Remoting.Messaging;
 using System.Configuration;
 using UnityEngine.Localization.Components;
+using WildfrostHopeMod.VFX;
 
 namespace Pokefrost
 {
@@ -42,6 +43,8 @@ namespace Pokefrost
         public TMP_SpriteAsset pokefrostSprites;
         public override TMP_SpriteAsset SpriteAsset => pokefrostSprites;
 
+        public static GIFLoader VFX;
+
         private CardData.StatusEffectStacks SStack(string name, int count) => new CardData.StatusEffectStacks(Get<StatusEffectData>(name), count);
         private CardData.TraitStacks TStack(string name, int count) => new CardData.TraitStacks(Get<TraitData>(name), count);
 
@@ -57,6 +60,9 @@ namespace Pokefrost
             pokefrostUI = new GameObject("PokefrostUI");
             pokefrostUI.SetActive(false);
             GameObject.DontDestroyOnLoad(pokefrostUI);
+
+            VFX = new GIFLoader(this.ImagePath("Anim"));
+            VFX.RegisterAllAsApplyEffect();
 
             statusList = new List<StatusEffectData>(30);
             /*
@@ -1427,6 +1433,56 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(giveThickClub);
 
+            this.CreateBasicKeyword("curseofweakness", "Curse of Weakness", "While in hand, reduce <keyword=attack> of all allies by <1>|A card can only hold one curse at a time!").showName = true;
+            this.CreateBasicKeyword("curseofpower", "Curse of Power", "While in hand, increase <keyword=attack> of all enemies by <1>|A card can only hold one curse at a time!").showName = true;
+            this.CreateBasicKeyword("curseofpara", "Curse of Paralysis", "While in hand, add <keyword=unmovable> to all allies|A card can only hold one curse at a time!").showName = true;
+
+            StatusEffectWhileInHandXUpdate weakcurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("While In Hand Reduce Attack To Allies (Different Desc)", "<keyword=curseofweakness>", type:"curse")
+                .ApplyX(Get<StatusEffectData>("Ongoing Reduce Attack"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+            statusList.Add(weakcurse);
+
+            StatusEffectWhileInHandXUpdate powercurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("While In Hand Increase Attack To Enemies", "<keyword=curseofpower>", type:"curse")
+                .ApplyX(Get<StatusEffectData>("Ongoing Increase Attack"), StatusEffectApplyX.ApplyToFlags.Enemies)
+                .Register(this);
+            statusList.Add(powercurse);
+
+            StatusEffectWhileInHandXUpdate paracurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("While In Hand Unmovable To Allies", "<keyword=curseofpara>", type:"curse")
+                .ApplyX(Get<StatusEffectData>("Temporary Unmovable"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+            statusList.Add(paracurse);
+
+
+            TargetConstraintStatusMoreThan curseconstraint = ScriptableObject.CreateInstance<TargetConstraintStatusMoreThan>();
+            curseconstraint.not = true;
+            curseconstraint.status = Get<StatusEffectData>("While In Hand Unmovable To Allies");
+            curseconstraint.amount = 0;
+
+
+            StatusEffectApplyXOnCardPlayed giveweakcurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", "Give a card in hand <keyword=curseofweakness>", boostable: true)
+                .ApplyX(Get<StatusEffectData>("While In Hand Reduce Attack To Allies (Different Desc)"), StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
+                .SetApplyConstraints(curseconstraint)
+                .Register(this);
+            statusList.Add(giveweakcurse);
+
+            StatusEffectApplyXOnCardPlayed givepowercurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", "Give a card in hand <keyword=curseofpower>", boostable: true)
+                .ApplyX(Get<StatusEffectData>("While In Hand Increase Attack To Enemies"), StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
+                .SetApplyConstraints(curseconstraint)
+                .Register(this);
+            statusList.Add(givepowercurse);
+
+            StatusEffectApplyXOnCardPlayed giveparacurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", "Give a card in hand <keyword=curseofpara>")
+                .ApplyX(Get<StatusEffectData>("While In Hand Unmovable To Allies"), StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
+                .SetApplyConstraints(curseconstraint)
+                .Register(this);
+            statusList.Add(giveparacurse);
+
+            StatusEffectJolted jolted = Ext.CreateStatus<StatusEffectJolted>("Jolted", "<Jolted> <{a}>")
+                .Register(this);
+            jolted.removeOnDiscard = true;
+            jolted.isStatus = true;
+            statusList.Add(jolted);
+
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
@@ -2431,6 +2487,47 @@ namespace Pokefrost
                     .CanPlayOnEnemy(false)
                 );
 
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_hypno", "Hypno")
+                    .SetStats(12, 3, 4)
+                    .SetSprites("slowbro.png", "slowbroBG.png")
+                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", 1))
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_mismagius", "Mismagius")
+                    .SetStats(6, 0, 1)
+                    .SetSprites("haunter.png", "haunterBG.png")
+                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1))
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_spiritomb", "Spiritomb")
+                    .SetStats(16, 0, 0)
+                    .SetSprites("sableye.png", "sableyeBG.png")
+                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", 1))
+                    .SetTraits(TStack("Smackback", 1))
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_magmortar", "Magmortar")
+                    .SetStats(10, 10, 5)
+                    .SetSprites("volcarona.png", "volcaronaBG.png")
+                    .SetTraits(TStack("Longshot", 1), TStack("Explode", 2))
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                );
+
             //
         }
 
@@ -2503,13 +2600,15 @@ namespace Pokefrost
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeSketch")
-                    .WithTier(3)
+                    .WithTier(5)
                     .WithImage("smeargleCharm.png")
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetEffects(SStack("When Deployed Sketch", 1))
-                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeBlock").targetConstraints)
+                    .SetTraits(TStack("Pigheaded", 1))
+                    .ChangeDamage(-2)
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeBlock").targetConstraints[0], Get<CardUpgradeData>("CardUpgradePig").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeBarrage").targetConstraints[2])
                     .WithTitle("Smeargle Charm")
-                    .WithText("Gain <keyword=sketch> <1>")
+                    .WithText("Gain <keyword=sketch> <1>, <keyword=pigheaded> and reduce <keyword=attack> by <2>")
             );
 
             charmlist.Add(
@@ -2543,11 +2642,11 @@ namespace Pokefrost
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeRevive")
-                    .WithTier(3)
+                    .WithTier(2)
                     .WithImage("reviveCharm.png")
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetEffects(SStack("Revive",1))
-                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeHeart").targetConstraints[0])
                     .WithTitle("Revive Charm")
                     .WithText("Gain <keyword=revive>")
             );

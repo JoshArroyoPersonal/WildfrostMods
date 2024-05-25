@@ -276,6 +276,7 @@
   <ItemGroup>
     <Compile Include="ButtonClasses.cs" />
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
+    <Compile Include="DumbFixes.cs" />
     <Compile Include="EventRoutineTrade.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="ScriptableAmounts.cs" />
@@ -283,6 +284,7 @@
     <Compile Include="StatusEffectChangeData.cs" />
     <Compile Include="StatusEffectEvolveFromNode.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
+    <Compile Include="StatusEffectJolted.cs" />
     <Compile Include="StatusEffectMoveCard.cs" />
     <Compile Include="StatusEffectRevive.cs" />
     <Compile Include="StatusEffectSketch.cs" />
