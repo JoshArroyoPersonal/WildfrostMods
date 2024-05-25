@@ -12,12 +12,12 @@ namespace Pokefrost
     {
         public override void Init()
         {
-            base.PostAttack += Check;
+            base.OnCardPlayed += Check;
         }
 
-        public override bool RunPostAttackEvent(Hit hit)
+        public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
         {
-            if (hit.attacker == target && hit.Offensive && hit.BasicHit)
+            if (entity == target)
             {
                 return true;
             }
@@ -25,16 +25,18 @@ namespace Pokefrost
             return false;
         }
 
-        public IEnumerator Check(Hit hit)
+        public IEnumerator Check(Entity entity, Entity[] targets)
         {
 
-            Hit hit2 = new Hit(target, hit.attacker, count)
+            Hit hit2 = new Hit(entity, entity, count)
             {
                 canRetaliate = false,
                 damageType = "jolt"
             };
 
             Pokefrost.VFX.TryPlayEffect("jolted", target.transform.position, 0.5f*target.transform.lossyScale);
+            target.curveAnimator.Ping();
+            yield return new WaitForSeconds(0.25f);
             yield return hit2.Process();
         }
     }
