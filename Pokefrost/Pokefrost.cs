@@ -25,6 +25,8 @@ using System.Runtime.Remoting.Messaging;
 using System.Configuration;
 using UnityEngine.Localization.Components;
 using WildfrostHopeMod.VFX;
+using WildfrostHopeMod.SFX;
+using BattleEditor;
 
 namespace Pokefrost
 {
@@ -44,6 +46,7 @@ namespace Pokefrost
         public override TMP_SpriteAsset SpriteAsset => pokefrostSprites;
 
         public static GIFLoader VFX;
+        public static SFXLoader SFX;
 
         private CardData.StatusEffectStacks SStack(string name, int count) => new CardData.StatusEffectStacks(Get<StatusEffectData>(name), count);
         private CardData.TraitStacks TStack(string name, int count) => new CardData.TraitStacks(Get<TraitData>(name), count);
@@ -63,6 +66,9 @@ namespace Pokefrost
 
             VFX = new GIFLoader(this.ImagePath("Anim"));
             VFX.RegisterAllAsApplyEffect();
+
+            SFX = new SFXLoader(this.ImagePath("Sounds"));
+            SFX.RegisterAllSoundsToGlobal();
 
             statusList = new List<StatusEffectData>(30);
             /*
@@ -1366,6 +1372,11 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(givedream);
 
+            StatusEffectApplyXOnCardPlayed dreamonplay = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Gain Dream Card To Hand", "Gain a <keyword=dream> card", stackable: false)
+                .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(dreamonplay);
+
             StatusEffectTemporaryTrait tempcrit = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             tempcrit.name = "Temporary Combo";
             tempcrit.trait = Get<TraitData>("Combo");
@@ -1452,12 +1463,10 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(paracurse);
 
-
             TargetConstraintStatusMoreThan curseconstraint = ScriptableObject.CreateInstance<TargetConstraintStatusMoreThan>();
             curseconstraint.not = true;
             curseconstraint.status = Get<StatusEffectData>("While In Hand Unmovable To Allies");
             curseconstraint.amount = 0;
-
 
             StatusEffectApplyXOnCardPlayed giveweakcurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", "Give a card in hand <keyword=curseofweakness>", boostable: true)
                 .ApplyX(Get<StatusEffectData>("While In Hand Reduce Attack To Allies (Different Desc)"), StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
@@ -1666,6 +1675,10 @@ namespace Pokefrost
 
             collection.SetString(Get<StatusEffectData>("Redraw Cards").name + "_text", "<Redraw>");
             Get<StatusEffectData>("Redraw Cards").textKey = collection.GetString(Get<StatusEffectData>("Redraw Cards").name + "_text");
+
+            StatusEffectApplyX wildeffect = Get<StatusEffectData>("Gain Frenzy When Wild Unit Killed") as StatusEffectApplyX;
+            wildeffect.applyEqualAmount = true;
+            wildeffect.contextEqualAmount = ScriptableObject.CreateInstance<ScriptableFixedAmount>();
 
         }
 
@@ -2487,6 +2500,7 @@ namespace Pokefrost
                     .CanPlayOnEnemy(false)
                 );
 
+            
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_hypno", "Hypno")
@@ -2500,7 +2514,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_mismagius", "Mismagius")
-                    .SetStats(6, 0, 1)
+                    .SetStats(6, 0, 2)
                     .SetSprites("haunter.png", "haunterBG.png")
                     .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1))
                     .WithCardType("Enemy")
@@ -2526,6 +2540,24 @@ namespace Pokefrost
                     .SetTraits(TStack("Longshot", 1), TStack("Explode", 2))
                     .WithCardType("Enemy")
                     .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_darkrai", "Darkrai")
+                    .SetStats(50, 1, 2)
+                    .SetSprites("gengar.png", "gengarBG.png")
+                    .WithCardType("Miniboss")
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("quest_cresselia", "Cresselia")
+                    .WithCardType("Summoned")
+                    .SetStats(4, null, 6)
+                    .SetSprites("musharna.png", "musharnaBG.png")
+                    .SetStartWithEffect(SStack("On Card Played Gain Dream Card To Hand", 1))
                 );
 
             //
@@ -2890,6 +2922,7 @@ namespace Pokefrost
             CreateModAssetsCharms();
             CreateEvents();
             base.Load();
+            CreateBattles();
             //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += PokemonPostBattle;
             Events.OnBattleEnd += CheckEvolve;
@@ -2949,6 +2982,21 @@ namespace Pokefrost
             //Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
+        }
+
+        private void CreateBattles()
+        {
+            new BattleDataEditor(this, "Spare Shells")
+                .SetSprite(this.ImagePath("nosepass.png").ToSprite())
+                .SetNameRef("Darkrai Fight")
+                .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
+                .StartWavePoolData(0, "Curses!")
+                .ConstructWaves(3, 0, "SMM")
+                .StartWavePoolData(1, "More curses")
+                .ConstructWaves(4, 1, "HMMG", "GMMH", "HSMG", "SSHG")
+                .StartWavePoolData(2, "Darkrai is here!")
+                .ConstructWaves(3, 9, "DMH", "DGH")
+                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
         }
 
         private void SceneLoaded(Scene scene)

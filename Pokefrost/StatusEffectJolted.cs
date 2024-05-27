@@ -35,6 +35,7 @@ namespace Pokefrost
             };
 
             Pokefrost.VFX.TryPlayEffect("jolted", target.transform.position, 0.5f*target.transform.lossyScale);
+            Pokefrost.SFX.TryPlaySound("jolted");
             target.curveAnimator.Ping();
             yield return new WaitForSeconds(0.25f);
             yield return hit2.Process();

@@ -89,6 +89,7 @@ namespace Pokefrost
             {
                 titleObject.text = "<size=0.55>What? <#ff0>" + evolvedPokemonLastBattle.Count + "</color> Pokemon have evolved!";
             }
+            Pokefrost.SFX.TryPlaySound("evolution");
             yield return sequence.StartCoroutine("CreateCards", pokemonEvolvedIntoLastBattle.ToArray());
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             evolvedPokemonLastBattle.Clear();
