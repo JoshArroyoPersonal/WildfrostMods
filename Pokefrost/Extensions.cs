@@ -165,6 +165,27 @@ namespace Pokefrost
             c.ModAdded = mod;
             AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", c);
         }
+
+        public static CardDataBuilder SStartEffects(this CardDataBuilder b, params (string,int)[] statusEffects)
+        {
+            CardData.StatusEffectStacks[] stacks = statusEffects.Select( (status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
+            b._data.startWithEffects = stacks;
+            return b;
+        }
+
+        public static CardDataBuilder SAttackEffects(this CardDataBuilder b, params (string, int)[] statusEffects)
+        {
+            CardData.StatusEffectStacks[] stacks = statusEffects.Select((status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
+            b._data.startWithEffects = stacks;
+            return b;
+        }
+
+        public static CardDataBuilder STraits(this CardDataBuilder b, params (string, int)[] statusEffects)
+        {
+            CardData.StatusEffectStacks[] stacks = statusEffects.Select((status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
+            b._data.startWithEffects = stacks;
+            return b;
+        }
     }
 
 

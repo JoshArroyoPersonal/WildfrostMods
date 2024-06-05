@@ -26,7 +26,7 @@ using System.Configuration;
 using UnityEngine.Localization.Components;
 using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
-using BattleEditor;
+//using BattleEditor;
 
 namespace Pokefrost
 {
@@ -2500,7 +2500,7 @@ namespace Pokefrost
                     .CanPlayOnEnemy(false)
                 );
 
-            
+            /*
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_hypno", "Hypno")
@@ -2559,7 +2559,7 @@ namespace Pokefrost
                     .SetSprites("musharna.png", "musharnaBG.png")
                     .SetStartWithEffect(SStack("On Card Played Gain Dream Card To Hand", 1))
                 );
-
+            */
             //
         }
 
@@ -2917,12 +2917,15 @@ namespace Pokefrost
         public override void Load()
         {
             CreateModAssets();
-            CreateModAssetsCards();
-            AddGreetings();
+            if (!preLoaded)
+            {
+                CreateModAssetsCards();
+                AddGreetings();
+            }
             CreateModAssetsCharms();
             CreateEvents();
             base.Load();
-            CreateBattles();
+            //CreateBattles();
             //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += PokemonPostBattle;
             Events.OnBattleEnd += CheckEvolve;
@@ -2958,6 +2961,7 @@ namespace Pokefrost
             //    UnityEngine.Debug.Log("Added to Deck");
             //}
             References.instance.StartCoroutine(UICollector.CollectPrefabs());
+            preLoaded = true;
         }
 
         public override void Unload()
@@ -2984,7 +2988,7 @@ namespace Pokefrost
 
         }
 
-        private void CreateBattles()
+        /*private void CreateBattles()
         {
             new BattleDataEditor(this, "Spare Shells")
                 .SetSprite(this.ImagePath("nosepass.png").ToSprite())
@@ -2997,7 +3001,7 @@ namespace Pokefrost
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
                 .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
-        }
+        }*/
 
         private void SceneLoaded(Scene scene)
         {
