@@ -168,23 +168,32 @@ namespace Pokefrost
 
         public static CardDataBuilder SStartEffects(this CardDataBuilder b, params (string,int)[] statusEffects)
         {
-            CardData.StatusEffectStacks[] stacks = statusEffects.Select( (status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
-            b._data.startWithEffects = stacks;
-            return b;
+            return b.SubscribeToAfterAllBuildEvent(
+                (data) =>
+                {
+                    CardData.StatusEffectStacks[] stacks = statusEffects.Select((status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
+                    data.startWithEffects = stacks;
+                });
         }
 
         public static CardDataBuilder SAttackEffects(this CardDataBuilder b, params (string, int)[] statusEffects)
         {
-            CardData.StatusEffectStacks[] stacks = statusEffects.Select((status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
-            b._data.startWithEffects = stacks;
-            return b;
+            return b.SubscribeToAfterAllBuildEvent(
+                (data) =>
+                {
+                    CardData.StatusEffectStacks[] stacks = statusEffects.Select((status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
+                    data.attackEffects = stacks;
+                });
         }
 
-        public static CardDataBuilder STraits(this CardDataBuilder b, params (string, int)[] statusEffects)
+        public static CardDataBuilder STraits(this CardDataBuilder b, params (string, int)[] traits)
         {
-            CardData.StatusEffectStacks[] stacks = statusEffects.Select((status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
-            b._data.startWithEffects = stacks;
-            return b;
+            return b.SubscribeToAfterAllBuildEvent(
+                (data) =>
+                {
+                    List<CardData.TraitStacks> t = traits.Select((tr) => new CardData.TraitStacks(Pokefrost.instance.Get<TraitData>(tr.Item1), tr.Item2)).ToList();
+                    data.traits = t;
+                });
         }
     }
 
