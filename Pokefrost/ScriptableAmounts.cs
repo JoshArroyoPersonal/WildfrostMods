@@ -23,6 +23,34 @@ namespace Pokefrost
 
     }
 
+    internal class ScriptableCursesInHand : ScriptableAmount
+    {
+        public override int Get(Entity entity)
+        {
+            if (!entity)
+            {
+                return 0;
+            }
+
+            int amount = 0;
+
+            foreach (Entity card in References.Player.handContainer)
+            {
+                foreach (StatusEffectData status in card.statusEffects) 
+                {
+                    if (status.type == "paracurse" || status.type == "weakcurse" || status.type == "powercurse")
+                    {
+                        amount++;
+                        break;
+                    }
+                }
+            }
+
+            return amount;
+        }
+
+    }
+
     public class TargetConstraintHasSlowkingCrown : TargetConstraint
     {
         public override bool Check(Entity target)
