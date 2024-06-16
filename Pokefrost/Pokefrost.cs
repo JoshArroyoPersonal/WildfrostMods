@@ -26,7 +26,7 @@ using System.Configuration;
 using UnityEngine.Localization.Components;
 using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
-//using BattleEditor;
+using BattleEditor;
 
 namespace Pokefrost
 {
@@ -1447,54 +1447,42 @@ namespace Pokefrost
             this.CreateBasicKeyword("curseofweakness", "Curse of Weakness", "While in hand, reduce <keyword=attack> of all allies by <1>|A card can only suffer from one curse at a time").showName = true;
             this.CreateBasicKeyword("curseofpower", "Curse of Power", "While in hand, increase <keyword=attack> of all enemies by <1>|A card can only suffer from one curse at a time").showName = true;
             this.CreateBasicKeyword("curseofpara", "Curse of Slumber", "While in hand, add <keyword=unmovable> to all allies|A card can only suffer from one curse at a time").showName = true;
+            this.CreateBasicKeyword("curseoffrenzy", "Curse of Frenzy", "While in hand, add <x1><keyword=frenzy> to all units|A card can only suffer from one curse at a time").showName = true;
 
             this.CreateIcon("curseofweakicon", ImagePath("curseofweakicon.png").ToSprite(), "weakcurse", "", Color.black, new KeywordData[] { Get<KeywordData>("curseofweakness") });
             this.CreateIcon("curseofpowericon", ImagePath("curseofpowericon.png").ToSprite(), "powercurse", "", Color.black, new KeywordData[] { Get<KeywordData>("curseofpower") });
             this.CreateIcon("curseofparaicon", ImagePath("curseofparaicon.png").ToSprite(), "paracurse", "", Color.black, new KeywordData[] { Get<KeywordData>("curseofpara") });
+            this.CreateIcon("curseoffrenzyicon", ImagePath("curseoffrenzyicon.png").ToSprite(), "frenzycurse", "", Color.black, new KeywordData[] { Get<KeywordData>("curseoffrenzy") });
 
-            StatusEffectWhileInHandXUpdate weakcurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("While In Hand Reduce Attack To Allies (Different Desc)", type:"weakcurse")
+            StatusEffectWhileInHandXUpdate weakcurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("WeakCurse", type:"weakcurse")
                 .ApplyX(Get<StatusEffectData>("Ongoing Reduce Attack"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
             weakcurse.iconGroupName = "crown";
             weakcurse.visible = true;
             statusList.Add(weakcurse);
 
-            StatusEffectWhileInHandXUpdate powercurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("While In Hand Increase Attack To Enemies", type:"powercurse")
+            StatusEffectWhileInHandXUpdate powercurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("PowerCurse", type:"powercurse")
                 .ApplyX(Get<StatusEffectData>("Ongoing Increase Attack"), StatusEffectApplyX.ApplyToFlags.Enemies)
                 .Register(this);
             powercurse.iconGroupName = "crown";
             powercurse.visible = true;
             statusList.Add(powercurse);
 
-            StatusEffectWhileInHandXUpdate paracurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("While In Hand Unmovable To Allies", type:"paracurse")
+            StatusEffectWhileInHandXUpdate paracurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("ParaCurse", type:"paracurse")
                 .ApplyX(Get<StatusEffectData>("Temporary Unmovable"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
             paracurse.iconGroupName = "crown";
             paracurse.visible = true;
             statusList.Add(paracurse);
 
-            /*
-            StatusEffectDreamDummy isdarkrai = Ext.CreateStatus<StatusEffectDreamDummy>("Is Darkrai", "Has <keyword=frenzy> equal to <cursed> cards in hand", type: "darkrai")
+            StatusEffectWhileInHandXUpdate frenzycurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("FrenzyCurse", type: "frenzycurse")
+                .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Allies|StatusEffectApplyX.ApplyToFlags.Enemies)
                 .Register(this);
-            statusList.Add(isdarkrai);
+            frenzycurse.iconGroupName = "crown";
+            frenzycurse.visible = true;
+            statusList.Add(frenzycurse);
 
-            
-            TargetConstraintStatusMoreThan darkraiconstraint = ScriptableObject.CreateInstance<TargetConstraintStatusMoreThan>();
-            darkraiconstraint.status = isdarkrai;
-            darkraiconstraint.amount = 0;
-
-            TargetConstraintHasStatus notinkconstraint = ScriptableObject.CreateInstance<TargetConstraintHasStatus>();
-            notinkconstraint.status = Get<StatusEffectData>("Null");
-            notinkconstraint.not = true;
-
-            StatusEffectWhileInHandXUpdate darkraifrenzy = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("While In Hand Give Boss Darkrai Multihit")
-                .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Enemies)
-                .SetApplyConstraints(darkraiconstraint, notinkconstraint)
-                .Register(this);
-            statusList.Add(darkraifrenzy);
-            */
-
-            StatusEffectApplyXPreTrigger darkraifrenzy = Ext.CreateStatus<StatusEffectApplyXPreTrigger>("Pre Trigger Gain Temp MultiHit Equal To Curses In Hand", "Trigger an additional time for each <curse> in hand")
+            StatusEffectApplyXPreTrigger darkraifrenzy = Ext.CreateStatus<StatusEffectApplyXPreTrigger>("Pre Trigger Gain Temp MultiHit Equal To Curses In Hand", "Attack an additional time for each <curse> in hand")
                 .ApplyX(Get<StatusEffectData>("MultiHit (Temporary, Not Visible)"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             darkraifrenzy.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCursesInHand>();
@@ -1515,39 +1503,30 @@ namespace Pokefrost
             paracurseconstraint.status = paracurse;
             paracurseconstraint.amount = 0;
 
+            TargetConstraintStatusMoreThan frenzycurseconstraint = ScriptableObject.CreateInstance<TargetConstraintStatusMoreThan>();
+            frenzycurseconstraint.not = true;
+            frenzycurseconstraint.status = frenzycurse;
+            frenzycurseconstraint.amount = 0;
+
             TargetConstraintHasTrait dreamconstraint = ScriptableObject.CreateInstance<TargetConstraintHasTrait>();
             dreamconstraint.not = true;
             dreamconstraint.trait = dreamtrait;
 
-            /*
-            StatusEffectMultEffects weakplusfrenzy = Ext.CreateStatus<StatusEffectMultEffects>("Weak Curse Plus Darkrai Frenzy")
-                .Register(this);
-            weakplusfrenzy.effects = new List<StatusEffectData> { weakcurse, darkraifrenzy };
-
-            StatusEffectMultEffects powerplusfrenzy = Ext.CreateStatus<StatusEffectMultEffects>("Power Curse Plus Darkrai Frenzy")
-                .Register(this);
-            powerplusfrenzy.effects = new List<StatusEffectData> { powercurse, darkraifrenzy };
-
-            StatusEffectMultEffects paraplusfrenzy = Ext.CreateStatus<StatusEffectMultEffects>("Para Curse Plus Darkrai Frenzy")
-                .Register(this);
-            paraplusfrenzy.effects = new List<StatusEffectData> { paracurse, darkraifrenzy };
-            */
-
             StatusEffectApplyXOnCardPlayed giveweakcurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", "Give a card in hand <keyword=curseofweakness>")
-                .ApplyX(weakcurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
-                .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, dreamconstraint)
+                .ApplyX(frenzycurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
+                .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, frenzycurseconstraint, dreamconstraint)
                 .Register(this);
             statusList.Add(giveweakcurse);
 
             StatusEffectApplyXOnCardPlayed givepowercurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", "Give a card in hand <keyword=curseofpower>")
                 .ApplyX(powercurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
-                .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, dreamconstraint)
+                .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, frenzycurseconstraint, dreamconstraint)
                 .Register(this);
             statusList.Add(givepowercurse);
 
             StatusEffectApplyXOnCardPlayed giveparacurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", "Give a card in hand <keyword=curseofpara>")
                 .ApplyX(paracurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
-                .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, dreamconstraint)
+                .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, frenzycurseconstraint, dreamconstraint)
                 .Register(this);
             statusList.Add(giveparacurse);
 
@@ -1844,9 +1823,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("voltorb", "Voltorb", idleAnim: "PulseAnimationProfile", bloodProfile: "Blood Profile Black")
-                    .SetStats(4, null, 1)
+                    .SetStats(4, null, 2)
                     .SetSprites("voltorb.png", "voltorbBG.png")
-                    .SStartEffects(("On Card Played Give Self Explode", 1), ("Evolve Voltorb", 3))
+                    .SStartEffects(("On Card Played Give Self Explode", 2), ("Evolve Voltorb", 3))
                     .WithValue(50)
                     .AddPool("GeneralItemPool")
                 );
@@ -1854,9 +1833,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("electrode", "Electrode", idleAnim: "PulseAnimationProfile", bloodProfile: "Blood Profile Black")
-                    .SetStats(6, null, 1)
+                    .SetStats(6, null, 2)
                     .SetSprites("electrode.png", "electrodeBG.png")
-                    .SStartEffects(("On Card Played Give Self Explode", 1), ("When Hit Trigger To Self", 1))
+                    .SStartEffects(("On Card Played Give Self Explode", 2), ("When Hit Trigger To Self", 1))
                 );
 
             list.Add(
@@ -2362,6 +2341,14 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("darkrai", "Darkrai")
+                    .SetStats(6, 3, 4)
+                    .SetSprites("darkrai.png", "darkraiBG.png")
+                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1), SStack("Pre Trigger Gain Temp MultiHit Equal To Curses In Hand", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("musharna", "Musharna", idleAnim: "FloatAnimationProfile")
                     .SetStats(7, 3, 0)
                     .SetSprites("musharna.png", "musharnaBG.png")
@@ -2565,7 +2552,7 @@ namespace Pokefrost
                     .CanPlayOnEnemy(false)
                 );
 
-            /*
+            
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_hypno", "Hypno")
@@ -3055,7 +3042,7 @@ namespace Pokefrost
 
         }
 
-        /*private void CreateBattles()
+        private void CreateBattles()
         {
             foreach (HardModeModifierData hardModeModifierData in References.instance.hardModeModifiers)
             {
@@ -3078,7 +3065,7 @@ namespace Pokefrost
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
                 .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
-        }*/
+        }
 
         private void SceneLoaded(Scene scene)
         {

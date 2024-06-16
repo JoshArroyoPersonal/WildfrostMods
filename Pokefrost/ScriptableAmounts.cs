@@ -38,7 +38,7 @@ namespace Pokefrost
             {
                 foreach (StatusEffectData status in card.statusEffects) 
                 {
-                    if (status.type == "paracurse" || status.type == "weakcurse" || status.type == "powercurse")
+                    if (status.type == "paracurse" || status.type == "weakcurse" || status.type == "powercurse" || status.type == "frenzycurse")
                     {
                         amount++;
                         break;
