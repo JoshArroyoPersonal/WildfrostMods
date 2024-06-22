@@ -34,8 +34,8 @@ namespace Pokefrost
                 damageType = "jolt"
             };
 
-            Pokefrost.VFX.TryPlayEffect("jolted", target.transform.position, 0.5f*target.transform.lossyScale);
-            Pokefrost.SFX.TryPlaySound("jolted");
+            Pokefrost.VFX.TryPlayEffect("jolt", target.transform.position, 0.5f*target.transform.lossyScale);
+            Pokefrost.SFX.TryPlaySound("jolt");
             target.curveAnimator.Ping();
             yield return new WaitForSeconds(0.25f);
             yield return hit2.Process();

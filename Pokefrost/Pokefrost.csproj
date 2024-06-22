@@ -453,6 +453,7 @@
     <Compile Include="StatusEffectNincadaAndMurkrow.cs" />
     <Compile Include="StatusEffectInstantApplyXCardInDeck.cs" />
     <Compile Include="StatusEffectImmuneToDamage.cs" />
+    <Compile Include="StatusEffectSpicune.cs" />
     <Compile Include="StatusEffectXActsLikeShell.cs" />
     <Compile Include="Pokefrost.cs" />
     <Compile Include="StatusEffectEvolveFromHitApplied.cs" />

@@ -197,7 +197,6 @@ namespace Pokefrost
             cardHover.enabled = false;
             cardHover.IsMaster = false;
             CardPopUpTarget cardPopUp = gameObject.AddComponent<CardPopUpTarget>();
-
             cardHover.pop = cardPopUp;
             RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
@@ -206,6 +205,7 @@ namespace Pokefrost
             gameObject.SetActive(true);
             overshroomicon.type = "overshroom";
             dicty["overshroom"] = gameObject;
+            
 
             KeywordData overshroomkey = Get<KeywordData>("shroom").InstantiateKeepName();
             overshroomkey.name = "Overshroom";
@@ -261,11 +261,12 @@ namespace Pokefrost
             overshroom.offensive = true;
             overshroom.applyFormat = "";
             overshroom.applyFormatKey = new UnityEngine.Localization.LocalizedString();
-            overshroom.keyword = "";
+            overshroom.keyword = "overshroom";
             overshroom.targetConstraints = new TargetConstraint[1] { new TargetConstraintCanBeHit() };
             overshroom.textOrder = 0;
             overshroom.textInsert = "{a}";
             overshroom.ModAdded = this;
+            overshroom.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overshroom);
             statusList.Add(overshroom);
 
@@ -1530,11 +1531,41 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(giveparacurse);
 
-            StatusEffectJolted jolted = Ext.CreateStatus<StatusEffectJolted>("Jolted", "<Jolted> <{a}>")
+
+            this.CreateIconKeyword("jolted", "Jolted", "Take damage after triggering | Does not count down!", "joltedicon").ChangeColor(note: new Color(0.98f, 0.89f, 0.61f));
+            this.CreateIcon("joltedicon", ImagePath("joltedicon.png").ToSprite(), "jolted", "counter", Color.black, new KeywordData[] { Get<KeywordData>("jolted") })
+                .transform.GetChild(0).transform.localPosition = new Vector3 (-0.09f, 0.125f, 0f);
+
+            StatusEffectJolted jolted = Ext.CreateStatus<StatusEffectJolted>("Jolted", null, type:"jolted")
                 .Register(this);
+            jolted.iconGroupName = "health";
+            jolted.visible = true;
             jolted.removeOnDiscard = true;
             jolted.isStatus = true;
+            jolted.offensive = true;
+            jolted.stackable = true;
+            jolted.targetConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintIsUnit>() };
+            jolted.textInsert = "{a}";
+            jolted.keyword = "jolted";
+            jolted.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
             statusList.Add(jolted);
+
+            this.CreateIconKeyword("spicune", "Juice", "Temporaily boosts effects | Clears after triggering", "juice").ChangeColor(title: new Color(0.23f, 0.96f, 0.8f), note: new Color(0.23f, 0.96f, 0.8f));
+            this.CreateIcon("juiceicon", ImagePath("juiceicon.png").ToSprite(), "juice", "lumin", Color.black, new KeywordData[] { Get<KeywordData>("spicune") })
+                .GetComponentInChildren<TextMeshProUGUI>(true).enabled = true;
+
+            StatusEffectSpicune spicune = Ext.CreateStatus<StatusEffectSpicune>("Spicune", null, type: "juice")
+                .Register(this);
+            spicune.iconGroupName = "damage";
+            spicune.visible = true;
+            spicune.isStatus = true;
+            spicune.offensive = true;
+            spicune.stackable = true;
+            spicune.targetConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintCanBeBoosted>() };
+            spicune.textInsert = "{a}";
+            spicune.keyword = "spicune";
+            spicune.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
+            statusList.Add(spicune);
 
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -2057,7 +2088,8 @@ namespace Pokefrost
                     .WithCardType("Summoned")
                     .SetStats(1, 2, 4)
                     .SetSprites("shedinja.png", "shedinjaBG.png")
-                    .SStartEffects(("Wonder Guard", 1), ("Destroy Self After Turn", 1), ("ImmuneToSnow",1))
+                    .SStartEffects(("Wonder Guard", 1), ("ImmuneToSnow",1))
+                    .STraits(("Fragile", 1))
                 );
 
             list.Add(
@@ -3321,7 +3353,7 @@ namespace Pokefrost
 
         private void PatchOvershroom(StatusIcon icon)
         {
-            if (icon.type == "overshroom")
+            if (icon.type == "overshroom" || icon.type == "jolted" || icon.type == "juice")
             {
                 icon.SetText();
                 icon.Ping();

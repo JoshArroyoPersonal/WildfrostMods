@@ -158,6 +158,30 @@ namespace Pokefrost
             return data;
         }
 
+        public static KeywordData CreateIconKeyword(this WildfrostMod mod, string name, string title, string desc, string icon)
+        {
+            KeywordData data = ScriptableObject.CreateInstance<KeywordData>();
+            data.name = name;
+            KeyCollection.SetString(data.name + "_text", title);
+            data.titleKey = KeyCollection.GetString(data.name + "_text");
+            KeyCollection.SetString(data.name + "_desc", desc);
+            data.descKey = KeyCollection.GetString(data.name + "_desc");
+            data.showIcon = true;
+            data.showName = false;
+            data.iconName = icon;
+            data.ModAdded = mod;
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", data);
+            return data;
+        }
+
+        public static KeywordData ChangeColor(this KeywordData kData, Color? title = null, Color? body = null, Color? note = null)
+        {
+            if (title is Color c1) { kData.titleColour = c1; }
+            if (body is Color c2) { kData.bodyColour = c2; }
+            if (note is Color c3) { kData.noteColour = c3; }
+            return kData;
+        }
+
         public static T CreateStatusButton<T>(this WildfrostMod mod, string name, string type, string iconGroup = "counter") where T : StatusEffectData
         {
             T status = ScriptableObject.CreateInstance<T>();
