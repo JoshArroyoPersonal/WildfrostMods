@@ -111,7 +111,7 @@ namespace Robo
                     .CreateUnit("glacia", "Glacia")
                     .SetStats(7, 1, 5)
                     .SetSprites("glacia.png", "glaciaBG.png")
-                    .SetStartWithEffect(SStack("When Hit Increase Attack Effect 1 To Self", 1), SStack("ImmuneToSnow", 1))
+                    .SetStartWithEffect(SStack("When Hit Increase Attack Effects To Self", 1), SStack("ImmuneToSnow", 1))
                     .SetAttackEffect(SStack("Snow", 1))
                     .AddPool("BasicUnitPool")
                 );
