@@ -1,5 +1,4 @@
-﻿using AssortedPatchesCollection;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +28,7 @@ namespace Pokefrost
         }
         public void EntityDisplayUpdated(Entity entity)
         {
-            if (entity == target && target.hp.current <= 0)
+            if (entity == target && target.hp.current <= 0 && !target.silenced)
             {
                 target.PromptUpdate();
                 target.StartCoroutine(Animate());
@@ -60,7 +59,7 @@ namespace Pokefrost
                             stack.count--;
                             if (stack.count == 0)
                             {
-                                card.startWithEffects = card.startWithEffects.RemoveFromArray(stack);
+                                card.startWithEffects = card.startWithEffects.Where((item) => item != stack).ToArray();
                             }
                         }
                     }

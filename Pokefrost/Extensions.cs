@@ -31,6 +31,7 @@ namespace Pokefrost
                 }
             }
             status.type = type;
+            status.hiddenKeywords = new KeywordData[0];
             status.canBeBoosted = boostable;
             status.stackable = stackable;
             return status;
@@ -137,7 +138,7 @@ namespace Pokefrost
             RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.zero;
-            rectTransform.sizeDelta *= 0.012f;
+            rectTransform.sizeDelta *= 0.01f;
             gameObject.SetActive(true);
             icon.type = type;
             cardIcons[type] = gameObject;

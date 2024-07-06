@@ -45,9 +45,6 @@
     <Reference Include="Assembly-CSharp-Publicized">
       <HintPath>..\..\..\..\Documents\Assembly-CSharp-Publicized.dll</HintPath>
     </Reference>
-    <Reference Include="AssortedPatchesCollection">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3155878385\AssortedPatchesCollection.dll</HintPath>
-    </Reference>
     <Reference Include="BattleEditor">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3158900413\BattleEditor.dll</HintPath>
     </Reference>
@@ -443,6 +440,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
+    <Compile Include="StatusEffectBurning.cs" />
     <Compile Include="StatusEffectChangeData.cs" />
     <Compile Include="StatusEffectEvolveFromNode.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />

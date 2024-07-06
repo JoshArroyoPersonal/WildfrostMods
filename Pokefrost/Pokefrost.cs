@@ -999,7 +999,7 @@ namespace Pokefrost
 
             StatusEffectApplyXOnKill buffCardInDeckOnKill = ScriptableObject.CreateInstance<StatusEffectApplyXOnKill>();
             buffCardInDeckOnKill.name = "Buff Card In Deck On Kill";
-            collection.SetString(buffCardInDeckOnKill.name + "_text", "Permamently give <+{a}><keyword=attack> to a card on kill");
+            collection.SetString(buffCardInDeckOnKill.name + "_text", "Permanently give <+{a}><keyword=attack> to a card on kill");
             buffCardInDeckOnKill.textKey = collection.GetString(buffCardInDeckOnKill.name + "_text");
             buffCardInDeckOnKill.canBeBoosted = true;
             buffCardInDeckOnKill.type = "";
