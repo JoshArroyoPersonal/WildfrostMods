@@ -418,20 +418,20 @@ namespace Pokefrost
 
             StatusEffectWhileActiveX boostallies = ScriptableObject.CreateInstance<StatusEffectWhileActiveX>();
             boostallies.applyConstraints = new TargetConstraint[0];
-            boostallies.applyToFlags = StatusEffectApplyX.ApplyToFlags.AlliesInRow;
+            boostallies.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies;
             boostallies.doPing = true;
             boostallies.effectToApply = Get<StatusEffectData>("Ongoing Increase Effects");
             boostallies.pauseAfter = 0;
             boostallies.targetMustBeAlive = true;
             boostallies.applyFormat = "";
             boostallies.applyFormatKey = new UnityEngine.Localization.LocalizedString();
-            boostallies.canBeBoosted = true;
+            boostallies.canBeBoosted = false;
             boostallies.keyword = "";
-            boostallies.stackable = true;
+            boostallies.stackable = false;
             boostallies.targetConstraints = new TargetConstraint[0];
             boostallies.textInsert = "";
             boostallies.name = "Boost Allies";
-            collection.SetString(boostallies.name + "_text", "While active, boost the effects of allies in the row by <{a}>");
+            collection.SetString(boostallies.name + "_text", "While active, boost the effects of all allies");
             boostallies.textKey = collection.GetString(boostallies.name + "_text");
             boostallies.textOrder = 0;
             boostallies.ModAdded = this;
@@ -1412,6 +1412,27 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(teeter2);
 
+            StatusEffectInstantFullHeal fullheal = Ext.CreateStatus<StatusEffectInstantFullHeal>("Heal Full")
+                .Register(this);
+
+            StatusEffectInstantRemoveCounter removeCounter = Ext.CreateStatus<StatusEffectInstantRemoveCounter>("Remove Counter")
+                .Register(this);
+
+            this.CreateBasicKeyword("rest", "Rest", "<End Turn>: Heal to full, then remove counter and effects |Click to activate");
+            this.CreateButtonIcon("snorlaxRest", ImagePath("snorlaxbutton.png").ToSprite(), "rest", "counter", Color.black, new KeywordData[] { Get<KeywordData>("rest") });
+
+            StatusTokenApplyX rest = this.CreateStatusButton<StatusTokenApplyX>("Rest Button", type: "rest")
+                .ApplyX(Get<StatusEffectData>("Heal Full"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            rest.endTurn = true;
+            rest.finiteUses = true;
+            statusList.Add(rest);
+
+            StatusTokenApplyXListener rest2 = Ext.CreateStatus<StatusTokenApplyXListener>("Rest Listener_1", type: "rest_listener")
+                .ApplyX(Get<StatusEffectData>("Remove Counter"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(rest2);
+
             this.CreateBasicKeyword("focusenergy", "Focus Energy", "<Free Action>: Discard the rightmost card in hand|Click to activate\nOnce per turn");
             this.CreateButtonIcon("kingdraFocusEnergy", ImagePath("kingdrabutton.png").ToSprite(), "focusEnergy", "", Color.white, new KeywordData[] { Get<KeywordData>("focusenergy") });
 
@@ -1584,6 +1605,52 @@ namespace Pokefrost
             burning.keyword = "burning";
             burning.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
             statusList.Add(burning);
+
+            StatusEffectApplyXOnKill killboost = Ext.CreateStatus<StatusEffectApplyXOnKill>("On Kill Boost Effects", "Boost effects on kill")
+                .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
+            StatusEffectWhileActiveX reduceattackdescrp = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Reduce Attack To Enemies", "While active, reduce <keyword=attack> of all enemies by <{a}>", boostable: true)
+                .ApplyX(Get<StatusEffectData>("Ongoing Reduce Attack"), StatusEffectApplyX.ApplyToFlags.Enemies)
+                .Register(this);
+
+            StatusEffectApplyXWhenHit onhitboost = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Boost Allies", "When hit, boost effects of all allies")
+                .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+
+            KeywordData falseswipekey = this.CreateBasicKeyword("falseswipe", "False Swipe", "Deals nonlethal damage|Except to Clunkers");
+            falseswipekey.showName = true;
+
+            StatusEffectFalseSwipe falseswipe = Ext.CreateStatus<StatusEffectFalseSwipe>("False Swipe")
+                .Register(this);
+            falseswipe.eventPriority = -3;
+
+            Ext.CreateTrait<TraitData>("FalseSwipe", this, falseswipekey, falseswipe);
+
+            KeywordData resistkey = this.CreateBasicKeyword("resist", "Resist", "Reduces damage");
+            resistkey.showName = true;
+            resistkey.canStack = true;
+            StatusEffectResist resist = Ext.CreateStatus<StatusEffectResist>("Resist", boostable:true)
+                .Register(this);
+
+            Ext.CreateTrait<TraitData>("Resist", this, resistkey, resist);
+
+            StatusEffectTemporaryTrait tempresist = Ext.CreateStatus<StatusEffectTemporaryTrait>("Temp Resist", stackable: false)
+                .Register(this);
+            tempresist.trait = Get<TraitData>("Resist");
+
+            StatusEffectMultEffects resisttransfereffects1 = Ext.CreateStatus<StatusEffectMultEffects>("Effects for Transfering Resist to Random Ally")
+                .Register(this);
+
+            StatusEffectTransfer resisttransfer1 = Ext.CreateStatus<StatusEffectTransfer>("Transfer Resist to Random Ally")
+                .ApplyX(resisttransfereffects1, StatusEffectApplyX.ApplyToFlags.RandomAlly)
+                .Register(this);
+
+            StatusEffectApplyXWhenHit resisthit1 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Random Ally", "Transfer this effect and <keyword=resist> <{a}> to a random ally when hit")
+                .ApplyX(resisttransfer1, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
+            resisttransfereffects1.effects = new List<StatusEffectData> { tempresist, resisthit1};
 
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -1854,8 +1921,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("farfetchd", "Farfetch'd")
-                    .SetStats(5, 5, 5)
+                    .SetStats(4, 6, 3)
                     .SetSprites("farfetchd.png", "farfetchdBG.png")
+                    .STraits(("FalseSwipe", 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -2025,9 +2094,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("snorlax", "Snorlax", idleAnim: "SquishAnimationProfile")
-                    .SetStats(14, 6, 5)
+                    .SetStats(10, 6, 5)
                     .SetSprites("snorlax.png", "snorlaxBG.png")
-                    .SStartEffects(("While Active Consume To Items In Hand", 1))
+                    .SStartEffects(("While Active Consume To Items In Hand", 1), ("Rest Button", 1), ("Rest Listener_1", 1))
                     .WithFlavour("Its stomach can digest any kind of food, even if it happens to be a durain fruit")
                 );
 
@@ -2048,8 +2117,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("aipom", "Aipom")
-                    .SetStats(5, 5, 5)
+                    .SetStats(5, 1, 3)
                     .SetSprites("aipom.png", "aipomBG.png")
+                    .SStartEffects(("On Kill Boost Effects", 1))
                 );
 
             list.Add(
@@ -2057,7 +2127,7 @@ namespace Pokefrost
                     .CreateUnit("espeon", "Espeon")
                     .SetStats(3, 3, 3)
                     .SetSprites("espeon.png", "espeonBG.png")
-                    .SStartEffects(("While Active Increase Effects To Hand", 1), ("Spicune", 1))
+                    .SStartEffects(("While Active Increase Effects To Hand", 1))
                 );
 
             list.Add(
@@ -2170,7 +2240,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("hooh", "Ho-oh")
+                    .CreateUnit("hooh", "Ho-Oh")
                     .SetStats(8, 0, 3)
                     .SetSprites("hooh.png", "hoohBG.png")
                 );
@@ -2338,6 +2408,7 @@ namespace Pokefrost
                     .CreateUnit("latias", "Latias")
                     .SetStats(8, 0, 3)
                     .SetSprites("latias.png", "latiasBG.png")
+                    .SStartEffects(("When Hit Transfer Resist to Random Ally", 1), ("Temp Resist", 1))
                 );
 
             list.Add(
@@ -2788,6 +2859,7 @@ namespace Pokefrost
                     .SetSprites("plusle.png", "plusleBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
+                    .SetStartWithEffect(SStack("While Active Increase Attack To Allies", 1), SStack("When Hit Boost Allies", 1))
                 );
 
             list.Add(
@@ -2797,6 +2869,7 @@ namespace Pokefrost
                     .SetSprites("minun.png", "minunBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
+                    .SetStartWithEffect(SStack("While Active Reduce Attack To Enemies", 1), SStack("When Hit Boost Allies", 1))
                 );
 
             list.Add(

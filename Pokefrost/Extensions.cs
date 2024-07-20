@@ -16,6 +16,18 @@ namespace Pokefrost
     {
         public static StringTable Collection => LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);
         public static StringTable KeyCollection => LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+
+        public static T CreateTrait<T>(string name, WildfrostMod mod, KeywordData keyword, params StatusEffectData[] effects) where T : TraitData
+        {
+            T trait = ScriptableObject.CreateInstance<T>();
+            trait.name = name;
+            trait.effects = effects;
+            trait.keyword = keyword;
+            trait.ModAdded = mod;
+            AddressableLoader.AddToGroup<TraitData>("TraitData", trait);
+            return trait;
+        }
+
         public static T CreateStatus<T>(string name, string desc = null, string textInsert = null, string type = "", bool boostable = false, bool stackable = true) where T : StatusEffectData
         {
             T status = ScriptableObject.CreateInstance<T>();
