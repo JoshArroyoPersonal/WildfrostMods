@@ -1646,11 +1646,28 @@ namespace Pokefrost
                 .ApplyX(resisttransfereffects1, StatusEffectApplyX.ApplyToFlags.RandomAlly)
                 .Register(this);
 
-            StatusEffectApplyXWhenHit resisthit1 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Random Ally", "Transfer this effect and <keyword=resist> <{a}> to a random ally when hit")
+            StatusEffectApplyXWhenHit resisthit1 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Random Ally", "When hit, <transfer> '<keyword=resist> <{a}>' to a random ally")
                 .ApplyX(resisttransfer1, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
             resisttransfereffects1.effects = new List<StatusEffectData> { tempresist, resisthit1};
+
+            StatusEffectWhileActiveX resistallies = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Allies Have Resist (No Desc)", stackable: false)
+                .ApplyX(tempresist, StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+
+            StatusEffectMultEffects resisttransfereffects2 = Ext.CreateStatus<StatusEffectMultEffects>("Effects for Transfering Resist to Allies to Random Ally")
+                .Register(this);
+
+            StatusEffectTransfer resisttransfer2 = Ext.CreateStatus<StatusEffectTransfer>("Transfer Resist to Allies to Random Ally")
+                .ApplyX(resisttransfereffects2, StatusEffectApplyX.ApplyToFlags.RandomAlly)
+                .Register(this);
+
+            StatusEffectApplyXWhenHit resisthit2 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Allies to Random Ally", "When hit, <transfer> 'While acitve, add <keyword=resist> <{a}> to all allies' to a random ally")
+                .ApplyX(resisttransfer2, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
+            resisttransfereffects2.effects = new List<StatusEffectData> { resistallies, resisthit2 };
 
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -2911,18 +2928,40 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_huntail", "Huntail")
-                    .SetStats(20, 3, 4)
+                    .SetStats(10, 2, 0)
                     .SetSprites("huntail.png", "huntailBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
+                    .SStartEffects(("Trigger Against When Ally Attacks", 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_gorebyss", "Gorebyss")
-                    .SetStats(20, 3, 4)
+                    .SetStats(15, 0, 5)
                     .SetSprites("gorebyss.png", "gorebyssBG.png")
                     .WithCardType("Enemy")
+                    .WithValue(50)
+                    .SAttackEffects(("Frost", 2))
+                    .SStartEffects(("Hit All Enemies", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_latias", "Latias")
+                    .SetStats(20, 3, 4)
+                    .SetSprites("latias.png", "latiasBG.png")
+                    .WithCardType("Miniboss")
+                    .WithValue(50)
+                    .SStartEffects(("When Hit Transfer Resist to Allies to Random Ally", 1), ("While Active Allies Have Resist (No Desc)", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_latios", "Latios")
+                    .SetStats(20, 3, 4)
+                    .SetSprites("latios.png", "latiosBG.png")
+                    .WithCardType("Miniboss")
                     .WithValue(50)
                 );
 

@@ -27,12 +27,26 @@ namespace Pokefrost
                     {
                         if (target.statusEffects[j].name == effs.effects[i].name)
                         {
-                            yield return target.statusEffects[j].Remove();
+
+                            if (target.statusEffects[j].GetType() == typeof(StatusEffectWhileActiveX))
+                            {
+                                StatusEffectWhileActiveX activeEff = target.statusEffects[j] as StatusEffectWhileActiveX;
+                                if (activeEff.active == true)
+                                {
+                                    UnityEngine.Debug.Log("DEACTIVATING");
+                                    yield return activeEff.Deactivate();
+                                }
+                            }
+
+                            yield return target.statusEffects[j].RemoveStacks(GetAmount(), true);
                             break;
                         }
 
                     }
                 }
+
+                target.display.promptUpdateDescription = true;
+                target.PromptUpdate();  
             }
         }
 
