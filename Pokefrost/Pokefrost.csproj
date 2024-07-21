@@ -46,7 +46,7 @@
       <HintPath>..\..\..\..\Documents\Assembly-CSharp-Publicized.dll</HintPath>
     </Reference>
     <Reference Include="BattleEditor">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3158900413\BattleEditor.dll</HintPath>
+      <HintPath>..\..\Mods\BattleEditor\bin\Debug\BattleEditor.dll</HintPath>
     </Reference>
     <Reference Include="DeadExtensions">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\DeadExtensions.dll</HintPath>
@@ -437,7 +437,9 @@
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
     <Compile Include="DumbFixes.cs" />
     <Compile Include="EventRoutineTrade.cs" />
+    <Compile Include="EvolutionPopUp.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="PickupRoutine.cs" />
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectBurning.cs" />
