@@ -43,6 +43,16 @@ namespace Pokefrost
                 }
                 target.PromptUpdate();
             }
+            else if (entity == target && target.hp.current <= 0)
+            {
+                target.statusEffects.Remove(this);
+                Events.OnEntityDisplayUpdated -= EntityDisplayUpdated;
+                if (target.display is Card card)
+                {
+                    card.promptUpdateDescription = true;
+                }
+                target.PromptUpdate();
+            }
         }
 
         public void CountDown()
