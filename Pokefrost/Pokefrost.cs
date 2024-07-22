@@ -2148,6 +2148,7 @@ namespace Pokefrost
                     .SetSprites("aipom.png", "aipomBG.png")
                     .SStartEffects(("On Kill Boost Effects", 1))
                     .STraits(("Pickup", 1))
+                    .AddPool()
                 );
 
             list.Add(
