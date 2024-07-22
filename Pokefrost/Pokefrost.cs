@@ -1627,7 +1627,7 @@ namespace Pokefrost
 
             Ext.CreateTrait<TraitData>("FalseSwipe", this, falseswipekey, falseswipe);
 
-            KeywordData resistkey = this.CreateBasicKeyword("resist", "Resist", "Reduces damage");
+            KeywordData resistkey = this.CreateBasicKeyword("resist", "Resist", "Reduce damage by <{0}>");
             resistkey.showName = true;
             resistkey.canStack = true;
             StatusEffectResist resist = Ext.CreateStatus<StatusEffectResist>("Resist", boostable:true)
@@ -1652,6 +1652,16 @@ namespace Pokefrost
 
             resisttransfereffects1.effects = new List<StatusEffectData> { tempresist, resisthit1};
 
+            //Pickup
+            StatusEffectPickup pickup = Ext.CreateStatus<StatusEffectPickup>("Pickup Items And Clunkers", boostable: true)
+                .Register(this);
+            pickup.constraint = (c) => c.cardType.name == "Item" || c.cardType.name == "Clunker";
+            pickup.rewardPoolNames = new string[] { "GeneralItemPool", "SnowItemPool", "BasicItemPool", "MagicItemPool", "ClunkItemPool" };
+            KeywordData pickupKeyword = Ext.CreateBasicKeyword(this, "pickup", "Pickup", "Pick one card from a selection of <{0}> at the end of battle");
+            pickupKeyword.canStack = true;
+            pickupKeyword.showName = true;
+            pickupKeyword.showIcon = false;
+            TraitData pickupTrait = Ext.CreateTrait<TraitData>("Pickup", this, pickupKeyword, pickup);
             StatusEffectWhileActiveX resistallies = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Allies Have Resist (No Desc)", stackable: false)
                 .ApplyX(tempresist, StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
@@ -2134,9 +2144,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("aipom", "Aipom")
-                    .SetStats(5, 1, 3)
+                    .SetStats(5, 2, 3)
                     .SetSprites("aipom.png", "aipomBG.png")
                     .SStartEffects(("On Kill Boost Effects", 1))
+                    .STraits(("Pickup", 1))
                 );
 
             list.Add(
@@ -3998,6 +4009,65 @@ namespace Pokefrost
             swapper.boostRange = new Vector2Int(minBoost, maxBoost);
             Debug.Log($"[Pokefrost] {swapper.effect.name} => {s} + {swapper.boostRange}");
             return swapper;
+        }
+    }
+
+    [HarmonyPatch(typeof(CardPopUpTarget), "Pop")]
+    internal static class PatchDynamicKeyword
+    {
+        public static List<string> dynamicKeywords = new List<string>{ "pickup", "resist" };
+        public static List<string> dynamicTypes = new List<string>{ typeof(StatusEffectPickup).Name, typeof(StatusEffectResist).Name };
+        static void Postfix(CardPopUpTarget __instance)
+        {
+            foreach(string s in __instance.current)
+            {
+                if (dynamicKeywords.Contains(s))
+                {
+                    if (MonoBehaviourRectSingleton<CardPopUp>.instance.activePanels.TryGetValue(s, out var value))
+                    {
+                        int index = dynamicKeywords.IndexOf(s);
+                        string count = "???";
+                        if (__instance.IsCard)
+                        {
+                            foreach (var effect in __instance.card.entity.statusEffects)
+                            {
+                                if (effect.GetType().Name == dynamicTypes[index])
+                                {
+                                    count = effect.GetAmount().ToString();
+                                }
+                            }
+                        }
+                        KeywordData keyword = AddressableLoader.Get<KeywordData>("KeywordData", s);
+                        ((CardPopUpPanel)value).Set(keyword, keyword.body.Replace("{0}", count));
+                    }
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(InspectSystem), "Popup", new Type[]
+    {
+        typeof(KeywordData),
+        typeof(Transform)
+    })]
+    internal static class PatchDynamicKeyword2
+    {
+        static void Postfix(InspectSystem __instance, KeywordData keyword)
+        {
+            if (PatchDynamicKeyword.dynamicKeywords.Contains(keyword.name))
+            {
+                CardPopUpPanel value = __instance.popups.FirstOrDefault((p) => p.name == keyword.name) as CardPopUpPanel;
+                int index = PatchDynamicKeyword.dynamicKeywords.IndexOf(keyword.name);
+                string count = "???";
+                foreach (var effect in __instance.inspect.statusEffects)
+                {
+                    if (effect.GetType().Name == PatchDynamicKeyword.dynamicTypes[index])
+                    {
+                        count = effect.GetAmount().ToString();
+                    }
+                }
+                (value).Set(keyword, keyword.body.Replace("{0}", count));
+            }
         }
     }
 }

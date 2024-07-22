@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.XR;
 using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
 
 namespace Pokefrost
@@ -15,10 +16,11 @@ namespace Pokefrost
         static GameObject objectGroup;
         static GameObject obj;
         static ChooseNewCardSequence sequence;
+        static Transform deadCards;
 
         public static void Debug1()
         {
-            Create();
+            Create("<color=#8F0>Pizza Frog</color> Found A Card");
         }
 
         public static void Debug2(int amount = 4)
@@ -37,8 +39,14 @@ namespace Pokefrost
             Events.PreBattleEnd += Debug3;
         }
 
-        public static void Create()
+        public static void Create(string text)
         {
+            if (objectGroup != null)
+            {
+                objectGroup.GetComponentInChildren<FloatingText>().SetText(text);
+                return;
+            }
+
             objectGroup = new GameObject("SelectCardRoutine");
             objectGroup.SetActive(false);
             objectGroup.transform.SetParent(GameObject.Find("CameraContainer/CameraMover/MinibossZoomer/CameraPositioner/CameraPointer/Animator/Rumbler/Shaker/InspectSystem").transform);
@@ -49,11 +57,12 @@ namespace Pokefrost
             background.GetComponent<Image>().color = new Color(0, 0, 0, 0.8f);
 
             GameObject title = UICollector.PullPrefab("Text", "Title", objectGroup);
-            title.GetComponent<FloatingText>().SetText("<color=#8F0>Pizza Frog</color> Found A Card");
+            title.GetComponent<FloatingText>().SetText(text);
             title.transform.position = new Vector3(0, 4.5f, 0);
 
             obj = new GameObject("SelectCard");
             obj.transform.SetParent(objectGroup.transform);
+            obj.transform.Translate(new Vector3(0, 1f, 0));
             RectTransform rect = obj.AddComponent<RectTransform>();
             rect.sizeDelta = new Vector2(7, 2);
             CardControllerSelectCard cc =  obj.AddComponent<CardControllerSelectCard>();
@@ -74,7 +83,9 @@ namespace Pokefrost
             cs.character = References.Player;
             cs.selectEvent = new UnityEventEntity();
 
-
+            GameObject deadObject = new GameObject("DeadObject");
+            deadCards = deadObject.transform;
+            deadObject.SetActive(false);
 
             sequence = objectGroup.AddComponent<ChooseNewCardSequence>();
             sequence.cardContainer = container;
@@ -86,6 +97,9 @@ namespace Pokefrost
 
         public static IEnumerator AddRandomCards(int amount, RewardPool[] rewards, Func<CardData, bool> criteria)
         {
+            CardHand hand = obj.GetComponent<CardHand>();
+            Debug.Log("[Pokefrost] Cleared!");
+            hand.Clear();
             IEnumerable<DataFile> data = new List<DataFile>();
             foreach (RewardPool r in rewards)
             {
@@ -98,7 +112,7 @@ namespace Pokefrost
             {
                 if (criteria(card))
                 {
-                    Card item = CardManager.Get(card, obj.GetComponent<CardController>(), References.Player, false, true);
+                    Card item = CardManager.Get(card.Clone(), obj.GetComponent<CardController>(), References.Player, false, true);
                     clump.Add(item.UpdateData());
                     obj.GetComponent<CardContainer>().Add(item.entity);
                     amount--;
@@ -115,23 +129,17 @@ namespace Pokefrost
         public static IEnumerator Run()
         {
             obj.SetActive(true);
+            sequence.cardController.Enable();
+            sequence.promptEnd = obj.GetComponent<CardHand>().entities.Count == 0;
             yield return objectGroup.GetComponent<ChooseNewCardSequence>().Run();
-            obj.transform.DestroyAllChildren();
         }
 
         public static void Select(Entity entity)
         {
-            ActionSelect action = new ActionSelect(entity, delegate
-            {
-                sequence.cardSelector.TakeCard(entity);
-                sequence.cardController.Disable();
-                sequence.promptEnd = true;
-                Events.InvokeEntityChosen(entity);
-            });
-            if (Events.CheckAction(action))
-            {
-                ActionQueue.Add(action);
-            }
+            References.PlayerData.inventory.deck.Add(entity.data);
+            sequence.cardController.Disable();
+            sequence.promptEnd = true;
+            Events.InvokeEntityChosen(entity);
         }
     }
 }
