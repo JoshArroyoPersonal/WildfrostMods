@@ -2022,7 +2022,7 @@ namespace Pokefrost
                     .SStartEffects(("When Ally Is Sacrificed Trigger To Self", 1), ("Summon Beepop", 1))
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("hitmonlee", "Hitmonlee")
                     .SetStats(5, 5, 5)
@@ -2035,7 +2035,7 @@ namespace Pokefrost
                     .SetStats(5, 5, 5)
                     .SetSprites("hitmonchan.png", "hitmonchanBG.png")
                 );
-
+            */
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("lickitung", "Lickitung", bloodProfile: "Blood Profile Berry")
@@ -2127,7 +2127,7 @@ namespace Pokefrost
                     .WithFlavour("Its stomach can digest any kind of food, even if it happens to be a durain fruit")
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("porygon", "Porygon")
                     .SetStats(5, 5, 5)
@@ -2140,7 +2140,7 @@ namespace Pokefrost
                     .SetStats(5, 5, 5)
                     .SetSprites("furret.png", "furretBG.png")
                 );
-
+            */
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("aipom", "Aipom")
@@ -2211,13 +2211,13 @@ namespace Pokefrost
                     .SStartEffects(("Give Combo to Card in Hand", 1), ("Discard Rightmost Button",1))
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("porygon2", "Porygon2")
                     .SetStats(5, 5, 5)
                     .SetSprites("porygon2.png", "porygon2BG.png")
                 );
-
+            */
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("smeargle", "Smeargle")
@@ -2228,7 +2228,7 @@ namespace Pokefrost
                     .AddPool()
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("tyrogue", "Tyrogue")
                     .SetStats(5, 5, 5)
@@ -2272,7 +2272,7 @@ namespace Pokefrost
                     .SetStats(8, 0, 3)
                     .SetSprites("hooh.png", "hoohBG.png")
                 );
-
+            */
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("ludicolo", "Ludicolo")
@@ -2282,7 +2282,7 @@ namespace Pokefrost
                     .AddPool()
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("kirlia", "Kirlia")
                     .SetStats(5, 5, 5)
@@ -2295,7 +2295,7 @@ namespace Pokefrost
                     .SetStats(5, 5, 5)
                     .SetSprites("gardevoir.png", "gardevoirBG.png")
                 );
-
+            */
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("nincada", "Nincada", idleAnim: "PingAnimationProfile", bloodProfile: "Blood Profile Fungus")
@@ -2431,7 +2431,7 @@ namespace Pokefrost
                     .AddPool()
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("latias", "Latias")
                     .SetStats(8, 0, 3)
@@ -2445,7 +2445,7 @@ namespace Pokefrost
                     .SetStats(8, 0, 3)
                     .SetSprites("latios.png", "latiosBG.png")
                 );
-
+            */
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("piplup", "Piplup", bloodProfile: "Blood Profile Snow")
@@ -2558,7 +2558,7 @@ namespace Pokefrost
                     .SAttackEffects(("Snow", 1), ("Frost", 1))
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("porygonz", "Porygon-Z")
                     .SetStats(5, 5, 5)
@@ -2571,7 +2571,7 @@ namespace Pokefrost
                     .SetStats(5, 5, 5)
                     .SetSprites("gallade.png", "galladeBG.png")
                 );
-
+            */
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("froslass", "Froslass", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Pink Wisp")
@@ -2631,7 +2631,7 @@ namespace Pokefrost
                     .SStartEffects(("Trigger When Card Destroyed", 1))
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("cresselia", "Cresselia")
                     .SetStats(8, 0, 3)
@@ -2645,7 +2645,7 @@ namespace Pokefrost
                     .SetSprites("darkrai.png", "darkraiBG.png")
                     .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1), SStack("Pre Trigger Gain Temp MultiHit Equal To Curses In Hand", 1))
                 );
-
+            */
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("musharna", "Musharna", idleAnim: "FloatAnimationProfile")
@@ -2852,7 +2852,7 @@ namespace Pokefrost
                 );
 
             
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_hypno", "Hypno")
                     .SetStats(20, 3, 4)
@@ -3026,7 +3026,7 @@ namespace Pokefrost
                     .WithValue(50)
                     .SetStartWithEffect(SStack("ImmuneToSnow", 1), SStack("Pre Trigger Gain Temp MultiHit Equal To Curses In Hand", 1))
                 );
-
+            */
             //
         }
 
@@ -3123,7 +3123,7 @@ namespace Pokefrost
                     .WithText("Gain <keyword=taunt>\n<+3><keyword=health>")
             );
 
-            charmlist.Add(
+            /*charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeCurse")
                     .WithTier(3)
@@ -3134,7 +3134,7 @@ namespace Pokefrost
                     .WithTitle("Darkrai Charm")
                     .WithText("Gain <keyword=curseoffrenzy>")
             );
-
+            */
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeTyrunt")
@@ -3431,7 +3431,7 @@ namespace Pokefrost
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
-            Events.OnSceneChanged += PokemonPhoto;
+            //Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             //for (int i = 0; i < References.Classes.Length; i++)
             //{
@@ -3461,7 +3461,7 @@ namespace Pokefrost
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
             //Events.OnCardDataCreated -= Wildparty;
-            Events.OnSceneChanged -= PokemonPhoto;
+            //Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
         }
