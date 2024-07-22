@@ -35,8 +35,24 @@ namespace Pokefrost
         public override IEnumerator Process()
         {
             target.counter.current = 99;
-            target.counter.max = 0;
-            target.silenceCount += 5000;
+            target.counter.max = 99;
+
+            for (int j = target.statusEffects.Count - 1; j >= 0; j--)
+            {
+
+                if (target.statusEffects[j].GetType() == typeof(StatusEffectWhileActiveX))
+                {
+                    StatusEffectWhileActiveX activeEff = target.statusEffects[j] as StatusEffectWhileActiveX;
+                    if (activeEff.active == true)
+                    {
+                        yield return activeEff.Deactivate();
+                    }
+                }
+
+                yield return target.statusEffects[j].Remove();
+
+            }
+
             target.PromptUpdate();
             yield return base.Process();
         }

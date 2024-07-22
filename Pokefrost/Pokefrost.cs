@@ -1418,7 +1418,7 @@ namespace Pokefrost
             StatusEffectInstantRemoveCounter removeCounter = Ext.CreateStatus<StatusEffectInstantRemoveCounter>("Remove Counter")
                 .Register(this);
 
-            this.CreateBasicKeyword("rest", "Rest", "<End Turn>: Heal to full, then remove counter and effects |Click to activate");
+            this.CreateBasicKeyword("rest", "Rest", "<End Turn>: Heal to full, then set max counter to 99 and remove all effects |Click to activate");
             this.CreateButtonIcon("snorlaxRest", ImagePath("snorlaxbutton.png").ToSprite(), "rest", "counter", Color.black, new KeywordData[] { Get<KeywordData>("rest") });
 
             StatusTokenApplyX rest = this.CreateStatusButton<StatusTokenApplyX>("Rest Button", type: "rest")
