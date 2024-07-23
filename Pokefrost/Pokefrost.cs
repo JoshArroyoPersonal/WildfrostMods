@@ -3985,6 +3985,9 @@ namespace Pokefrost
             swappers.Add(CreateSwapper("End of Turn Draw a Card", "When Hit Add Junk To Hand", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("While Active It Is Overshroom", attackOption: "Overload", minBoost: 4, maxBoost: 4));
             swappers.Add(CreateSwapper("Gain Frenzy When Companion Is Killed", "MultiHit", minBoost: 2, maxBoost: 3));
+            swappers.Add(CreateSwapper("Revive", "Heal Self", minBoost: 3, maxBoost: 5));
+            swappers.Add(CreateSwapper("Rest Button", "Heal Self", minBoost: 3, maxBoost: 5));
+            swappers.Add(CreateSwapper("Rest Listener_1", minBoost: 0, maxBoost: 0));
             __instance.effectSwappers = __instance.effectSwappers.AddRangeToArray(swappers.ToArray()).ToArray();
         }
 
