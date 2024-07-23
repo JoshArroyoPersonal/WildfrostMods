@@ -3222,8 +3222,9 @@ namespace Pokefrost
         private void PokemonPostBattle()
         {
             CardDataList active = References.Player.data.inventory.deck;
-            foreach(CardData cardData in active)
+            for (int j = active.Count - 1; j >= 0; j--)
             {
+                CardData cardData = active.list[j];
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.marowak")
                 {
                     Debug.Log("[Pokefrost] Marowak found a bone lying on the battlefield.");
@@ -3252,8 +3253,9 @@ namespace Pokefrost
             }
 
             CardDataList bench = References.PlayerData.inventory.reserve;
-            foreach (CardData cardData in bench)
+            for (int j = bench.Count - 1; j >= 0; j--)
             {
+                CardData cardData = bench.list[j];
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.nosepass")
                 {
                     Debug.Log("[Pokefrost] Nosepass's magentic field attrached a charm to it.");
@@ -3262,7 +3264,7 @@ namespace Pokefrost
                     {
                         var r = UnityEngine.Random.Range(0, options.Count);
                         CardUpgradeData charm = options[r].Clone();
-                        if (charm.CanAssign(cardData))
+                        if (charm.CanAssign(cardData) && charm.tier > 0)
                         {
                             Debug.Log("Nosepass found " + charm.name.ToString());
                             charm.Assign(cardData);
@@ -3984,6 +3986,7 @@ namespace Pokefrost
             swappers.Add(CreateSwapper("End of Turn Draw a Card", "When Hit Add Junk To Hand", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("While Active It Is Overshroom", attackOption: "Overload", minBoost: 4, maxBoost: 4));
             swappers.Add(CreateSwapper("Gain Frenzy When Companion Is Killed", "MultiHit", minBoost: 2, maxBoost: 3));
+            swappers.Add(CreateSwapper("Revive", "Heal Self", minBoost: 3, maxBoost: 5));
             __instance.effectSwappers = __instance.effectSwappers.AddRangeToArray(swappers.ToArray()).ToArray();
         }
 
