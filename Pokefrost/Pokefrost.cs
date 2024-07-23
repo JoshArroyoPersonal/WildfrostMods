@@ -2124,7 +2124,6 @@ namespace Pokefrost
                     .SetStats(10, 6, 5)
                     .SetSprites("snorlax.png", "snorlaxBG.png")
                     .SStartEffects(("While Active Consume To Items In Hand", 1), ("Rest Button", 1), ("Rest Listener_1", 1))
-                    .WithFlavour("Its stomach can digest any kind of food, even if it happens to be a durain fruit")
                 );
 
             /*list.Add(
@@ -2140,17 +2139,17 @@ namespace Pokefrost
                     .SetStats(5, 5, 5)
                     .SetSprites("furret.png", "furretBG.png")
                 );
-            */
+            
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("aipom", "Aipom")
-                    .SetStats(5, 2, 3)
+                    .SetStats(5, 3, 3)
                     .SetSprites("aipom.png", "aipomBG.png")
                     .SStartEffects(("On Kill Boost Effects", 1))
-                    .STraits(("Pickup", 1))
+                    .STraits(("Pickup", 2))
                     .AddPool()
                 );
-
+            */
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("espeon", "Espeon")
