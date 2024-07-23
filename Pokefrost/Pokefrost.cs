@@ -3221,8 +3221,9 @@ namespace Pokefrost
         private void PokemonPostBattle()
         {
             CardDataList active = References.Player.data.inventory.deck;
-            foreach(CardData cardData in active)
+            for (int j = active.Count - 1; j >= 0; j--)
             {
+                CardData cardData = active.list[j];
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.marowak")
                 {
                     Debug.Log("[Pokefrost] Marowak found a bone lying on the battlefield.");
@@ -3237,7 +3238,7 @@ namespace Pokefrost
                 }
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.slowking")
                 {
-                    
+
                     Debug.Log("[Pokefrost] Slowking bestows a crown(?) to the party.");
                     foreach (CardData.StatusEffectStacks s in cardData.startWithEffects)
                     {
@@ -3251,8 +3252,9 @@ namespace Pokefrost
             }
 
             CardDataList bench = References.PlayerData.inventory.reserve;
-            foreach (CardData cardData in bench)
+            for (int j = bench.Count - 1; j >= 0; j--)
             {
+                CardData cardData = bench.list[j];
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.nosepass")
                 {
                     Debug.Log("[Pokefrost] Nosepass's magentic field attrached a charm to it.");
@@ -3261,7 +3263,7 @@ namespace Pokefrost
                     {
                         var r = UnityEngine.Random.Range(0, options.Count);
                         CardUpgradeData charm = options[r].Clone();
-                        if (charm.CanAssign(cardData))
+                        if (charm.CanAssign(cardData) && charm.tier > 0)
                         {
                             Debug.Log("Nosepass found " + charm.name.ToString());
                             charm.Assign(cardData);
