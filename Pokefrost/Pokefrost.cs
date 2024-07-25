@@ -779,6 +779,7 @@ namespace Pokefrost
             //taunttargetmode.constraints = temptaunteffect;
             //taunteffect.targetMode = taunttargetmode;
 
+//IMPORTANT: If the name of Temporary Taunted changes, change the name in TargetModeTaunt
             StatusEffectTemporaryTrait imtaunted = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             imtaunted.name = "Temporary Taunted";
             imtaunted.trait = tauntedtrait;
@@ -3306,6 +3307,34 @@ namespace Pokefrost
                 .Register(this);
         }
 
+        public void TauntedFailsafe(Entity entity, ref int amount)
+        {
+            for(int i=entity.traits.Count-1; i>=0; i--)
+            {
+                if (entity.traits[i].data.name == "Taunted")
+                {
+                    foreach(Entity e in entity.GetAllEnemies())
+                    {
+                        foreach(Entity.TraitStacks t in e.traits)
+                        {
+                            if (t.data.name == "Taunt")
+                            {
+                                return;
+                            }
+                        }
+                    }
+                    for(int j=entity.statusEffects.Count-1; j>=0; j--)
+                    {
+                        if (entity.statusEffects[j]?.name == "Temporary Taunted" )
+                        {
+                            entity.StartCoroutine(entity.statusEffects[j].Remove());
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         private void LoadStatusEffects()
         {
             AddressableLoader.AddRangeToGroup("StatusEffectData", statusList);
@@ -3511,6 +3540,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
+            Events.OnEntityCountDown += TauntedFailsafe;
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
@@ -3554,6 +3584,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
             Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
+            Events.OnEntityCountDown -= TauntedFailsafe;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
