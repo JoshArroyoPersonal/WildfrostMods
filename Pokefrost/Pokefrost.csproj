@@ -447,6 +447,7 @@
     <Compile Include="StatusEffectEvolveFromNode.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
     <Compile Include="StatusEffectFalseSwipe.cs" />
+    <Compile Include="StatusEffectInstantAddDeck.cs" />
     <Compile Include="StatusEffectInstantFullHeal.cs" />
     <Compile Include="StatusEffectJolted.cs" />
     <Compile Include="StatusEffectMoveCard.cs" />

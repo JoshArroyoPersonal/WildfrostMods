@@ -1438,12 +1438,13 @@ namespace Pokefrost
 
             StatusEffectMoveCard discard = Ext.CreateStatus<StatusEffectMoveCard>("Discard Self")
                 .Register(this);
+            statusList.Add (discard);
 
             StatusTokenApplyX focusEnergy = this.CreateStatusButton<StatusTokenApplyX>("Discard Rightmost Button", "focusEnergy")
                 .ApplyX(Get<StatusEffectData>("Discard Self"), StatusEffectApplyX.ApplyToFlags.RightCardInHand)
                 .Register(this);
             focusEnergy.oncePerTurn = true;
-            statusList.Add(teeter);
+            statusList.Add(focusEnergy);
 
             StatusEffectApplyRandomOnCardPlayed buffmarowak = ScriptableObject.CreateInstance<StatusEffectApplyRandomOnCardPlayed>();
             buffmarowak.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Self;
@@ -1588,7 +1589,7 @@ namespace Pokefrost
             spicune.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
             statusList.Add(spicune);
 
-            this.CreateIconKeyword("burning", "Burning", "Explodes when hit, damaging all targets in row then clearing | Applying more increases the explosion!", "burning").ChangeColor(title: new Color(1f, 0.2f, 0.2f), note: new Color(1f, 0.2f, 0.2f));
+            this.CreateIconKeyword("burning", "Burning", "Explodes when hit, damaging all targets in row then clearing | Applying more increases the explosion!", "burningicon").ChangeColor(title: new Color(1f, 0.2f, 0.2f), note: new Color(1f, 0.2f, 0.2f));
             this.CreateIcon("burningicon", ImagePath("burningicon.png").ToSprite(), "burning", "spice", Color.black, new KeywordData[] { Get<KeywordData>("burning") })
                 .GetComponentInChildren<TextMeshProUGUI>(true).enabled = true;
 
@@ -1679,6 +1680,39 @@ namespace Pokefrost
 
             resisttransfereffects2.effects = new List<StatusEffectData> { resistallies, resisthit2 };
 
+
+            StatusEffectSummon tar1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
+            tar1.summonCard = Get<CardData>("Dart");
+            tar1.gainTrait = Get<StatusEffectData>("Temporary Zoomlin");
+            tar1.name = "Summon Tar Blade";
+            tar1.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tar1);
+            statusList.Add(tar1);
+            StatusEffectInstantSummon tar2 = Get<StatusEffectData>("Instant Summon Junk In Hand").InstantiateKeepName() as StatusEffectInstantSummon;
+            tar2.targetSummon = Get<StatusEffectData>("Summon Tar Blade") as StatusEffectSummon;
+            tar2.name = "Instant Summon Tar Blade In Hand";
+            tar2.ModAdded = this;
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", tar2);
+            statusList.Add(tar2);
+
+            StatusEffectInstantAddDeck tar3 = Ext.CreateStatus<StatusEffectInstantAddDeck>("Add Tar Blade To Deck")
+                .Register(this);
+            tar3.card = Get<CardData>("Dart");
+
+            this.CreateBasicKeyword("tarshot", "Tar Shot", "<Free Action>: Place a <card=Dart> into your hand and backpack\n Give it <keyword=zoomlin> this battle |Click to activate\n Once per turn\n Thrice per battle");
+            this.CreateButtonIcon("mukTarShoot", ImagePath("mukbutton.png").ToSprite(), "tarshot", "ink", Color.white, new KeywordData[] { Get<KeywordData>("tarshot") });
+
+            StatusTokenApplyX tarbutton = this.CreateStatusButton<StatusTokenApplyX>("Add Tar Blade Button", type: "tarshot")
+                .ApplyX(Get<StatusEffectData>("Instant Summon Tar Blade In Hand"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            tarbutton.oncePerTurn = true;
+            tarbutton.finiteUses = true;
+            statusList.Add(tarbutton);
+
+            StatusTokenApplyXListener tarbutton2 = Ext.CreateStatus<StatusTokenApplyXListener>("Tar Shot Listener_1", type: "tarshot_listener")
+                .ApplyX(Get<StatusEffectData>("Add Tar Blade To Deck"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(tarbutton2);
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
@@ -1957,8 +1991,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("muk", "Muk")
-                    .SetStats(5, 5, 5)
+                    .SetStats(7, 0, 5)
                     .SetSprites("muk.png", "mukBG.png")
+                    .SStartEffects(("Bonus Damage Equal To Darts In Hand",1), ("Add Tar Blade Button",3), ("Tar Shot Listener_1",1))
                 );
 
             list.Add(
@@ -2519,7 +2554,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("croagunk", "Croagunk", bloodProfile: "Blood Profile Fungus")
-                    .SetStats(5, 2, 4)
+                    .SetStats(6, 2, 5)
                     .SetSprites("croagunk.png", "croagunkBG.png")
                     .SStartEffects(("On Hit Equal Shroom To Target", 1), ("Evolve Croagunk", 80))
                     .AddPool("BasicUnitPool")
@@ -2528,7 +2563,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("toxicroak", "Toxicroak", bloodProfile: "Blood Profile Fungus")
-                    .SetStats(7, 3, 4)
+                    .SetStats(6, 3, 4)
                     .SetSprites("toxicroak.png", "toxicroakBG.png")
                     .SStartEffects(("On Hit Equal Shroom To Target", 1))
                 );
