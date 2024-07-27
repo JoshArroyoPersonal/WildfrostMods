@@ -16,7 +16,8 @@ namespace Pokefrost
                              select e);
             if (hashSet.Count <= 0)
             {
-                return null;
+                TargetModeBasic targetModeBasic = new TargetModeBasic();
+                return targetModeBasic.GetPotentialTargets(entity, target, targetContainer);
             }
 
             return hashSet.ToArray();

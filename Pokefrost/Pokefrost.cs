@@ -3214,6 +3214,7 @@ namespace Pokefrost
                 .Register(this);
         }
 
+        /*
         public void TauntedFailsafe(Entity entity, ref int amount)
         {
             for(int i=entity.traits.Count-1; i>=0; i--)
@@ -3241,6 +3242,7 @@ namespace Pokefrost
                 }
             }
         }
+        */
 
         private void LoadStatusEffects()
         {
@@ -3447,7 +3449,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
-            Events.OnEntityCountDown += TauntedFailsafe;
+            //Events.OnEntityCountDown += TauntedFailsafe;
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
@@ -3489,7 +3491,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
             Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
-            Events.OnEntityCountDown -= TauntedFailsafe;
+            //Events.OnEntityCountDown -= TauntedFailsafe;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
@@ -3811,7 +3813,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\nAdds 46 new companions, 2 new pets, 6 new charms, and a new map event.";
+        public override string Description => "Pokemon Companions\r\n\r\nAdds 46 new companions, 2 new pets, 6 new charms, and a new map event.\n\n\nThe developers can be contacted through Steam or Discord (@Josh A, @Michael C)";
 
         public override List<T> AddAssets<T, Y>()
         {
