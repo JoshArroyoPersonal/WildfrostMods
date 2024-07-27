@@ -131,6 +131,7 @@ namespace Pokefrost
             //background.transform.localPosition = new Vector3(-2.1f, -20.44f, 0);
             //background.transform.localScale = new Vector3(5.2f, 1.2f, 0);
             background2.GetComponent<RectTransform>().sizeDelta = new Vector2(100f, 100f);
+            background2.AddComponent<UINavigationLayer>();
 
             //Cancel Button
             GameObject cancelButton = UICollector.PullPrefab("Button", "CancelButton", background2);
