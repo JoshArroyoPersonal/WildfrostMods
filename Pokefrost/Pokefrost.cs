@@ -1912,7 +1912,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("alolansandslash", "Alolan Sandslash", bloodProfile: "Blood Profile Snow")
-                    .SetStats(6, 2, 4)
+                    .SetStats(6, 5, 4)
                     .SetSprites("alolansandslash.png", "alolansandslashBG.png")
                     .SAttackEffects(("Snow", 3), ("Block", 1))
                     .AddPool()
@@ -1994,6 +1994,7 @@ namespace Pokefrost
                     .SetStats(7, 0, 5)
                     .SetSprites("muk.png", "mukBG.png")
                     .SStartEffects(("Bonus Damage Equal To Darts In Hand",1), ("Add Tar Blade Button",3), ("Tar Shot Listener_1",1))
+                    .AddPool("MagicUnitPool")
                 );
 
             list.Add(
