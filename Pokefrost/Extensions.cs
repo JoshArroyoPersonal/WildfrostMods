@@ -114,6 +114,7 @@ namespace Pokefrost
             gameObject.SetActive(true);
             icon.type = type;
             cardIcons[type] = gameObject;
+            gameObject.AddComponent<UINavigationItem>();
 
             return gameObject;
         }
