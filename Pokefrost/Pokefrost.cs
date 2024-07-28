@@ -1680,7 +1680,6 @@ namespace Pokefrost
 
             resisttransfereffects2.effects = new List<StatusEffectData> { resistallies, resisthit2 };
 
-
             StatusEffectSummon tar1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             tar1.summonCard = Get<CardData>("Dart");
             tar1.gainTrait = Get<StatusEffectData>("Temporary Zoomlin");
@@ -3206,7 +3205,7 @@ namespace Pokefrost
                     .SetEffects(SStack("On Card Played Buff Marowak", 1))
                     .SetConstraints(thickclubconstraint)
                     .WithTitle("Thick Club")
-                    .WithText("Gain increase <Marowak's> <keyword=health> or <keyword=attack> by <1>\n\nRandomly each trigger")
+                    .WithText("Gain 'increase <Marowak's> <keyword=health> or <keyword=attack> by <1>'\n\nRandomly each trigger")
             );
 
             charmlist.Add(
@@ -3457,6 +3456,8 @@ namespace Pokefrost
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
+
+            //AddressableLoader.AddRangeToGroup("EyeData", EyeDataAdder.Eyes());
 
             //References.instance.classes[0] = Get<ClassData>("Basic");
             //References.instance.classes[1] = Get<ClassData>("Magic");
