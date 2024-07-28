@@ -114,9 +114,6 @@
     <Reference Include="Rewired_Windows_Functions">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\Rewired_Windows_Functions.dll</HintPath>
     </Reference>
-    <Reference Include="Snowfall">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3265405837\Snowfall.dll</HintPath>
-    </Reference>
     <Reference Include="Steamworks">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\Steamworks.dll</HintPath>
     </Reference>
@@ -439,6 +436,7 @@
     <Compile Include="EventRoutineTrade.cs" />
     <Compile Include="EvolutionPopUp.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="EyeDataAdder.cs" />
     <Compile Include="PickupRoutine.cs" />
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
