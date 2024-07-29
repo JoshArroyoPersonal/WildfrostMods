@@ -120,4 +120,44 @@ namespace Pokefrost
         }
 
     }
+
+
+    internal class StatusEffectInstantHitRedrawBell : StatusEffectInstant
+    {
+        public override IEnumerator Process()
+        {
+
+            RedrawBellSystem redrawBell = GameSystem.FindObjectOfType<RedrawBellSystem>();
+
+            int handSize = Events.GetHandSize(References.PlayerData.handSize);
+            ActionRedraw action = new ActionRedraw(redrawBell.owner, handSize);
+            if (Events.CheckAction(action))
+            {
+                ActionQueue.Add(action);
+                redrawBell.controller.Disable();
+                if (redrawBell.IsCharged)
+                {
+                    redrawBell.reset = false;
+                }
+                else
+                {
+                    redrawBell.reset = true;
+                }
+
+                Events.InvokeRedrawBellHit(redrawBell);
+                SfxSystem.OneShot("event:/sfx/inventory/redraw_bell_use");
+                redrawBell.SetCounter(redrawBell.counter.max);
+                redrawBell.AnimatorTrigger("Ring");
+                Events.InvokeScreenShake(1f, 0f);
+                Events.InvokeUINavigationReset();
+                redrawBell.hitParticleSystem.Play();
+            }
+
+
+
+            return base.Process();
+        }
+    }
+
+
 }
