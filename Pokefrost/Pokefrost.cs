@@ -2059,7 +2059,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("seadra", "Seadra", idleAnim: "FloatAnimationProfile")
-                    .SetStats(6,6,5)
+                    .SetStats(7,5,5)
                     .SetSprites("seadra.png", "seadraBG.png")
                     .SStartEffects(("Give Combo to Card in Hand", 1), ("Evolve Seadra", 4))
                     .AddPool()
@@ -2207,7 +2207,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("kingdra", "Kingdra")
-                    .SetStats(7, 7, 5)
+                    .SetStats(9, 7, 5)
                     .SetSprites("kingdra.png", "kingdraBG.png")
                     .SStartEffects(("Give Combo to Card in Hand", 1), ("Discard Rightmost Button",1))
                 );
@@ -2744,7 +2744,7 @@ namespace Pokefrost
                     .CreateUnit("sylveon", "Sylveon", bloodProfile: "Blood Profile Berry")
                     .SetStats(4, 3, 3)
                     .SetSprites("sylveon.png", "sylveonBG.png")
-                    .SStartEffects(("On Turn Heal & Cleanse Allies", 3))
+                    .SStartEffects(("On Turn Heal & Cleanse Allies", 2))
                 );
 
             list.Add(
@@ -2778,7 +2778,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("polteageist", "Polteageist", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Husk")
-                    .SetStats(6, null, 5)
+                    .SetStats(7, null, 4)
                     .SetSprites("polteageist.png", "polteageistBG.png")
                     .SStartEffects(("On Card Played Blaze Tea Random Ally", 1))
                     .AddPool()
