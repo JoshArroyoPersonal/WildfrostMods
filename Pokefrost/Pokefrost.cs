@@ -124,7 +124,7 @@ namespace Pokefrost
             tauntkey.name = "Taunt";
             keycollection.SetString(tauntkey.name + "_text", "Taunt");
             tauntkey.titleKey = keycollection.GetString(tauntkey.name + "_text");
-            keycollection.SetString(tauntkey.name + "_desc", "All enmeies are <keyword=taunted>");
+            keycollection.SetString(tauntkey.name + "_desc", "All enemies are <keyword=taunted>");
             tauntkey.descKey = keycollection.GetString(tauntkey.name + "_desc");
             tauntkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntkey);
@@ -559,7 +559,7 @@ namespace Pokefrost
             scrap3.effectToApply = Get<StatusEffectData>("Instant Summon Scrap Pile In Hand") as StatusEffectInstantSummon;
             scrap3.canBeBoosted = false;
             scrap3.name = "When Hit Add Scrap Pile To Hand";
-            collection.SetString(scrap3.name + "_text", "Add <Scrap Pile> to hand when hit");
+            collection.SetString(scrap3.name + "_text", "Add <card=ScrapPile> to hand when hit");
             scrap3.textKey = collection.GetString(scrap3.name + "_text");
             scrap3.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", scrap3);
