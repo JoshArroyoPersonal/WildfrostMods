@@ -1681,6 +1681,15 @@ namespace Pokefrost
             resisttransfereffects2.effects = new List<StatusEffectData> { resistallies, resisthit2 };
 
 
+            StatusEffectInstantHitRedrawBell redrawTest = Ext.CreateStatus<StatusEffectInstantHitRedrawBell>("Hit Redraw Bell")
+                .Register(this);
+            statusList.Add(redrawTest);
+
+            StatusEffectApplyXOnCardPlayed redrawOnPlay = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Hit Redraw Bell", "Hit <Redraw Bell>")
+                .ApplyX(redrawTest, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(redrawOnPlay);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -2391,7 +2400,7 @@ namespace Pokefrost
                     .CreateUnit("cradily", "Cradily", idleAnim: "GoopAnimationProfile", bloodProfile: "Blood Profile Fungus")
                     .SetStats(12, null, 5)
                     .SetSprites("cradily.png", "cradilyBG.png")
-                    .SStartEffects(("Heal Self", 6))
+                    .SStartEffects(("Heal Self", 4))
                     .STraits(("Frontline", 1), ("Pigheaded", 1))
                     .AddPool()
                 );
