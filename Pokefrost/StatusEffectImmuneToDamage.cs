@@ -73,12 +73,15 @@ namespace Pokefrost
 
         private IEnumerator Check(Hit hit)
         {
-            UnityEngine.Debug.Log("here");
-            SfxSystem.OneShot("event:/sfx/status_icon/block_decrease");
-            hit.damageBlocked = hit.damage;
-            hit.damage = 0;
+            if (!target.silenced)
+            {
+                UnityEngine.Debug.Log("here");
+                SfxSystem.OneShot("event:/sfx/status_icon/block_decrease");
+                hit.damageBlocked = hit.damage;
+                hit.damage = 0;
 
-            target.PromptUpdate();
+                target.PromptUpdate();
+            }
             yield break;
         }
 

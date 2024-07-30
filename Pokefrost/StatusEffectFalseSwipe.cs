@@ -17,7 +17,7 @@ namespace Pokefrost
         public override bool RunHitEvent(Hit hit)
         {
 
-            if (hit.attacker == target)
+            if (hit.attacker == target && !target.silenced)
             {
                 UnityEngine.Debug.Log("attacking");
                 return hit.damage >= hit.target.hp.current;
@@ -28,7 +28,7 @@ namespace Pokefrost
 
         public IEnumerator Check(Hit hit)
         {
-            while (hit.damage >= hit.target.hp.current)
+            while (hit.damage >= hit.target.hp.current && hit.target.hp.current > 0)
             {
                 hit.damage--;
                 hit.damageBlocked++;
