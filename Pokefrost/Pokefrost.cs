@@ -2396,9 +2396,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("sableye", "Sableye", bloodProfile: "Blood Profile Pink Wisp")
-                    .SetStats(10, 0, 3)
+                    .SetStats(10, 0, 2)
                     .SetSprites("sableye.png", "sableyeBG.png")
-                    .SStartEffects(("Drop Bling on Hit", 10))
+                    .SStartEffects(("Drop Bling on Hit", 15))
                     .STraits(("Greed", 1))
                     .AddPool()
                 );
@@ -2969,6 +2969,7 @@ namespace Pokefrost
                     .SetSprites("lunatone.png", "lunatoneBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
+                    .SStartEffects(("On Turn Apply Snow To Enemies", 1))
                 );
 
             list.Add(
@@ -2978,6 +2979,7 @@ namespace Pokefrost
                     .SetSprites("solrock.png", "solrockBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
+                    .SStartEffects(("On Card Played Reduce Counter To Allies", 1))
                 );
 
             list.Add(

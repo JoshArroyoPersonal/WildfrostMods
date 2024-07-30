@@ -4,7 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
+using static Steamworks.InventoryItem;
 
 namespace Pokefrost
 {
@@ -128,6 +130,20 @@ namespace Pokefrost
         {
 
             RedrawBellSystem redrawBell = GameSystem.FindObjectOfType<RedrawBellSystem>();
+            Debug.Log("Got bell");
+            if(redrawBell == null || redrawBell.controller == null)
+            {
+                NoTargetTextSystem noText = GameSystem.FindObjectOfType<NoTargetTextSystem>();
+                if(noText != null)
+                {
+                    TMP_Text textElement = noText.textElement;
+                    textElement.text = "No Bell To Hit!";
+                    noText.PopText(target.transform.position);
+                }
+
+
+                return base.Process();
+            }
 
             int handSize = Events.GetHandSize(References.PlayerData.handSize);
             ActionRedraw action = new ActionRedraw(redrawBell.owner, handSize);
@@ -152,8 +168,6 @@ namespace Pokefrost
                 Events.InvokeUINavigationReset();
                 redrawBell.hitParticleSystem.Play();
             }
-
-
 
             return base.Process();
         }

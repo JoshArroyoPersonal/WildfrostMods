@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
@@ -130,11 +131,31 @@ namespace Pokefrost
                 && CorrectPlace() 
                 && !target.IsSnowed 
                 && target.owner == References.Player
+                && !target.silenced
                 && (!oncePerTurn || unusedThisTurn) )
             {
                 target.StartCoroutine(ButtonClicked());
                 unusedThisTurn = false;
             }
+
+            if ((bool) target.IsSnowed || target.silenced)
+            {
+                NoTargetTextSystem noText = GameSystem.FindObjectOfType<NoTargetTextSystem>();
+                if (noText != null)
+                {
+                    TMP_Text textElement = noText.textElement;
+                    if ((bool)target.IsSnowed)
+                    {
+                        textElement.text = "Snowed!";
+                    }
+                    if ((bool)target.silenced)
+                    {
+                        textElement.text = "Inked!";
+                    }
+                    noText.PopText(target.transform.position);
+                }
+            }
+
         }
 
         public bool CheckFlag(PlayFromFlags flag) => (playFrom & flag) != 0;
