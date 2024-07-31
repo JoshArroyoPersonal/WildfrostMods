@@ -4032,6 +4032,7 @@ namespace Pokefrost
             swappers.Add(CreateSwapper("Revive", "Heal Self", minBoost: 3, maxBoost: 5));
             swappers.Add(CreateSwapper("Rest Button", "Heal Self", minBoost: 3, maxBoost: 5));
             swappers.Add(CreateSwapper("Rest Listener_1", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("Redraw Cards", "Trigger When Redraw Hit", minBoost: 0, maxBoost: 0));
             __instance.effectSwappers = __instance.effectSwappers.AddRangeToArray(swappers.ToArray()).ToArray();
         }
 
