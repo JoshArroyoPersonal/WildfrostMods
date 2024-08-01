@@ -2951,6 +2951,7 @@ namespace Pokefrost
                     .SetSprites("volbeat.png", "volbeatBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
+                    .SStartEffects(("On Turn Apply Attack To Self", 4))
                 );
 
             list.Add(
@@ -2960,6 +2961,8 @@ namespace Pokefrost
                     .SetSprites("illumise.png", "illumiseBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
+                    .SStartEffects(("Heal Self", 4))
+                    .STraits(("Heartburn", 1))
                 );
 
             list.Add(
@@ -4037,6 +4040,8 @@ namespace Pokefrost
             swappers.Add(CreateSwapper("Rest Button", "Heal Self", minBoost: 3, maxBoost: 5));
             swappers.Add(CreateSwapper("Rest Listener_1", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("Redraw Cards", "Trigger When Redraw Hit", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("Add Tar Blade Button", minBoost: 0, maxBoost: 0));
+            swappers.Add(CreateSwapper("Tar Shot Listener_1", minBoost: 0, maxBoost: 0));
             __instance.effectSwappers = __instance.effectSwappers.AddRangeToArray(swappers.ToArray()).ToArray();
         }
 
