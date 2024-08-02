@@ -1647,11 +1647,13 @@ namespace Pokefrost
                 .ApplyX(resisttransfereffects1, StatusEffectApplyX.ApplyToFlags.RandomAlly)
                 .Register(this);
 
-            StatusEffectApplyXWhenHit resisthit1 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Random Ally", "When hit, <transfer> '<keyword=resist> <{a}>' to a random ally")
+            StatusEffectApplyXWhenHit resisthit1 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Random Ally", "When hit, <transfer> '<keyword=resist> {a}' to a random ally")
                 .ApplyX(resisttransfer1, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
             resisttransfereffects1.effects = new List<StatusEffectData> { tempresist, resisthit1};
+            resisttransfer1.targetMustBeAlive = false;
+            resisthit1.targetMustBeAlive = false;
 
             //Pickup
             StatusEffectPickup pickup = Ext.CreateStatus<StatusEffectPickup>("Pickup Items And Clunkers", boostable: true)
@@ -1674,11 +1676,43 @@ namespace Pokefrost
                 .ApplyX(resisttransfereffects2, StatusEffectApplyX.ApplyToFlags.RandomAlly)
                 .Register(this);
 
-            StatusEffectApplyXWhenHit resisthit2 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Allies to Random Ally", "When hit, <transfer> 'While acitve, add <keyword=resist> <{a}> to all allies' to a random ally")
+            StatusEffectApplyXWhenHit resisthit2 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Allies to Random Ally", "When hit, <transfer> 'While acitve, add <keyword=resist> {a} to all allies' to a random ally")
                 .ApplyX(resisttransfer2, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
             resisttransfereffects2.effects = new List<StatusEffectData> { resistallies, resisthit2 };
+            resisttransfer2.targetMustBeAlive = false;
+            resisthit2.targetMustBeAlive = false;
+
+            StatusEffectMultEffects frenzytransfereffects = Ext.CreateStatus<StatusEffectMultEffects>("Effects for Transfering MultiHit to Random Ally")
+                .Register(this);
+
+            StatusEffectTransfer frenzytransfer = Ext.CreateStatus<StatusEffectTransfer>("Transfer MultiHit to Random Ally")
+                .ApplyX(frenzytransfereffects, StatusEffectApplyX.ApplyToFlags.RandomAlly)
+                .Register(this);
+
+            StatusEffectApplyXWhenHit frenzyhit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer MultiHit to Random Ally", "When hit, <transfer> 'x{a}<keyword=frenzy>' to a random ally")
+                .ApplyX(frenzytransfer, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
+            frenzytransfereffects.effects = new List<StatusEffectData> { Get<StatusEffectData>("MultiHit"), frenzyhit };
+            frenzytransfer.targetMustBeAlive = false;
+            frenzyhit.targetMustBeAlive = false;
+
+            StatusEffectMultEffects attacktransfereffects = Ext.CreateStatus<StatusEffectMultEffects>("Effects for Transfering Attack to Random Ally")
+                .Register(this);
+
+            StatusEffectTransfer attacktransfer = Ext.CreateStatus<StatusEffectTransfer>("Transfer Attack to Random Ally")
+                .ApplyX(attacktransfereffects, StatusEffectApplyX.ApplyToFlags.RandomAlly)
+                .Register(this);
+
+            StatusEffectApplyXOnCardPlayed attackhit = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Transfer Attack to Random Ally", "<Transfer> '+{a}<keyword=attack>' to a random ally")
+                .ApplyX(attacktransfer, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
+            attacktransfereffects.effects = new List<StatusEffectData> { Get<StatusEffectData>("Ongoing Increase Attack"), attackhit };
+            attacktransfer.targetMustBeAlive = false;
+            attackhit.targetMustBeAlive = false;
 
             StatusEffectSummon tar1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             tar1.summonCard = Get<CardData>("Dart");
@@ -2488,6 +2522,7 @@ namespace Pokefrost
                     .CreateUnit("latios", "Latios")
                     .SetStats(8, 0, 3)
                     .SetSprites("latios.png", "latiosBG.png")
+                    .SStartEffects(("On Card Played Transfer Attack to Random Ally", 2), ("Ongoing Increase Attack", 2))
                 );
 
             list.Add(
@@ -3013,7 +3048,7 @@ namespace Pokefrost
                     .SetSprites("latias.png", "latiasBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
-                    .SStartEffects(("When Hit Transfer Resist to Allies to Random Ally", 1), ("While Active Allies Have Resist (No Desc)", 1))
+                    .SStartEffects(("When Hit Transfer Resist to Allies to Random Ally", 3), ("While Active Allies Have Resist (No Desc)", 3))
                 );
 
             list.Add(
@@ -3023,6 +3058,7 @@ namespace Pokefrost
                     .SetSprites("latios.png", "latiosBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
+                    .SStartEffects(("When Hit Transfer MultiHit to Random Ally", 1), ("MultiHit", 1))
                 );
 
             list.Add(
