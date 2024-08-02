@@ -840,15 +840,17 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", bomall);
             statusList.Add(bomall);
 
-            StatusEffectTriggerWhenDamageType teethtrigger = ScriptableObject.CreateInstance<StatusEffectTriggerWhenDamageType>();
+            StatusEffectApplyXWhenAnyoneTakesDamage teethtrigger = ScriptableObject.CreateInstance<StatusEffectApplyXWhenAnyoneTakesDamage>();
             teethtrigger.name = "Trigger When Teeth Damage";
+            teethtrigger.effectToApply = Get<StatusEffectData>("Trigger (High Prio)");
+            teethtrigger.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
             teethtrigger.isReaction = true;
             teethtrigger.applyFormat = "";
             teethtrigger.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             teethtrigger.keyword = "";
             teethtrigger.targetConstraints = new TargetConstraint[0];
-            teethtrigger.triggerdamagetype = "spikes";
-            collection.SetString(teethtrigger.name + "_text", "Trigger when <keyword=teeth> damage is taken");
+            teethtrigger.targetDamageType = "spikes";
+            collection.SetString(teethtrigger.name + "_text", "Trigger whenever anything takes damage from <keyword=teeth>");
             teethtrigger.descColorHex = "F99C61";
             teethtrigger.textKey = collection.GetString(teethtrigger.name + "_text");
             teethtrigger.textOrder = 0;
@@ -1756,6 +1758,11 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(redrawOnPlay);
 
+            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", "Whenever anyone takes damage from <keyword=jolted>, apply equal <keyword=jolted> to a random enemy")
+                .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.RandomEnemy)
+                .Register(this);
+            joltChain.targetDamageType = "jolt";
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -2323,9 +2330,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("raikou", "Raikou")
-                    .SetStats(8, 0, 3)
+                    .SetStats(9, 0, 4)
                     .SetSprites("raikou.png", "raikouBG.png")
-                    .SAttackEffects(("Jolted", 1))
+                    .SAttackEffects(("Jolted", 2))
+                    .SStartEffects(("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", 1))
                 );
 
             list.Add(

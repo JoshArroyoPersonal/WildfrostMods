@@ -19,15 +19,6 @@ namespace Pokefrost
             }
 
             return entity.hp.max - entity.hp.current;
-            /*int amount = 0;
-            foreach(Entity card in Battle.GetCardsOnBoard(References.Player))
-            {
-                if (card.data.cardType.name == "Clunker")
-                {
-                    amount++;
-                }
-            }
-            return amount;*/
 
         }
 
