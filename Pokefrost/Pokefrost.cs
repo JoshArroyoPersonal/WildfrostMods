@@ -736,6 +736,7 @@ namespace Pokefrost
             plucktrait.ModAdded = this;
             AddressableLoader.AddToGroup<TraitData>("TraitData", plucktrait);
 
+//VANILLA GAME FIX: OVERRIDES WITH PLUCK
             aimlesstrait.overrides = aimlesstrait.overrides.Append(plucktrait).ToArray();
             barragetrait.overrides = barragetrait.overrides.Append(plucktrait).ToArray();
             longshottrait.overrides = longshottrait.overrides.Append(plucktrait).ToArray();
@@ -799,6 +800,7 @@ namespace Pokefrost
             bombard1trait.overrides = bombard1trait.overrides.Append(tauntedtrait).ToArray();
             bombard2trait.overrides = bombard2trait.overrides.Append(tauntedtrait).ToArray();
 
+//VANILLA GAMEFIX: WOOLLY DREK
             StatusEffectInstantEat woollydrekeat = Get<StatusEffectData>("Eat (Health, Attack & Effects)") as StatusEffectInstantEat;
             woollydrekeat.illegalEffects = woollydrekeat.illegalEffects.AddItem<StatusEffectData>(imtaunted).ToArray();
 
@@ -3506,10 +3508,26 @@ namespace Pokefrost
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
+            RevertVanillaChanges();
             //Events.OnCardDataCreated -= Wildparty;
             //Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
+        }
+
+        private void RevertVanillaChanges()
+        {
+            //VANILLA REVERT: PLUCK
+            TraitData aimless = Get<TraitData>("Aimless");
+            aimless.overrides = aimless.overrides.RemoveNulls(this);
+            TraitData barrage = Get<TraitData>("Barrage");
+            barrage.overrides = aimless.overrides.RemoveNulls(this);
+            TraitData longshot = Get<TraitData>("Longshot");
+            longshot.overrides = aimless.overrides.RemoveNulls(this);
+
+            //VANILLA REVERT: WOOLY DREK
+            StatusEffectInstantEat woollydrekeat = Get<StatusEffectData>("Eat (Health, Attack & Effects)") as StatusEffectInstantEat;
+            woollydrekeat.illegalEffects = woollydrekeat.illegalEffects.RemoveNulls(this);
         }
 
         private void CreateBattles()
