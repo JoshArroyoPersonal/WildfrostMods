@@ -51,18 +51,29 @@ namespace Pokefrost
 
         public virtual void FindDeckCopy(Action<CardData, CardData.StatusEffectStacks> action)
         {
+            CardData bestCandidate = null;
             foreach(CardData card in References.Player.data.inventory.deck)
             {
                 if (card.id == target.data.id)
                 {
-                    foreach (CardData.StatusEffectStacks status in card.startWithEffects)
+                    bestCandidate = card;
+                    break;
+                }
+                if (card.name == target.data.name)
+                {
+                    bestCandidate = card;
+                }
+            }
+
+            if (bestCandidate != null)
+            {
+                foreach (CardData.StatusEffectStacks status in bestCandidate.startWithEffects)
+                {
+                    if (status.data.name == this.name)
                     {
-                        if (status.data.name == this.name)
-                        {
-                            action(card, status);
-                            UnityEngine.Debug.Log("[Pokefrost] Updated deck copy!");
-                            return;
-                        }
+                        action(bestCandidate, status);
+                        UnityEngine.Debug.Log("[Pokefrost] Updated deck copy!");
+                        return;
                     }
                 }
             }

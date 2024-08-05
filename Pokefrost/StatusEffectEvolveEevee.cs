@@ -36,6 +36,7 @@ namespace Pokefrost
             upgradeMap.Add("CardUpgradeSpice", "flareon");
             upgradeMap.Add("CardUpgradeBattle", "flareon");
             upgradeMap.Add("CardUpgradeBombskull", "flareon");
+            upgradeMap.Add("CardUpgradeFlameberry", "flareon");
 
             upgradeMap.Add("CardUpgradeInk", "vaporeon");
             upgradeMap.Add("CardUpgradeFury", "vaporeon");
@@ -46,12 +47,14 @@ namespace Pokefrost
             upgradeMap.Add("CardUpgradeDraw", "jolteon");
             upgradeMap.Add("CardUpgradeFrenzyReduceAttack", "jolteon");
             upgradeMap.Add("CardUpgradeWildcard", "jolteon");
+            upgradeMap.Add("CardUpgradeGlass", "jolteon");
             upgradeMap.Add("websiteofsites.wildfrost.pokefrost.CardUpgradeMagnemite", "jolteon");
 
             upgradeMap.Add("CardUpgradeBalanced", "espeon");
             upgradeMap.Add("CardUpgradeBom", "espeon");
             upgradeMap.Add("CardUpgradeBoost", "espeon");
             upgradeMap.Add("CardUpgradeSun", "espeon");
+            upgradeMap.Add("CardUpgradeHeartburn", "espeon");
 
             upgradeMap.Add("CardUpgradeGreed", "umbreon");
             upgradeMap.Add("CardUpgradeTeethWhenHit", "umbreon");
@@ -63,16 +66,19 @@ namespace Pokefrost
             upgradeMap.Add("CardUpgradeFrosthand", "glaceon");
             upgradeMap.Add("CardUpgradeSnowImmune", "glaceon");
             upgradeMap.Add("CardUpgradeAttackIncreaseCounter", "glaceon");
+            upgradeMap.Add("CardUpgradeBlue", "glaceon");
 
             upgradeMap.Add("CardUpgradeAcorn", "leafeon");
             upgradeMap.Add("CardUpgradeShellOnKill", "leafeon");
             upgradeMap.Add("CardUpgradeShroom", "leafeon");
             upgradeMap.Add("CardUpgradeShroomReduceHealth", "leafeon");
+            upgradeMap.Add("CardUpgradePlink", "leafeon");
 
             upgradeMap.Add("CardUpgradeAttackAndHealth", "sylveon");
             upgradeMap.Add("CardUpgradeHeart", "sylveon");
-            upgradeMap.Add("CardUpgradeClouberry", "sylveon");
+            upgradeMap.Add("CardUpgradeCloudberry", "sylveon");
             upgradeMap.Add("CardUpgradePig", "sylveon");
+            upgradeMap.Add("CardUpgradeHeartmist", "sylveon");
 
             type = "evolve2";
         }
