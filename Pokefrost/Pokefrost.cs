@@ -736,6 +736,7 @@ namespace Pokefrost
             plucktrait.ModAdded = this;
             AddressableLoader.AddToGroup<TraitData>("TraitData", plucktrait);
 
+//VANILLA GAME FIX: OVERRIDES WITH PLUCK
             aimlesstrait.overrides = aimlesstrait.overrides.Append(plucktrait).ToArray();
             barragetrait.overrides = barragetrait.overrides.Append(plucktrait).ToArray();
             longshottrait.overrides = longshottrait.overrides.Append(plucktrait).ToArray();
@@ -779,6 +780,7 @@ namespace Pokefrost
             //taunttargetmode.constraints = temptaunteffect;
             //taunteffect.targetMode = taunttargetmode;
 
+//IMPORTANT: If the name of Temporary Taunted changes, change the name in TargetModeTaunt
             StatusEffectTemporaryTrait imtaunted = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             imtaunted.name = "Temporary Taunted";
             imtaunted.trait = tauntedtrait;
@@ -798,6 +800,7 @@ namespace Pokefrost
             bombard1trait.overrides = bombard1trait.overrides.Append(tauntedtrait).ToArray();
             bombard2trait.overrides = bombard2trait.overrides.Append(tauntedtrait).ToArray();
 
+//VANILLA GAMEFIX: WOOLLY DREK
             StatusEffectInstantEat woollydrekeat = Get<StatusEffectData>("Eat (Health, Attack & Effects)") as StatusEffectInstantEat;
             woollydrekeat.illegalEffects = woollydrekeat.illegalEffects.AddItem<StatusEffectData>(imtaunted).ToArray();
 
@@ -3308,6 +3311,36 @@ namespace Pokefrost
                 .Register(this);
         }
 
+        /*
+        public void TauntedFailsafe(Entity entity, ref int amount)
+        {
+            for(int i=entity.traits.Count-1; i>=0; i--)
+            {
+                if (entity.traits[i].data.name == "Taunted")
+                {
+                    foreach(Entity e in entity.GetAllEnemies())
+                    {
+                        foreach(Entity.TraitStacks t in e.traits)
+                        {
+                            if (t.data.name == "Taunt")
+                            {
+                                return;
+                            }
+                        }
+                    }
+                    for(int j=entity.statusEffects.Count-1; j>=0; j--)
+                    {
+                        if (entity.statusEffects[j]?.name == "Temporary Taunted" )
+                        {
+                            entity.StartCoroutine(entity.statusEffects[j].Remove());
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+        */
+
         private void LoadStatusEffects()
         {
             AddressableLoader.AddRangeToGroup("StatusEffectData", statusList);
@@ -3513,6 +3546,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
+            //Events.OnEntityCountDown += TauntedFailsafe;
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
@@ -3556,13 +3590,30 @@ namespace Pokefrost
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
             Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
+            //Events.OnEntityCountDown -= TauntedFailsafe;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
+            RevertVanillaChanges();
             //Events.OnCardDataCreated -= Wildparty;
             Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
+        }
+
+        private void RevertVanillaChanges()
+        {
+            //VANILLA REVERT: PLUCK
+            TraitData aimless = Get<TraitData>("Aimless");
+            aimless.overrides = aimless.overrides.RemoveNulls(this);
+            TraitData barrage = Get<TraitData>("Barrage");
+            barrage.overrides = aimless.overrides.RemoveNulls(this);
+            TraitData longshot = Get<TraitData>("Longshot");
+            longshot.overrides = aimless.overrides.RemoveNulls(this);
+
+            //VANILLA REVERT: WOOLY DREK
+            StatusEffectInstantEat woollydrekeat = Get<StatusEffectData>("Eat (Health, Attack & Effects)") as StatusEffectInstantEat;
+            woollydrekeat.illegalEffects = woollydrekeat.illegalEffects.RemoveNulls(this);
         }
 
         private void CreateBattles()
@@ -3877,7 +3928,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\nAdds 46 new companions, 2 new pets, 6 new charms, and a new map event.";
+        public override string Description => "Pokemon Companions\r\n\r\nAdds 46 new companions, 2 new pets, 6 new charms, and a new map event.\n\n\nThe developers can be contacted through Steam or Discord (@Josh A, @Michael C)";
 
         public override List<T> AddAssets<T, Y>()
         {
