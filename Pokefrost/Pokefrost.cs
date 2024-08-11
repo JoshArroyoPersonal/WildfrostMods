@@ -1290,7 +1290,7 @@ namespace Pokefrost
             dreamkey.name = "Dream";
             keycollection.SetString(dreamkey.name + "_text", "Dream");
             dreamkey.titleKey = keycollection.GetString(dreamkey.name + "_text");
-            keycollection.SetString(dreamkey.name + "_desc", "Changes to a random card each turn|Destoryed after use or discard");
+            keycollection.SetString(dreamkey.name + "_desc", "Changes to a random card each turn|Destroyed after use or discard");
             dreamkey.descKey = keycollection.GetString(dreamkey.name + "_desc");
             dreamkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", dreamkey);
