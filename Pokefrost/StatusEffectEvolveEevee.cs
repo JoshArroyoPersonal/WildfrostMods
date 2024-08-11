@@ -12,6 +12,15 @@ namespace Pokefrost
     {
         public static Dictionary<string, string> upgradeMap = new Dictionary<string, string>();
 
+        private string flareon = "flareon";
+        private string vaporeon = "vaporeon";
+        private string jolteon = "jolteon";
+        private string espeon = "espeon";
+        private string umbreon = "umbreon";
+        private string glaceon = "glaceon";
+        private string leafeon = "leafeon";
+        private string sylveon = "sylveon";
+
         public static readonly string[] eeveelutions = new string[8] { "flareon", "vaporeon", "jolteon", "espeon", "umbreon", "glaceon", "leafeon", "sylveon" };
         public enum eeveeEnum
         {
@@ -54,7 +63,7 @@ namespace Pokefrost
             upgradeMap.Add("CardUpgradeBom", "espeon");
             upgradeMap.Add("CardUpgradeBoost", "espeon");
             upgradeMap.Add("CardUpgradeSun", "espeon");
-            upgradeMap.Add("CardUpgradeHeartburn", "espeon");
+            upgradeMap.Add("CardUpgradeBootleg", "espeon");
 
             upgradeMap.Add("CardUpgradeGreed", "umbreon");
             upgradeMap.Add("CardUpgradeTeethWhenHit", "umbreon");
@@ -79,6 +88,37 @@ namespace Pokefrost
             upgradeMap.Add("CardUpgradeCloudberry", "sylveon");
             upgradeMap.Add("CardUpgradePig", "sylveon");
             upgradeMap.Add("CardUpgradeHeartmist", "sylveon");
+
+            
+            //Abigail Mods
+            upgradeMap.Add("absentabigail.wildfrost.blahaj.CardUpgradeShark", vaporeon);
+
+            //Bethanw Mods
+            upgradeMap.Add("bethanw10.wildfrost.allcharms.CardUpgradeMakoko", flareon);
+            upgradeMap.Add("bethanw10.wildfrost.allcharms.CardUpgradeScales", espeon);
+            upgradeMap.Add("bethanw10.wildfrost.allcharms.CardUpgradeShadeHeart", umbreon);
+
+            //Green Ranger Mods
+            upgradeMap.Add("greenranger.wildfrost.devilcharm.CardUpgradeDevil", flareon);
+            upgradeMap.Add("greenranger.wildfrost.basketcharm.CardUpgradeCleanse", sylveon);
+
+            //Miya Mods
+            upgradeMap.Add("kopie.wildfrost.charmscollection.charm_speed", jolteon);
+
+            //Semmiesem Mods
+            upgradeMap.Add("semmiesem9.wildfrost.hatsunemiku.BobaCharm", sylveon);
+
+            //Shortcake Mods
+            upgradeMap.Add("shortcake.charms.CrystalShardCharm", vaporeon);
+            upgradeMap.Add("shortcake.charms.SnowFlowerCharm", glaceon);
+            upgradeMap.Add("shortcake.charms.LuminiceCharm", espeon);
+            upgradeMap.Add("shortcake.charms.BarrierCharm", vaporeon);
+            upgradeMap.Add("shortcake.charms.OrangeCharm", jolteon);
+
+            //Vibe Mods
+            upgradeMap.Add("vibeneutral.wildfrost.hollowfrost.focuscharm", espeon);
+            upgradeMap.Add("vibeneutral.wildfrost.hollowfrost.grimmcharm", flareon);
+            upgradeMap.Add("vibeneutral.wildfrost.hollowfrost.defendercharm", umbreon);
 
             type = "evolve2";
         }
