@@ -1289,7 +1289,7 @@ namespace Pokefrost
             dreamkey.name = "Dream";
             keycollection.SetString(dreamkey.name + "_text", "Dream");
             dreamkey.titleKey = keycollection.GetString(dreamkey.name + "_text");
-            keycollection.SetString(dreamkey.name + "_desc", "Changes to a random card each turn|Destoryed after use or discard");
+            keycollection.SetString(dreamkey.name + "_desc", "Changes to a random card each turn|Destroyed after use or discard");
             dreamkey.descKey = keycollection.GetString(dreamkey.name + "_desc");
             dreamkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", dreamkey);
@@ -1758,7 +1758,9 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(redrawOnPlay);
 
-            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", "Whenever anyone takes damage from <keyword=jolted>, apply equal <keyword=jolted> to a random enemy")
+            KeywordData chainkey = this.CreateBasicKeyword("conduit", "Conduit", "Does an effect whenever anyone takes damage from <keyword=jolted>");
+            chainkey.showName = true;
+            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to a random enemy")
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.RandomEnemy)
                 .Register(this);
             joltChain.targetDamageType = "jolt";
