@@ -63,13 +63,10 @@ namespace Pokefrost
         public ButtonExt button;
         private IStatusToken effectToken;
 
-
-
         public override void Assign(Entity entity)
         {
             base.Assign(entity);
             SetText();
-            Ping();
             onValueDown.AddListener(delegate { Ping(); });
             onValueUp.AddListener(delegate { Ping(); });
             afterUpdate.AddListener(SetText);

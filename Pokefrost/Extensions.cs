@@ -131,7 +131,7 @@ namespace Pokefrost
             GameObject gameObject = new GameObject(name);
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
             gameObject.SetActive(false);
-            StatusIcon icon = gameObject.AddComponent<StatusIcon>();
+            StatusIcon icon = gameObject.AddComponent<StatusIconExt>();
             Dictionary<string, GameObject> cardIcons = CardManager.cardIcons;
             if (!copyTextFrom.IsNullOrEmpty())
             {

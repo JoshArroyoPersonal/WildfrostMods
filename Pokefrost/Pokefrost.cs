@@ -626,7 +626,7 @@ namespace Pokefrost
             duskulleffect.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             duskulleffect.keyword = "";
             duskulleffect.targetConstraints = new TargetConstraint[0];
-            collection.SetString(duskulleffect.name + "_text", "Add a skull to hand");
+            collection.SetString(duskulleffect.name + "_text", "Add a skull with <keyword=consume> to hand");
             duskulleffect.textKey = collection.GetString(duskulleffect.name + "_text");
             duskulleffect.textOrder = 0;
             duskulleffect.doPing = false;
@@ -641,14 +641,19 @@ namespace Pokefrost
             duskulltrigger.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             duskulltrigger.keyword = "";
             duskulltrigger.targetConstraints = new TargetConstraint[0];
-            collection.SetString(duskulltrigger.name + "_text", "Trigger when anything is summoned");
+            //collection.SetString(duskulltrigger.name + "_text", "Trigger when anything is summoned");
             duskulltrigger.descColorHex = "F99C61";
-            duskulltrigger.textKey = collection.GetString(duskulltrigger.name + "_text");
+            //duskulltrigger.textKey = collection.GetString(duskulltrigger.name + "_text");
             duskulltrigger.textOrder = 0;
             duskulltrigger.textInsert = "";
             duskulltrigger.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", duskulltrigger);
             statusList.Add(duskulltrigger);
+
+            KeywordData spookkey = this.CreateBasicKeyword("spook", "Spook", "Trigger whenever anything is summoned");
+            spookkey.showName = true;
+
+            Ext.CreateTrait<TraitData>("Spook", this, spookkey, duskulltrigger).isReaction = true;
 
             StatusEffectApplyXOnCardPlayed demonizeally = Get<StatusEffectData>("On Card Played Apply Spice To RandomAlly").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
             demonizeally.effectToApply = Get<StatusEffectData>("Demonize");
@@ -2491,7 +2496,8 @@ namespace Pokefrost
                     .CreateUnit("duskull", "Duskull", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(8, null, 0)
                     .SetSprites("duskull.png", "duskullBG.png")
-                    .SStartEffects( ("When Ally Summoned Add Skull To Hand",1), ("Trigger When Summon", 1), ("Evolve Duskull",7))
+                    .SStartEffects( ("When Ally Summoned Add Skull To Hand",1), ("Evolve Duskull",7))
+                    .STraits(("Spook", 1))
                     .AddPool("MagicUnitPool")
                 );
 
@@ -2500,7 +2506,8 @@ namespace Pokefrost
                     .CreateUnit("dusclops", "Dusclops", bloodProfile: "Blood Profile Black")
                     .SetStats(10, 4, 0)
                     .SetSprites("dusclops.png", "dusclopsBG.png")
-                    .SStartEffects(("When Ally Summoned Add Skull To Hand", 1), ("Trigger When Summon", 1))
+                    .SStartEffects(("When Ally Summoned Add Skull To Hand", 1))
+                    .STraits(("Spook", 1))
                 );
 
             list.Add(
@@ -2679,7 +2686,7 @@ namespace Pokefrost
                     .CreateUnit("rotom", "Rotom", idleAnim: "Heartbeat2AnimationProfile", bloodProfile: "Blood Profile Blue (x2)")
                     .SetStats(8, 3, 4)
                     .SetSprites("rotom.png", "rotomBG.png")
-                    .SStartEffects(("Trigger Clunker Ahead", 1), ("On Card Played Damage To Self", 1))
+                    .SStartEffects(("Trigger Clunker Ahead", 1), ("Jolted", 1))
                     .IsPet((ChallengeData)null, true)
                 );
 
