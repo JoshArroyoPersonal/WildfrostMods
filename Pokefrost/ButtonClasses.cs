@@ -71,7 +71,6 @@ namespace Pokefrost
             onValueUp.AddListener(delegate { Ping(); });
             afterUpdate.AddListener(SetText);
             onValueDown.AddListener(CheckDestroy);
-            onDestroy.AddListener(DisableDragBlocker);
 
             StatusEffectData effect = entity.FindStatus(type);
             if (effect is IStatusToken effect2)
@@ -79,6 +78,7 @@ namespace Pokefrost
                 effectToken = effect2;
                 effect2.ButtonCreate(this);
                 button.onClick.AddListener(effectToken.RunButtonClicked);
+                onDestroy.AddListener(DisableDragBlocker);
             }
         }
 

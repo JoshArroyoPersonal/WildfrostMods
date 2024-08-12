@@ -1743,7 +1743,8 @@ namespace Pokefrost
             tar3.card = Get<CardData>("Dart");
 
             this.CreateBasicKeyword("tarshot", "Tar Shot", "<Free Action>: Place a <card=Dart> into your hand and backpack\n Give it <keyword=zoomlin> this battle |Click to activate\n Once per turn\n Thrice per battle");
-            this.CreateButtonIcon("mukTarShoot", ImagePath("mukbutton.png").ToSprite(), "tarshot", "ink", Color.white, new KeywordData[] { Get<KeywordData>("tarshot") });
+            this.CreateButtonIcon("mukTarShot", ImagePath("mukbutton.png").ToSprite(), "tarshot", "ink", Color.white, new KeywordData[] { Get<KeywordData>("tarshot") })
+                .GetComponentInChildren<TextMeshProUGUI>().fontSize = 0.5f;
 
             StatusTokenApplyX tarbutton = this.CreateStatusButton<StatusTokenApplyX>("Add Tar Blade Button", type: "tarshot")
                 .ApplyX(Get<StatusEffectData>("Instant Summon Tar Blade In Hand"), StatusEffectApplyX.ApplyToFlags.Self)
@@ -1772,6 +1773,26 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.RandomEnemy)
                 .Register(this);
             joltChain.targetDamageType = "jolt";
+            statusList.Add(joltChain);
+
+            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltTrigger = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Trigger", "<keyword=conduit>: Trigger")
+                .ApplyX(Get<StatusEffectData>("Trigger (High Prio)"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            joltTrigger.targetDamageType = "jolt";
+            joltTrigger.isReaction = true;
+            statusList.Add(joltTrigger);
+
+            StatusEffectApplyXWhenDestroyed shroomOnDeath = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destroyed Apply Shroom To All Enemies In Row", "When destroyed, apply <{a}><keyword=shroom> to all enemies in row", boostable: true)
+                .ApplyX(Get<StatusEffectData>("Shroom"), StatusEffectApplyX.ApplyToFlags.EnemiesInRow)
+                .Register(this);
+            shroomOnDeath.targetMustBeAlive = false;
+            statusList.Add(shroomOnDeath);
+
+            StatusEffectApplyXWhenDestroyed bomOnDeath = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destroyed Apply Bom To All Enemies In Row", "When destroyed, apply <{a}><keyword=weakness> to all enemies in row", boostable: true)
+                .ApplyX(Get<StatusEffectData>("Weakness"), StatusEffectApplyX.ApplyToFlags.EnemiesInRow)
+                .Register(this);
+            bomOnDeath.targetMustBeAlive = false;
+            statusList.Add(bomOnDeath);
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
@@ -2964,25 +2985,27 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_beautifly", "Beautifly")
-                    .SetStats(20, 3, 4)
+                    .SetStats(6, 1, 3)
                     .SetSprites("beautifly.png", "beautiflyBG.png")
                     .WithCardType("Enemy")
+                    .SStartEffects(("When Destroyed Apply Bom To All Enemies In Row", 1))
                     .WithValue(50)
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_dustox", "Dustox")
-                    .SetStats(20, 3, 4)
+                    .SetStats(6, 4, 6)
                     .SetSprites("dustox.png", "dustoxBG.png")
                     .WithCardType("Enemy")
+                    .SStartEffects(("When Destroyed Apply Shroom To All Enemies In Row", 2))
                     .WithValue(50)
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_plusle", "Plusle")
-                    .SetStats(20, 3, 4)
+                    .SetStats(14, 3, 5)
                     .SetSprites("plusle.png", "plusleBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -2992,7 +3015,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_minun", "Minun")
-                    .SetStats(20, 3, 4)
+                    .SetStats(14, 3, 5)
                     .SetSprites("minun.png", "minunBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3002,7 +3025,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_volbeat", "Volbeat")
-                    .SetStats(20, 3, 4)
+                    .SetStats(10, 1, 3)
                     .SetSprites("volbeat.png", "volbeatBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3012,7 +3035,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_illumise", "Illumise")
-                    .SetStats(20, 3, 4)
+                    .SetStats(10, 1, 3)
                     .SetSprites("illumise.png", "illumiseBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3023,7 +3046,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_lunatone", "Lunatone")
-                    .SetStats(20, 3, 4)
+                    .SetStats(8, null, 5)
                     .SetSprites("lunatone.png", "lunatoneBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3033,7 +3056,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_solrock", "Solrock")
-                    .SetStats(20, 3, 4)
+                    .SetStats(8, null, 5)
                     .SetSprites("solrock.png", "solrockBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3043,7 +3066,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_huntail", "Huntail")
-                    .SetStats(10, 2, 0)
+                    .SetStats(7, 2, 0)
                     .SetSprites("huntail.png", "huntailBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3053,7 +3076,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_gorebyss", "Gorebyss")
-                    .SetStats(15, 0, 5)
+                    .SetStats(14, 0, 5)
                     .SetSprites("gorebyss.png", "gorebyssBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3064,21 +3087,21 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_latias", "Latias")
-                    .SetStats(20, 3, 4)
+                    .SetStats(30, 2, 5)
                     .SetSprites("latias.png", "latiasBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
-                    .SStartEffects(("When Hit Transfer Resist to Allies to Random Ally", 3), ("While Active Allies Have Resist (No Desc)", 3))
+                    .SStartEffects(("When Hit Transfer Resist to Allies to Random Ally", 3), ("While Active Allies Have Resist (No Desc)", 3), ("ImmuneToSnow", 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_latios", "Latios")
-                    .SetStats(20, 3, 4)
+                    .SetStats(30, 5, 4)
                     .SetSprites("latios.png", "latiosBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
-                    .SStartEffects(("When Hit Transfer MultiHit to Random Ally", 1), ("MultiHit", 1))
+                    .SStartEffects(("When Hit Transfer MultiHit to Random Ally", 1), ("MultiHit", 1), ("ImmuneToSnow", 1))
                 );
 
             list.Add(
@@ -3540,7 +3563,7 @@ namespace Pokefrost
             CreateModAssetsCharms();
             CreateEvents();
             base.Load();
-            //CreateBattles();
+            CreateBattles();
             //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += PokemonPostBattle;
             Events.OnBattleEnd += CheckEvolve;
@@ -3635,9 +3658,9 @@ namespace Pokefrost
                 }
             }
 
-            new BattleDataEditor(this, "Spare Shells")
+            new BattleDataEditor(this, "Darkrai")
                 .SetSprite(this.ImagePath("nosepass.png").ToSprite())
-                .SetNameRef("Darkrai Fight")
+                .SetNameRef("Cursed Nightmares")
                 .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
                 .StartWavePoolData(0, "Curses!")
                 .ConstructWaves(4, 0, "SMMS")
@@ -3645,6 +3668,19 @@ namespace Pokefrost
                 .ConstructWaves(4, 1, "HMMG", "GMMH", "HSMG", "SSHG")
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
+                .AddBattleToLoader().RegisterBattle(6); //Loads and makes it the mandatory first fight
+
+            new BattleDataEditor(this, "Lati Twins")
+                .SetSprite(this.ImagePath("nosepass.png").ToSprite())
+                .SetNameRef("Deadly Duos")
+                .EnemyDictionary(('P', "enemy_plusle"), ('M', "enemy_minun"), ('V', "enemy_volbeat"), ('I', "enemy_illumise"), ('D', "enemy_dustox"), ('B', "enemy_beautifly"), ('G', "enemy_gorebyss"), ('H', "enemy_huntail"), ('S', "enemy_solrock"), ('L', "enemy_lunatone"), ('A', "enemy_latias"), ('O', "enemy_latios"))
+                .StartWavePoolData(0, "Charging up")
+                .ConstructWaves(4, 0, "PMVI")
+                .StartWavePoolData(1, "Scary")
+                .ConstructWaves(4, 1, "DBGH")
+                .StartWavePoolData(2, "Lati!")
+                .ConstructWaves(4, 9, "SLAO")
+                .GiveMiniBossesCharms(new string[2] { "enemy_latias", "enemy_latios"}, "CardUpgradeBattle")
                 .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
         }
 
