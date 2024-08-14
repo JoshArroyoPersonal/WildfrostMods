@@ -1182,6 +1182,7 @@ namespace Pokefrost
             doubleattacker.effectToApply = Get<StatusEffectData>("Double Attack");
             doubleattacker.applyToFlags = StatusEffectApplyX.ApplyToFlags.Applier;
             doubleattacker.canBeBoosted = false;
+            doubleattacker.targetMustBeAlive = false;
             doubleattacker.type = "";
             doubleattacker.targetConstraints = new TargetConstraint[0];
             doubleattacker.textKey = null;
@@ -1196,6 +1197,7 @@ namespace Pokefrost
             iceball.effectToApply = doubleattacker;
             iceball.applyConstraints = new TargetConstraint[] { snowconstraint };
             iceball.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
+            iceball.targetMustBeAlive = false;
             iceball.canBeBoosted = false;
             iceball.type = "";
             iceball.postHit = true;
@@ -1537,7 +1539,7 @@ namespace Pokefrost
             dreamconstraint.trait = dreamtrait;
 
             StatusEffectApplyXOnCardPlayed giveweakcurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", "Give a card in hand <keyword=curseofweakness>")
-                .ApplyX(frenzycurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
+                .ApplyX(weakcurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
                 .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, frenzycurseconstraint, dreamconstraint)
                 .Register(this);
             statusList.Add(giveweakcurse);
@@ -3546,15 +3548,6 @@ namespace Pokefrost
 
         private void CreateBattles()
         {
-            foreach (HardModeModifierData hardModeModifierData in References.instance.hardModeModifiers)
-            {
-                if (hardModeModifierData.name == "10.BossesHaveCharms")
-                {
-                    string[] source2 = ((ScriptUpgradeMinibosses)hardModeModifierData.modifierData.startScripts[0]).profiles[5].cardDataNames.Append("SplitBoss1").ToArray();
-                    source2 = source2.Append("websiteofsites.wildfrost.pokefrost.enemy_darkrai").ToArray();
-                    ((ScriptUpgradeMinibosses)hardModeModifierData.modifierData.startScripts[0]).profiles[5].cardDataNames = source2;
-                }
-            }
 
             new BattleDataEditor(this, "Spare Shells")
                 .SetSprite(this.ImagePath("nosepass.png").ToSprite())
