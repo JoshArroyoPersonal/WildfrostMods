@@ -1189,6 +1189,7 @@ namespace Pokefrost
             doubleattacker.effectToApply = Get<StatusEffectData>("Double Attack");
             doubleattacker.applyToFlags = StatusEffectApplyX.ApplyToFlags.Applier;
             doubleattacker.canBeBoosted = false;
+            doubleattacker.targetMustBeAlive = false;
             doubleattacker.type = "";
             doubleattacker.targetConstraints = new TargetConstraint[0];
             doubleattacker.textKey = null;
@@ -1203,6 +1204,7 @@ namespace Pokefrost
             iceball.effectToApply = doubleattacker;
             iceball.applyConstraints = new TargetConstraint[] { snowconstraint };
             iceball.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
+            iceball.targetMustBeAlive = false;
             iceball.canBeBoosted = false;
             iceball.type = "";
             iceball.postHit = true;
@@ -1546,7 +1548,7 @@ namespace Pokefrost
             dreamconstraint.trait = dreamtrait;
 
             StatusEffectApplyXOnCardPlayed giveweakcurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", "Give a card in hand <keyword=curseofweakness>")
-                .ApplyX(frenzycurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
+                .ApplyX(weakcurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
                 .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, frenzycurseconstraint, dreamconstraint)
                 .Register(this);
             statusList.Add(giveweakcurse);
@@ -1751,6 +1753,8 @@ namespace Pokefrost
                 .Register(this);
             tarbutton.oncePerTurn = true;
             tarbutton.finiteUses = true;
+            tarbutton.applyEqualAmount = true;
+            tarbutton.fixedAmount = 1;
             statusList.Add(tarbutton);
 
             StatusTokenApplyXListener tarbutton2 = Ext.CreateStatus<StatusTokenApplyXListener>("Tar Shot Listener_1", type: "tarshot_listener")
@@ -3594,7 +3598,7 @@ namespace Pokefrost
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
-            Events.OnSceneChanged += PokemonPhoto;
+            //Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             //for (int i = 0; i < References.Classes.Length; i++)
             //{
@@ -3648,18 +3652,9 @@ namespace Pokefrost
 
         private void CreateBattles()
         {
-            foreach (HardModeModifierData hardModeModifierData in References.instance.hardModeModifiers)
-            {
-                if (hardModeModifierData.name == "10.BossesHaveCharms")
-                {
-                    string[] source2 = ((ScriptUpgradeMinibosses)hardModeModifierData.modifierData.startScripts[0]).profiles[5].cardDataNames.Append("SplitBoss1").ToArray();
-                    source2 = source2.Append("websiteofsites.wildfrost.pokefrost.enemy_darkrai").ToArray();
-                    ((ScriptUpgradeMinibosses)hardModeModifierData.modifierData.startScripts[0]).profiles[5].cardDataNames = source2;
-                }
-            }
 
             new BattleDataEditor(this, "Darkrai")
-                .SetSprite(this.ImagePath("nosepass.png").ToSprite())
+                .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
                 .SetNameRef("Cursed Nightmares")
                 .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
                 .StartWavePoolData(0, "Curses!")
@@ -3668,10 +3663,11 @@ namespace Pokefrost
                 .ConstructWaves(4, 1, "HMMG", "GMMH", "HSMG", "SSHG")
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
-                .AddBattleToLoader().RegisterBattle(6); //Loads and makes it the mandatory first fight
+                .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeBattle")
+                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
 
-            new BattleDataEditor(this, "Lati Twins")
-                .SetSprite(this.ImagePath("nosepass.png").ToSprite())
+            /*new BattleDataEditor(this, "Lati Twins")
+                .SetSprite(this.ImagePath("smeargleCharm.png").ToSprite())
                 .SetNameRef("Deadly Duos")
                 .EnemyDictionary(('P', "enemy_plusle"), ('M', "enemy_minun"), ('V', "enemy_volbeat"), ('I', "enemy_illumise"), ('D', "enemy_dustox"), ('B', "enemy_beautifly"), ('G', "enemy_gorebyss"), ('H', "enemy_huntail"), ('S', "enemy_solrock"), ('L', "enemy_lunatone"), ('A', "enemy_latias"), ('O', "enemy_latios"))
                 .StartWavePoolData(0, "Charging up")
@@ -3681,7 +3677,7 @@ namespace Pokefrost
                 .StartWavePoolData(2, "Lati!")
                 .ConstructWaves(4, 9, "SLAO")
                 .GiveMiniBossesCharms(new string[2] { "enemy_latias", "enemy_latios"}, "CardUpgradeBattle")
-                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
+                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight*/
         }
 
         private void SceneLoaded(Scene scene)
