@@ -31,7 +31,7 @@ namespace Pokefrost
 {
     public class Pokefrost : WildfrostMod
     {
-        public static string[] basicPool = new string[] {"croagunk", "toxicroak", "salazzle", "magcargo" };
+        public static string[] basicPool = new string[] {"spheal", "croagunk", "toxicroak", "salazzle", "magcargo" };
         public static string[] magicPool = new string[] { "cubone", "marowak", "alolanmarowak", "carvanha", "sharpedo", "duskull", "dusclops", "litwick", "lampent", "chandelure" };
         public static string[] clunkPool = new string[] { "weezing", "hippowdon", "trubbish", "garbodor" };
 
@@ -2018,7 +2018,7 @@ namespace Pokefrost
                     .SetStats(6, 5, 4)
                     .SetSprites("alolansandslash.png", "alolansandslashBG.png")
                     .SAttackEffects(("Snow", 3), ("Block", 1))
-                    .AddPool()
+                    .AddPool("SnowUnitPool")
                 );
 
             list.Add(
@@ -2068,7 +2068,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("slowbro", "Slowbro")
-                    .SetStats(10, 1, 5)
+                    .SetStats(10, 1, 4)
                     .SetSprites("slowbro.png", "slowbroBG.png")
                     .SStartEffects(("On Card Played Increase Targets and Own Max Counter",1))
                 );
@@ -2578,10 +2578,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("spheal", "Spheal", idleAnim: "PingAnimationProfile")
-                    .SetStats(5, 2, 3)
+                    .SetStats(4, 1, 3)
                     .SetSprites("spheal.png", "sphealBG.png")
                     .SStartEffects(("On Hit Snowed Target Double Attack", 1))
-                    .AddPool()
+                    .AddPool("BasicUnitPool")
                 );
 
             list.Add(
@@ -2612,7 +2612,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("prinplup", "Prinplup", bloodProfile: "Blood Profile Snow")
-                    .SetStats(7, 3, 3)
+                    .SetStats(7, 2, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
                     .SStartEffects(("Snow Acts Like Shell", 1), ("When Snow Applied To Self Gain Equal Attack", 1), ("Evolve Prinplup", 10))
                 );
@@ -2620,7 +2620,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("empoleon", "Empoleon", bloodProfile: "Blood Profile Snow")
-                    .SetStats(8, 4, 3)
+                    .SetStats(8, 2, 3)
                     .SetSprites("empoleon.png", "empoleonBG.png")
                     .SStartEffects(("Snow Acts Like Shell", 1), ("When Snow Applied To Self Gain Equal Attack", 1), ("When Snowed Snow Random Enemy", 1))
                 );
