@@ -1390,6 +1390,12 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(dreamonplay);
 
+            StatusEffectApplyXWhenCardDestroyed keepOnDreamin = Ext.CreateStatus<StatusEffectApplyXWhenCardDestroyed>("When Card Destroyed, Gain Dream Card", "When a card is destroyed, gain a <keyword=dream> card")
+                .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            keepOnDreamin.mustBeOnBoard = false;
+            statusList.Add(keepOnDreamin);
+
             StatusEffectTemporaryTrait tempcrit = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             tempcrit.name = "Temporary Combo";
             tempcrit.trait = Get<TraitData>("Combo");
@@ -1475,7 +1481,7 @@ namespace Pokefrost
             buffmarowak.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", buffmarowak);
             statusList.Add(buffmarowak);
-            StatusEffectDreamDummy giveThickClub = Ext.CreateStatus<StatusEffectDreamDummy>("Give Thick Club", "Gain a <Thick Club> upon battle end")
+            StatusEffectDreamDummy giveThickClub = Ext.CreateStatus<StatusEffectDreamDummy>("Give Thick Club", "Gain a <Thick Club> upon evolution and battle end")
                 .Register(this);
             statusList.Add(giveThickClub);
 
@@ -1797,6 +1803,19 @@ namespace Pokefrost
                 .Register(this);
             bomOnDeath.targetMustBeAlive = false;
             statusList.Add(bomOnDeath);
+
+            StatusEffectBonusDamageEqualToX handSizeAttack = Ext.CreateStatus<StatusEffectBonusDamageEqualToX>("Deal Bonus Damage Equal To Cards In Hand", "Deal additional damage equal to cards in hand")
+                .Register(this);
+            handSizeAttack.on = StatusEffectBonusDamageEqualToX.On.ScriptableAmount;
+            handSizeAttack.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCardsInHand>();
+            statusList.Add(handSizeAttack);
+
+            TargetModeStatus notBurnTargetMode = ScriptableObject.CreateInstance<TargetModeStatus>();
+            notBurnTargetMode.missing = true;
+            notBurnTargetMode.targetType = "burning";
+            StatusEffectChangeTargetMode notBurning = Ext.CreateStatus<StatusEffectChangeTargetMode>("Hits All NonBurning Targets", "Hit all enemies without <keyword=burning>")
+                .Register(this);
+            notBurning.targetMode = notBurnTargetMode;
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
@@ -2317,6 +2336,15 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("hisuiansneasel", "Hitsuian Sneasel", idleAnim: "PingAnimationProfile")
+                    .SetStats(6, 0, 3)
+                    .SetSprites("hisuiansneasel.png", "hisuiansneaselBG.png")
+                    .SStartEffects(("Deal Bonus Damage Equal To Cards In Hand", 1), ("When Hit Draw", 1))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("magcargo", "Magcargo", idleAnim: "GoopAnimationProfile")
                     .SetStats(15, 0, 6)
                     .SetSprites("magcargo.png", "magcargoBG.png")
@@ -2377,7 +2405,8 @@ namespace Pokefrost
                     .CreateUnit("entei", "Entei")
                     .SetStats(8, 0, 3)
                     .SetSprites("entei.png", "enteiBG.png")
-                    .SAttackEffects(("Burning", 1))
+                    .SAttackEffects(("Burning", 3))
+                    .SStartEffects(("Hit All NonBurning Targets", 1))
                 );
 
             list.Add(
@@ -2759,8 +2788,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("cresselia", "Cresselia")
-                    .SetStats(8, 0, 3)
+                    .SetStats(8, 2, 4)
                     .SetSprites("cresselia.png", "cresseliaBG.png")
+                    .SStartEffects(("When Card Destroyed, Gain Dream Card", 1))
                 );
 
             list.Add(
