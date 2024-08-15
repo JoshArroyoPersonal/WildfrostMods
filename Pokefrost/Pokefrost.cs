@@ -2209,6 +2209,7 @@ namespace Pokefrost
                     .SetSprites("eevee.png", "eeveeBG.png")
                     .IsPet((ChallengeData)null, true)
                     .SStartEffects(("Evolve Eevee", 1))
+                    .WithFlavour("Despite the limitless possibilities, Eevee is already perfect")
                 );
 
             list.Add(
@@ -2981,7 +2982,7 @@ namespace Pokefrost
                     .CreateUnit("enemy_hypno", "Hypno")
                     .SetStats(20, 3, 4)
                     .SetSprites("hypno.png", "hypnoBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", 1), SStack("ImmuneToSnow", 1))
+                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", 1))
                     .WithCardType("Enemy")
                     .WithValue(50)
                 );
@@ -2989,7 +2990,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_beautifly", "Beautifly")
-                    .SetStats(6, 1, 3)
+                    .SetStats(6, 1, 2)
                     .SetSprites("beautifly.png", "beautiflyBG.png")
                     .WithCardType("Enemy")
                     .SStartEffects(("When Destroyed Apply Bom To All Enemies In Row", 1))
@@ -2999,10 +3000,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_dustox", "Dustox")
-                    .SetStats(6, 4, 6)
+                    .SetStats(6, 2, 2)
                     .SetSprites("dustox.png", "dustoxBG.png")
                     .WithCardType("Enemy")
-                    .SStartEffects(("When Destroyed Apply Shroom To All Enemies In Row", 2))
+                    .SStartEffects(("When Destroyed Apply Shroom To All Enemies In Row", 3))
                     .WithValue(50)
                 );
 
@@ -3070,11 +3071,12 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_huntail", "Huntail")
-                    .SetStats(7, 2, 0)
+                    .SetStats(10, 2, 0)
                     .SetSprites("huntail.png", "huntailBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
                     .SStartEffects(("Trigger Against When Ally Attacks", 1))
+                    .STraits(("Resist", 1))
                 );
 
             list.Add(
@@ -3121,9 +3123,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_spiritomb", "Spiritomb")
-                    .SetStats(16, 0, 0)
+                    .SetStats(14, 0, 0)
                     .SetSprites("spiritomb.png", "spiritombBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", 1))
+                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", 1), SStack("On Turn Apply Attack To Self", 1))
                     .SetTraits(TStack("Smackback", 1))
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3132,7 +3134,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_magmortar", "Magmortar")
-                    .SetStats(10, 10, 5)
+                    .SetStats(10, 7, 5)
                     .SetSprites("magmortar.png", "magmortarBG.png")
                     .SetTraits(TStack("Longshot", 1), TStack("Explode", 2))
                     .SetStartWithEffect(SStack("ImmuneToSnow", 1))
