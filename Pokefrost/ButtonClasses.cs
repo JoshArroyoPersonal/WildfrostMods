@@ -72,7 +72,6 @@ namespace Pokefrost
         {
             base.Assign(entity);
             SetText();
-            Ping();
             onValueDown.AddListener(delegate { Ping(); });
             onValueUp.AddListener(delegate { Ping(); });
             afterUpdate.AddListener(SetText);
