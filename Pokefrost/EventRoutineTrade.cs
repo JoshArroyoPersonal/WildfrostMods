@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Deadpan.Enums.Engine.Components.Modding;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,12 +7,21 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Tables;
 using UnityEngine.UI;
 
 namespace Pokefrost
 {
-    internal class EventRoutineTrade : EventRoutine
+    internal class EventRoutineTrade : EventRoutine, IRerollable
     {
+        public static readonly string Seq1Key = "websiteofsites.wildfrost.pokefrost.trade_text1";
+        public static readonly string Seq2Key = "websiteofsites.wildfrost.pokefrost.trade_text2";
+
+        public static readonly string TradeConfirm = "websiteofsites.wildfrost.pokefrost.trade_confirm";
+        public static readonly string TradeCancel = "websiteofsites.wildfrost.pokefrost.trade_cancel";
+
+        StringTable stringTable;
+
         public CardControllerSelectCard cc;
         public CardSelector cs;
         public CardLane topRow;
@@ -43,11 +53,14 @@ namespace Pokefrost
         public bool routineActive = true;
         //public int maxTrades = 1;
 
+        private bool initialized = false;
+
         public override IEnumerator Populate()
         {
             string[] saveCollection = base.data.GetSaveCollection<string>("cards");
             string[] upgradeCollection = base.data.GetSaveCollection<string>("charms");
-            int size = saveCollection.Count();
+            int size = saveCollection.Length;
+            int amountPer = upgradeCollection.Length / size;
             if (!data.ContainsKey("currentcompanions"))
             {
                 List<CardData> items = new List<CardData>();
@@ -77,13 +90,25 @@ namespace Pokefrost
             Routine.Clump clump = new Routine.Clump();
             for (int i = 0; i < size; i++)
             {
-                clump.Add(CreateCardsFromLoader(saveCollection[i], new List<string> { upgradeCollection[2 * i], upgradeCollection[2 * i + 1] }, cc, topRow)); //Edit Save Collection to remember charms
-                clump.Add(CreateCardsFromDeck(savedOffers[i], cc, bottomRow));
+                List<string> upgrades = upgradeCollection.RangeSubset(amountPer * i, amountPer).ToList();
+                clump.Add(CreateCardsFromLoader(saveCollection[i], upgrades, cc, topRow)); //Edit Save Collection to remember charms
+                if(!initialized)
+                {
+                    clump.Add(CreateCardsFromDeck(savedOffers[i], cc, bottomRow));
+                }
             }
 
             yield return clump.WaitForEnd();
             topRow.SetChildPositions();
             bottomRow.SetChildPositions();
+
+            if(initialized)
+            {
+                yield break;
+            }
+
+            initialized = true;
+
             SetSize();
 
             cc.pressEvent.AddListener(Select);
@@ -104,8 +129,8 @@ namespace Pokefrost
             cancelObject.GetComponentInChildren<ButtonAnimator>().baseColour = new Color(0.9f, 0.3f, 0.3f, 1f);
             cancelObject.SetActive(false);
             cancelObject.SetActive(true);
-            cancelObject.GetComponentInChildren<TextMeshProUGUI>().SetText("Cancel");
-            confirmObject.GetComponentInChildren<TextMeshProUGUI>().SetText("Confirm");
+            cancelObject.GetComponentInChildren<TextMeshProUGUI>().SetText(stringTable.GetString(TradeCancel).GetLocalizedString());
+            confirmObject.GetComponentInChildren<TextMeshProUGUI>().SetText(stringTable.GetString(TradeConfirm).GetLocalizedString());
         }
 
         private void SetSize()
@@ -122,11 +147,12 @@ namespace Pokefrost
 
         public override IEnumerator Run()
         {
-            while(routineActive)
+            stringTable = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
+            while (routineActive)
             {
                 if (swapped != -1)
                 {
-                    title.SetText("Select a trade!");
+                    title.SetText(stringTable.GetString(Seq1Key).GetLocalizedString());
                     topRow.entities[swapped].transform.SetParent(topRow.transform, true);
                     bottomRow.entities[swapped].transform.SetParent(bottomRow.transform, true);
                     topRow.TweenChildPositions();
@@ -144,7 +170,8 @@ namespace Pokefrost
                 }
 
                 //Trade Selected
-                title.SetText($"{bottomRow.entities[swapped].data.title} for {topRow.entities[swapped].data.title}?");
+                string s = stringTable.GetString(Seq2Key).GetLocalizedString();
+                title.SetText(string.Format(s,bottomRow.entities[swapped].data.title,topRow.entities[swapped].data.title));
                 selectionBackground.SetActive(true);
                 PrepareButtons();
                 UnhoverAll();
@@ -375,6 +402,31 @@ namespace Pokefrost
             routineActive = false;
             selected = false;
             Debug.Log("[Pokefrost] Confirm");
+        }
+
+        public bool Reroll()
+        {
+            if (selected)
+            {
+                return false;
+            }
+
+            string[] saveCollection = base.data.GetSaveCollection<string>("cards");
+            string[] upgradeCollection = base.data.GetSaveCollection<string>("charms");
+            int size = saveCollection.Length;
+
+            base.data["cards"] = CampaignNodeTypeTrade.ObtainCards(size, 499).ToSaveCollectionOfNames();
+            base.data["charms"] = CampaignNodeTypeTrade.ObtainCharms(upgradeCollection.Length).ToSaveCollectionOfNames();
+
+            foreach(Entity item in topRow)
+            {
+                CardManager.ReturnToPool(item);
+            }
+
+            topRow.Clear();
+            StartCoroutine(Populate());
+            CardPopUp.Clear();
+            return true;
         }
     }
 
