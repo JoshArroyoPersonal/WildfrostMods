@@ -238,7 +238,7 @@ namespace Pokefrost
             mapNode.spriteOptions[0] = mod.ImagePath("trade_event.png").ToSprite();
             mapNode.clearedSpriteOptions[0] = mod.ImagePath("trade_done.png").ToSprite();
             return cn.WithMapNodePrefab(mapNode)
-                .FreeModify<CampaignNodeTypeBetterEvent>((data) =>
+                .FreeModify<CampaignNodeTypeTrade>((data) =>
                 {
                     data.key = key;
                 });

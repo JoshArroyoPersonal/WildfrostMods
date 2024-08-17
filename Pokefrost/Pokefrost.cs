@@ -3219,9 +3219,15 @@ namespace Pokefrost
             cn.mapNodeSprite = ImagePath("trade_event.png").ToSprite();
             cn.zoneName = "Trade";
             AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);*/
-            Ext.CreateCampaignNodeType<CampaignNodeTypeBetterEvent>(this, "trade", "t")
+            Ext.CreateCampaignNodeType<CampaignNodeTypeTrade>(this, "trade", "t")
                 .BetterEvent("Trade", this)
                 .Register(this);
+
+            StringTable keycollection = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
+            keycollection.SetString(EventRoutineTrade.Seq1Key, "Select a Trade!");
+            keycollection.SetString(EventRoutineTrade.Seq2Key, "{0} for {1}?");
+            keycollection.SetString(EventRoutineTrade.TradeConfirm, "Confirm");
+            keycollection.SetString(EventRoutineTrade.TradeCancel, "Cancel");
         }
 
         /*
@@ -3445,6 +3451,7 @@ namespace Pokefrost
             }
             CreateModAssetsCharms();
             CreateEvents();
+            MiscLocalizationStrings();
             base.Load();
             //CreateBattles();
             //Events.OnSceneLoaded += PokemonEdits;
@@ -3486,6 +3493,14 @@ namespace Pokefrost
             //}
             References.instance.StartCoroutine(UICollector.CollectPrefabs());
             preLoaded = true;
+        }
+
+        private void MiscLocalizationStrings()
+        {
+            StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+
+            tooltips.SetString(StatusTokenApplyX.Key_Snowed, "Snowed!");
+            tooltips.SetString(StatusTokenApplyX.Key_Inked, "Inked!");
         }
 
         public override void Unload()

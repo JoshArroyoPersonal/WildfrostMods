@@ -11,29 +11,26 @@ using System.ComponentModel;
 
 namespace Pokefrost
 {
-    internal class CampaignNodeTypeBetterEvent : CampaignNodeTypeEvent
+    internal class CampaignNodeTypeTrade : CampaignNodeTypeEvent
     {
         public string key = "Trade";
         public static Dictionary<string, GameObject> Prefabs = new Dictionary<string, GameObject>();
 
         public int choices = 3;
+        public int valueCap = 499;
         public List<CardData> force;
         public List<CardUpgradeData> upgrades;
+        public int baseUpgradeAmount = 1;
+        public int BonusUpgradePerArea = 1;
 
         public override IEnumerator SetUp(CampaignNode node)
         {
-            yield return null;
-
             Debug.Log("[Trade]");
-            List<CardData> allCards = AddressableLoader.GetGroup<CardData>("CardData").Clone();
-            allCards.RemoveAll(card => card.cardType.name != "Friendly" || card.mainSprite?.name == "Nothing");
-            List<CardData> list = allCards.TakeRandom(choices).ToList();
-            Debug.Log(allCards.Count.ToString());
 
-            List<CardUpgradeData> allUpgrades = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData").Clone();
-            allUpgrades.RemoveAll(charm => charm.type != CardUpgradeData.Type.Charm || charm.tier < 0);
-            List<CardUpgradeData> listCharm = allUpgrades.TakeRandom(2*choices).ToList();
-            Debug.Log(allUpgrades.Count.ToString());
+            List<CardData> list = ObtainCards(choices,valueCap);
+
+            int upgradeAmount = (baseUpgradeAmount + BonusUpgradePerArea * node.areaIndex) * choices;
+            List<CardUpgradeData> listCharm = ObtainCharms(upgradeAmount);
 
             /*CharacterRewards component = References.Player.GetComponent<CharacterRewards>();
             List<CardData> list = force.Clone();
@@ -55,16 +52,36 @@ namespace Pokefrost
             listCharm.AddRange(component.Pull<CardUpgradeData>(node, "Charms", charmCount));*/
 
             node.data = new Dictionary<string, object>
+            {
+                {
+                    "cards",
+                    list.ToSaveCollectionOfNames()
+                },
+                {
+                    "charms",
+                    listCharm.ToSaveCollectionOfNames()
+                },
+            };
+
+            yield break;
+        }
+
+        public static List<CardData> ObtainCards(int choices, int valueCap)
         {
-            {
-                "cards",
-                list.ToSaveCollectionOfNames()
-            },
-            {
-                "charms",
-                listCharm.ToSaveCollectionOfNames()
-            },
-        };
+            List<CardData> allCards = AddressableLoader.GetGroup<CardData>("CardData").Clone();
+            allCards.RemoveAll(card => card.cardType.name != "Friendly" || card.mainSprite?.name == "Nothing" || card.value > valueCap);
+            List<CardData> list = allCards.TakeRandom(choices).ToList();
+            Debug.Log(allCards.Count.ToString());
+            return list;
+        }
+
+        public static List<CardUpgradeData> ObtainCharms(int choices)
+        {
+            List<CardUpgradeData> allUpgrades = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData").Clone();
+            allUpgrades.RemoveAll(charm => charm.type != CardUpgradeData.Type.Charm || charm.tier < 0);
+            List<CardUpgradeData> listCharm = allUpgrades.TakeRandom(choices).ToList();
+            Debug.Log(allUpgrades.Count.ToString());
+            return listCharm;
         }
 
         public override IEnumerator Populate(CampaignNode node)
@@ -91,7 +108,7 @@ namespace Pokefrost
             yield return MapNew.CheckCompanionLimit();
         }
 
-        public CampaignNodeTypeBetterEvent()
+        public CampaignNodeTypeTrade()
         {
         }
     }

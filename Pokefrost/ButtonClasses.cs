@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Deadpan.Enums.Engine.Components.Modding;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Localization.Tables;
 using UnityEngine.UI;
 
 namespace Pokefrost
@@ -103,6 +107,9 @@ namespace Pokefrost
             Discard = 8
         }
 
+        public static readonly string Key_Snowed = "websiteofsites.wildfrost.pokefrost.buttonSnowed";
+        public static readonly string Key_Inked = "websiteofsites.wildfrost.pokefrost.buttonInked";
+
         public PlayFromFlags playFrom = PlayFromFlags.Board;
         public bool finiteUses = false;
         public bool oncePerTurn = false;
@@ -135,6 +142,27 @@ namespace Pokefrost
                 target.StartCoroutine(ButtonClicked());
                 unusedThisTurn = false;
             }
+
+            if ((bool) target.IsSnowed || target.silenced)
+            {
+                NoTargetTextSystem noText = GameSystem.FindObjectOfType<NoTargetTextSystem>();
+                if (noText != null)
+                {
+                    TMP_Text textElement = noText.textElement;
+                    if ((bool)target.IsSnowed)
+                    {
+                        StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+                        textElement.text = tooltips.GetString(Key_Snowed).GetLocalizedString();
+                    }
+                    if ((bool)target.silenced)
+                    {
+                        StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+                        textElement.text = tooltips.GetString(Key_Inked).GetLocalizedString();
+                    }
+                    noText.PopText(target.transform.position);
+                }
+            }
+
         }
 
         public bool CheckFlag(PlayFromFlags flag) => (playFrom & flag) != 0;
