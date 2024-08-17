@@ -31,7 +31,7 @@ namespace Pokefrost
 {
     public class Pokefrost : WildfrostMod
     {
-        public static string[] basicPool = new string[] {"croagunk", "toxicroak", "salazzle", "magcargo" };
+        public static string[] basicPool = new string[] {"spheal", "croagunk", "toxicroak", "salazzle", "magcargo" };
         public static string[] magicPool = new string[] { "cubone", "marowak", "alolanmarowak", "carvanha", "sharpedo", "duskull", "dusclops", "litwick", "lampent", "chandelure" };
         public static string[] clunkPool = new string[] { "weezing", "hippowdon", "trubbish", "garbodor" };
 
@@ -626,7 +626,7 @@ namespace Pokefrost
             duskulleffect.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             duskulleffect.keyword = "";
             duskulleffect.targetConstraints = new TargetConstraint[0];
-            collection.SetString(duskulleffect.name + "_text", "Add a skull to hand");
+            collection.SetString(duskulleffect.name + "_text", "Add a skull with <keyword=consume> to hand");
             duskulleffect.textKey = collection.GetString(duskulleffect.name + "_text");
             duskulleffect.textOrder = 0;
             duskulleffect.doPing = false;
@@ -641,14 +641,19 @@ namespace Pokefrost
             duskulltrigger.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             duskulltrigger.keyword = "";
             duskulltrigger.targetConstraints = new TargetConstraint[0];
-            collection.SetString(duskulltrigger.name + "_text", "Trigger when anything is summoned");
+            //collection.SetString(duskulltrigger.name + "_text", "Trigger when anything is summoned");
             duskulltrigger.descColorHex = "F99C61";
-            duskulltrigger.textKey = collection.GetString(duskulltrigger.name + "_text");
+            //duskulltrigger.textKey = collection.GetString(duskulltrigger.name + "_text");
             duskulltrigger.textOrder = 0;
             duskulltrigger.textInsert = "";
             duskulltrigger.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", duskulltrigger);
             statusList.Add(duskulltrigger);
+
+            KeywordData spookkey = this.CreateBasicKeyword("spook", "Spook", "Trigger whenever anything is summoned");
+            spookkey.showName = true;
+
+            Ext.CreateTrait<TraitData>("Spook", this, spookkey, duskulltrigger).isReaction = true;
 
             StatusEffectApplyXOnCardPlayed demonizeally = Get<StatusEffectData>("On Card Played Apply Spice To RandomAlly").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
             demonizeally.effectToApply = Get<StatusEffectData>("Demonize");
@@ -1184,6 +1189,7 @@ namespace Pokefrost
             doubleattacker.effectToApply = Get<StatusEffectData>("Double Attack");
             doubleattacker.applyToFlags = StatusEffectApplyX.ApplyToFlags.Applier;
             doubleattacker.canBeBoosted = false;
+            doubleattacker.targetMustBeAlive = false;
             doubleattacker.type = "";
             doubleattacker.targetConstraints = new TargetConstraint[0];
             doubleattacker.textKey = null;
@@ -1198,6 +1204,7 @@ namespace Pokefrost
             iceball.effectToApply = doubleattacker;
             iceball.applyConstraints = new TargetConstraint[] { snowconstraint };
             iceball.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
+            iceball.targetMustBeAlive = false;
             iceball.canBeBoosted = false;
             iceball.type = "";
             iceball.postHit = true;
@@ -1292,7 +1299,7 @@ namespace Pokefrost
             dreamkey.name = "Dream";
             keycollection.SetString(dreamkey.name + "_text", "Dream");
             dreamkey.titleKey = keycollection.GetString(dreamkey.name + "_text");
-            keycollection.SetString(dreamkey.name + "_desc", "Changes to a random card each turn|Destoryed after use or discard");
+            keycollection.SetString(dreamkey.name + "_desc", "Changes to a random card each turn|Destroyed after use or discard");
             dreamkey.descKey = keycollection.GetString(dreamkey.name + "_desc");
             dreamkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", dreamkey);
@@ -1383,6 +1390,12 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(dreamonplay);
 
+            StatusEffectApplyXWhenCardDestroyed keepOnDreamin = Ext.CreateStatus<StatusEffectApplyXWhenCardDestroyed>("When Card Destroyed, Gain Dream Card", "When a card is destroyed, gain a <keyword=dream> card")
+                .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            keepOnDreamin.mustBeOnBoard = false;
+            statusList.Add(keepOnDreamin);
+
             StatusEffectTemporaryTrait tempcrit = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             tempcrit.name = "Temporary Combo";
             tempcrit.trait = Get<TraitData>("Combo");
@@ -1467,7 +1480,7 @@ namespace Pokefrost
             buffmarowak.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", buffmarowak);
             statusList.Add(buffmarowak);
-            StatusEffectDreamDummy giveThickClub = Ext.CreateStatus<StatusEffectDreamDummy>("Give Thick Club", "Gain a <Thick Club> upon battle end")
+            StatusEffectDreamDummy giveThickClub = Ext.CreateStatus<StatusEffectDreamDummy>("Give Thick Club", "Gain a <Thick Club> upon evolution and battle end")
                 .Register(this);
             statusList.Add(giveThickClub);
 
@@ -1540,7 +1553,7 @@ namespace Pokefrost
             dreamconstraint.trait = dreamtrait;
 
             StatusEffectApplyXOnCardPlayed giveweakcurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", "Give a card in hand <keyword=curseofweakness>")
-                .ApplyX(frenzycurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
+                .ApplyX(weakcurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
                 .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, frenzycurseconstraint, dreamconstraint)
                 .Register(this);
             statusList.Add(giveweakcurse);
@@ -1737,13 +1750,16 @@ namespace Pokefrost
             tar3.card = Get<CardData>("Dart");
 
             this.CreateBasicKeyword("tarshot", "Tar Shot", "<Free Action>: Place a <card=Dart> into your hand and backpack\n Give it <keyword=zoomlin> this battle |Click to activate\n Once per turn\n Thrice per battle");
-            this.CreateButtonIcon("mukTarShoot", ImagePath("mukbutton.png").ToSprite(), "tarshot", "ink", Color.white, new KeywordData[] { Get<KeywordData>("tarshot") });
+            this.CreateButtonIcon("mukTarShot", ImagePath("mukbutton.png").ToSprite(), "tarshot", "ink", Color.white, new KeywordData[] { Get<KeywordData>("tarshot") })
+                .GetComponentInChildren<TextMeshProUGUI>().fontSize = 0.5f;
 
             StatusTokenApplyX tarbutton = this.CreateStatusButton<StatusTokenApplyX>("Add Tar Blade Button", type: "tarshot")
                 .ApplyX(Get<StatusEffectData>("Instant Summon Tar Blade In Hand"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             tarbutton.oncePerTurn = true;
             tarbutton.finiteUses = true;
+            tarbutton.applyEqualAmount = true;
+            tarbutton.fixedAmount = 1;
             statusList.Add(tarbutton);
 
             StatusTokenApplyXListener tarbutton2 = Ext.CreateStatus<StatusTokenApplyXListener>("Tar Shot Listener_1", type: "tarshot_listener")
@@ -1760,10 +1776,45 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(redrawOnPlay);
 
-            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", "Whenever anyone takes damage from <keyword=jolted>, apply equal <keyword=jolted> to a random enemy")
+            KeywordData chainkey = this.CreateBasicKeyword("conduit", "Conduit", "Does an effect whenever anyone takes damage from <keyword=jolted>");
+            chainkey.showName = true;
+            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to a random enemy")
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.RandomEnemy)
                 .Register(this);
             joltChain.targetDamageType = "jolt";
+            statusList.Add(joltChain);
+
+            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltTrigger = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Trigger", "<keyword=conduit>: Trigger")
+                .ApplyX(Get<StatusEffectData>("Trigger (High Prio)"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            joltTrigger.targetDamageType = "jolt";
+            joltTrigger.isReaction = true;
+            statusList.Add(joltTrigger);
+
+            StatusEffectApplyXWhenDestroyed shroomOnDeath = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destroyed Apply Shroom To All Enemies In Row", "When destroyed, apply <{a}><keyword=shroom> to all enemies in row", boostable: true)
+                .ApplyX(Get<StatusEffectData>("Shroom"), StatusEffectApplyX.ApplyToFlags.EnemiesInRow)
+                .Register(this);
+            shroomOnDeath.targetMustBeAlive = false;
+            statusList.Add(shroomOnDeath);
+
+            StatusEffectApplyXWhenDestroyed bomOnDeath = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destroyed Apply Bom To All Enemies In Row", "When destroyed, apply <{a}><keyword=weakness> to all enemies in row", boostable: true)
+                .ApplyX(Get<StatusEffectData>("Weakness"), StatusEffectApplyX.ApplyToFlags.EnemiesInRow)
+                .Register(this);
+            bomOnDeath.targetMustBeAlive = false;
+            statusList.Add(bomOnDeath);
+
+            StatusEffectBonusDamageEqualToX handSizeAttack = Ext.CreateStatus<StatusEffectBonusDamageEqualToX>("Deal Bonus Damage Equal To Cards In Hand", "Deal additional damage equal to cards in hand")
+                .Register(this);
+            handSizeAttack.on = StatusEffectBonusDamageEqualToX.On.ScriptableAmount;
+            handSizeAttack.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCardsInHand>();
+            statusList.Add(handSizeAttack);
+
+            TargetModeStatus notBurnTargetMode = ScriptableObject.CreateInstance<TargetModeStatus>();
+            notBurnTargetMode.missing = true;
+            notBurnTargetMode.targetType = "burning";
+            StatusEffectChangeTargetMode notBurning = Ext.CreateStatus<StatusEffectChangeTargetMode>("Hits All NonBurning Targets", "Hit all enemies without <keyword=burning>")
+                .Register(this);
+            notBurning.targetMode = notBurnTargetMode;
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
@@ -1966,7 +2017,7 @@ namespace Pokefrost
                     .SetStats(6, 5, 4)
                     .SetSprites("alolansandslash.png", "alolansandslashBG.png")
                     .SAttackEffects(("Snow", 3), ("Block", 1))
-                    .AddPool()
+                    .AddPool("SnowUnitPool")
                 );
 
             list.Add(
@@ -2016,7 +2067,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("slowbro", "Slowbro")
-                    .SetStats(10, 1, 5)
+                    .SetStats(10, 1, 4)
                     .SetSprites("slowbro.png", "slowbroBG.png")
                     .SStartEffects(("On Card Played Increase Targets and Own Max Counter",1))
                 );
@@ -2176,6 +2227,7 @@ namespace Pokefrost
                     .SetSprites("eevee.png", "eeveeBG.png")
                     .IsPet((ChallengeData)null, true)
                     .SStartEffects(("Evolve Eevee", 1))
+                    .WithFlavour("Despite the limitless possibilities, Eevee is already perfect")
                 );
 
             list.Add(
@@ -2283,6 +2335,15 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("hisuiansneasel", "Hitsuian Sneasel", idleAnim: "PingAnimationProfile")
+                    .SetStats(6, 0, 3)
+                    .SetSprites("hisuiansneasel.png", "hisuiansneaselBG.png")
+                    .SStartEffects(("Deal Bonus Damage Equal To Cards In Hand", 1), ("When Hit Draw", 1))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("magcargo", "Magcargo", idleAnim: "GoopAnimationProfile")
                     .SetStats(15, 0, 6)
                     .SetSprites("magcargo.png", "magcargoBG.png")
@@ -2343,7 +2404,8 @@ namespace Pokefrost
                     .CreateUnit("entei", "Entei")
                     .SetStats(8, 0, 3)
                     .SetSprites("entei.png", "enteiBG.png")
-                    .SAttackEffects(("Burning", 1))
+                    .SAttackEffects(("Burning", 3))
+                    .SStartEffects(("Hit All NonBurning Targets", 1))
                 );
 
             list.Add(
@@ -2488,7 +2550,8 @@ namespace Pokefrost
                     .CreateUnit("duskull", "Duskull", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Black")
                     .SetStats(8, null, 0)
                     .SetSprites("duskull.png", "duskullBG.png")
-                    .SStartEffects( ("When Ally Summoned Add Skull To Hand",1), ("Trigger When Summon", 1), ("Evolve Duskull",7))
+                    .SStartEffects( ("When Ally Summoned Add Skull To Hand",1), ("Evolve Duskull",7))
+                    .STraits(("Spook", 1))
                     .AddPool("MagicUnitPool")
                 );
 
@@ -2497,7 +2560,8 @@ namespace Pokefrost
                     .CreateUnit("dusclops", "Dusclops", bloodProfile: "Blood Profile Black")
                     .SetStats(10, 4, 0)
                     .SetSprites("dusclops.png", "dusclopsBG.png")
-                    .SStartEffects(("When Ally Summoned Add Skull To Hand", 1), ("Trigger When Summon", 1))
+                    .SStartEffects(("When Ally Summoned Add Skull To Hand", 1))
+                    .STraits(("Spook", 1))
                 );
 
             list.Add(
@@ -2513,10 +2577,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("spheal", "Spheal", idleAnim: "PingAnimationProfile")
-                    .SetStats(5, 2, 3)
+                    .SetStats(4, 1, 3)
                     .SetSprites("spheal.png", "sphealBG.png")
                     .SStartEffects(("On Hit Snowed Target Double Attack", 1))
-                    .AddPool()
+                    .AddPool("BasicUnitPool")
                 );
 
             list.Add(
@@ -2547,7 +2611,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("prinplup", "Prinplup", bloodProfile: "Blood Profile Snow")
-                    .SetStats(7, 3, 3)
+                    .SetStats(7, 2, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
                     .SStartEffects(("Snow Acts Like Shell", 1), ("When Snow Applied To Self Gain Equal Attack", 1), ("Evolve Prinplup", 10))
                 );
@@ -2555,7 +2619,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("empoleon", "Empoleon", bloodProfile: "Blood Profile Snow")
-                    .SetStats(8, 4, 3)
+                    .SetStats(8, 2, 3)
                     .SetSprites("empoleon.png", "empoleonBG.png")
                     .SStartEffects(("Snow Acts Like Shell", 1), ("When Snow Applied To Self Gain Equal Attack", 1), ("When Snowed Snow Random Enemy", 1))
                 );
@@ -2676,7 +2740,7 @@ namespace Pokefrost
                     .CreateUnit("rotom", "Rotom", idleAnim: "Heartbeat2AnimationProfile", bloodProfile: "Blood Profile Blue (x2)")
                     .SetStats(8, 3, 4)
                     .SetSprites("rotom.png", "rotomBG.png")
-                    .SStartEffects(("Trigger Clunker Ahead", 1), ("On Card Played Damage To Self", 1))
+                    .SStartEffects(("Trigger Clunker Ahead", 1), ("Jolted", 1))
                     .IsPet((ChallengeData)null, true)
                 );
 
@@ -2723,8 +2787,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("cresselia", "Cresselia")
-                    .SetStats(8, 0, 3)
+                    .SetStats(8, 2, 4)
                     .SetSprites("cresselia.png", "cresseliaBG.png")
+                    .SStartEffects(("When Card Destroyed, Gain Dream Card", 1))
                 );
 
             list.Add(
@@ -2946,7 +3011,7 @@ namespace Pokefrost
                     .CreateUnit("enemy_hypno", "Hypno")
                     .SetStats(20, 3, 4)
                     .SetSprites("hypno.png", "hypnoBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", 1), SStack("ImmuneToSnow", 1))
+                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", 1))
                     .WithCardType("Enemy")
                     .WithValue(50)
                 );
@@ -2954,25 +3019,27 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_beautifly", "Beautifly")
-                    .SetStats(20, 3, 4)
+                    .SetStats(6, 1, 2)
                     .SetSprites("beautifly.png", "beautiflyBG.png")
                     .WithCardType("Enemy")
+                    .SStartEffects(("When Destroyed Apply Bom To All Enemies In Row", 1))
                     .WithValue(50)
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_dustox", "Dustox")
-                    .SetStats(20, 3, 4)
+                    .SetStats(6, 2, 2)
                     .SetSprites("dustox.png", "dustoxBG.png")
                     .WithCardType("Enemy")
+                    .SStartEffects(("When Destroyed Apply Shroom To All Enemies In Row", 3))
                     .WithValue(50)
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_plusle", "Plusle")
-                    .SetStats(20, 3, 4)
+                    .SetStats(14, 3, 5)
                     .SetSprites("plusle.png", "plusleBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -2982,7 +3049,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_minun", "Minun")
-                    .SetStats(20, 3, 4)
+                    .SetStats(14, 3, 5)
                     .SetSprites("minun.png", "minunBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -2992,7 +3059,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_volbeat", "Volbeat")
-                    .SetStats(20, 3, 4)
+                    .SetStats(10, 1, 3)
                     .SetSprites("volbeat.png", "volbeatBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3002,7 +3069,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_illumise", "Illumise")
-                    .SetStats(20, 3, 4)
+                    .SetStats(10, 1, 3)
                     .SetSprites("illumise.png", "illumiseBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3013,7 +3080,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_lunatone", "Lunatone")
-                    .SetStats(20, 3, 4)
+                    .SetStats(8, null, 5)
                     .SetSprites("lunatone.png", "lunatoneBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3023,7 +3090,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_solrock", "Solrock")
-                    .SetStats(20, 3, 4)
+                    .SetStats(8, null, 5)
                     .SetSprites("solrock.png", "solrockBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3038,12 +3105,13 @@ namespace Pokefrost
                     .WithCardType("Enemy")
                     .WithValue(50)
                     .SStartEffects(("Trigger Against When Ally Attacks", 1))
+                    .STraits(("Resist", 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_gorebyss", "Gorebyss")
-                    .SetStats(15, 0, 5)
+                    .SetStats(14, 0, 5)
                     .SetSprites("gorebyss.png", "gorebyssBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3054,21 +3122,21 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_latias", "Latias")
-                    .SetStats(20, 3, 4)
+                    .SetStats(30, 2, 5)
                     .SetSprites("latias.png", "latiasBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
-                    .SStartEffects(("When Hit Transfer Resist to Allies to Random Ally", 3), ("While Active Allies Have Resist (No Desc)", 3))
+                    .SStartEffects(("When Hit Transfer Resist to Allies to Random Ally", 3), ("While Active Allies Have Resist (No Desc)", 3), ("ImmuneToSnow", 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_latios", "Latios")
-                    .SetStats(20, 3, 4)
+                    .SetStats(30, 5, 4)
                     .SetSprites("latios.png", "latiosBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
-                    .SStartEffects(("When Hit Transfer MultiHit to Random Ally", 1), ("MultiHit", 1))
+                    .SStartEffects(("When Hit Transfer MultiHit to Random Ally", 1), ("MultiHit", 1), ("ImmuneToSnow", 1))
                 );
 
             list.Add(
@@ -3084,9 +3152,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_spiritomb", "Spiritomb")
-                    .SetStats(16, 0, 0)
+                    .SetStats(14, 0, 0)
                     .SetSprites("spiritomb.png", "spiritombBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", 1))
+                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", 1), SStack("On Turn Apply Attack To Self", 1))
                     .SetTraits(TStack("Smackback", 1))
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3095,7 +3163,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_magmortar", "Magmortar")
-                    .SetStats(10, 10, 5)
+                    .SetStats(10, 7, 5)
                     .SetSprites("magmortar.png", "magmortarBG.png")
                     .SetTraits(TStack("Longshot", 1), TStack("Explode", 2))
                     .SetStartWithEffect(SStack("ImmuneToSnow", 1))
@@ -3537,7 +3605,7 @@ namespace Pokefrost
             CreateEvents();
             MiscLocalizationStrings();
             base.Load();
-            //CreateBattles();
+            CreateBattles();
             //Events.OnSceneLoaded += PokemonEdits;
             Events.OnBattleEnd += PokemonPostBattle;
             Events.OnBattleEnd += CheckEvolve;
@@ -3568,7 +3636,7 @@ namespace Pokefrost
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
-            Events.OnSceneChanged += PokemonPhoto;
+            //Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             //for (int i = 0; i < References.Classes.Length; i++)
             //{
@@ -3630,19 +3698,10 @@ namespace Pokefrost
 
         private void CreateBattles()
         {
-            foreach (HardModeModifierData hardModeModifierData in References.instance.hardModeModifiers)
-            {
-                if (hardModeModifierData.name == "10.BossesHaveCharms")
-                {
-                    string[] source2 = ((ScriptUpgradeMinibosses)hardModeModifierData.modifierData.startScripts[0]).profiles[5].cardDataNames.Append("SplitBoss1").ToArray();
-                    source2 = source2.Append("websiteofsites.wildfrost.pokefrost.enemy_darkrai").ToArray();
-                    ((ScriptUpgradeMinibosses)hardModeModifierData.modifierData.startScripts[0]).profiles[5].cardDataNames = source2;
-                }
-            }
 
-            new BattleDataEditor(this, "Spare Shells")
-                .SetSprite(this.ImagePath("nosepass.png").ToSprite())
-                .SetNameRef("Darkrai Fight")
+            new BattleDataEditor(this, "Darkrai")
+                .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
+                .SetNameRef("Cursed Nightmares")
                 .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
                 .StartWavePoolData(0, "Curses!")
                 .ConstructWaves(4, 0, "SMMS")
@@ -3650,7 +3709,21 @@ namespace Pokefrost
                 .ConstructWaves(4, 1, "HMMG", "GMMH", "HSMG", "SSHG")
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
+                .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeBattle")
                 .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
+
+            /*new BattleDataEditor(this, "Lati Twins")
+                .SetSprite(this.ImagePath("smeargleCharm.png").ToSprite())
+                .SetNameRef("Deadly Duos")
+                .EnemyDictionary(('P', "enemy_plusle"), ('M', "enemy_minun"), ('V', "enemy_volbeat"), ('I', "enemy_illumise"), ('D', "enemy_dustox"), ('B', "enemy_beautifly"), ('G', "enemy_gorebyss"), ('H', "enemy_huntail"), ('S', "enemy_solrock"), ('L', "enemy_lunatone"), ('A', "enemy_latias"), ('O', "enemy_latios"))
+                .StartWavePoolData(0, "Charging up")
+                .ConstructWaves(4, 0, "PMVI")
+                .StartWavePoolData(1, "Scary")
+                .ConstructWaves(4, 1, "DBGH")
+                .StartWavePoolData(2, "Lati!")
+                .ConstructWaves(4, 9, "SLAO")
+                .GiveMiniBossesCharms(new string[2] { "enemy_latias", "enemy_latios"}, "CardUpgradeBattle")
+                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight*/
         }
 
         private void SceneLoaded(Scene scene)

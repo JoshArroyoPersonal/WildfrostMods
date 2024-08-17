@@ -32,10 +32,13 @@ namespace Pokefrost
 
     public class StatusEffectInstantRemoveCounter : StatusEffectInstant
     {
+
+        public int cCount = 99;
+
         public override IEnumerator Process()
         {
-            target.counter.current = 99;
-            target.counter.max = 99;
+            target.counter.current = cCount;
+            target.counter.max = cCount;
 
             for (int j = target.statusEffects.Count - 1; j >= 0; j--)
             {

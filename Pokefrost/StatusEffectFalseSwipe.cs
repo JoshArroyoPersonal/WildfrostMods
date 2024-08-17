@@ -60,7 +60,7 @@ namespace Pokefrost
         public IEnumerator Check(Hit hit)
         {
             int countflag = 0;
-            while (hit.damage > 0 && countflag < count)
+            while (hit.damage > 0 && countflag < GetAmount())
             {
                 hit.damage--;
                 hit.damageBlocked++;
