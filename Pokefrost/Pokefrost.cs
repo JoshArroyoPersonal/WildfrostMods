@@ -658,7 +658,7 @@ namespace Pokefrost
             StatusEffectApplyXOnCardPlayed demonizeally = Get<StatusEffectData>("On Card Played Apply Spice To RandomAlly").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
             demonizeally.effectToApply = Get<StatusEffectData>("Demonize");
             demonizeally.name = "On Card Apply Demonize To RandomAlly";
-            collection.SetString(demonizeally.name + "_text", "Apply <{a}> <keyword=demonize> to a random ally");
+            collection.SetString(demonizeally.name + "_text", "Apply <{a}><keyword=demonize> to a random ally");
             demonizeally.textKey = collection.GetString(demonizeally.name + "_text");
             demonizeally.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", demonizeally);
@@ -674,7 +674,7 @@ namespace Pokefrost
             triattack.keyword = "";
             triattack.hiddenKeywords = new KeywordData[] {Get<KeywordData>("random effect")};
             triattack.targetConstraints = new TargetConstraint[0];
-            collection.SetString(triattack.name + "_text", "Apply <{a}> <keyword=shroom>/<keyword=overload>/<keyword=weakness>");
+            collection.SetString(triattack.name + "_text", "Apply <{a}><keyword=shroom>/<keyword=overload>/<keyword=weakness>");
             triattack.textKey = collection.GetString(triattack.name + "_text");
             triattack.textOrder = 0;
             triattack.textInsert = "<keyword=shroom>, <keyword=overload>, <keyword=weakness>";
