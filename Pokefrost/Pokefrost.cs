@@ -1415,14 +1415,13 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", givecrit);
             statusList.Add(givecrit);
 
-            this.CreateBasicKeyword("teeterdance", "Teeter Dance", "<End Turn>: Trigger self, then enemies, then allies |Click to activate\nTwice per battle");
-            this.CreateButtonIcon("ludicoloTeeterDance", ImagePath("ludicolobutton.png").ToSprite(), "teeterDance", "counter", Color.black, new KeywordData[] {Get<KeywordData>("teeterdance")});
+            this.CreateBasicKeyword("teeterdance", "Teeter Dance", "<End Turn>: Trigger self, then enemies, then allies |Click to activate");
+            this.CreateButtonIcon("ludicoloTeeterDance", ImagePath("ludicolobutton.png").ToSprite(), "teeterDance", "", Color.black, new KeywordData[] {Get<KeywordData>("teeterdance")});
 
             StatusTokenApplyX teeter = this.CreateStatusButton<StatusTokenApplyX>("Trigger All Button", type: "teeterDance")
                 .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Enemies | StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             teeter.endTurn = true;
-            teeter.finiteUses = true;
             statusList.Add(teeter);
 
             StatusTokenApplyXListener teeter2 = Ext.CreateStatus<StatusTokenApplyXListener>("Trigger All Listener_1", type: "teeterDance_listener")
@@ -1485,10 +1484,10 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(giveThickClub);
 
-            this.CreateBasicKeyword("curseofweakness", "Curse of Weakness", "While in hand, reduce <keyword=attack> of all allies by <1>|A card can only suffer from one curse at a time").showName = true;
-            this.CreateBasicKeyword("curseofpower", "Curse of Power", "While in hand, increase <keyword=attack> of all enemies by <1>|A card can only suffer from one curse at a time").showName = true;
-            this.CreateBasicKeyword("curseofpara", "Curse of Slumber", "While in hand, add <keyword=unmovable> to all allies|A card can only suffer from one curse at a time").showName = true;
-            this.CreateBasicKeyword("curseoffrenzy", "Curse of Frenzy", "While in hand, add <x1><keyword=frenzy> to all units|A card can only suffer from one curse at a time").showName = true;
+            this.CreateBasicKeyword("curseofweakness", "Curse of Weakness", "While in hand, reduce <keyword=attack> of all allies by <1>|Cannot be cleared or replaced!").showName = true;
+            this.CreateBasicKeyword("curseofpower", "Curse of Power", "While in hand, increase <keyword=attack> of all enemies by <1>|Cannot be cleared or replaced!").showName = true;
+            this.CreateBasicKeyword("curseofpara", "Curse of Slumber", "While in hand, add <keyword=unmovable> to all allies|Cannot be cleared or replaced!").showName = true;
+            this.CreateBasicKeyword("curseoffrenzy", "Curse of Frenzy", "While in hand, add <x1><keyword=frenzy> to all units|Cannot be cleared or replaced!").showName = true;
 
             this.CreateIcon("curseofweakicon", ImagePath("curseofweakicon.png").ToSprite(), "weakcurse", "", Color.black, new KeywordData[] { Get<KeywordData>("curseofweakness") });
             this.CreateIcon("curseofpowericon", ImagePath("curseofpowericon.png").ToSprite(), "powercurse", "", Color.black, new KeywordData[] { Get<KeywordData>("curseofpower") });
@@ -2435,7 +2434,7 @@ namespace Pokefrost
                     .CreateUnit("ludicolo", "Ludicolo")
                     .SetStats(10, 4, 0)
                     .SetSprites("ludicolo.png", "ludicoloBG.png")
-                    .SStartEffects(("Trigger All Button",2), ("Trigger All Listener_1", 1))
+                    .SStartEffects(("Trigger All Button",1), ("Trigger All Listener_1", 1))
                     .AddPool()
                 );
 
@@ -3378,9 +3377,15 @@ namespace Pokefrost
             cn.mapNodeSprite = ImagePath("trade_event.png").ToSprite();
             cn.zoneName = "Trade";
             AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);*/
-            Ext.CreateCampaignNodeType<CampaignNodeTypeBetterEvent>(this, "trade", "t")
+            Ext.CreateCampaignNodeType<CampaignNodeTypeTrade>(this, "trade", "t")
                 .BetterEvent("Trade", this)
                 .Register(this);
+
+            StringTable keycollection = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
+            keycollection.SetString(EventRoutineTrade.Seq1Key, "Select a Trade!");
+            keycollection.SetString(EventRoutineTrade.Seq2Key, "{0} for {1}?");
+            keycollection.SetString(EventRoutineTrade.TradeConfirm, "Confirm");
+            keycollection.SetString(EventRoutineTrade.TradeCancel, "Cancel");
         }
 
         /*
@@ -3604,6 +3609,7 @@ namespace Pokefrost
             }
             CreateModAssetsCharms();
             CreateEvents();
+            MiscLocalizationStrings();
             base.Load();
             CreateBattles();
             //Events.OnSceneLoaded += PokemonEdits;
@@ -3645,6 +3651,14 @@ namespace Pokefrost
             //}
             References.instance.StartCoroutine(UICollector.CollectPrefabs());
             preLoaded = true;
+        }
+
+        private void MiscLocalizationStrings()
+        {
+            StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+
+            tooltips.SetString(StatusTokenApplyX.Key_Snowed, "Snowed!");
+            tooltips.SetString(StatusTokenApplyX.Key_Inked, "Inked!");
         }
 
         public override void Unload()

@@ -163,7 +163,7 @@ namespace Pokefrost
             background.SetActive(true);
             lane1.SetActive(true);
             lane2.SetActive(true);
-            CampaignNodeTypeBetterEvent.Prefabs.Add("Trade", controller);
+            CampaignNodeTypeTrade.Prefabs.Add("Trade", controller);
         }
         //Canvas/Safe Area/Menu/ButtonLayout/SettingsButton
         //FloatingTextManager
