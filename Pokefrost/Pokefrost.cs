@@ -1822,6 +1822,44 @@ namespace Pokefrost
                 .Register(this);
             notBurning.targetMode = notBurnTargetMode;
 
+            StatusEffectWeather sandstorm = Ext.CreateStatus<StatusEffectWeather>("Sandstorm")
+                .Register(this);
+            sandstorm.color = new Color(1f, 1f, 0.75f);
+            statusList.Add(sandstorm);
+
+            StatusEffectWhileActiveX sandstream = Ext.CreateStatus<StatusEffectWhileActiveX>("When Active Sandstorm")
+                .ApplyX(sandstorm, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(sandstream);
+
+            StatusEffectWeather snowstorm = Ext.CreateStatus<StatusEffectWeather>("Snowstorm")
+                .Register(this);
+            snowstorm.color = new Color(1f, 1f, 1f);
+            snowstorm.intensityMultiplier = 5f;
+            statusList.Add(snowstorm);
+
+            StatusEffectWhileActiveX snowstream = Ext.CreateStatus<StatusEffectWhileActiveX>("When Active Snowstorm")
+                .ApplyX(snowstorm, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(snowstream);
+
+            StatusEffectAddAttackEffects snowPunch = Ext.CreateStatus<StatusEffectAddAttackEffects>("All Hits Apply Snow", "While active, everyone applies <{a}><keyword=snow>", boostable:true)
+                .Register(this);
+            snowPunch.effectToApply = Get<StatusEffectData>("Snow");
+            statusList.Add(snowPunch);
+
+            StatusEffectDuplicateEffect synchronize = Ext.CreateStatus<StatusEffectDuplicateEffect>("Copy Effects Applied To Ally Ahead")
+                .ApplyX(null, StatusEffectApplyX.ApplyToFlags.AllyInFrontOf)
+                .Register(this);
+            synchronize.applyEqualAmount = true;
+            statusList.Add(synchronize);
+
+            KeywordData syncKeyword = Ext.CreateBasicKeyword(this, "synchronize", "Synchronize", "Whenever an effect is applied to ally ahead, also apply it to self|Watch out for debuffs!");
+            syncKeyword.showName = true;
+            syncKeyword.canStack = false;
+
+            TraitData syncTrait = Ext.CreateTrait<TraitData>("Synchronize", this, syncKeyword, synchronize);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -2443,6 +2481,7 @@ namespace Pokefrost
                     .CreateUnit("kirlia", "Kirlia")
                     .SetStats(5, 5, 5)
                     .SetSprites("kirlia.png", "kirliaBG.png")
+                    .STraits(("Synchronize", 1))
                 );
 
             list.Add(
@@ -2662,7 +2701,7 @@ namespace Pokefrost
                     .CreateUnit("hippowdon", "Hippowdon", idleAnim: "SquishAnimationProfile")
                     .SetStats(12, 3, 5)
                     .SetSprites("hippowdon.png", "hippowdonBG.png")
-                    .SStartEffects(("Pre Turn Weakness All Enemies", 1))
+                    .SStartEffects(("Pre Turn Weakness All Enemies", 1), ("When Active Sandstorm",1))
                     .AddPool("ClunkUnitPool")
                 );
 
