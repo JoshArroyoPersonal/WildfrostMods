@@ -2371,7 +2371,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("sableye", "Sableye", bloodProfile: "Blood Profile Pink Wisp")
-                    .SetStats(10, 0, 3)
+                    .SetStats(10, 0, 2)
                     .SetSprites("sableye.png", "sableyeBG.png")
                     .SStartEffects(("Drop Bling on Hit", 10))
                     .STraits(("Greed", 1))
