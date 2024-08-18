@@ -2346,6 +2346,20 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("natu", "Natu")
+                    .SetStats(4, 1, 4)
+                    .SetSprites("natu.png", "natuBG.png")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("xatu", "Xatu")
+                    .SetStats(8, 3, 4)
+                    .SetSprites("xatu.png", "xatuBG.png")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("aipom", "Aipom")
                     .SetStats(6, 3, 3)
                     .SetSprites("aipom.png", "aipomBG.png")
@@ -2752,6 +2766,20 @@ namespace Pokefrost
                     .SetStats(6, 3, 4)
                     .SetSprites("toxicroak.png", "toxicroakBG.png")
                     .SStartEffects(("On Hit Equal Shroom To Target", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("snover", "Snover")
+                    .SetStats(6, 4, 5)
+                    .SetSprites("snover.png", "snoverBG.png")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("abomasnow", "abomasnow")
+                    .SetStats(8, 4, 5)
+                    .SetSprites("abomasnow.png", "abomasnowBG.png")
                 );
 
             list.Add(
