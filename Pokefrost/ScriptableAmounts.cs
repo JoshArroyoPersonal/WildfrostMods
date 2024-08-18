@@ -50,7 +50,7 @@ namespace Pokefrost
                 {
                     if (status.type == "paracurse" || status.type == "weakcurse" || status.type == "powercurse" || status.type == "frenzycurse")
                     {
-                        amount++;
+                        amount += (1+entity.effectBonus ) * ((int)Math.Round(entity.effectFactor));
                         break;
                     }
                 }
