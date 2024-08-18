@@ -658,7 +658,7 @@ namespace Pokefrost
             StatusEffectApplyXOnCardPlayed demonizeally = Get<StatusEffectData>("On Card Played Apply Spice To RandomAlly").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
             demonizeally.effectToApply = Get<StatusEffectData>("Demonize");
             demonizeally.name = "On Card Apply Demonize To RandomAlly";
-            collection.SetString(demonizeally.name + "_text", "Apply <{a}> <keyword=demonize> to a random ally");
+            collection.SetString(demonizeally.name + "_text", "Apply <{a}><keyword=demonize> to a random ally");
             demonizeally.textKey = collection.GetString(demonizeally.name + "_text");
             demonizeally.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", demonizeally);
@@ -674,7 +674,7 @@ namespace Pokefrost
             triattack.keyword = "";
             triattack.hiddenKeywords = new KeywordData[] {Get<KeywordData>("random effect")};
             triattack.targetConstraints = new TargetConstraint[0];
-            collection.SetString(triattack.name + "_text", "Apply <{a}> <keyword=shroom>/<keyword=overload>/<keyword=weakness>");
+            collection.SetString(triattack.name + "_text", "Apply <{a}><keyword=shroom>/<keyword=overload>/<keyword=weakness>");
             triattack.textKey = collection.GetString(triattack.name + "_text");
             triattack.textOrder = 0;
             triattack.textInsert = "<keyword=shroom>, <keyword=overload>, <keyword=weakness>";
@@ -928,7 +928,7 @@ namespace Pokefrost
             increasehandattack.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             increasehandattack.keyword = "";
             increasehandattack.targetConstraints = new TargetConstraint[] { new TargetConstraintDoesDamage() };
-            collection.SetString(increasehandattack.name + "_text", "Add <+{a}><keyword=attack> to <Cards> in your hand");
+            collection.SetString(increasehandattack.name + "_text", "Add <+{a}><keyword=attack> to cards in hand");
             increasehandattack.textKey = collection.GetString(increasehandattack.name + "_text");
             increasehandattack.textOrder = 0;
             increasehandattack.textInsert = "";
@@ -1860,6 +1860,21 @@ namespace Pokefrost
 
             TraitData syncTrait = Ext.CreateTrait<TraitData>("Synchronize", this, syncKeyword, synchronize);
 
+            StatusEffectApplyXOnCardPlayed juiceToHand = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Cards In Hand Juice", "Apply <{a}><keyword=spicune> to cards in hand", boostable:true)
+                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Hand)
+                .Register(this);
+
+            StatusEffectApplyXWhenHit juiceOnHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("Gain Juice On Hit", "When hit, gain <{a}><keyword=spicune>", boostable:true)
+                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
+            StatusEffectApplyXOnCardPlayed juiceToAll = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To All", "Apply current <keyword=spicune> to everything else")
+                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Enemies | StatusEffectApplyX.ApplyToFlags.Hand)
+                .Register(this);
+            ScriptableCurrentStatus myJuice = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
+            myJuice.statusType = "juice";
+            juiceToAll.scriptableAmount = myJuice;
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -2338,7 +2353,7 @@ namespace Pokefrost
                     .CreateUnit("espeon", "Espeon")
                     .SetStats(3, 3, 3)
                     .SetSprites("espeon.png", "espeonBG.png")
-                    .SStartEffects(("While Active Increase Effects To Hand", 1))
+                    .SStartEffects(("Give Cards In Hand Juice", 1))
                 );
 
             list.Add(
@@ -2457,7 +2472,7 @@ namespace Pokefrost
                     .CreateUnit("suicune", "Suicune")
                     .SetStats(8, 0, 3)
                     .SetSprites("suicune.png", "suicuneBG.png")
-                    .SAttackEffects(("Spicune", 1))
+                    .SStartEffects(("Gain Juice On Hit", 1), ("Give Your Juice To All", 1))
                 );
 
             list.Add(
@@ -2549,7 +2564,7 @@ namespace Pokefrost
                     .CreateUnit("sableye", "Sableye", bloodProfile: "Blood Profile Pink Wisp")
                     .SetStats(10, 0, 2)
                     .SetSprites("sableye.png", "sableyeBG.png")
-                    .SStartEffects(("Drop Bling on Hit", 15))
+                    .SStartEffects(("Drop Bling on Hit", 10))
                     .STraits(("Greed", 1))
                     .AddPool()
                 );
