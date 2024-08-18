@@ -429,6 +429,7 @@
   <ItemGroup>
     <Compile Include="ButtonClasses.cs" />
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
+    <Compile Include="StatusEffectAdAttackEffects.cs" />
     <Compile Include="DumbFixes.cs" />
     <Compile Include="EventRoutineTrade.cs" />
     <Compile Include="EvolutionPopUp.cs" />
@@ -440,6 +441,7 @@
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectBurning.cs" />
     <Compile Include="StatusEffectChangeData.cs" />
+    <Compile Include="StatusEffectDuplicateEffect.cs" />
     <Compile Include="StatusEffectEvolveFromNode.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
     <Compile Include="StatusEffectFalseSwipe.cs" />
@@ -455,6 +457,7 @@
     <Compile Include="StatusEffectImmuneToDamage.cs" />
     <Compile Include="StatusEffectSpicune.cs" />
     <Compile Include="StatusEffectTransfer.cs" />
+    <Compile Include="StatusEffectWeather.cs" />
     <Compile Include="StatusEffectXActsLikeShell.cs" />
     <Compile Include="Pokefrost.cs" />
     <Compile Include="StatusEffectEvolveFromHitApplied.cs" />
