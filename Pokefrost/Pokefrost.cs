@@ -85,7 +85,7 @@ namespace Pokefrost
             Debug.Log("[Josh] Changed icon_sheet");*/
 
             Debug.Log(this.ImagePath(""));
-            pokefrostSprites = HopeUtils.CreateSpriteAsset("pokefrostSprites", directoryWithPNGs: this.ImagePath("Sprites"), textures: new Texture2D[] { this.ImagePath("Sprites/overshroomicon.png").ToSprite().ToTexture() }, sprites: new Sprite[] { this.ImagePath("Sprites/overshroomicon.png").ToSprite() });
+            pokefrostSprites = HopeUtils.CreateSpriteAsset("pokefrostSprites", directoryWithPNGs: this.ImagePath("Sprites"), textures: new Texture2D[] {  }, sprites: new Sprite[] {  });
             foreach(var character in pokefrostSprites.spriteCharacterTable)
             {
                 character.scale = 1.3f;
@@ -532,7 +532,7 @@ namespace Pokefrost
             blazetea.targetConstraints = Get<CardData>("BlazeTea").attackEffects[1].data.targetConstraints;
             blazetea.textInsert = "Add MultiHit To Random Ally";
             blazetea.name = "On Card Played Blaze Tea Random Ally";
-            collection.SetString(blazetea.name + "_text", "Add <x{a}> <keyword=frenzy> and increase <keyword=counter> by <{a}> to a random ally");
+            collection.SetString(blazetea.name + "_text", "Add <x{a}><keyword=frenzy> and increase <keyword=counter> by <{a}> to a random ally");
             blazetea.textKey = collection.GetString(blazetea.name + "_text");
             blazetea.textOrder = 0;
             blazetea.ModAdded = this;
@@ -842,7 +842,7 @@ namespace Pokefrost
             bomall.effectToApply = Get<StatusEffectData>("Weakness");
             bomall.applyToFlags = StatusEffectApplyX.ApplyToFlags.Enemies;
             bomall.name = "Pre Turn Weakness All Enemies";
-            collection.SetString(bomall.name + "_text", "Before triggering, apply <{a}> <keyword=weakness> to all enemies");
+            collection.SetString(bomall.name + "_text", "Before triggering, apply <{a}><keyword=weakness> to all enemies");
             bomall.textKey = collection.GetString(bomall.name + "_text");
             bomall.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", bomall);
@@ -1528,6 +1528,12 @@ namespace Pokefrost
                 .Register(this);
             darkraifrenzy.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCursesInHand>();
             statusList.Add(darkraifrenzy);
+
+            StatusEffectWhileActiveX darkraiTest = Ext.CreateStatus<StatusEffectWhileActiveX>("Frenzy Equal To Curses In Hand", "Has <x{a}><keyword=frenzy> for each <curse> in hand", boostable: true)
+                .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            darkraiTest.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCursesInHand>();
+            statusList.Add(darkraiTest);
 
             TargetConstraintStatusMoreThan weakcurseconstraint = ScriptableObject.CreateInstance<TargetConstraintStatusMoreThan>();
             weakcurseconstraint.not = true;
@@ -2406,7 +2412,7 @@ namespace Pokefrost
                     .SetStats(8, 0, 3)
                     .SetSprites("entei.png", "enteiBG.png")
                     .SAttackEffects(("Burning", 3))
-                    .SStartEffects(("Hit All NonBurning Targets", 1))
+                    .SStartEffects(("Hits All NonBurning Targets", 1))
                 );
 
             list.Add(
@@ -2597,7 +2603,7 @@ namespace Pokefrost
                     .CreateUnit("latios", "Latios")
                     .SetStats(8, 0, 3)
                     .SetSprites("latios.png", "latiosBG.png")
-                    .SStartEffects(("On Card Played Transfer Attack to Random Ally", 2), ("Ongoing Increase Attack", 2))
+                    .SStartEffects(("On Card Played Transfer Attack to Random Ally", 5), ("Ongoing Increase Attack", 5))
                 );
 
             list.Add(
@@ -2798,7 +2804,7 @@ namespace Pokefrost
                     .CreateUnit("darkrai", "Darkrai")
                     .SetStats(6, 3, 4)
                     .SetSprites("darkrai.png", "darkraiBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1), SStack("Pre Trigger Gain Temp MultiHit Equal To Curses In Hand", 1))
+                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1), SStack("Frenzy Equal To Curses In Hand", 1))
                 );
 
             list.Add(
@@ -3188,7 +3194,7 @@ namespace Pokefrost
                     .SetSprites("darkrai.png", "darkraiBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
-                    .SetStartWithEffect(SStack("ImmuneToSnow", 1), SStack("Pre Trigger Gain Temp MultiHit Equal To Curses In Hand", 1))
+                    .SetStartWithEffect(SStack("ImmuneToSnow", 1), SStack("Frenzy Equal To Curses In Hand", 1))
                 );
 
             //
@@ -4297,4 +4303,32 @@ namespace Pokefrost
             }
         }
     }
+
+
+
+    [HarmonyPatch(typeof(PetHutFlagSetter), "SetupFlag")]
+    internal static class PatchInPetFlag
+    {
+        static void Prefix(PetHutFlagSetter __instance)
+        {
+
+            Texture2D Etex = Pokefrost.instance.ImagePath("eeveeflag.png").ToTex();
+            Sprite Espr = Sprite.Create(Etex, new Rect(0, 0, Etex.width, Etex.height), new Vector2(0.5f, 1f), 160);
+            Texture2D Rtex = Pokefrost.instance.ImagePath("rotomflag.png").ToTex();
+            Sprite Rspr = Sprite.Create(Rtex, new Rect(0, 0, Rtex.width, Rtex.height), new Vector2(0.5f, 1f), 160);
+
+            __instance.flagSprites = __instance.flagSprites.Append(Espr).ToArray();
+            __instance.flagSprites = __instance.flagSprites.Append(Rspr).ToArray();
+        }
+
+        static Sprite CreateSprite(int density)
+        {
+            Texture2D tex = Pokefrost.instance.ImagePath("eeveeflag.png").ToTex();
+            Sprite spr = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), new Vector2(0.5f, 1f), density);
+            return spr;
+        }
+
+    }
+
+
 }

@@ -38,7 +38,7 @@ namespace Pokefrost
 
         public override bool RunHitEvent(Hit hit)
         {
-            if (hit.target == target && hit.Offensive && hit.canBeNullified)
+            if (hit.target == target && hit.Offensive && hit.canBeNullified && !target.silenced)
             {
                 UnityEngine.Debug.Log(hit.damageType);
 
