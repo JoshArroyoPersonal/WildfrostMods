@@ -4442,5 +4442,17 @@ namespace Pokefrost
 
     }
 
+    [HarmonyPatch(typeof(StatusEffectChangeTargetMode), "RunEndEvent")]
+    static class PatchInkedTargetModeRemove
+    {
+        static void Postfix(StatusEffectChangeTargetMode __instance)
+        {
+            if (__instance.target.silenced)
+            {
+                __instance.target.targetMode = ScriptableObject.CreateInstance<TargetModeBasic>();
+            }
+        }
+    }
+
 
 }
