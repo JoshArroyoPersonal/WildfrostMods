@@ -79,10 +79,15 @@ namespace Pokefrost
 
         public IEnumerator Animate()
         {
+
             ChangePhaseAnimationSystem animationSystem = UnityEngine.Object.FindObjectOfType<ChangePhaseAnimationSystem>();
 
+            GameObject obj = new GameObject("focus");
+            obj.transform.SetParent(animationSystem.container);
+            obj.transform.position = target.transform.position;
+
+            animationSystem.container = obj.transform;
             animationSystem?.Flash();
-            
             yield return animationSystem.Focus(target);
             yield return Sequences.Wait(0.3f);
             ActionQueue.Stack(new ActionSequence(animationSystem.UnFocus())
@@ -90,6 +95,21 @@ namespace Pokefrost
                 note = "Unfocus boss",
                 priority = 10
             }, fixedPosition: true);
+            
+            
+        }
+
+        IEnumerator blah()
+        {
+            target.containers[0].SetChildPosition(target);
+            yield break;
+        }
+
+        public override bool RunBeginEvent()
+        {
+            target.display.promptUpdateDescription = true;
+            target.PromptUpdate();
+            return base.RunBeginEvent();
         }
     }
 }
