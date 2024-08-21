@@ -31,7 +31,7 @@ namespace Pokefrost
 {
     public class Pokefrost : WildfrostMod
     {
-        public static string[] basicPool = new string[] {"spheal", "croagunk", "toxicroak", "salazzle", "magcargo" };
+        public static string[] basicPool = new string[] {"spheal", "croagunk", "toxicroak", "salazzle", "magcargo", "kirlia", "gardevoir", "gallade" };
         public static string[] magicPool = new string[] { "cubone", "marowak", "alolanmarowak", "carvanha", "sharpedo", "duskull", "dusclops", "litwick", "lampent", "chandelure" };
         public static string[] clunkPool = new string[] { "weezing", "hippowdon", "trubbish", "garbodor" };
 
@@ -2051,6 +2051,12 @@ namespace Pokefrost
             ev22.Confirm();
             statusList.Add(ev22);
 
+            StatusEffectEvolveKirlia ev23 = ScriptableObject.CreateInstance<StatusEffectEvolveKirlia>();
+            ev23.Autofill("Evolve Kirlia", "<keyword=evolve>: Gain <{a}> unique effects", this);
+            ev23.SetEvolutions("gardevoir", "gallade");
+            ev23.Confirm();
+            statusList.Add(ev23);
+
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
             shiny.type = "shiny";
@@ -2524,9 +2530,11 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("kirlia", "Kirlia")
-                    .SetStats(5, 5, 5)
+                    .SetStats(4, 2, 4)
                     .SetSprites("kirlia.png", "kirliaBG.png")
                     .STraits(("Synchronize", 1))
+                    .SStartEffects(("Evolve Kirlia",7))
+                    .AddPool("BasicUnitPool")
                 );
 
             list.Add(
@@ -3798,9 +3806,17 @@ namespace Pokefrost
         private void MiscLocalizationStrings()
         {
             StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+            StringTable ui = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
 
             tooltips.SetString(StatusTokenApplyX.Key_Snowed, "Snowed!");
             tooltips.SetString(StatusTokenApplyX.Key_Inked, "Inked!");
+
+            ui.SetString(EvolutionPopUp.EvoTitleKey1A, "Huh? <#ff0>{0}</color> is evolving?");
+            ui.SetString(EvolutionPopUp.EvoTitleKey1B, "Huh? <#ff0>{0}</color> Pokemon are evolving?");
+            ui.SetString(EvolutionPopUp.EvoTitleKey2A, "<#ff0>{0}</color> has evolved into <#ff0>{1}</color>!");
+            ui.SetString(EvolutionPopUp.EvoTitleKey2B, "<#ff0>{0}</color> Pokemon have evolved!");
+            ui.SetString(EvolutionPopUp.EvoObserve, "Observe");
+
         }
 
         public override void Unload()
@@ -4137,9 +4153,9 @@ namespace Pokefrost
 
         public void DisplayEvolutions(CampaignNode whatever)
         {
-            if (StatusEffectEvolve.evolvedPokemonLastBattle.Count > 0)
+            if (EvolutionPopUp.evolvedPokemonLastBattle.Count > 0)
             {
-                References.instance.StartCoroutine(StatusEffectEvolve.EvolutionPopUp(this));
+                References.instance.StartCoroutine(EvolutionPopUp.Run());
             }
         }
 
@@ -4485,6 +4501,18 @@ namespace Pokefrost
             return spr;
         }
 
+    }
+
+    [HarmonyPatch(typeof(StatusEffectChangeTargetMode), "RunEndEvent")]
+    static class PatchInkedTargetModeRemove
+    {
+        static void Postfix(StatusEffectChangeTargetMode __instance)
+        {
+            if (__instance.target.silenced)
+            {
+                __instance.target.targetMode = ScriptableObject.CreateInstance<TargetModeBasic>();
+            }
+        }
     }
 
 

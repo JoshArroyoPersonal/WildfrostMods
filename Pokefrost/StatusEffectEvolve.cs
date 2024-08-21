@@ -84,7 +84,7 @@ namespace Pokefrost
             return true;
         }
 
-        public static IEnumerator EvolutionPopUp(WildfrostMod mod)
+        public static IEnumerator EvolutionPopUpAlt(WildfrostMod mod)
         {
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
@@ -171,8 +171,10 @@ namespace Pokefrost
 
             References.Player.data.inventory.deck.Add(card.entity.data);
             Events.InvokeEntityShowUnlocked(card.entity);
-            evolvedPokemonLastBattle.Add(preEvo.name);
-            pokemonEvolvedIntoLastBattle.Add(evolutionCardName);
+            //evolvedPokemonLastBattle.Add(preEvo.name);
+            //pokemonEvolvedIntoLastBattle.Add(evolutionCardName);
+            EvolutionPopUp.evolvedPokemonLastBattle.Add(preEvo);
+            EvolutionPopUp.pokemonEvolvedIntoLastBattle.Add(card.entity.data);
         }
     }
 }

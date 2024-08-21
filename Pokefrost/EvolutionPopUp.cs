@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Localization.Tables;
 using UnityEngine.UI;
 
 namespace Pokefrost
@@ -18,6 +19,14 @@ namespace Pokefrost
         public static List<CardData> pokemonEvolvedIntoLastBattle = new List<CardData>(3);
 
         public static List<GameObject> silhouettes = new List<GameObject>();
+
+        public static string EvoTitleKey1A = "websiteofsites.wildfrost.pokefrost.evo_title1a";
+        public static string EvoTitleKey1B = "websiteofsites.wildfrost.pokefrost.evo_title1b";
+        public static string EvoTitleKey2A = "websiteofsites.wildfrost.pokefrost.evo_title2a";
+        public static string EvoTitleKey2B = "websiteofsites.wildfrost.pokefrost.evo_title2b";
+        public static string EvoObserve = "websiteofsites.wildfrost.pokefrost.evo_observe";
+
+        public static StringTable stringTable;
 
         private static WildfrostMod mod => Pokefrost.instance;
         private static CardFramesUnlockedSequence sequence;
@@ -36,7 +45,7 @@ namespace Pokefrost
         private static Vector3 translate2 = new Vector3(0f, -0.5f, 0f);
         private static float fadeInDur = 0.75f;
         private static LeanTweenType fadeInType = LeanTweenType.easeInCubic;
-        private static float hold = 0.5f;
+        private static float hold = 0.25f;
         private static float fadeOutDur = 0.3f;
         private static LeanTweenType fadeOutType = LeanTweenType.easeOutCubic;
         private static float frequency = 0.05f;
@@ -50,20 +59,23 @@ namespace Pokefrost
 
         public static IEnumerator Run()
         {
+            stringTable = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
             eventProgress = 0;
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
             sequence = GameObject.FindObjectOfType<CardFramesUnlockedSequence>();
             sequence.container1.transform.Translate(translate2);
             titleObject = sequence.GetComponentInChildren<TextMeshProUGUI>(true);
+            fader = UICollector.PullPrefab("Box", "Fader", sequence.gameObject);
+            fader.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
+            fader.SetActive(false);
+            yield return new WaitForSeconds(0.3f);
             GameObject obj = UICollector.PullPrefab("Button", "Continue Button", sequence.gameObject);
             obj.transform.position = translate;
             continueButton = obj.GetComponentInChildren<Button>();
             continueButton.onClick.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
             continueButton.onClick.AddListener(ProgressEvent);
-            fader = UICollector.PullPrefab("Box", "Fader", sequence.gameObject);
-            fader.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
-            fader.SetActive(false);
+            fader.transform.SetAsLastSibling();
 
             yield return Preevos();
             yield return new WaitUntil(() => eventProgress > 0);
@@ -74,14 +86,15 @@ namespace Pokefrost
             yield return new WaitForSeconds(fadeInDur);
             yield return Evos();
             SfxSystem.OneShot("event:/sfx/inventory/charm_assign");
+            continueButton.gameObject.SetActive(false);
             yield return new WaitForSeconds(hold);
-            BackgroundFade(1f, 0f, fadeInDur, fadeOutType);
-            yield return new WaitForSeconds(fadeOutDur - overlap/2);
+            BackgroundFade(1f, 0f, fadeOutDur, fadeOutType);
+            yield return new WaitForSeconds(fadeOutDur);
             //SilhouetteFade(1f, 0f, duration, silTweenType);
             fader.SetActive(false);
-            yield return new WaitForSeconds(duration);
+            //yield return new WaitForSeconds(duration);
             Pokefrost.SFX.TryPlaySound("evolution");
-            continueButton.interactable = true;
+            //continueButton.interactable = true;
             yield return new WaitUntil(() => eventProgress > 1);
             Routine.Clump clump = new Routine.Clump();
             for(int i = sequence.container1.Count - 1; i >= 0; i--)
@@ -116,14 +129,18 @@ namespace Pokefrost
             {
                 string preEvo = evolvedPokemonLastBattle[0].title;
                 string evo = pokemonEvolvedIntoLastBattle[0].title;
-                titleObject.text = "<size=0.55>Huh? <#ff0>" + preEvo + "</color> is evolving? </size>";
+                titleObject.fontSize = 0.55f;
+                string text = stringTable.GetString(EvoTitleKey1A).GetLocalizedString();
+                titleObject.text = string.Format(text, preEvo);
             }
             else
             {
-                titleObject.text = "<size=0.55>Huh? <#ff0>" + evolvedPokemonLastBattle.Count + "</color> Pokemon are evolving?";
+                string text = stringTable.GetString(EvoTitleKey1B).GetLocalizedString();
+                titleObject.text = string.Format(text, evolvedPokemonLastBattle.Count);
             }
             yield return CreateCardsAlt(evolvedPokemonLastBattle);
-            continueButton.GetComponentInChildren<TextMeshProUGUI>().SetText("Observe");
+            string text2 = stringTable.GetString(EvoObserve).GetLocalizedString();
+            continueButton.GetComponentInChildren<TextMeshProUGUI>().SetText(text2);
             //AttachSilhouettes(0f);
         }
 
@@ -132,18 +149,21 @@ namespace Pokefrost
             if (evolvedPokemonLastBattle.Count == 1)
             {
                 string preEvo = evolvedPokemonLastBattle[0].title;
-                string evo = pokemonEvolvedIntoLastBattle[0].title;
-                titleObject.text = "<size=0.55><#ff0>" + preEvo + "</color> has evolved into" + evo + "</color>!</size>";
+                string evo = Pokefrost.instance.Get<CardData>(pokemonEvolvedIntoLastBattle[0].name)?.title ?? pokemonEvolvedIntoLastBattle[0].name;
+
+                string text = stringTable.GetString(EvoTitleKey2A).GetLocalizedString();
+                titleObject.text = string.Format(text, preEvo, evo);
             }
             else
             {
-                titleObject.text = "<size=0.55><#ff0>" + evolvedPokemonLastBattle.Count + "</color> Pokemon have evolved!";
+                string text = stringTable.GetString(EvoTitleKey2B).GetLocalizedString();
+                titleObject.text = string.Format(text, pokemonEvolvedIntoLastBattle.Count);
             }
             //RemoveSilhouettes();
             sequence.container1.ClearAndDestroyAllImmediately();
             yield return CreateCardsAlt(pokemonEvolvedIntoLastBattle, true);
             //AttachSilhouettes(1f);
-            continueButton.GetComponentInChildren<TextMeshProUGUI>().SetText("Continue");
+            //continueButton.GetComponentInChildren<TextMeshProUGUI>().SetText("Continue");
             Button back = sequence.group.GetComponentInChildren<Button>();
             back.onClick.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
             back.onClick.AddListener(() => End());
