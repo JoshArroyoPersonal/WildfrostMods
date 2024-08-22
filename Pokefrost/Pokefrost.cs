@@ -26,6 +26,7 @@ using UnityEngine.Localization.Components;
 using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
 using BattleEditor;
+using static Mono.Security.X509.X509Stores;
 
 namespace Pokefrost
 {
@@ -3774,6 +3775,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
+            Events.OnEntityFlee += FurretFlee;
             //Events.OnEntityCountDown += TauntedFailsafe;
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
@@ -3834,6 +3836,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
             Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
+            Events.OnEntityFlee -= FurretFlee;
             //Events.OnEntityCountDown -= TauntedFailsafe;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
@@ -4191,6 +4194,27 @@ namespace Pokefrost
 
             return base.AddAssets<T, Y>();
         }
+
+        public void FurretFlee(Entity entity)
+        {
+            string fileName = Path.Combine(ModDirectory, "furret.txt");
+
+            if (entity.owner == References.Player && entity.name == "websiteofsites.wildfrost.pokefrost.furret")
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.AppendLine(entity.data.title);
+                stringBuilder.AppendLine(References.Player.data.inventory.deck[0].title);
+                stringBuilder.AppendLine(DateTime.Now.ToString());
+                foreach(CardUpgradeData upgrade in entity.data.upgrades)
+                {
+                    stringBuilder.AppendLine(upgrade.name);
+                }
+                
+                System.IO.File.WriteAllText(fileName, stringBuilder.ToString());
+            }
+
+        }
+
     }
 
     [HarmonyPatch(typeof(InspectSystem), "GetClass", new Type[]

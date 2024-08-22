@@ -436,6 +436,7 @@
     <Compile Include="EvolutionPopUp.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="EyeDataAdder.cs" />
+    <Compile Include="Furret.cs" />
     <Compile Include="PickupRoutine.cs" />
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage.cs" />
