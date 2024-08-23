@@ -427,6 +427,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BattleGenerationScriptHooh.cs" />
     <Compile Include="ButtonClasses.cs" />
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
     <Compile Include="StatusEffectAdAttackEffects.cs" />
