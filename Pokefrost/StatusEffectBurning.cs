@@ -76,7 +76,8 @@ namespace Pokefrost
             {
                 Hit hit = new Hit(damager, item, count)
                 {
-                    damageType = "burning"
+                    damageType = "burning",
+                    canRetaliate = false
                 };
                 clump.Add(hit.Process());
                 Pokefrost.VFX.TryPlayEffect("burntei", item.transform.position, item.transform.lossyScale);

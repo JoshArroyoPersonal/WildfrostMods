@@ -26,6 +26,7 @@ using UnityEngine.Localization.Components;
 using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
 using BattleEditor;
+using static Mono.Security.X509.X509Stores;
 
 namespace Pokefrost
 {
@@ -1230,6 +1231,7 @@ namespace Pokefrost
             revive.type = "";
             revive.preventDeath = true;
             revive.eventPriority = -999998;
+            revive.targetConstraints = new TargetConstraint[1] { Get<CardUpgradeData>("CardUpgradeHeart").targetConstraints[0] };
             collection.SetString(revive.name + "_text", "<keyword=revive>");
             revive.textKey = collection.GetString(revive.name + "_text");
             revive.ModAdded = this;
@@ -1790,6 +1792,12 @@ namespace Pokefrost
             joltChain.targetDamageType = "jolt";
             statusList.Add(joltChain);
 
+            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage enemyChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To Front Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to front enemy")
+                .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.FrontEnemy)
+                .Register(this);
+            enemyChain.targetDamageType = "jolt";
+            statusList.Add(joltChain);
+
             StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltTrigger = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Trigger", "<keyword=conduit>: Trigger")
                 .ApplyX(Get<StatusEffectData>("Trigger (High Prio)"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
@@ -1827,7 +1835,7 @@ namespace Pokefrost
             sandstorm.color = new Color(1f, 1f, 0.75f);
             statusList.Add(sandstorm);
 
-            StatusEffectWhileActiveX sandstream = Ext.CreateStatus<StatusEffectWhileActiveX>("When Active Sandstorm")
+            StatusEffectWhileActiveX sandstream = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Sandstorm")
                 .ApplyX(sandstorm, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             statusList.Add(sandstream);
@@ -1838,7 +1846,7 @@ namespace Pokefrost
             snowstorm.intensityMultiplier = 5f;
             statusList.Add(snowstorm);
 
-            StatusEffectWhileActiveX snowstream = Ext.CreateStatus<StatusEffectWhileActiveX>("When Active Snowstorm")
+            StatusEffectWhileActiveX snowstream = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Snowstorm")
                 .ApplyX(snowstorm, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             statusList.Add(snowstream);
@@ -1864,6 +1872,10 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Hand)
                 .Register(this);
 
+            StatusEffectApplyXOnCardPlayed juiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Allies Juice", "Apply <{a}><keyword=spicune> to allies", boostable: true)
+                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Hand)
+                .Register(this);
+
             StatusEffectApplyXWhenHit juiceOnHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("Gain Juice On Hit", "When hit, gain <{a}><keyword=spicune>", boostable:true)
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
@@ -1874,6 +1886,15 @@ namespace Pokefrost
             ScriptableCurrentStatus myJuice = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
             myJuice.statusType = "juice";
             juiceToAll.scriptableAmount = myJuice;
+
+            StatusEffectApplyXOnCardPlayed YourjuiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To Allies", "Apply current <keyword=spicune> to allies")
+                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+            YourjuiceToAllies.scriptableAmount = myJuice;
+
+            StatusEffectApplyXOnCardPlayed reviveToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Revive To Allies", "Give <keyword=revive> to allies")
+                .ApplyX(Get<StatusEffectData>("Revive"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
@@ -2340,8 +2361,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("furret", "Furret")
-                    .SetStats(5, 5, 5)
+                    .SetStats(5, 2, 5)
                     .SetSprites("furret.png", "furretBG.png")
+                    .SStartEffects(("On Turn Escape To Self", 1))
                 );
 
             list.Add(
@@ -2738,7 +2760,7 @@ namespace Pokefrost
                     .CreateUnit("hippowdon", "Hippowdon", idleAnim: "SquishAnimationProfile")
                     .SetStats(12, 3, 5)
                     .SetSprites("hippowdon.png", "hippowdonBG.png")
-                    .SStartEffects(("Pre Turn Weakness All Enemies", 1), ("When Active Sandstorm",1))
+                    .SStartEffects(("Pre Turn Weakness All Enemies", 1), ("While Active Sandstorm",1))
                     .AddPool("ClunkUnitPool")
                 );
 
@@ -2771,15 +2793,16 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("snover", "Snover")
-                    .SetStats(6, 4, 5)
+                    .SetStats(6, 4, 4)
                     .SetSprites("snover.png", "snoverBG.png")
                 );
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("abomasnow", "abomasnow")
-                    .SetStats(8, 4, 5)
+                    .CreateUnit("abomasnow", "Abomasnow")
+                    .SetStats(8, 4, 4)
                     .SetSprites("abomasnow.png", "abomasnowBG.png")
+                    .SStartEffects(("While Active Snowstorm", 1), ("All Hits Apply Snow", 1), ("ImmuneToSnow", 1))
                 );
 
             list.Add(
@@ -3101,7 +3124,7 @@ namespace Pokefrost
                     .CanPlayOnEnemy(false)
                 );
 
-            
+
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_hypno", "Hypno")
@@ -3109,6 +3132,100 @@ namespace Pokefrost
                     .SetSprites("hypno.png", "hypnoBG.png")
                     .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", 1))
                     .WithCardType("Enemy")
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_vaporeon", "Vaporeon", bloodProfile: "Blood Profile Blue (x2)")
+                    .SetStats(10, 3, 3)
+                    .SetSprites("vaporeon.png", "vaporeonBG.png")
+                    .SStartEffects(("Block", 1))
+                    .SAttackEffects(("Null", 4))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_jolteon", "Jolteon")
+                    .SetStats(10, 1, 3)
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                    .SetSprites("jolteon.png", "jolteonBG.png")
+                    .SStartEffects(("MultiHit", 1))
+                    .SAttackEffects(("Jolted", 1))
+                    .STraits(("Aimless", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_flareon", "Flareon")
+                    .SetStats(10, 2, 3)
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                    .SetSprites("flareon.png", "flareonBG.png")
+                    .SStartEffects(("While Active Increase Attack To Allies", 2))
+                    .SAttackEffects(("Burning", 3))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_espeon", "Espeon")
+                    .SetStats(10, 0, 3)
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                    .SetSprites("espeon.png", "espeonBG.png")
+                    .SStartEffects(("Give Allies Juice", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_umbreon", "Umbreon")
+                    .SetStats(13, 0, 3)
+                    .SetSprites("umbreon.png", "umbreonBG.png")
+                    .SStartEffects(("Teeth", 2))
+                    .SAttackEffects(("Demonize", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_raikou", "Raikou")
+                    .SetStats(30, 0, 4)
+                    .SetSprites("raikou.png", "raikouBG.png")
+                    .WithCardType("Miniboss")
+                    .SAttackEffects(("Jolted", 2))
+                    .SStartEffects(("When Anyone Takes Jolted Damage Apply Equal Jolted To Front Enemy", 1))
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_entei", "Entei")
+                    .SetStats(25, 0, 4)
+                    .SetSprites("entei.png", "enteiBG.png")
+                    .WithCardType("Miniboss")
+                    .SAttackEffects(("Burning", 5))
+                    .STraits(("Barrage", 1))
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_suicune", "Suicune")
+                    .SetStats(35, 0, 4)
+                    .SetSprites("suicune.png", "suicuneBG.png")
+                    .WithCardType("Miniboss")
+                    .SStartEffects(("Gain Juice On Hit", 1), ("Give Your Juice To Allies", 1))
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_hooh", "Ho-Oh")
+                    .SetStats(100, 5, 5)
+                    .SetSprites("hooh.png", "hoohBG.png")
+                    .WithCardType("Boss")
+                    .SStartEffects(("Give Revive To Allies",1), ("Revive", 1))
+                    .STraits(("Backline",1))
                     .WithValue(50)
                 );
 
@@ -3248,7 +3365,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_spiritomb", "Spiritomb")
-                    .SetStats(14, 0, 0)
+                    .SetStats(12, 0, 0)
                     .SetSprites("spiritomb.png", "spiritombBG.png")
                     .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", 1), SStack("On Turn Apply Attack To Self", 1))
                     .SetTraits(TStack("Smackback", 1))
@@ -3269,6 +3386,27 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("enemy_leafeon", "Leafeon", bloodProfile: "Blood Profile Fungus")
+                    .SetStats(10, 1, 3)
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                    .SetSprites("leafeon.png", "leafeonBG.png")
+                    .SStartEffects(("On Turn Apply Shell To AllyInFrontOf", 4))
+                    .SAttackEffects(("Shroom", 2))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_glaceon", "Glaceon", bloodProfile: "Blood Profile Snow")
+                    .SetStats(10, 3, 3)
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                    .SetSprites("glaceon.png", "glaceonBG.png")
+                    .SAttackEffects(("Snow", 1), ("Frost", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("quest_cresselia", "Cresselia")
                     .WithCardType("Summoned")
                     .SetStats(4, null, 6)
@@ -3284,6 +3422,16 @@ namespace Pokefrost
                     .WithCardType("Miniboss")
                     .WithValue(50)
                     .SetStartWithEffect(SStack("ImmuneToSnow", 1), SStack("Frenzy Equal To Curses In Hand", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("enemy_sylveon", "Sylveon", bloodProfile: "Blood Profile Berry")
+                    .SetStats(13, 2, 3)
+                    .WithCardType("Enemy")
+                    .WithValue(50)
+                    .SetSprites("sylveon.png", "sylveonBG.png")
+                    .SStartEffects(("On Turn Heal & Cleanse Allies", 2))
                 );
 
             //
@@ -3553,7 +3701,7 @@ namespace Pokefrost
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.nosepass")
                 {
                     Debug.Log("[Pokefrost] Nosepass's magentic field attrached a charm to it.");
-                    List<CardUpgradeData> options = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData").Clone();
+                    List<CardUpgradeData> options = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData");
                     for (int i = 0; i < 30; i++)
                     {
                         var r = UnityEngine.Random.Range(0, options.Count);
@@ -3714,6 +3862,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
+            Events.OnEntityFlee += FurretFlee;
             //Events.OnEntityCountDown += TauntedFailsafe;
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
@@ -3732,7 +3881,7 @@ namespace Pokefrost
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
-            //Events.OnSceneChanged += PokemonPhoto;
+            Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             //for (int i = 0; i < References.Classes.Length; i++)
             //{
@@ -3774,6 +3923,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
             Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
+            Events.OnEntityFlee -= FurretFlee;
             //Events.OnEntityCountDown -= TauntedFailsafe;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
@@ -3803,7 +3953,7 @@ namespace Pokefrost
         private void CreateBattles()
         {
 
-            new BattleDataEditor(this, "Darkrai")
+            /*new BattleDataEditor(this, "Darkrai")
                 .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
                 .SetNameRef("Cursed Nightmares")
                 .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
@@ -3816,7 +3966,7 @@ namespace Pokefrost
                 .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeBattle")
                 .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
 
-            /*new BattleDataEditor(this, "Lati Twins")
+            new BattleDataEditor(this, "Lati Twins")
                 .SetSprite(this.ImagePath("smeargleCharm.png").ToSprite())
                 .SetNameRef("Deadly Duos")
                 .EnemyDictionary(('P', "enemy_plusle"), ('M', "enemy_minun"), ('V', "enemy_volbeat"), ('I', "enemy_illumise"), ('D', "enemy_dustox"), ('B', "enemy_beautifly"), ('G', "enemy_gorebyss"), ('H', "enemy_huntail"), ('S', "enemy_solrock"), ('L', "enemy_lunatone"), ('A', "enemy_latias"), ('O', "enemy_latios"))
@@ -3828,6 +3978,20 @@ namespace Pokefrost
                 .ConstructWaves(4, 9, "SLAO")
                 .GiveMiniBossesCharms(new string[2] { "enemy_latias", "enemy_latios"}, "CardUpgradeBattle")
                 .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight*/
+
+            new BattleDataEditor(this, "Ho-Oh")
+                .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
+                .SetNameRef("Mt. Faraway")
+                .EnemyDictionary(('H', "enemy_hooh"), ('E', "enemy_entei"), ('R', "enemy_raikou"), ('S', "enemy_suicune"), ('V', "enemy_vaporeon"), ('J', "enemy_jolteon"), ('F', "enemy_flareon"), ('P', "enemy_espeon"), ('U', "enemy_umbreon"), ('L', "enemy_leafeon"), ('G', "enemy_glaceon"), ('Y', "enemy_sylveon"))
+                .StartWavePoolData(0, "Mystery")
+                .ConstructWaves(1, 0, "H")
+                .StartWavePoolData(1, "Beasts")
+                .ConstructWaves(2, 1, "EF", "RJ", "SV")
+                .StartWavePoolData(2, "Eeveeloutions")
+                .ConstructWaves(2, 9, "PU", "GL", "Y")
+                .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeBattle")
+                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
+
         }
 
         private void SceneLoaded(Scene scene)
@@ -3860,7 +4024,8 @@ namespace Pokefrost
                 "websiteofsites.wildfrost.pokefrost.hitmonlee", "websiteofsites.wildfrost.pokefrost.hitmonchan", "websiteofsites.wildfrost.pokefrost.porygon",
                 "websiteofsites.wildfrost.pokefrost.furret", "websiteofsites.wildfrost.pokefrost.aipom", "websiteofsites.wildfrost.pokefrost.porygon2", 
                 "websiteofsites.wildfrost.pokefrost.tyrogue", "websiteofsites.wildfrost.pokefrost.hitmontop", "websiteofsites.wildfrost.pokefrost.kirlia",
-                "websiteofsites.wildfrost.pokefrost.gardevoir", "websiteofsites.wildfrost.pokefrost.porygonz", "websiteofsites.wildfrost.pokefrost.gallade"
+                "websiteofsites.wildfrost.pokefrost.gardevoir", "websiteofsites.wildfrost.pokefrost.porygonz", "websiteofsites.wildfrost.pokefrost.gallade",
+                "websiteofsites.wildfrost.pokefrost.natu", "websiteofsites.wildfrost.pokefrost.xatu", "websiteofsites.wildfrost.pokefrost.snover", "websiteofsites.wildfrost.pokefrost.abomasnow"
             };
 
             string[] everyType = { "websiteofsites.wildfrost.pokefrost.raikou", "websiteofsites.wildfrost.pokefrost.entei", "websiteofsites.wildfrost.pokefrost.suicune",
@@ -4130,6 +4295,31 @@ namespace Pokefrost
 
             return base.AddAssets<T, Y>();
         }
+
+        public void FurretFlee(Entity entity)
+        {
+            string fileName = Path.Combine(ModDirectory, "furret.txt");
+
+            if (entity.owner == References.Player && entity.name == "websiteofsites.wildfrost.pokefrost.furret" && entity.data.cardType.name == "Friendly")
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.AppendLine(entity.data.title);
+                stringBuilder.AppendLine(References.Player.data.inventory.deck[0].title);
+                stringBuilder.AppendLine(StatsSystem.instance.Stats.Count("battlesWon").ToString());
+                stringBuilder.AppendLine(DateTime.Now.ToString());
+                foreach(CardUpgradeData upgrade in entity.data.upgrades)
+                {
+                    stringBuilder.AppendLine(upgrade.name);
+                }
+                
+                System.IO.File.WriteAllText(fileName, stringBuilder.ToString());
+
+                References.Player.data.inventory.deck.RemoveWhere((e) => e.name == entity.name );
+
+            }
+
+        }
+
     }
 
     [HarmonyPatch(typeof(InspectSystem), "GetClass", new Type[]
