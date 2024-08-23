@@ -1887,10 +1887,10 @@ namespace Pokefrost
             myJuice.statusType = "juice";
             juiceToAll.scriptableAmount = myJuice;
 
-            StatusEffectApplyXOnCardPlayed juiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To Allies", "Apply current <keyword=spicune> to allies")
+            StatusEffectApplyXOnCardPlayed YourjuiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To Allies", "Apply current <keyword=spicune> to allies")
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
-            juiceToAllies.scriptableAmount = myJuice;
+            YourjuiceToAllies.scriptableAmount = myJuice;
 
             StatusEffectApplyXOnCardPlayed reviveToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Revive To Allies", "Give <keyword=revive> to allies")
                 .ApplyX(Get<StatusEffectData>("Revive"), StatusEffectApplyX.ApplyToFlags.Allies)
@@ -3701,7 +3701,7 @@ namespace Pokefrost
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.nosepass")
                 {
                     Debug.Log("[Pokefrost] Nosepass's magentic field attrached a charm to it.");
-                    List<CardUpgradeData> options = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData").Clone();
+                    List<CardUpgradeData> options = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData");
                     for (int i = 0; i < 30; i++)
                     {
                         var r = UnityEngine.Random.Range(0, options.Count);
@@ -3982,13 +3982,13 @@ namespace Pokefrost
             new BattleDataEditor(this, "Ho-Oh")
                 .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
                 .SetNameRef("Mt. Faraway")
-                .EnemyDictionary(('H', "enemy_hooh"), ('E', "enemy_entei"), ('R', "enemy_raikou"), ('S', "enemy_suicune"), ('V', "enemy_vaporeon"), ('J', "enemy_jolteon"), ('F', "enemy_flareon"), ('P', "enemy_espeon"), ('U', "enemy_umbreon"), ('L', "enemy_leafeon"), ('G', "enemy_glaceon"), ('V', "enemy_sylveon"))
+                .EnemyDictionary(('H', "enemy_hooh"), ('E', "enemy_entei"), ('R', "enemy_raikou"), ('S', "enemy_suicune"), ('V', "enemy_vaporeon"), ('J', "enemy_jolteon"), ('F', "enemy_flareon"), ('P', "enemy_espeon"), ('U', "enemy_umbreon"), ('L', "enemy_leafeon"), ('G', "enemy_glaceon"), ('Y', "enemy_sylveon"))
                 .StartWavePoolData(0, "Mystery")
                 .ConstructWaves(1, 0, "H")
                 .StartWavePoolData(1, "Beasts")
                 .ConstructWaves(2, 1, "EF", "RJ", "SV")
                 .StartWavePoolData(2, "Eeveeloutions")
-                .ConstructWaves(2, 9, "PU", "GL", "V")
+                .ConstructWaves(2, 9, "PU", "GL", "Y")
                 .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeBattle")
                 .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
 
