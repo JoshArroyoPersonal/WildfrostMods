@@ -43,8 +43,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Documents\Assembly-CSharp-Publicized.dll</HintPath>
     </Reference>
-    <Reference Include="BattleEditor">
-      <HintPath>..\..\Mods\BattleEditor\bin\Debug\BattleEditor.dll</HintPath>
+    <Reference Include="BattleEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\StreamingAssets\Mods\BattleEditor\BattleEditor.dll</HintPath>
     </Reference>
     <Reference Include="DeadExtensions">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\DeadExtensions.dll</HintPath>

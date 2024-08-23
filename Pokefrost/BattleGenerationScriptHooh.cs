@@ -20,7 +20,7 @@ namespace Pokefrost
             BattleWavePoolData[] pools = battleData.pools.Select((p) => p.InstantiateKeepName()).ToArray();
 
             //Ho-oh
-            waveList.Add(pools[0].Pull());
+            BattleWavePoolData.Wave hooh = pools[0].Pull();
 
             //The rest
             int index = Dead.Random.Range(0, pools[1].waves.Length);
@@ -30,7 +30,9 @@ namespace Pokefrost
                 waveList.Add(Concat(pools.Select(p => p.Pull()).ToArray()));
             }
 
-            AddGoldGivers(waveList, battleData);
+            waveList.AddUnit(0, hooh.units[0]);
+
+            //AddGoldGivers(waveList, battleData);
             AddBonusUnits(waveList, battleData);
 
             List<BattleWaveManager.WaveData> list2 = new List<BattleWaveManager.WaveData>();
