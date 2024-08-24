@@ -4007,7 +4007,7 @@ namespace Pokefrost
                 .GiveMiniBossesCharms(new string[2] { "enemy_latias", "enemy_latios"}, "CardUpgradeBattle")
                 .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight*/
 
-            new BattleDataEditor(this, "Ho-Oh")
+            BattleDataEditor hooh = new BattleDataEditor(this, "Ho-Oh")
                 .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
                 .SetNameRef("Mt. Faraway")
                 .EnemyDictionary(('H', "enemy_hooh"), ('E', "enemy_entei"), ('R', "enemy_raikou"), ('S', "enemy_suicune"), ('V', "enemy_vaporeon"), ('J', "enemy_jolteon"), ('F', "enemy_flareon"), ('P', "enemy_espeon"), ('U', "enemy_umbreon"), ('L', "enemy_leafeon"), ('G', "enemy_glaceon"), ('Y', "enemy_sylveon"))
@@ -4018,8 +4018,8 @@ namespace Pokefrost
                 .StartWavePoolData(2, "Eeveeloutions")
                 .ConstructWaves(2, 9, "PU", "GL", "Y")
                 .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeBattle")
-                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
-
+                .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
+                .AddBattleToLoader().RegisterBattle(0, mandatory: true); //Loads and makes it the mandatory first fight
         }
 
         private void SceneLoaded(Scene scene)
