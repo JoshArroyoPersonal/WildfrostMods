@@ -1871,14 +1871,17 @@ namespace Pokefrost
             StatusEffectApplyXOnCardPlayed juiceToHand = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Cards In Hand Juice", "Apply <{a}><keyword=spicune> to cards in hand", boostable:true)
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Hand)
                 .Register(this);
+            statusList.Add(juiceToHand);
 
             StatusEffectApplyXOnCardPlayed juiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Allies Juice", "Apply <{a}><keyword=spicune> to allies", boostable: true)
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Hand)
                 .Register(this);
+            statusList.Add(juiceToAllies);
 
             StatusEffectApplyXWhenHit juiceOnHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("Gain Juice On Hit", "When hit, gain <{a}><keyword=spicune>", boostable:true)
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
+            statusList.Add(juiceOnHit);
 
             StatusEffectApplyXOnCardPlayed juiceToAll = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To All", "Apply current <keyword=spicune> to everything else")
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Enemies | StatusEffectApplyX.ApplyToFlags.Hand)
@@ -1886,15 +1889,35 @@ namespace Pokefrost
             ScriptableCurrentStatus myJuice = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
             myJuice.statusType = "juice";
             juiceToAll.scriptableAmount = myJuice;
+            statusList.Add(juiceToAll);
 
             StatusEffectApplyXOnCardPlayed YourjuiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To Allies", "Apply current <keyword=spicune> to allies")
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
             YourjuiceToAllies.scriptableAmount = myJuice;
+            statusList.Add(YourjuiceToAllies);
 
             StatusEffectApplyXOnCardPlayed reviveToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Revive To Allies", "Give <keyword=revive> to allies")
                 .ApplyX(Get<StatusEffectData>("Revive"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
+            statusList.Add(reviveToAllies);
+
+            StatusEffectSummon holderSummon = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
+            holderSummon.name = "Summon Placeholder";
+            holderSummon.Register(this);
+            statusList.Add(holderSummon);
+
+            StatusEffectInstantSummonCustom futureSummon = Ext.CreateStatus<StatusEffectInstantSummonCustom>("Instant Summon Placeholder To Hand")
+                .Register(this);
+            futureSummon.targetSummon = holderSummon;
+            futureSummon.summonPosition = StatusEffectInstantSummon.Position.Hand;
+            statusList.Add(futureSummon);
+
+            StatusEffectApplyXWhenDeployed natuSummon = Ext.CreateStatus<StatusEffectApplyXWhenDeployed>("When Deployed Summon Placeholder To Hand", "When deployed, add the <prophesized> card to hand")
+                .ApplyX(futureSummon, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(natuSummon);
+
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
@@ -2371,6 +2394,7 @@ namespace Pokefrost
                     .CreateUnit("natu", "Natu")
                     .SetStats(4, 1, 4)
                     .SetSprites("natu.png", "natuBG.png")
+                    .SStartEffects(("When Deployed Summon Placeholder To Hand", 1))
                 );
 
             list.Add(
@@ -3139,6 +3163,8 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_vaporeon", "Vaporeon", bloodProfile: "Blood Profile Blue (x2)")
                     .SetStats(10, 3, 3)
+                    .WithCardType("Enemy")
+                    .WithValue(50)
                     .SetSprites("vaporeon.png", "vaporeonBG.png")
                     .SStartEffects(("Block", 1))
                     .SAttackEffects(("Null", 4))
@@ -3181,6 +3207,8 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_umbreon", "Umbreon")
                     .SetStats(13, 0, 3)
+                    .WithCardType("Enemy")
+                    .WithValue(50)
                     .SetSprites("umbreon.png", "umbreonBG.png")
                     .SStartEffects(("Teeth", 2))
                     .SAttackEffects(("Demonize", 1))

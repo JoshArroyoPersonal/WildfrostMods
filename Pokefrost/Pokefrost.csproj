@@ -459,6 +459,7 @@
     <Compile Include="StatusEffectInstantApplyXCardInDeck.cs" />
     <Compile Include="StatusEffectImmuneToDamage.cs" />
     <Compile Include="StatusEffectSpicune.cs" />
+    <Compile Include="StatusEffectSummonCustom.cs" />
     <Compile Include="StatusEffectTransfer.cs" />
     <Compile Include="StatusEffectWeather.cs" />
     <Compile Include="StatusEffectXActsLikeShell.cs" />

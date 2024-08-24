@@ -67,24 +67,29 @@ namespace Pokefrost
 
         public override bool CanTarget(Entity entity)
         {
-            bool flag = false;
+            bool flag = true;
             CardContainer[] containers = entity.containers;
             foreach (CardContainer cardContainer in containers)
             {
-                flag = true;
-                for (int j = cardContainer.IndexOf(entity) + 1; j < cardContainer.max; j++)
+
+                for (int num = 0; num < cardContainer.Count; num++)
                 {
-                    if ((bool)cardContainer[j] && cardContainer[j].canBeHit)
+                    Entity test = cardContainer[num];
+                    if ((bool)test && test.enabled && test.alive && test.canBeHit)
                     {
-                        flag = false;
-                        break;
+                        if (entity.hp.current > test.hp.current)
+                        {
+                            flag = false;
+                            break;
+                        }
+                        else if (entity.hp.current == test.hp.current && num < cardContainer.IndexOf(entity))
+                        {
+                            flag = false;
+                            break;
+                        }
                     }
                 }
 
-                if (flag)
-                {
-                    break;
-                }
             }
 
             return flag;
