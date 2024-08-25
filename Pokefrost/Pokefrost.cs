@@ -2094,6 +2094,13 @@ namespace Pokefrost
             ev23.Confirm();
             statusList.Add(ev23);
 
+            StatusEffectEvolveFromKill ev24 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
+            ev24.Autofill("Evolve Aron", "<keyword=evolve>: Team <keyword=recycle><s> <{a}> cards", this);
+            ev24.SetEvolution("lairon");
+            ev24.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardWasRecycled);
+            ev24.anyKill = true;
+            ev24.Confirm();
+
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
             shiny.type = "shiny";
@@ -2651,6 +2658,7 @@ namespace Pokefrost
                     .CreateUnit("aron", "Aron")
                     .SetStats(4, 6, 4)
                     .SetSprites("aron.png", "aronBG.png")
+                    .SStartEffects(("Evolve Aron", 10))
                 );
 
             list.Add(
