@@ -675,7 +675,7 @@ namespace Pokefrost
             triattack.keyword = "";
             triattack.hiddenKeywords = new KeywordData[] {Get<KeywordData>("random effect")};
             triattack.targetConstraints = new TargetConstraint[0];
-            collection.SetString(triattack.name + "_text", "Apply <{a}><keyword=shroom>/<keyword=overload>/<keyword=weakness>");
+            collection.SetString(triattack.name + "_text", "Apply <{a}><keyword=shroom>/<keyword=overload>/<keyword=weakness> randomly");
             triattack.textKey = collection.GetString(triattack.name + "_text");
             triattack.textOrder = 0;
             triattack.textInsert = "<keyword=shroom>, <keyword=overload>, <keyword=weakness>";
@@ -2278,7 +2278,7 @@ namespace Pokefrost
                     .SStartEffects(("When Ally Is Sacrificed Trigger To Self", 1), ("Summon Beepop", 1))
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("hitmonlee", "Hitmonlee")
                     .SetStats(5, 5, 5)
@@ -2290,7 +2290,7 @@ namespace Pokefrost
                     .CreateUnit("hitmonchan", "Hitmonchan")
                     .SetStats(5, 5, 5)
                     .SetSprites("hitmonchan.png", "hitmonchanBG.png")
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2383,12 +2383,12 @@ namespace Pokefrost
                     .SStartEffects(("While Active Consume To Items In Hand", 1), ("Rest Button", 1), ("Rest Listener_1", 1))
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("porygon", "Porygon")
                     .SetStats(5, 5, 5)
                     .SetSprites("porygon.png", "porygonBG.png")
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2493,12 +2493,12 @@ namespace Pokefrost
                     .SStartEffects(("Give Combo to Card in Hand", 1), ("Discard Rightmost Button",1))
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("porygon2", "Porygon2")
                     .SetStats(5, 5, 5)
                     .SetSprites("porygon2.png", "porygon2BG.png")
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2510,7 +2510,7 @@ namespace Pokefrost
                     .AddPool()
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("tyrogue", "Tyrogue")
                     .SetStats(5, 5, 5)
@@ -2522,7 +2522,7 @@ namespace Pokefrost
                     .CreateUnit("hitmontop", "Hitmontop")
                     .SetStats(5, 5, 5)
                     .SetSprites("hitmontop.png", "hitmontopBG.png")
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2644,6 +2644,27 @@ namespace Pokefrost
                     .SStartEffects(("Drop Bling on Hit", 10))
                     .STraits(("Greed", 1))
                     .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("aron", "Aron")
+                    .SetStats(4, 6, 4)
+                    .SetSprites("aron.png", "aronBG.png")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("lairon", "Lairon")
+                    .SetStats(6, 6, 4)
+                    .SetSprites("lairon.png", "laironBG.png")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("aggron", "Aggron")
+                    .SetStats(8, 6, 4)
+                    .SetSprites("aggron.png", "aggronBG.png")
                 );
 
             list.Add(
@@ -2825,10 +2846,17 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("lumineon", "Lumineon")
+                    .SetStats(6, 0, 3)
+                    .SetSprites("lumineon.png", "lumineonBG.png")
+                );
+
+            /*list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("snover", "Snover")
                     .SetStats(6, 4, 4)
                     .SetSprites("snover.png", "snoverBG.png")
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2863,12 +2891,12 @@ namespace Pokefrost
                     .SAttackEffects(("Snow", 1), ("Frost", 1))
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("porygonz", "Porygon-Z")
                     .SetStats(5, 5, 5)
                     .SetSprites("porygonz.png", "porygonzBG.png")
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -3261,7 +3289,7 @@ namespace Pokefrost
                     .SetStats(100, 5, 5)
                     .SetSprites("hooh.png", "hoohBG.png")
                     .WithCardType("Boss")
-                    .SStartEffects(("Give Revive To Allies",1), ("Revive", 1))
+                    .SStartEffects(("Give Revive To Allies",1), ("Revive", 1), ("ImmuneToSnow", 1))
                     .STraits(("Backline",1))
                     .WithValue(50)
                 );
@@ -4057,12 +4085,12 @@ namespace Pokefrost
 
         private static IEnumerator PokemonPhoto2()
         {
-            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.farfetchd", "websiteofsites.wildfrost.pokefrost.muk", 
-                "websiteofsites.wildfrost.pokefrost.hitmonlee", "websiteofsites.wildfrost.pokefrost.hitmonchan", "websiteofsites.wildfrost.pokefrost.porygon",
-                "websiteofsites.wildfrost.pokefrost.furret", "websiteofsites.wildfrost.pokefrost.aipom", "websiteofsites.wildfrost.pokefrost.porygon2", 
-                "websiteofsites.wildfrost.pokefrost.tyrogue", "websiteofsites.wildfrost.pokefrost.hitmontop", "websiteofsites.wildfrost.pokefrost.kirlia",
-                "websiteofsites.wildfrost.pokefrost.gardevoir", "websiteofsites.wildfrost.pokefrost.porygonz", "websiteofsites.wildfrost.pokefrost.gallade",
-                "websiteofsites.wildfrost.pokefrost.natu", "websiteofsites.wildfrost.pokefrost.xatu", "websiteofsites.wildfrost.pokefrost.snover", "websiteofsites.wildfrost.pokefrost.abomasnow"
+            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.farfetchd", "websiteofsites.wildfrost.pokefrost.muk",
+                "websiteofsites.wildfrost.pokefrost.furret", "websiteofsites.wildfrost.pokefrost.aipom", "websiteofsites.wildfrost.pokefrost.kirlia",
+                "websiteofsites.wildfrost.pokefrost.gardevoir", "websiteofsites.wildfrost.pokefrost.gallade",
+                "websiteofsites.wildfrost.pokefrost.natu", "websiteofsites.wildfrost.pokefrost.xatu", "websiteofsites.wildfrost.pokefrost.abomasnow",
+                "websiteofsites.wildfrost.pokefrost.aron", "websiteofsites.wildfrost.pokefrost.lairon", "websiteofsites.wildfrost.pokefrost.aggron",
+                "websiteofsites.wildfrost.pokefrost.lumineon"
             };
 
             string[] everyType = { "websiteofsites.wildfrost.pokefrost.raikou", "websiteofsites.wildfrost.pokefrost.entei", "websiteofsites.wildfrost.pokefrost.suicune",
