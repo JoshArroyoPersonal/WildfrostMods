@@ -441,6 +441,7 @@
     <Compile Include="Furret.cs" />
     <Compile Include="PickupRoutine.cs" />
     <Compile Include="ScriptableAmounts.cs" />
+    <Compile Include="StatusEffectAllCardsAreRecycled.cs" />
     <Compile Include="StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectBurning.cs" />

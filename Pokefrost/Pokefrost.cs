@@ -1918,6 +1918,15 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(natuSummon);
 
+            StatusEffectAllCardsAreRecycled allRecyclable = Ext.CreateStatus<StatusEffectAllCardsAreRecycled>("All Cards Are Recyclable")
+                .Register(this);
+            statusList.Add(allRecyclable);
+
+            StatusEffectWhileActiveX allRecyclableWhileActive = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active All Cards Are Recyclable", "While active, all cards are recyclable")
+                .ApplyX(allRecyclable, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(allRecyclableWhileActive);
+
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);

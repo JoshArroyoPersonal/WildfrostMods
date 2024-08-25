@@ -1,4 +1,6 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
+using FMOD.Studio;
+using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,6 +61,11 @@ namespace Pokefrost
             }
         }
 
+        public static bool ReturnTrueIfCardWasRecycled(Entity entity, DeathType _)
+        {
+            return (PatchRecycleEvent.recycler != null && PatchRecycleEvent.recycler.toDestroy.Contains(entity));
+        }
+
         public virtual void SetConstraints(Func<Entity, DeathType, bool> c)
         {
             constraint = c;
@@ -108,6 +115,20 @@ namespace Pokefrost
                 }
             }
             return false;
+        }
+
+        [HarmonyPatch(typeof(StatusEffectRecycle), "EntityPreTrigger")]
+        class PatchRecycleEvent
+        {
+            public static StatusEffectRecycle recycler = null;
+
+            static IEnumerator Postfix(IEnumerator __result, StatusEffectRecycle __instance)
+            {
+                StatusEffectRecycle pre = recycler;
+                recycler = __instance;
+                yield return __result;
+                recycler = pre;
+            }
         }
     }
 
