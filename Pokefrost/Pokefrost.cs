@@ -1874,7 +1874,7 @@ namespace Pokefrost
             statusList.Add(juiceToHand);
 
             StatusEffectApplyXOnCardPlayed juiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Allies Juice", "Apply <{a}><keyword=spicune> to allies", boostable: true)
-                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Hand)
+                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
             statusList.Add(juiceToAllies);
 
@@ -1927,9 +1927,43 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(allRecyclableWhileActive);
 
+            StatusEffectUnlimitedLumin unlimitedLumin = Ext.CreateStatus<StatusEffectUnlimitedLumin>("Unlimited Lumin")
+                .Register(this);
+            statusList.Add(unlimitedLumin);
+
+            StatusEffectWhileActiveX unlimitedLuminWhileActive = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Unlimited Lumin", "While active, <keyword=lumin> does not clear!")
+                .ApplyX(unlimitedLumin, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(unlimitedLuminWhileActive);
+
+            StatusEffectSummon luminHolderSummon = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
+            luminHolderSummon.name = "Summon Lumin Goop or Broken Vase";
+            luminHolderSummon.summonCard = Get<CardData>("LuminSealant");
+            luminHolderSummon.Register(this);
+            statusList.Add(luminHolderSummon);
+
+            StatusEffectInstantSummonLuminPart luminPartSummon = Ext.CreateStatus<StatusEffectInstantSummonLuminPart>("Instant Summon Lumin Part")
+                .Register(this);
+            luminPartSummon.targetSummon = luminHolderSummon;
+            luminPartSummon.summonPosition = StatusEffectInstantSummon.Position.Hand;
+            luminPartSummon.card1 = Get<CardData>("LuminSealant");
+            luminPartSummon.card2 = Get<CardData>("BrokenVase");
+            statusList.Add(luminPartSummon);
+
+            StatusEffectApplyXOnCardPlayed luminSummonAttack = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Add Lumin Part To Hand")
+                .ApplyX(luminPartSummon, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(luminSummonAttack);
+
+            KeywordData salvageKeyword = Ext.CreateBasicKeyword(this, "salvage", "Salvage", "Add a <Lumin Part> to hand that can combine into <card=LuminVase> with <keyword=zoomlin> and <keyword=consume>");
+            salvageKeyword.showName = true;
+            salvageKeyword.canStack = false;
+
+            TraitData salvageTrait = Ext.CreateTrait<TraitData>("Salvage", this, salvageKeyword, luminSummonAttack);
+
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses", this);
+            ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
             ev1.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardTypeIsBossOrMiniboss);
             ev1.Confirm();
@@ -2488,9 +2522,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("kingdra", "Kingdra")
-                    .SetStats(9, 7, 5)
+                    .SetStats(9, 3, 5)
                     .SetSprites("kingdra.png", "kingdraBG.png")
-                    .SStartEffects(("Give Combo to Card in Hand", 1), ("Discard Rightmost Button",1))
+                    .SStartEffects(("Give Combo to Card in Hand", 1), ("Discard Rightmost Button",1), ("MultiHit", 1))
                 );
 
             /*list.Add(
@@ -2641,7 +2675,7 @@ namespace Pokefrost
                     .CreateUnit("sableye", "Sableye", bloodProfile: "Blood Profile Pink Wisp")
                     .SetStats(10, 0, 2)
                     .SetSprites("sableye.png", "sableyeBG.png")
-                    .SStartEffects(("Drop Bling on Hit", 10))
+                    .SStartEffects(("Drop Bling on Hit", 4))
                     .STraits(("Greed", 1))
                     .AddPool()
                 );
@@ -2849,6 +2883,8 @@ namespace Pokefrost
                     .CreateUnit("lumineon", "Lumineon")
                     .SetStats(6, 0, 3)
                     .SetSprites("lumineon.png", "lumineonBG.png")
+                    .SStartEffects(("While Active Unlimited Lumin", 1))
+                    .STraits(("Salvage", 1))
                 );
 
             /*list.Add(
@@ -3928,6 +3964,7 @@ namespace Pokefrost
             Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             Events.OnEntityFlee += FurretFlee;
+            Events.OnSceneLoaded += BattleFuse;
             //Events.OnEntityCountDown += TauntedFailsafe;
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
@@ -3989,6 +4026,7 @@ namespace Pokefrost
             Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
             Events.OnEntityFlee -= FurretFlee;
+            Events.OnSceneLoaded -= BattleFuse;
             //Events.OnEntityCountDown -= TauntedFailsafe;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
@@ -4341,6 +4379,14 @@ namespace Pokefrost
                 icon.onValueUp.AddListener(delegate { icon.Ping(); });
                 icon.afterUpdate.AddListener(icon.SetText);
                 icon.onValueDown.AddListener(icon.CheckDestroy);
+            }
+        }
+
+        public void BattleFuse(Scene scene)
+        {
+            if (scene.name == "Campaign")
+            {
+                GameObject.Find("Systems").AddComponent<CombineCardInBattleSystem>();
             }
         }
 

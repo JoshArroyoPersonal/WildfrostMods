@@ -432,6 +432,7 @@
     <Compile Include="BattleGenerationScriptHooh.cs" />
     <Compile Include="ButtonClasses.cs" />
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
+    <Compile Include="CombineCardInBattleSystem.cs" />
     <Compile Include="StatusEffectAdAttackEffects.cs" />
     <Compile Include="DumbFixes.cs" />
     <Compile Include="EventRoutineTrade.cs" />
@@ -464,6 +465,7 @@
     <Compile Include="StatusEffectSpicune.cs" />
     <Compile Include="StatusEffectSummonCustom.cs" />
     <Compile Include="StatusEffectTransfer.cs" />
+    <Compile Include="StatusEffectUnlimitedLumin.cs" />
     <Compile Include="StatusEffectWeather.cs" />
     <Compile Include="StatusEffectXActsLikeShell.cs" />
     <Compile Include="Pokefrost.cs" />
