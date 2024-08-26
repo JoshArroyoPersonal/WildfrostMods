@@ -29,7 +29,7 @@ namespace Pokefrost
 
         public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
         {
-            if (!cardPlayed && entity == target && count > 0 && targets != null && targets.Length != 0)
+            if (!cardPlayed && entity == target && count > 0)
             {
                 cardPlayed = true;
                 amountToClear = current;
