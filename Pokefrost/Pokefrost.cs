@@ -1918,6 +1918,19 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(natuSummon);
 
+            this.CreateBasicKeyword("fidget", "Fidgety", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate");
+            this.CreateButtonIcon("aronFidget", ImagePath("kingdrabutton.png").ToSprite(), "fidget", "", Color.white, new KeywordData[] { Get<KeywordData>("fidget") });
+
+            StatusEffectInstantRunScript fidgetEffect = Ext.CreateStatus<StatusEffectInstantRunScript>("Run Fidget Script")
+                .Register(this);
+            fidgetEffect.scriptList = new List<EntityCardScript> { EntityCardScriptSwapTraits.Create(Get<TraitData>("Trash"), Get<TraitData>("Recycle")) };
+            statusList.Add(fidgetEffect);
+
+            StatusTokenApplyX applyFidget = this.CreateStatusButton<StatusTokenApplyX>("Fidget Button", "fidget")
+                .ApplyX(Get<StatusEffectData>("Run Fidget Script"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(applyFidget);
+
             StatusEffectAllCardsAreRecycled allRecyclable = Ext.CreateStatus<StatusEffectAllCardsAreRecycled>("All Cards Are Recyclable")
                 .Register(this);
             statusList.Add(allRecyclable);
@@ -1960,7 +1973,6 @@ namespace Pokefrost
             salvageKeyword.canStack = false;
 
             TraitData salvageTrait = Ext.CreateTrait<TraitData>("Salvage", this, salvageKeyword, luminSummonAttack);
-
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
@@ -2129,11 +2141,18 @@ namespace Pokefrost
             statusList.Add(ev23);
 
             StatusEffectEvolveFromKill ev24 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev24.Autofill("Evolve Aron", "<keyword=evolve>: Team <keyword=recycle><s> <{a}> cards", this);
+            ev24.Autofill("Evolve Aron", "<keyword=evolve>: Team <keyword=recycle>s <{a}> cards", this);
             ev24.SetEvolution("lairon");
             ev24.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardWasRecycled);
             ev24.anyKill = true;
             ev24.Confirm();
+
+            StatusEffectEvolveFromKill ev25 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
+            ev25.Autofill("Evolve Lairon", "<keyword=evolve>: Team <keyword=recycle>s <{a}> <keyword=recycle> card", this);
+            ev25.SetEvolution("aggron");
+            ev25.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfRecycleCardWasRecycled);
+            ev25.anyKill = true;
+            ev25.Confirm();
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -2687,12 +2706,13 @@ namespace Pokefrost
                     .AddPool()
                 );
 
-            /*list.Add(
+            list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("aron", "Aron")
                     .SetStats(4, 6, 4)
                     .SetSprites("aron.png", "aronBG.png")
-                    .SStartEffects(("Evolve Aron", 10))
+                    .STraits(("Recycle",1))
+                    .SStartEffects(("Evolve Aron", 10), ("Fidget Button", 1))
                 );
 
             list.Add(
@@ -2700,6 +2720,8 @@ namespace Pokefrost
                     .CreateUnit("lairon", "Lairon")
                     .SetStats(6, 6, 4)
                     .SetSprites("lairon.png", "laironBG.png")
+                    .STraits(("Recycle", 1))
+                    .SStartEffects(("While Active All Cards Are Recyclable", 1),("Evolve Lairon",1))
                 );
 
             list.Add(
@@ -2707,7 +2729,9 @@ namespace Pokefrost
                     .CreateUnit("aggron", "Aggron")
                     .SetStats(8, 6, 4)
                     .SetSprites("aggron.png", "aggronBG.png")
-                );*/
+                    .STraits(("Recycle", 1))
+                    .SStartEffects(("While Active All Cards Are Recyclable", 1))
+                );
 
             list.Add(
                 new CardDataBuilder(this)

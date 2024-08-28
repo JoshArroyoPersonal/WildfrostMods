@@ -66,6 +66,16 @@ namespace Pokefrost
             return (PatchRecycleEvent.recycler != null && PatchRecycleEvent.recycler.toDestroy.Contains(entity));
         }
 
+        public static bool ReturnTrueIfRecycleCardWasRecycled(Entity entity, DeathType _)
+        {
+            if (PatchRecycleEvent.recycler != null && PatchRecycleEvent.recycler.toDestroy.Contains(entity))
+            {
+                Entity.TraitStacks stack = entity.traits.FirstOrDefault((s) => s.data?.name == "Recycle");
+                return stack != null;
+            }
+            return false;
+        }
+
         public virtual void SetConstraints(Func<Entity, DeathType, bool> c)
         {
             constraint = c;

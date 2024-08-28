@@ -432,6 +432,7 @@
     <Compile Include="BattleGenerationScriptHooh.cs" />
     <Compile Include="ButtonClasses.cs" />
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
+    <Compile Include="CardScripts.cs" />
     <Compile Include="CombineCardInBattleSystem.cs" />
     <Compile Include="StatusEffectAdAttackEffects.cs" />
     <Compile Include="DumbFixes.cs" />
@@ -458,6 +459,7 @@
     <Compile Include="StatusEffectMoveCard.cs" />
     <Compile Include="StatusEffectPickup.cs" />
     <Compile Include="StatusEffectRevive.cs" />
+    <Compile Include="StatusEffectRunScript.cs" />
     <Compile Include="StatusEffectSketch.cs" />
     <Compile Include="StatusEffectNincadaAndMurkrow.cs" />
     <Compile Include="StatusEffectInstantApplyXCardInDeck.cs" />
