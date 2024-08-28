@@ -2431,7 +2431,7 @@ namespace Pokefrost
                     .SetSprites("porygon.png", "porygonBG.png")
                 );*/
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("furret", "Furret")
                     .SetStats(5, 2, 5)
@@ -2462,7 +2462,7 @@ namespace Pokefrost
                     .SStartEffects(("On Kill Boost Effects", 1))
                     .STraits(("Pickup", 2))
                     .AddPool()
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2607,7 +2607,7 @@ namespace Pokefrost
                     .AddPool()
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("kirlia", "Kirlia")
                     .SetStats(4, 2, 4)
@@ -2622,7 +2622,7 @@ namespace Pokefrost
                     .CreateUnit("gardevoir", "Gardevoir")
                     .SetStats(5, 5, 5)
                     .SetSprites("gardevoir.png", "gardevoirBG.png")
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2687,7 +2687,7 @@ namespace Pokefrost
                     .AddPool()
                 );
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("aron", "Aron")
                     .SetStats(4, 6, 4)
@@ -2707,7 +2707,7 @@ namespace Pokefrost
                     .CreateUnit("aggron", "Aggron")
                     .SetStats(8, 6, 4)
                     .SetSprites("aggron.png", "aggronBG.png")
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2889,10 +2889,11 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("lumineon", "Lumineon")
-                    .SetStats(6, 0, 3)
+                    .SetStats(8, null, 3)
                     .SetSprites("lumineon.png", "lumineonBG.png")
                     .SStartEffects(("While Active Unlimited Lumin", 1))
                     .STraits(("Salvage", 1))
+                    .AddPool("GeneralUnitPool")
                 );
 
             /*list.Add(
@@ -2905,9 +2906,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("abomasnow", "Abomasnow")
-                    .SetStats(8, 4, 4)
+                    .SetStats(10, 4, 4)
                     .SetSprites("abomasnow.png", "abomasnowBG.png")
                     .SStartEffects(("While Active Snowstorm", 1), ("All Hits Apply Snow", 1), ("ImmuneToSnow", 1))
+                    .AddPool("SnowUnitPool")
                 );
 
             list.Add(
@@ -2942,12 +2944,12 @@ namespace Pokefrost
                     .SetSprites("porygonz.png", "porygonzBG.png")
                 );*/
 
-            list.Add(
+            /*list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("gallade", "Gallade")
                     .SetStats(5, 5, 5)
                     .SetSprites("gallade.png", "galladeBG.png")
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -3191,6 +3193,8 @@ namespace Pokefrost
                     .WithFlavour("Appears to be a safe without a lock. What use is that?")
                     .CanPlayOnFriendly(false)
                     .CanPlayOnEnemy(false)
+                    .NeedsTarget(false)
+                    .WithPlayType(Card.PlayType.None)
                 );
 
             list.Add(
@@ -3200,6 +3204,9 @@ namespace Pokefrost
                     .WithFlavour("A device that spins and makes loud noises. What use is that?")
                     .CanPlayOnFriendly(false)
                     .CanPlayOnEnemy(false)
+                    .NeedsTarget(false)
+                    .CanPlayOnBoard(false)
+                    .WithPlayType(Card.PlayType.None)
                 );
 
             list.Add(
@@ -3209,6 +3216,9 @@ namespace Pokefrost
                     .WithFlavour("This strange device seems to... keep things cold? What use is that?")
                     .CanPlayOnFriendly(false)
                     .CanPlayOnEnemy(false)
+                    .NeedsTarget(false)
+                    .CanPlayOnBoard(false)
+                    .WithPlayType(Card.PlayType.None)
                 );
 
             list.Add(
@@ -3218,6 +3228,9 @@ namespace Pokefrost
                     .WithFlavour("A strange saw sealed by an even stranger cage. What use is that?")
                     .CanPlayOnFriendly(false)
                     .CanPlayOnEnemy(false)
+                    .NeedsTarget(false)
+                    .CanPlayOnBoard(false)
+                    .WithPlayType(Card.PlayType.None)
                 );
 
             list.Add(
@@ -3227,6 +3240,9 @@ namespace Pokefrost
                     .WithFlavour("Seems to be some sort of vehicle, but lacks seating. What use is that?")
                     .CanPlayOnFriendly(false)
                     .CanPlayOnEnemy(false)
+                    .NeedsTarget(false)
+                    .CanPlayOnBoard(false)
+                    .WithPlayType(Card.PlayType.None)
                 );
 
 
@@ -3271,7 +3287,7 @@ namespace Pokefrost
                     .WithValue(50)
                     .SetSprites("flareon.png", "flareonBG.png")
                     .SStartEffects(("While Active Increase Attack To Allies", 2))
-                    .SAttackEffects(("Burning", 3))
+                    .SAttackEffects(("Burning", 2))
                 );
 
             list.Add(
@@ -3281,7 +3297,7 @@ namespace Pokefrost
                     .WithCardType("Enemy")
                     .WithValue(50)
                     .SetSprites("espeon.png", "espeonBG.png")
-                    .SStartEffects(("Give Allies Juice", 1))
+                    .SStartEffects(("Give Allies Juice", 2))
                 );
 
             list.Add(
@@ -3298,11 +3314,11 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_raikou", "Raikou")
-                    .SetStats(30, 0, 4)
+                    .SetStats(30, 3, 4)
                     .SetSprites("raikou.png", "raikouBG.png")
                     .WithCardType("Miniboss")
                     .SAttackEffects(("Jolted", 2))
-                    .SStartEffects(("When Anyone Takes Jolted Damage Apply Equal Jolted To Front Enemy", 1))
+                    .SStartEffects(("When Anyone Takes Jolted Damage Apply Equal Jolted To Front Enemy", 1), ("ImmuneToSnow", 1))
                     .WithValue(50)
                 );
 
@@ -3313,6 +3329,7 @@ namespace Pokefrost
                     .SetSprites("entei.png", "enteiBG.png")
                     .WithCardType("Miniboss")
                     .SAttackEffects(("Burning", 5))
+                    .SStartEffects(("ImmuneToSnow", 1))
                     .STraits(("Barrage", 1))
                     .WithValue(50)
                 );
@@ -3320,10 +3337,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_suicune", "Suicune")
-                    .SetStats(35, 0, 4)
+                    .SetStats(35, 2, 4)
                     .SetSprites("suicune.png", "suicuneBG.png")
                     .WithCardType("Miniboss")
-                    .SStartEffects(("Gain Juice On Hit", 1), ("Give Your Juice To Allies", 1))
+                    .SStartEffects(("Gain Juice On Hit", 1), ("Give Your Juice To Allies", 1), ("ImmuneToSnow", 1))
                     .WithValue(50)
                 );
 
@@ -3511,7 +3528,7 @@ namespace Pokefrost
                     .WithCardType("Enemy")
                     .WithValue(50)
                     .SetSprites("glaceon.png", "glaceonBG.png")
-                    .SAttackEffects(("Snow", 1), ("Frost", 1))
+                    .SAttackEffects(("Snow", 2), ("Frost", 2))
                 );
 
             list.Add(
@@ -3536,7 +3553,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_sylveon", "Sylveon", bloodProfile: "Blood Profile Berry")
-                    .SetStats(13, 2, 3)
+                    .SetStats(10, 2, 3)
                     .WithCardType("Enemy")
                     .WithValue(50)
                     .SetSprites("sylveon.png", "sylveonBG.png")
@@ -3991,7 +4008,7 @@ namespace Pokefrost
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
-            Events.OnSceneChanged += PokemonPhoto;
+            //Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             //for (int i = 0; i < References.Classes.Length; i++)
             //{
@@ -4041,7 +4058,7 @@ namespace Pokefrost
             RemoveFromPools();
             RevertVanillaChanges();
             //Events.OnCardDataCreated -= Wildparty;
-            Events.OnSceneChanged -= PokemonPhoto;
+            //Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
         }
@@ -4102,7 +4119,7 @@ namespace Pokefrost
                 .ConstructWaves(2, 9, "PU", "GL", "Y")
                 .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeBattle")
                 .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
-                .AddBattleToLoader().RegisterBattle(0, mandatory: true); //Loads and makes it the mandatory first fight
+                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
         }
 
         private void SceneLoaded(Scene scene)
