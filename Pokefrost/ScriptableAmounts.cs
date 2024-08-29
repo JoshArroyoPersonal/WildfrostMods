@@ -37,11 +37,11 @@ namespace Pokefrost
 
             foreach (Entity card in References.Player.handContainer)
             {
-                foreach (StatusEffectData status in card.statusEffects) 
+                foreach (StatusEffectData status in card.statusEffects)
                 {
                     if (status.type == "paracurse" || status.type == "weakcurse" || status.type == "powercurse" || status.type == "frenzycurse")
                     {
-                        amount += (1+entity.effectBonus ) * ((int)Math.Round(entity.effectFactor));
+                        amount += (1 + entity.effectBonus) * ((int)Math.Round(entity.effectFactor));
                         break;
                     }
                 }

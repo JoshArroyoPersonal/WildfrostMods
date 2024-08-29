@@ -1974,6 +1974,13 @@ namespace Pokefrost
 
             TraitData salvageTrait = Ext.CreateTrait<TraitData>("Salvage", this, salvageKeyword, luminSummonAttack);
 
+            StatusEffectAddAttackEffects burningToAllies = Ext.CreateStatus<StatusEffectAddAttackEffects>("Allied Hits Have Burning", "While active, allies apply <{a}><keyword=burning>", boostable: true)
+                .Register(this);
+            burningToAllies.sameOwner = true;
+            burningToAllies.includeSelf = false;
+            burningToAllies.effectToApply = burning;
+            statusList.Add(burningToAllies);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -2431,8 +2438,8 @@ namespace Pokefrost
                     .CreateUnit("flareon", "Flareon")
                     .SetStats(4, 1, 3)
                     .SetSprites("flareon.png", "flareonBG.png")
-                    .SStartEffects(("While Active Increase Attack To Allies", 2))
-                    .SAttackEffects(("Overload", 2))
+                    .SStartEffects(("Allied Hits Have Burning", 2))
+                    .SAttackEffects(("Burning", 2))
                 );
 
             list.Add(
