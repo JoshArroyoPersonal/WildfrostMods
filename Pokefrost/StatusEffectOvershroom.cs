@@ -38,13 +38,15 @@ namespace Pokefrost
 
         public bool primed;
 
-        public override bool HasPostApplyStatusRoutine => true;
+        //public override bool HasPostApplyStatusRoutine => true;
 
         public StatusEffectData dummy1;
 
         public StatusEffectData dummy2;
 
         public StatusEffectData dummy3;
+
+        private string[] types = new string[] { "Shroom", "Overload" };
 
         public override void Init()
         {
@@ -73,23 +75,58 @@ namespace Pokefrost
         {
 
             bool flag = true;
+
+            //Check for real shroom and overburn
             List<StatusEffectData> effectstoremove = new List<StatusEffectData>();
             foreach (StatusEffectData effect in target.statusEffects)
             {
-                if ((effect.name == "Shroom" || effect.name == "Overload") && effect.offensive == true)
+                if (types.Contains(effect.name) && effect.offensive == true)
                 {
                     count += effect.count;
+                    stacks += effect.count;
                     effectstoremove.Add(effect);
                 }
             }
 
+            //Remove stacks
             foreach (StatusEffectData effect in effectstoremove)
             {
                 yield return effect.RemoveStacks(effect.count, false);
             }
 
+            //Add dummies
+            Routine.Clump clump = new Routine.Clump();
+            clump.Add(StatusEffectSystem.Apply(target, applier, dummy1, stacks, applyEvenIfZero: true));
+            clump.Add(StatusEffectSystem.Apply(target, applier, dummy2, stacks, applyEvenIfZero: true));
 
+            yield return clump.WaitForEnd();
+
+            //Correct differences from Shroominator, etc.
+            int shroomDiff = 0;
+            int overDiff = 0;
+            StatusEffectData shroom = null;
+            StatusEffectData overload = null;
             foreach (StatusEffectData effect in target.statusEffects)
+            {
+                if (effect.offensive == false && effect.count != count)
+                {
+                    if (effect.name == "Shroom")
+                    {
+                        shroomDiff = effect.count - count;
+                    }
+                    if (effect.name == "Overload")
+                    {
+                        overDiff = effect.count - count;
+                    }
+                }
+            }
+
+            count = Math.Max(0, count + shroomDiff + overDiff);
+            if ((bool)shroom) { shroom.count = count; }
+            if ((bool)overload) { overload.count = count; }
+
+            //Check dummy shroom
+            /*foreach (StatusEffectData effect in target.statusEffects)
             {
                 if (effect.name == "Shroom" && effect.offensive == false)
                 {
@@ -108,7 +145,8 @@ namespace Pokefrost
                 Debug.Log("[Overshroom 2] start apply");
                 yield return ActionQueue.Stack(new ActionApplyStatus(target, target, dummy2, count), true);
                 yield return ActionQueue.Stack(new ActionApplyStatus(target, target, dummy1, count), true);
-            }
+            }*/
+
 
 
             Check();
@@ -135,6 +173,19 @@ namespace Pokefrost
             }
         }
 
+        public override bool RunApplyStatusEvent(StatusEffectApply apply)
+        {
+            //Debug.Log("[Test] ApplyStatusRoutine");
+            if (apply != null && target == apply?.target && apply.effectData?.offensive == true && (apply?.effectData.name == "Overload" || apply?.effectData.name == "Shroom"))
+            {
+                Debug.Log("[Pokefrost] Changing to overshroom");
+                apply.effectData = AddressableLoader.Get<StatusEffectData>("StatusEffectData", "Overshroom");
+            }
+
+            return false;
+        }
+
+        /*
         public override IEnumerator PostApplyStatusRoutine(StatusEffectApply apply)
         {
             foreach (StatusEffectData effect in target.statusEffects)
@@ -161,7 +212,9 @@ namespace Pokefrost
                     }
                 }
             }
-        }
+            
+        }*/
+
 
         public IEnumerator DealDamage(int damage)
         {
@@ -201,7 +254,16 @@ namespace Pokefrost
         {
             if ((bool)this && (bool)target && target.alive)
             {
-                yield return Remove();
+                Routine.Clump clump = new Routine.Clump();
+                for (int i = target.statusEffects.Count - 1; i >= 0; i--)
+                {
+                    if (target.statusEffects[i] != null && types.Contains(target.statusEffects[i].name))
+                    {
+                        clump.Add(target.statusEffects[i].Remove());
+                    }
+                }
+                clump.Add(Remove());
+                yield return clump.WaitForEnd();
                 overloading = false;
             }
         }

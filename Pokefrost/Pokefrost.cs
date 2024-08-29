@@ -229,6 +229,7 @@ namespace Pokefrost
             dummyoverload.type = "overload";
             dummyoverload.iconGroupName = "health";
             dummyoverload.visible = false;
+            dummyoverload.isStatus = true;
             dummyoverload.targetConstraints = new TargetConstraint[0];
             dummyoverload.applyFormat = "";
             dummyoverload.applyFormatKey = new UnityEngine.Localization.LocalizedString();
@@ -242,6 +243,7 @@ namespace Pokefrost
             dummyshroom.type = "shroom";
             dummyshroom.iconGroupName = "health";
             dummyshroom.visible = false;
+            dummyshroom.isStatus = true;
             dummyshroom.targetConstraints = new TargetConstraint[0];
             dummyshroom.applyFormat = "";
             dummyshroom.applyFormatKey = new UnityEngine.Localization.LocalizedString();
@@ -265,6 +267,7 @@ namespace Pokefrost
             overshroom.keyword = "overshroom";
             overshroom.targetConstraints = new TargetConstraint[1] { new TargetConstraintCanBeHit() };
             overshroom.textOrder = 0;
+            overshroom.eventPriority = 99;
             overshroom.textInsert = "{a}";
             overshroom.ModAdded = this;
             overshroom.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
@@ -280,6 +283,7 @@ namespace Pokefrost
             giveovershroom.textKey = new UnityEngine.Localization.LocalizedString();
             giveovershroom.type = "";
             giveovershroom.textOrder = 0;
+            giveovershroom.eventPriority = 100;
             giveovershroom.textInsert = "";
             giveovershroom.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", giveovershroom);
