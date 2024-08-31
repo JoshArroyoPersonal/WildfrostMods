@@ -52,6 +52,20 @@ namespace Pokefrost
 
     }
 
+    public class ScriptableNegativeHalfAttack : ScriptableAmount 
+    {
+        public override int Get(Entity entity)
+        {
+            if (!entity)
+            {
+                return 0;
+            }
+
+            return -Mathf.FloorToInt((entity.damage.current + entity.tempDamage.Value)/2);
+        }
+
+    }
+
     public class TargetConstraintHasSlowkingCrown : TargetConstraint
     {
         public override bool Check(Entity target)
@@ -69,4 +83,73 @@ namespace Pokefrost
             return !not;
         }
     }
+
+
+    public class TargetConstraintHasNegativeStatus : TargetConstraint
+    {
+
+
+        public override bool Check(Entity target)
+        {
+            if (!target.statusEffects.Any((StatusEffectData a) => a.IsNegativeStatusEffect()))
+            {
+                return not;
+            }
+
+            return !not;
+        }
+
+        public override bool Check(CardData targetData)
+        {
+            bool flag = false;
+            CardData.StatusEffectStacks[] startWithEffects = targetData.startWithEffects;
+            for (int i = 0; i < startWithEffects.Length; i++)
+            {
+                if (startWithEffects[i].data.IsNegativeStatusEffect())
+                {
+                    flag = true;
+                    break;
+                }
+            }
+
+            if (!not)
+            {
+                return flag;
+            }
+
+            return !flag;
+        }
+
+        public bool CheckWillApply(Hit hit)
+        {
+            bool flag = false;
+            List<CardData.StatusEffectStacks> statusEffects = hit.statusEffects;
+            if (statusEffects != null && statusEffects.Count > 0)
+            {
+                foreach (CardData.StatusEffectStacks statusEffect in hit.statusEffects)
+                {
+                    if (statusEffect.data.IsNegativeStatusEffect())
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+
+            if (!not)
+            {
+                return flag;
+            }
+
+            return !flag;
+        }
+
+
+
+    }
+
+
+
+
+
 }

@@ -151,6 +151,9 @@ namespace Pokefrost
             randomkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", randomkey);
 
+            KeywordData debuffKey = this.CreateBasicKeyword("debuffed", "Debuffed", "Has a negative status");
+            debuffKey.showName = true;
+
             StatusEffectFreeTrait wilder = ScriptableObject.CreateInstance<StatusEffectFreeTrait>();
             wilder.trait = this.Get<TraitData>("Wild");
             wilder.silenced = null;
@@ -1140,7 +1143,7 @@ namespace Pokefrost
             guts.effectToGain = Get<StatusEffectData>("Ongoing Increase Attack");
             guts.canBeBoosted = true;
             guts.type = "";
-            collection.SetString(guts.name + "_text", "While suffering from a status, <keyword=attack> is increased by <{a}>");
+            collection.SetString(guts.name + "_text", "While <keyword=debuffed>, <keyword=attack> is increased by <{a}>");
             guts.textKey = collection.GetString(guts.name + "_text");
             guts.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", guts);
@@ -1151,7 +1154,7 @@ namespace Pokefrost
             frenzyguts.effectToGain = Get<StatusEffectData>("MultiHit");
             frenzyguts.canBeBoosted = true;
             frenzyguts.type = "";
-            collection.SetString(frenzyguts.name + "_text", "While suffering from a status, gain <x{a}><keyword=frenzy>");
+            collection.SetString(frenzyguts.name + "_text", "While <keyword=debuffed>, gain <x{a}><keyword=frenzy>");
             frenzyguts.textKey = collection.GetString(frenzyguts.name + "_text");
             frenzyguts.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", frenzyguts);
@@ -1202,18 +1205,32 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", doubleattacker);
             statusList.Add(doubleattacker);
 
-            StatusEffectApplyXOnHit iceball = ScriptableObject.CreateInstance<StatusEffectApplyXOnHit>();
-            iceball.name = "On Hit Snowed Target Double Attack";
+            StatusEffectInstantIncreaseAttack halfAttack = Ext.CreateStatus<StatusEffectInstantIncreaseAttack>("Half Attack")
+                .Register(this);
+            halfAttack.scriptableAmount = ScriptableAmount.CreateInstance<ScriptableNegativeHalfAttack>();
+            statusList.Add(halfAttack);
+
+            StatusEffectApplyXInstant halfAttacker = Ext.CreateStatus<StatusEffectApplyXInstant>("Instant Half Attack")
+                .ApplyX(halfAttack, StatusEffectApplyX.ApplyToFlags.Applier)
+                .Register(this);
+            halfAttacker.targetMustBeAlive = false;
+            statusList.Add(halfAttacker);
+
+            StatusEffectApplyXOnHitOtherwiseY iceball = ScriptableObject.CreateInstance<StatusEffectApplyXOnHitOtherwiseY>();
+            iceball.name = "On Hit Snowed Target Double Attack Otherwise Half";
             iceball.addDamageFactor = 0;
             iceball.multiplyDamageFactor = 1f;
             iceball.effectToApply = doubleattacker;
-            iceball.applyConstraints = new TargetConstraint[] { snowconstraint };
+            iceball.mainEffect = doubleattacker;
+            iceball.otherEffect = halfAttacker;
+            iceball.applyConstraints = new TargetConstraint[0];
+            iceball.applyConstraints2 = new TargetConstraint[] { snowconstraint };
             iceball.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
             iceball.targetMustBeAlive = false;
             iceball.canBeBoosted = false;
             iceball.type = "";
             iceball.postHit = true;
-            collection.SetString(iceball.name + "_text", "Double <keyword=attack> after hitting a <keyword=snow>'d target");
+            collection.SetString(iceball.name + "_text", "Double <keyword=attack> after hitting a <keyword=snow>'d target, otherwise halve <keyword=attack>");
             iceball.textKey = collection.GetString(iceball.name + "_text");
             iceball.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", iceball);
@@ -1242,18 +1259,18 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", revive);
             statusList.Add(revive);
 
-            StatusEffectApplyXOnHit hex = ScriptableObject.CreateInstance<StatusEffectApplyXOnHit>();
+            StatusEffectApplyXOnHitOtherwiseY hex = ScriptableObject.CreateInstance<StatusEffectApplyXOnHitOtherwiseY>();
             hex.name = "On Hit Deal Double Damage To Statused Targets";
             hex.addDamageFactor = 0;
             hex.multiplyDamageFactor = 2f;
-            TargetConstraintOr sufferingfromstatus = new TargetConstraintOr();
-            sufferingfromstatus.constraints = new TargetConstraint[] { snowconstraint, bomconstraint, demonconstraint, frostconstraint, hazeconstraint, inkconstraint, overburnconstraint, shroomconstraint };
-            hex.applyConstraints = new TargetConstraint[] { sufferingfromstatus };
+            TargetConstraintHasNegativeStatus sufferingfromstatus = ScriptableObject.CreateInstance<TargetConstraintHasNegativeStatus>();
+            hex.applyConstraints2 = new TargetConstraint[] { sufferingfromstatus };
+            hex.applyConstraints = new TargetConstraint[0];
             hex.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
             hex.canBeBoosted = false;
             hex.type = "";
             hex.postHit = true;
-            collection.SetString(hex.name + "_text", "Deal double damage to debuffed enemies");
+            collection.SetString(hex.name + "_text", "Deal double damage to <keyword=debuffed> targets");
             hex.textKey = collection.GetString(hex.name + "_text");
             hex.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", hex);
@@ -2816,7 +2833,7 @@ namespace Pokefrost
                     .CreateUnit("spheal", "Spheal", idleAnim: "PingAnimationProfile")
                     .SetStats(4, 1, 3)
                     .SetSprites("spheal.png", "sphealBG.png")
-                    .SStartEffects(("On Hit Snowed Target Double Attack", 1))
+                    .SStartEffects(("On Hit Snowed Target Double Attack Otherwise Half", 1))
                     .AddPool("BasicUnitPool")
                 );
 
