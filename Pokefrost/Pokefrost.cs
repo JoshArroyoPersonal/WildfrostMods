@@ -1598,15 +1598,16 @@ namespace Pokefrost
             statusList.Add(jolted);
 
             this.CreateIconKeyword("spicune", "Juice", "Temporarily boosts effects | Clears after triggering", "juice").ChangeColor(title: new Color(0.23f, 0.96f, 0.8f), note: new Color(0.23f, 0.96f, 0.8f));
-            this.CreateIcon("juiceicon", ImagePath("juiceicon.png").ToSprite(), "juice", "lumin", Color.black, new KeywordData[] { Get<KeywordData>("spicune") })
-                .GetComponentInChildren<TextMeshProUGUI>(true).enabled = true;
+            GameObject spicuneicon = this.CreateIcon("juiceicon", ImagePath("juiceicon.png").ToSprite(), "juice", "lumin", Color.black, new KeywordData[] { Get<KeywordData>("spicune") });
+            spicuneicon.GetComponentInChildren<TextMeshProUGUI>(true).enabled = true;
+            spicuneicon.GetComponent<RectTransform>().sizeDelta = new Vector2(1, 1.1f);
 
             StatusEffectSpicune spicune = Ext.CreateStatus<StatusEffectSpicune>("Spicune", null, type: "juice")
                 .Register(this);
             spicune.iconGroupName = "damage";
             spicune.visible = true;
             spicune.isStatus = true;
-            spicune.offensive = true;
+            spicune.offensive = false;
             spicune.stackable = true;
             spicune.targetConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintCanBeBoosted>() };
             spicune.textInsert = "{a}";
@@ -1614,9 +1615,9 @@ namespace Pokefrost
             spicune.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
             statusList.Add(spicune);
 
-            this.CreateIconKeyword("burning", "Burning", "Explodes when hit, damaging all targets in row then clearing | Applying more increases the explosion!", "burningicon").ChangeColor(title: new Color(1f, 0.2f, 0.2f), note: new Color(1f, 0.2f, 0.2f));
-            this.CreateIcon("burningicon", ImagePath("burningicon.png").ToSprite(), "burning", "spice", Color.black, new KeywordData[] { Get<KeywordData>("burning") })
-                .GetComponentInChildren<TextMeshProUGUI>(true).enabled = true;
+            this.CreateIconKeyword("burning", "Ignite", "Explodes when hit, damaging all targets in row then clearing | Applying more increases the explosion!", "burningicon").ChangeColor(title: new Color(1f, 0.2f, 0.2f), note: new Color(1f, 0.2f, 0.2f));
+            this.CreateIcon("burningicon", ImagePath("burningicon.png").ToSprite(), "burning", "spice", Color.white, new KeywordData[] { Get<KeywordData>("burning") })
+                .GetComponentInChildren<TextMeshProUGUI>(true).gameObject.transform.localPosition = new Vector3 (0, -0.06f, 0);
 
             StatusEffectBurning burning = Ext.CreateStatus<StatusEffectBurning>("Burning", null, type: "burning")
                 .Register(this);
@@ -1918,8 +1919,8 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(natuSummon);
 
-            this.CreateBasicKeyword("fidget", "Fidgety", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate");
-            this.CreateButtonIcon("aronFidget", ImagePath("kingdrabutton.png").ToSprite(), "fidget", "", Color.white, new KeywordData[] { Get<KeywordData>("fidget") });
+            this.CreateBasicKeyword("fidget", "Fidget", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate");
+            this.CreateButtonIcon("aronFidget", ImagePath("aronbutton.png").ToSprite(), "fidget", "", Color.white, new KeywordData[] { Get<KeywordData>("fidget") });
 
             StatusEffectInstantRunScript fidgetEffect = Ext.CreateStatus<StatusEffectInstantRunScript>("Run Fidget Script")
                 .Register(this);
@@ -2129,7 +2130,7 @@ namespace Pokefrost
             statusList.Add(ev21);
 
             StatusEffectEvolveCubone ev22 = ScriptableObject.CreateInstance<StatusEffectEvolveCubone>();
-            ev22.Autofill("Evolve Cubone", "<keyword=evolve>: Become injured", this);
+            ev22.Autofill("Evolve Cubone", "<keyword=evolve>: Become injured <i><color=#A6A6A6>(by whom?)</i></color>", this);
             ev22.SetEvolutions("websiteofsites.wildfrost.pokefrost.marowak", "websiteofsites.wildfrost.pokefrost.alolanmarowak");
             ev22.Confirm();
             statusList.Add(ev22);
@@ -2141,14 +2142,14 @@ namespace Pokefrost
             statusList.Add(ev23);
 
             StatusEffectEvolveFromKill ev24 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev24.Autofill("Evolve Aron", "<keyword=evolve>: Team <keyword=recycle>s <{a}> cards", this);
+            ev24.Autofill("Evolve Aron", "<keyword=evolve>: Team <keyword=recycle><color=#FFCA57>s</color> <{a}> cards", this);
             ev24.SetEvolution("lairon");
             ev24.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardWasRecycled);
             ev24.anyKill = true;
             ev24.Confirm();
 
             StatusEffectEvolveFromKill ev25 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev25.Autofill("Evolve Lairon", "<keyword=evolve>: Team <keyword=recycle>s <{a}> <keyword=recycle> card", this);
+            ev25.Autofill("Evolve Lairon", "<keyword=evolve>: Team <keyword=recycle><color=#FFCA57>s</color> <{a}> <keyword=recycle> card", this);
             ev25.SetEvolution("aggron");
             ev25.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfRecycleCardWasRecycled);
             ev25.anyKill = true;
@@ -2336,6 +2337,7 @@ namespace Pokefrost
                     .SetStats(4, null, 0)
                     .SetSprites("alolanmarowak.png", "alolanmarowakBG.png")
                     .SStartEffects(("When Ally Is Sacrificed Trigger To Self", 1), ("Summon Beepop", 1))
+                    .STraits(("Spark", 1))
                 );
 
             /*list.Add(
@@ -2450,7 +2452,7 @@ namespace Pokefrost
                     .SetSprites("porygon.png", "porygonBG.png")
                 );*/
 
-            /*list.Add(
+            list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("furret", "Furret")
                     .SetStats(5, 2, 5)
@@ -2481,7 +2483,7 @@ namespace Pokefrost
                     .SStartEffects(("On Kill Boost Effects", 1))
                     .STraits(("Pickup", 2))
                     .AddPool()
-                );*/
+                );
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2626,7 +2628,7 @@ namespace Pokefrost
                     .AddPool()
                 );
 
-            /*list.Add(
+            list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("kirlia", "Kirlia")
                     .SetStats(4, 2, 4)
@@ -2641,7 +2643,7 @@ namespace Pokefrost
                     .CreateUnit("gardevoir", "Gardevoir")
                     .SetStats(5, 5, 5)
                     .SetSprites("gardevoir.png", "gardevoirBG.png")
-                );*/
+                );
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2968,12 +2970,12 @@ namespace Pokefrost
                     .SetSprites("porygonz.png", "porygonzBG.png")
                 );*/
 
-            /*list.Add(
+            list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("gallade", "Gallade")
                     .SetStats(5, 5, 5)
                     .SetSprites("gallade.png", "galladeBG.png")
-                );*/
+                );
 
             list.Add(
                 new CardDataBuilder(this)
@@ -3283,7 +3285,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_vaporeon", "Vaporeon", bloodProfile: "Blood Profile Blue (x2)")
-                    .SetStats(10, 3, 3)
+                    .SetStats(8, 3, 3)
                     .WithCardType("Enemy")
                     .WithValue(50)
                     .SetSprites("vaporeon.png", "vaporeonBG.png")
@@ -3294,7 +3296,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_jolteon", "Jolteon")
-                    .SetStats(10, 1, 3)
+                    .SetStats(8, 1, 3)
                     .WithCardType("Enemy")
                     .WithValue(50)
                     .SetSprites("jolteon.png", "jolteonBG.png")
@@ -3306,7 +3308,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_flareon", "Flareon")
-                    .SetStats(10, 2, 3)
+                    .SetStats(8, 2, 3)
                     .WithCardType("Enemy")
                     .WithValue(50)
                     .SetSprites("flareon.png", "flareonBG.png")
@@ -3327,7 +3329,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_umbreon", "Umbreon")
-                    .SetStats(13, 0, 3)
+                    .SetStats(10, 0, 3)
                     .WithCardType("Enemy")
                     .WithValue(50)
                     .SetSprites("umbreon.png", "umbreonBG.png")
@@ -4032,7 +4034,7 @@ namespace Pokefrost
 
             //DebugShiny();
             //Events.OnCardDataCreated += Wildparty;
-            //Events.OnSceneChanged += PokemonPhoto;
+            Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             //for (int i = 0; i < References.Classes.Length; i++)
             //{
@@ -4082,7 +4084,7 @@ namespace Pokefrost
             RemoveFromPools();
             RevertVanillaChanges();
             //Events.OnCardDataCreated -= Wildparty;
-            //Events.OnSceneChanged -= PokemonPhoto;
+            Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
         }
