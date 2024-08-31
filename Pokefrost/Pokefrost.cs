@@ -229,6 +229,7 @@ namespace Pokefrost
             dummyoverload.type = "overload";
             dummyoverload.iconGroupName = "health";
             dummyoverload.visible = false;
+            dummyoverload.isStatus = true;
             dummyoverload.targetConstraints = new TargetConstraint[0];
             dummyoverload.applyFormat = "";
             dummyoverload.applyFormatKey = new UnityEngine.Localization.LocalizedString();
@@ -242,6 +243,7 @@ namespace Pokefrost
             dummyshroom.type = "shroom";
             dummyshroom.iconGroupName = "health";
             dummyshroom.visible = false;
+            dummyshroom.isStatus = true;
             dummyshroom.targetConstraints = new TargetConstraint[0];
             dummyshroom.applyFormat = "";
             dummyshroom.applyFormatKey = new UnityEngine.Localization.LocalizedString();
@@ -265,6 +267,7 @@ namespace Pokefrost
             overshroom.keyword = "overshroom";
             overshroom.targetConstraints = new TargetConstraint[1] { new TargetConstraintCanBeHit() };
             overshroom.textOrder = 0;
+            overshroom.eventPriority = 99;
             overshroom.textInsert = "{a}";
             overshroom.ModAdded = this;
             overshroom.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
@@ -280,6 +283,7 @@ namespace Pokefrost
             giveovershroom.textKey = new UnityEngine.Localization.LocalizedString();
             giveovershroom.type = "";
             giveovershroom.textOrder = 0;
+            giveovershroom.eventPriority = 100;
             giveovershroom.textInsert = "";
             giveovershroom.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", giveovershroom);
@@ -1975,6 +1979,13 @@ namespace Pokefrost
 
             TraitData salvageTrait = Ext.CreateTrait<TraitData>("Salvage", this, salvageKeyword, luminSummonAttack);
 
+            StatusEffectAddAttackEffects burningToAllies = Ext.CreateStatus<StatusEffectAddAttackEffects>("Allied Hits Have Burning", "While active, allies apply <{a}><keyword=burning>", boostable: true)
+                .Register(this);
+            burningToAllies.sameOwner = true;
+            burningToAllies.includeSelf = false;
+            burningToAllies.effectToApply = burning;
+            statusList.Add(burningToAllies);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -2433,8 +2444,8 @@ namespace Pokefrost
                     .CreateUnit("flareon", "Flareon")
                     .SetStats(4, 1, 3)
                     .SetSprites("flareon.png", "flareonBG.png")
-                    .SStartEffects(("While Active Increase Attack To Allies", 2))
-                    .SAttackEffects(("Overload", 2))
+                    .SStartEffects(("Allied Hits Have Burning", 2))
+                    .SAttackEffects(("Burning", 2))
                 );
 
             list.Add(
