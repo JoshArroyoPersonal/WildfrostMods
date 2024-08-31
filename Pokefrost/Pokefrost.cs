@@ -1940,10 +1940,13 @@ namespace Pokefrost
             futureSummon.summonPosition = StatusEffectInstantSummon.Position.Hand;
             statusList.Add(futureSummon);
 
-            StatusEffectApplyXWhenDeployed natuSummon = Ext.CreateStatus<StatusEffectApplyXWhenDeployed>("When Deployed Summon Placeholder To Hand", "When deployed, add the <prophesized> card to hand")
+            StatusEffectApplyXWhenDeployed natuSummon = Ext.CreateStatus<StatusEffectApplyXWhenDeployed>("When Deployed Summon Placeholder To Hand", "When deployed, add the <keyword=prophesized> card to hand")
                 .ApplyX(futureSummon, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             statusList.Add(natuSummon);
+
+            this.CreateBasicKeyword("prophesized", "Prophesized", "The card is fated to be in your deck").showName = true;
+
 
             this.CreateBasicKeyword("fidget", "Fidget", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate");
             this.CreateButtonIcon("aronFidget", ImagePath("aronbutton.png").ToSprite(), "fidget", "", Color.white, new KeywordData[] { Get<KeywordData>("fidget") });
@@ -2194,6 +2197,12 @@ namespace Pokefrost
             ev25.anyKill = true;
             ev25.Confirm();
             statusList.Add(ev25);
+
+            StatusEffectEvolveNatu ev26 = ScriptableObject.CreateInstance<StatusEffectEvolveNatu>();
+            ev26.Autofill("Evolve Natu", "<keyword=evolve>: Fulfill the <Prophecy>", this);
+            ev26.SetEvolution("xatu");
+            ev26.Confirm();
+            statusList.Add(ev26);
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -2505,7 +2514,7 @@ namespace Pokefrost
                     .CreateUnit("natu", "Natu")
                     .SetStats(4, 1, 4)
                     .SetSprites("natu.png", "natuBG.png")
-                    .SStartEffects(("When Deployed Summon Placeholder To Hand", 1))
+                    .SStartEffects(("When Deployed Summon Placeholder To Hand", 1), ("Evolve Natu", 1))
                     .FreeModify(
                     (c) =>
                     {
@@ -3914,65 +3923,6 @@ namespace Pokefrost
             }
         }
 
-        private void CheckEvolve()
-        {
-            if (References.Battle.winner != References.Player)
-            {
-                return;
-            }
-
-            CardDataList list = References.Player.data.inventory.deck;
-            List<CardData> slateForEvolution = new List<CardData>();
-            List<StatusEffectEvolve> evolveEffects = new List<StatusEffectEvolve>();
-            foreach (CardData card in list)
-            {
-                foreach (CardData.StatusEffectStacks s in card.startWithEffects)
-                {
-                    if (s.data.type == "evolve1")
-                    {
-                        s.count -= 1;
-                        if (s.count == 0)
-                        {
-                            if (((StatusEffectEvolve)s.data).ReadyToEvolve(card))
-                            {
-                                Debug.Log("[Pokefrost] Ready for evolution!");
-                                slateForEvolution.Add(card);
-                                evolveEffects.Add(((StatusEffectEvolve)s.data));
-                            }
-                            else
-                            {
-                                s.count += 1;
-                                Debug.Log("[Pokefrost] Conditions not met.");
-                            }
-                        }
-                    }
-                    if (s.data.type == "evolve2")
-                    {
-                        if (((StatusEffectEvolve)s.data).ReadyToEvolve(card))
-                        {
-                            Debug.Log("[Pokefrost] Ready for evolution!");
-                            slateForEvolution.Add(card);
-                            evolveEffects.Add(((StatusEffectEvolve)s.data));
-                        }
-                        else
-                        {
-                            Debug.Log("[Pokefrost] Conditions not met.");
-                        }
-                    }
-                }
-            }
-            int count = slateForEvolution.Count;
-
-            for (int i = 0; i < count; i++)
-            {
-                if (References.Player.data.inventory.deck.RemoveWhere((CardData a) => slateForEvolution[i].id == a.id))
-                {
-                    Debug.Log("[" + slateForEvolution[i].name + "] Removed From [" + References.Player.name + "] deck");
-                    evolveEffects[i].Evolve(this, slateForEvolution[i]);
-                }
-            }
-        }
-
         private void ShinyPet()
         {
             CardScriptForsee.ids.Clear();
@@ -4051,13 +4001,14 @@ namespace Pokefrost
             CreateBattles();
             //Events.OnSceneLoaded += PokemonEdits;
             
-            Events.OnBattleEnd += CheckEvolve;
+            Events.OnBattleEnd += StatusEffectEvolve.CheckEvolve;
             Events.PostBattle += DisplayEvolutions;
             Events.OnEntityOffered += GetShiny;
             Events.OnCampaignStart += ShinyPet;
             Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             Events.OnSceneLoaded += BattleFuse;
+            Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
 
 
             //Pokemon specific events
@@ -4070,16 +4021,11 @@ namespace Pokefrost
             Events.OnCampaignLoaded += CountNatus;
             Events.OnMapNodeReveal += NatuForsee;
 
-            //Events.OnEntityCountDown += TauntedFailsafe;
-
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
 
             //AddressableLoader.AddRangeToGroup("EyeData", EyeDataAdder.Eyes());
 
-            //References.instance.classes[0] = Get<ClassData>("Basic");
-            //References.instance.classes[1] = Get<ClassData>("Magic");
-            //References.instance.classes[2] = Get<ClassData>("Clunk");
             Get<CardData>("websiteofsites.wildfrost.pokefrost.klefki").charmSlots = 100;
             ((StatusEffectSummon)Get<StatusEffectData>("Summon Shedinja")).summonCard = Get<CardData>("websiteofsites.wildfrost.pokefrost.shedinja");
             TargetConstraintIsSpecificCard onlymarowak = new TargetConstraintIsSpecificCard();
@@ -4090,11 +4036,6 @@ namespace Pokefrost
             //Events.OnCardDataCreated += Wildparty;
             Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
-            //for (int i = 0; i < References.Classes.Length; i++)
-            //{
-            //    References.Classes[i].startingInventory.deck.Add(Get<CardData>("tyrantrum"));
-            //    UnityEngine.Debug.Log("Added to Deck");
-            //}
             References.instance.StartCoroutine(UICollector.CollectPrefabs());
             preLoaded = true;
         }
@@ -4120,7 +4061,7 @@ namespace Pokefrost
             base.Unload();
             //Events.OnSceneLoaded -= PokemonEdits;
             Events.OnBattleEnd -= PokemonPostBattle;
-            Events.OnBattleEnd -= CheckEvolve;
+            Events.OnBattleEnd -= StatusEffectEvolve.CheckEvolve;
             Events.PostBattle -= DisplayEvolutions;
             Events.OnEntityOffered -= GetShiny;
             Events.OnEntityEnterBackpack -= RotomFuse;
@@ -4134,8 +4075,7 @@ namespace Pokefrost
             Events.OnSceneLoaded -= BattleFuse;
             Events.OnCampaignLoaded -= CountNatus;
             Events.OnMapNodeReveal -= NatuForsee;
-            //Events.OnEntitySelect -= NatuForsee;
-            //Events.OnEntityCountDown -= TauntedFailsafe;
+            Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
@@ -4343,7 +4283,7 @@ namespace Pokefrost
 
 
 
-        private readonly string[] rotomAppliances = { "websiteofsites.wildfrost.pokefrost.microwave", "websiteofsites.wildfrost.pokefrost.washingmachine", "websiteofsites.wildfrost.pokefrost.fridge", "websiteofsites.wildfrost.pokefrost.fan", "websiteofsites.wildfrost.pokefrost.lawnmower" };
+        internal static readonly string[] rotomAppliances = { "websiteofsites.wildfrost.pokefrost.microwave", "websiteofsites.wildfrost.pokefrost.washingmachine", "websiteofsites.wildfrost.pokefrost.fridge", "websiteofsites.wildfrost.pokefrost.fan", "websiteofsites.wildfrost.pokefrost.lawnmower" };
         private readonly string[] rotomForms = { "websiteofsites.wildfrost.pokefrost.rotomheat", "websiteofsites.wildfrost.pokefrost.rotomwash", "websiteofsites.wildfrost.pokefrost.rotomfrost", "websiteofsites.wildfrost.pokefrost.rotomfan", "websiteofsites.wildfrost.pokefrost.rotommow" };
         private CardData fusedRotom;
 
@@ -4616,77 +4556,6 @@ namespace Pokefrost
         }
     }
 
-    [HarmonyPatch(typeof(CampaignNode), "SetCleared", new Type[]
-        {
-        })]
-    internal static class AfterNodeCleared
-    {
-        internal static void Prefix(CampaignNode __instance)
-        {
-            Debug.Log($"[Pokefrost] {__instance.name}");
-            CardDataList list = References.Player.data.inventory.deck;
-            List<CardData> slateForEvolution = new List<CardData>();
-            List<StatusEffectEvolve> evolveEffects = new List<StatusEffectEvolve>();
-            foreach (CardData card in list)
-            {
-                foreach (CardData.StatusEffectStacks s in card.startWithEffects)
-                {
-                    if (s.data is StatusEffectEvolveFromNode s2)
-                    {
-                        ;
-                        if (s2.NodeVisit(__instance.name, card))
-                        {
-                            Debug.Log("[Pokefrost] Ready for evolution!");
-                            slateForEvolution.Add(card);
-                            evolveEffects.Add(((StatusEffectEvolve)s.data));
-                        }
-                    }
-                }
-            }
-            list = References.Player.data.inventory.reserve;
-            foreach (CardData card in list)
-            {
-                foreach (CardData.StatusEffectStacks s in card.startWithEffects)
-                {
-                    if (s.data is StatusEffectEvolveFromNode s2)
-                    {
-                        if (s2.NodeVisit(__instance.name, card))
-                        {
-                            Debug.Log("[Pokefrost] Ready for evolution!");
-                            slateForEvolution.Add(card);
-                            evolveEffects.Add(((StatusEffectEvolve)s.data));
-                        }
-                    }
-                }
-            }
-            int count = slateForEvolution.Count;
-
-            for (int i = 0; i < count; i++)
-            {
-                if (References.Player.data.inventory.deck.RemoveWhere((CardData a) => slateForEvolution[i].id == a.id))
-                {
-                    Debug.Log("[" + slateForEvolution[i].name + "] Removed From [" + References.Player.name + "] deck");
-                    evolveEffects[i].Evolve(Pokefrost.instance, slateForEvolution[i]);
-                }
-                if (References.Player.data.inventory.reserve.RemoveWhere((CardData a) => slateForEvolution[i].id == a.id))
-                {
-                    Debug.Log("[" + slateForEvolution[i].name + "] Removed From [" + References.Player.name + "] reserve");
-                    evolveEffects[i].Evolve(Pokefrost.instance, slateForEvolution[i]);
-                }
-            }
-            if (count > 0)
-            {
-                References.instance.StartCoroutine(ForceEvolvePopup(__instance));
-            }  
-        }
-
-        internal static IEnumerator ForceEvolvePopup(CampaignNode whatever)
-        {
-            yield return new WaitUntil(() => SceneManager.IsLoaded("MapNew"));
-            ((Pokefrost)Pokefrost.instance).DisplayEvolutions(whatever);
-        }
-    }
-
     [HarmonyPatch(typeof(FinalBossGenerationSettings), "ReplaceCards", new Type[]
         {
             typeof(IList<CardData>)
@@ -4897,5 +4766,20 @@ namespace Pokefrost
         }
     }
 
-
+    [HarmonyPatch(typeof(Card), "SetDescription")]
+    static class PatchmentionedCards
+    {
+        static void Postfix(Card __instance)
+        {
+            CardData data = __instance.entity?.data;
+            if (data != null && data.TryGetCustomData("Future Sight", out string cardName, "Junk"))
+            {
+                CardData data2 = Pokefrost.instance.Get<CardData>(cardName);
+                if (data2 != null)
+                {
+                    __instance.mentionedCards.Add(data2);
+                }
+            }
+        }
+    }
 }
