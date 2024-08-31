@@ -18,6 +18,11 @@ namespace Pokefrost
             Events.OnActionQueued += DetermineEffect;
         }
 
+        public void OnDestory()
+        {
+            Events.OnActionQueued -= DetermineEffect;
+        }
+
         private void DetermineEffect(PlayAction arg)
         {
             int r = UnityEngine.Random.Range(0, effectsToapply.Length);
