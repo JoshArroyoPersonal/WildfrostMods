@@ -14,7 +14,7 @@ namespace Pokefrost
     {
         public string[] rewardPoolNames;
         public Func<CardData, bool> constraint;
-        public int cap = 15;
+        public int cap = 10;
         public string text = "{0} Found A Card";
         public string cappedText = "{0} Found A Fortune!";
 
@@ -59,7 +59,7 @@ namespace Pokefrost
             Debug.Log($"[Pokefrost] Starting {target.data.id}");
             string titleText = (cap <= GetAmount()) ? cappedText : text;
             PickupRoutine.Create(titleText.Replace("{0}",target.data.title));
-            RewardPool[] pools = ConvertToPools();
+            RewardPool[] pools = GetPools();
             constraint = AddressableLoader.Get<StatusEffectPickup>("StatusEffectData", name).constraint;
             yield return PickupRoutine.AddRandomCards(Math.Min(15, GetAmount()), pools, constraint);
             yield return PickupRoutine.Run();
@@ -82,6 +82,24 @@ namespace Pokefrost
                 }
             }
             return pools.ToArray();
+        }
+
+        protected RewardPool[] GetPools()
+        {
+            List<ClassData> tribes = AddressableLoader.GetGroup<ClassData>("ClassData");
+            ClassData tribe = tribes[0];
+            string tribeName = References.Player.name;
+            Debug.Log($"[Pokefrost] {tribeName}");
+            foreach(ClassData t in tribes)
+            {
+                if (tribeName.ToLower().Contains(t.name.ToLower()))
+                {
+                    tribe = t;
+                    break;
+                }
+            }
+
+            return tribe.rewardPools.Where((r) => r != null && r.type == "Items" && !r.isGeneralPool).ToArray();
         }
     }
 }

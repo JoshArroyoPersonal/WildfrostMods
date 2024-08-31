@@ -38,7 +38,7 @@ namespace Pokefrost
 
         internal List<CardDataBuilder> list;
         internal List<CardUpgradeDataBuilder> charmlist;
-        internal List<StatusEffectData> statusList;
+        internal static List<StatusEffectData> statusList;
         private bool preLoaded = false;
         private static float shinyrate = 1/100f;
         public static Pokefrost instance;
@@ -1878,6 +1878,11 @@ namespace Pokefrost
             snowPunch.effectToApply = Get<StatusEffectData>("Snow");
             statusList.Add(snowPunch);
 
+            StatusEffectWhileActiveX snowPunchWhileActive = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active All Hits Apply Snow", "While active, everyone applies <{a}><keyword=snow>")
+                .ApplyX(snowPunch, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(snowPunch);
+
             StatusEffectDuplicateEffect synchronize = Ext.CreateStatus<StatusEffectDuplicateEffect>("Copy Effects Applied To Ally Ahead")
                 .ApplyX(null, StatusEffectApplyX.ApplyToFlags.AllyInFrontOf)
                 .Register(this);
@@ -1996,12 +2001,17 @@ namespace Pokefrost
 
             TraitData salvageTrait = Ext.CreateTrait<TraitData>("Salvage", this, salvageKeyword, luminSummonAttack);
 
-            StatusEffectAddAttackEffects burningToAllies = Ext.CreateStatus<StatusEffectAddAttackEffects>("Allied Hits Have Burning", "While active, allies apply <{a}><keyword=burning>", boostable: true)
+            StatusEffectAddAttackEffects burningToAllies = Ext.CreateStatus<StatusEffectAddAttackEffects>("Allied Hits Have Burning", boostable: true)
                 .Register(this);
             burningToAllies.sameOwner = true;
             burningToAllies.includeSelf = false;
             burningToAllies.effectToApply = burning;
             statusList.Add(burningToAllies);
+
+            StatusEffectWhileActiveX burnStream = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Allied Hits Have Burning", "While active, allies apply <{a}><keyword=burning>")
+                .ApplyX(burningToAllies, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(burnStream);
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
@@ -2175,6 +2185,7 @@ namespace Pokefrost
             ev24.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardWasRecycled);
             ev24.anyKill = true;
             ev24.Confirm();
+            statusList.Add(ev24);
 
             StatusEffectEvolveFromKill ev25 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev25.Autofill("Evolve Lairon", "<keyword=evolve>: Team <keyword=recycle><color=#FFCA57>s</color> <{a}> <keyword=recycle> card", this);
@@ -2182,6 +2193,7 @@ namespace Pokefrost
             ev25.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfRecycleCardWasRecycled);
             ev25.anyKill = true;
             ev25.Confirm();
+            statusList.Add(ev25);
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -2459,9 +2471,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("flareon", "Flareon")
-                    .SetStats(4, 1, 3)
+                    .SetStats(4, 2, 3)
                     .SetSprites("flareon.png", "flareonBG.png")
-                    .SStartEffects(("Allied Hits Have Burning", 2))
+                    .SStartEffects(("While Active Allied Hits Have Burning", 1))
                     .SAttackEffects(("Burning", 2))
                 );
 
@@ -2486,7 +2498,7 @@ namespace Pokefrost
                     .SetStats(5, 2, 5)
                     .SetSprites("furret.png", "furretBG.png")
                     .SStartEffects(("On Turn Escape To Self", 1))
-                );
+                );*/
 
             list.Add(
                 new CardDataBuilder(this)
@@ -2494,6 +2506,11 @@ namespace Pokefrost
                     .SetStats(4, 1, 4)
                     .SetSprites("natu.png", "natuBG.png")
                     .SStartEffects(("When Deployed Summon Placeholder To Hand", 1))
+                    .FreeModify(
+                    (c) =>
+                    {
+                        c.createScripts = new CardScript[] { ScriptableObject.CreateInstance<CardScriptForsee>() };
+                    })
                 );
 
             list.Add(
@@ -2962,7 +2979,7 @@ namespace Pokefrost
                     .CreateUnit("abomasnow", "Abomasnow")
                     .SetStats(10, 4, 4)
                     .SetSprites("abomasnow.png", "abomasnowBG.png")
-                    .SStartEffects(("While Active Snowstorm", 1), ("All Hits Apply Snow", 1), ("ImmuneToSnow", 1))
+                    .SStartEffects(("While Active Snowstorm", 1), ("While Active All Hits Apply Snow", 1), ("ImmuneToSnow", 1))
                     .AddPool("SnowUnitPool")
                 );
 
@@ -3958,6 +3975,8 @@ namespace Pokefrost
 
         private void ShinyPet()
         {
+            CardScriptForsee.ids.Clear();
+
             if (References.PlayerData?.inventory?.deck == null)
             {
                 return;
@@ -4031,19 +4050,26 @@ namespace Pokefrost
             base.Load();
             CreateBattles();
             //Events.OnSceneLoaded += PokemonEdits;
-            Events.OnBattleEnd += PokemonPostBattle;
+            
             Events.OnBattleEnd += CheckEvolve;
             Events.PostBattle += DisplayEvolutions;
             Events.OnEntityOffered += GetShiny;
-            Events.OnEntityEnterBackpack += RotomFuse;
             Events.OnCampaignStart += ShinyPet;
+            Events.OnStatusIconCreated += PatchOvershroom;
+            Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
+            Events.OnSceneLoaded += BattleFuse;
+
+
+            //Pokemon specific events
+            Events.OnBattleEnd += PokemonPostBattle;
+            Events.OnEntityEnterBackpack += RotomFuse;
+            Events.OnEntityFlee += FurretFlee;
             Events.OnCampaignGenerated += ApplianceSpawns;
             Events.OnCardDraw += HowManyCardsDrawn;
             Events.OnBattlePhaseStart += ResetCardsDrawn;
-            Events.OnStatusIconCreated += PatchOvershroom;
-            Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
-            Events.OnEntityFlee += FurretFlee;
-            Events.OnSceneLoaded += BattleFuse;
+            Events.OnCampaignLoaded += CountNatus;
+            Events.OnMapNodeReveal += NatuForsee;
+
             //Events.OnEntityCountDown += TauntedFailsafe;
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
@@ -4106,6 +4132,9 @@ namespace Pokefrost
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
             Events.OnEntityFlee -= FurretFlee;
             Events.OnSceneLoaded -= BattleFuse;
+            Events.OnCampaignLoaded -= CountNatus;
+            Events.OnMapNodeReveal -= NatuForsee;
+            //Events.OnEntitySelect -= NatuForsee;
             //Events.OnEntityCountDown -= TauntedFailsafe;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
@@ -4115,6 +4144,40 @@ namespace Pokefrost
             Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
+        }
+
+        private void CountNatus()
+        {
+            if (References.PlayerData?.inventory?.deck == null)
+            {
+                return;
+            }
+            List<CardData> list = References.PlayerData.inventory.deck.Where((c) => c.name == "websiteofsites.wildfrost.pokefrost.natu").ToList();
+            list.AddRange(References.PlayerData.inventory.reserve.Where((c) => c.name == "websiteofsites.wildfrost.pokefrost.natu"));
+            foreach (CardData natu in list)
+            {
+                if(natu.TryGetCustomData("Future Sight ID", out int id, -1))
+                {
+                    CardScriptForsee.ids.Add(id);
+                }
+            }
+        }
+
+        private void NatuForsee(MapNode node)
+        {
+            if (CardScriptForsee.ids.Contains(node.campaignNode.id))
+            {
+                if (node.campaignNode.glow)
+                {
+                    return;
+                }
+                else
+                {
+                    node.campaignNode.glow = true;
+                    node.glow.GetComponent<SpriteRenderer>().color = new Color(0, 1, 0, 0.3f);
+                    node.glow.SetActive(true);
+                }
+            }
         }
 
         private void RevertVanillaChanges()

@@ -138,6 +138,8 @@ namespace Pokefrost
         {
             References.PlayerData.inventory.deck.Add(entity.data);
             sequence.cardController.Disable();
+            entity.RemoveFromContainers();
+            sequence.cardSelector.MoveCardToDeck(entity);
             sequence.promptEnd = true;
             Events.InvokeEntityChosen(entity);
         }
