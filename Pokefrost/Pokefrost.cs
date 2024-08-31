@@ -2498,7 +2498,7 @@ namespace Pokefrost
                     .SetStats(5, 2, 5)
                     .SetSprites("furret.png", "furretBG.png")
                     .SStartEffects(("On Turn Escape To Self", 1))
-                );*/
+                );
 
             list.Add(
                 new CardDataBuilder(this)
@@ -4757,7 +4757,7 @@ namespace Pokefrost
             swappers.Add(CreateSwapper("Trigger All Listener_1", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("When Ally Summoned Add Skull To Hand", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("Trigger When Summon", "Trigger When Card Destroyed", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("On Hit Snowed Target Double Attack", attackOption:"Snow", minBoost: 1, maxBoost: 2));
+            swappers.Add(CreateSwapper("On Hit Snowed Target Double Attack Otherwise Half", attackOption:"Snow", minBoost: 1, maxBoost: 2));
             swappers.Add(CreateSwapper("Buff Card In Deck On Kill", "On Turn Apply Attack To Self", minBoost: 1, maxBoost: 3));
             swappers.Add(CreateSwapper("Trigger Clunker Ahead", "On Turn Apply Scrap To RandomAlly", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("On Card Played Increase Attack Of Cards In Hand", "While Active Increase Attack To Allies", minBoost: 0, maxBoost: 0));
