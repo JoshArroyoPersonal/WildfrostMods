@@ -112,5 +112,44 @@ namespace Pokefrost
             script.traitB = traitB;
             return script;
         }
+
     }
+
+
+    public class LeaderScripts
+    {
+        public static CardScript GiveUpgrade(string name = "Crown") //Give a crown
+        {
+            CardScriptGiveUpgrade script = ScriptableObject.CreateInstance<CardScriptGiveUpgrade>(); //This is the standard way of creating a ScriptableObject
+            script.name = $"Give {name}";                               //Name only appears in the Unity Inspector. It has no other relevance beyond that.
+            script.upgradeData = Pokefrost.instance.Get<CardUpgradeData>(name);
+            return script;
+        }
+
+        public static CardScript AddRandomHealth(int min, int max) //Boost health by a random amount
+        {
+            CardScriptAddRandomHealth health = ScriptableObject.CreateInstance<CardScriptAddRandomHealth>();
+            health.name = "Random Health";
+            health.healthRange = new Vector2Int(min, max);
+            return health;
+        }
+
+        public static CardScript AddRandomDamage(int min, int max) //Boost damage by a ranom amount
+        {
+            CardScriptAddRandomDamage damage = ScriptableObject.CreateInstance<CardScriptAddRandomDamage>();
+            damage.name = "Give Damage";
+            damage.damageRange = new Vector2Int(min, max);
+            return damage;
+        }
+
+        public static CardScript AddRandomCounter(int min, int max) //Increase counter by a random amount
+        {
+            CardScriptAddRandomCounter counter = ScriptableObject.CreateInstance<CardScriptAddRandomCounter>();
+            counter.name = "Give Counter";
+            counter.counterRange = new Vector2Int(min, max);
+            return counter;
+        }
+    }
+
+
 }

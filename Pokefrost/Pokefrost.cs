@@ -154,6 +154,9 @@ namespace Pokefrost
             KeywordData debuffKey = this.CreateBasicKeyword("debuffed", "Debuffed", "Has a negative status");
             debuffKey.showName = true;
 
+            KeywordData legendKey = this.CreateBasicKeyword("legendary", "Legendary", "Counts as an additional leader|You lose when all your leaders die");
+            legendKey.showName = true;
+
             StatusEffectFreeTrait wilder = ScriptableObject.CreateInstance<StatusEffectFreeTrait>();
             wilder.trait = this.Get<TraitData>("Wild");
             wilder.silenced = null;
@@ -1551,11 +1554,19 @@ namespace Pokefrost
             darkraifrenzy.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCursesInHand>();
             statusList.Add(darkraifrenzy);
 
-            StatusEffectWhileActiveX darkraiTest = Ext.CreateStatus<StatusEffectWhileActiveX>("Frenzy Equal To Curses In Hand", "Has <x{a}><keyword=frenzy> for each <curse> in hand", boostable: true)
+            StatusEffectWhileActiveX darkraiTest = Ext.CreateStatus<StatusEffectWhileActiveX>("Frenzy Equal To Curses In Hand", "Has <keyword=frenzy> equal to <curses> in hand")
                 .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             darkraiTest.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCursesInHand>();
             statusList.Add(darkraiTest);
+
+            StatusEffectWhileActiveX garbFrenzy = Ext.CreateStatus<StatusEffectWhileActiveX>("Frenzy Equal To Scrap", "Has <keyword=frenzy> equal to <keyword=scrap>")
+                .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            ScriptableCurrentStatus scrapAmount = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
+            scrapAmount.statusType = "scrap";
+            garbFrenzy.scriptableAmount = scrapAmount;
+            statusList.Add(garbFrenzy);
 
             TargetConstraintStatusMoreThan weakcurseconstraint = ScriptableObject.CreateInstance<TargetConstraintStatusMoreThan>();
             weakcurseconstraint.not = true;
@@ -1825,6 +1836,7 @@ namespace Pokefrost
                 .Register(this);
             joltTrigger.targetDamageType = "jolt";
             joltTrigger.isReaction = true;
+            joltTrigger.descColorHex = "F99C61";
             statusList.Add(joltTrigger);
 
             StatusEffectApplyXWhenDestroyed shroomOnDeath = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destroyed Apply Shroom To All Enemies In Row", "When destroyed, apply <{a}><keyword=shroom> to all enemies in row", boostable: true)
@@ -2638,6 +2650,13 @@ namespace Pokefrost
                     .SetSprites("raikou.png", "raikouBG.png")
                     .SAttackEffects(("Jolted", 2))
                     .SStartEffects(("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", 1))
+                    .WithCardType("Leader")
+                    .WithText("<keyword=legendary>")
+                    .FreeModify(
+                    (data) =>
+                    {
+                        data.createScripts = new CardScript[] { LeaderScripts.GiveUpgrade() };
+                    })
                 );
 
             list.Add(
@@ -2647,6 +2666,13 @@ namespace Pokefrost
                     .SetSprites("entei.png", "enteiBG.png")
                     .SAttackEffects(("Burning", 3))
                     .SStartEffects(("Hits All NonBurning Targets", 1))
+                    .WithCardType("Leader")
+                    .WithText("<keyword=legendary>")
+                    .FreeModify(
+                    (data) =>
+                    {
+                        data.createScripts = new CardScript[] { LeaderScripts.GiveUpgrade() };
+                    })
                 );
 
             list.Add(
@@ -2655,13 +2681,27 @@ namespace Pokefrost
                     .SetStats(8, 0, 3)
                     .SetSprites("suicune.png", "suicuneBG.png")
                     .SStartEffects(("Gain Juice On Hit", 1), ("Give Your Juice To All", 1))
+                    .WithCardType("Leader")
+                    .WithText("<keyword=legendary>")
+                    .FreeModify(
+                    (data) =>
+                    {
+                        data.createScripts = new CardScript[] { LeaderScripts.GiveUpgrade() };
+                    })
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("hooh", "Ho-Oh")
+                    .WithCardType("Leader")
                     .SetStats(8, 0, 3)
                     .SetSprites("hooh.png", "hoohBG.png")
+                    .WithText("<keyword=legendary>")
+                    .FreeModify(
+                    (data) =>
+                    {
+                        data.createScripts = new CardScript[] { LeaderScripts.GiveUpgrade() };
+                    })
                 );
 
             list.Add(
@@ -2860,6 +2900,13 @@ namespace Pokefrost
                     .SetStats(8, 0, 3)
                     .SetSprites("latias.png", "latiasBG.png")
                     .SStartEffects(("When Hit Transfer Resist to Random Ally", 1), ("Temp Resist", 1))
+                    .WithCardType("Leader")
+                    .WithText("<keyword=legendary>")
+                    .FreeModify(
+                    (data) =>
+                    {
+                        data.createScripts = new CardScript[] { LeaderScripts.GiveUpgrade() };
+                    })
                 );
 
             list.Add(
@@ -2868,6 +2915,13 @@ namespace Pokefrost
                     .SetStats(8, 0, 3)
                     .SetSprites("latios.png", "latiosBG.png")
                     .SStartEffects(("On Card Played Transfer Attack to Random Ally", 5), ("Ongoing Increase Attack", 5))
+                    .WithCardType("Leader")
+                    .WithText("<keyword=legendary>")
+                    .FreeModify(
+                    (data) =>
+                    {
+                        data.createScripts = new CardScript[] { LeaderScripts.GiveUpgrade() };
+                    })
                 );
 
             list.Add(
@@ -3087,6 +3141,13 @@ namespace Pokefrost
                     .SetStats(8, 2, 4)
                     .SetSprites("cresselia.png", "cresseliaBG.png")
                     .SStartEffects(("When Card Destroyed, Gain Dream Card", 1))
+                    .WithCardType("Leader")
+                    .WithText("<keyword=legendary>")
+                    .FreeModify(
+                    (data) =>
+                    {
+                        data.createScripts = new CardScript[] { LeaderScripts.GiveUpgrade() };
+                    })
                 );
 
             list.Add(
@@ -3095,6 +3156,13 @@ namespace Pokefrost
                     .SetStats(6, 3, 4)
                     .SetSprites("darkrai.png", "darkraiBG.png")
                     .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1), SStack("Frenzy Equal To Curses In Hand", 1))
+                    .WithCardType("Leader")
+                    .WithText("<keyword=legendary>")
+                    .FreeModify(
+                    (data) =>
+                    {
+                        data.createScripts = new CardScript[] { LeaderScripts.GiveUpgrade() };
+                    })
                 );
 
             list.Add(
@@ -3129,7 +3197,7 @@ namespace Pokefrost
                     .CreateUnit("garbodor", "Garbodor", idleAnim: "GiantAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(6, 3, 4)
                     .SetSprites("garbodor.png", "garbodorBG.png")
-                    .SStartEffects(("When Clunker Destroyed Gain Scrap", 1), ("Pre Trigger Gain Frenzy Equal To Scrap", 1))
+                    .SStartEffects(("When Clunker Destroyed Gain Scrap", 1), ("Frenzy Equal To Scrap", 1), ("Scrap", 1))
                 );
 
             list.Add(
@@ -3677,14 +3745,14 @@ namespace Pokefrost
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeMagnemite")
-                    .WithTier(0)
+                    .WithTier(1)
                     .WithImage("magnemiteCharm.png")
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetEffects(SStack("On Card Played Apply Shroom Overburn Or Bom", 1))
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeShroom").targetConstraints)
                     .SetBecomesTarget(true)
                     .WithTitle("Magnemite Charm")
-                    .WithText("Apply <1> <keyword=shroom>/<keyword=overload>/<keyword=weakness>")
+                    .WithText("Apply <1><keyword=shroom>/<keyword=overload>/<keyword=weakness> randomly")
             );
 
             charmlist.Add(
@@ -3703,7 +3771,7 @@ namespace Pokefrost
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeSketch")
-                    .WithTier(5)
+                    .WithTier(3)
                     .WithImage("smeargleCharm.png")
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetEffects(SStack("When Deployed Sketch", 1))
@@ -3716,8 +3784,46 @@ namespace Pokefrost
 
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
+                    .Create("CardUpgradeConduit")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(2)
+                    .WithImage("raikouCharm.png")
+                    .SetBecomesTarget(true)
+                    .SetEffects(SStack("When Anyone Takes Jolted Damage Trigger", 1))
+                    .SetAttackEffects(SStack("Jolted", 1))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .WithTitle("Raikou Charm")
+                    .WithText("Apply <1><keyword=jolted> and gain <keyword=conduit><color=#F99C61>: Trigger</color>")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
+                    .Create("CardUpgradeJuice")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(2)
+                    .WithImage("suicuneCharm.png")
+                    .SetEffects(SStack("Spicune", 4))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeCake").targetConstraints[1])
+                    .WithTitle("Suicune Charm")
+                    .WithText("Start with <4><keyword=spicune>")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
+                    .Create("CardUpgradeResist")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(2)
+                    .WithImage("latiasCharm.png")
+                    .SetTraits(TStack("Resist", 1))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .WithTitle("Latias Charm")
+                    .WithText("Gain <keyword=resist> <1>")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeTaunt")
-                    .WithTier(0)
+                    .WithTier(1)
                     .WithImage("shieldonCharm.png")
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetTraits(TStack("Taunt", 1))
@@ -3729,10 +3835,10 @@ namespace Pokefrost
 
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
-                    .CreateCharm("CardUpgradeCurse")
-                    .WithTier(3)
-                    .WithImage("darkraiCharm.png")
+                    .Create("CardUpgradeCurse")
                     .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(2)
+                    .WithImage("darkraiCharm.png")
                     .SetEffects(SStack("FrenzyCurse", 1))
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeFrenzyConsume").targetConstraints)
                     .WithTitle("Darkrai Charm")
@@ -3742,7 +3848,7 @@ namespace Pokefrost
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeTyrunt")
-                    .WithTier(2)
+                    .WithTier(1)
                     .WithImage("tyruntCharm.png")
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetTraits(TStack("Wild", 1))
@@ -3756,7 +3862,7 @@ namespace Pokefrost
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeRevive")
-                    .WithTier(2)
+                    .WithTier(1)
                     .WithImage("reviveCharm.png")
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetEffects(SStack("Revive", 1))
@@ -4069,6 +4175,7 @@ namespace Pokefrost
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnCampaignLoaded += CountNatus;
             Events.OnMapNodeReveal += NatuForsee;
+            Events.OnEntityCreated += FixImage;
 
             //Events.OnEntityCountDown += TauntedFailsafe;
 
@@ -4134,6 +4241,7 @@ namespace Pokefrost
             Events.OnSceneLoaded -= BattleFuse;
             Events.OnCampaignLoaded -= CountNatus;
             Events.OnMapNodeReveal -= NatuForsee;
+            Events.OnEntityCreated -= FixImage;
             //Events.OnEntitySelect -= NatuForsee;
             //Events.OnEntityCountDown -= TauntedFailsafe;
             CardManager.cardIcons["overshroom"].Destroy();
@@ -4529,6 +4637,14 @@ namespace Pokefrost
             if (scene.name == "Campaign")
             {
                 GameObject.Find("Systems").AddComponent<CombineCardInBattleSystem>();
+            }
+        }
+
+        private void FixImage(Entity entity)
+        {
+            if (entity.display is Card card && !card.hasScriptableImage) //These cards should use the static image
+            {
+                card.mainImage.gameObject.SetActive(true);               //And this line turns them on
             }
         }
 

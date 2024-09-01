@@ -175,6 +175,7 @@ namespace Pokefrost
             KeyCollection.SetString(data.name + "_desc", desc);
             data.descKey = KeyCollection.GetString(data.name + "_desc");
             data.ModAdded = mod;
+            data.showName = true;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", data);
             return data;
         }
