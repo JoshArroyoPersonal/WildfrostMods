@@ -4248,7 +4248,7 @@ namespace Pokefrost
         private void CreateBattles()
         {
 
-            /*new BattleDataEditor(this, "Darkrai")
+            new BattleDataEditor(this, "Darkrai")
                 .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
                 .SetNameRef("Cursed Nightmares")
                 .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
@@ -4259,7 +4259,7 @@ namespace Pokefrost
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
                 .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeBattle")
-                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
+                .AddBattleToLoader().RegisterBattle(6); //Loads and makes it the mandatory first fight
 
             new BattleDataEditor(this, "Lati Twins")
                 .SetSprite(this.ImagePath("smeargleCharm.png").ToSprite())
@@ -4272,7 +4272,7 @@ namespace Pokefrost
                 .StartWavePoolData(2, "Lati!")
                 .ConstructWaves(4, 9, "SLAO")
                 .GiveMiniBossesCharms(new string[2] { "enemy_latias", "enemy_latios"}, "CardUpgradeBattle")
-                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight*/
+                .AddBattleToLoader().RegisterBattle(6); //Loads and makes it the mandatory first fight
 
             BattleDataEditor hooh = new BattleDataEditor(this, "Ho-Oh")
                 .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
@@ -4286,7 +4286,7 @@ namespace Pokefrost
                 .ConstructWaves(2, 9, "PU", "GL", "Y")
                 .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeBattle")
                 .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
-                .AddBattleToLoader().RegisterBattle(6, mandatory: true); //Loads and makes it the mandatory first fight
+                .AddBattleToLoader().RegisterBattle(6); //Loads and makes it the mandatory first fight
         }
 
         private void SceneLoaded(Scene scene)
