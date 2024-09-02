@@ -30,7 +30,7 @@ namespace Pokefrost
             ModAdded = mod;
             textInsert = "Who knows what this does.";
             applyFormat = "";
-            type = "evolve1";
+            type = "evolve2";
         }
 
 
@@ -51,7 +51,10 @@ namespace Pokefrost
 
         public virtual void FindDeckCopy(Action<CardData, CardData.StatusEffectStacks> action)
         {
+            if (target.data.cardType.name == "Summoned") { return; }
+
             CardData bestCandidate = null;
+
             foreach(CardData card in References.Player.data.inventory.deck)
             {
                 if (card.id == target.data.id)
@@ -81,7 +84,14 @@ namespace Pokefrost
 
         public virtual bool ReadyToEvolve(CardData cardData)
         {
-            return true;
+            foreach (CardData.StatusEffectStacks statuses in cardData.startWithEffects)
+            {
+                if (statuses.data.name == this.name)
+                {
+                    return (statuses.count == 0);
+                }
+            }
+            return false;
         }
 
         public static IEnumerator EvolutionPopUpAlt(WildfrostMod mod)
@@ -175,6 +185,51 @@ namespace Pokefrost
             //pokemonEvolvedIntoLastBattle.Add(evolutionCardName);
             EvolutionPopUp.evolvedPokemonLastBattle.Add(preEvo);
             EvolutionPopUp.pokemonEvolvedIntoLastBattle.Add(card.entity.data);
+        }
+
+        public static void CheckEvolve()
+        {
+            if (References.Battle.winner != References.Player)
+            {
+                return;
+            }
+
+            CheckEvolve<StatusEffectEvolve>(References.PlayerData.inventory.deck, "evolve2", (s, c) => s.ReadyToEvolve(c));
+        }
+
+        protected static void CheckEvolve<T>(CardDataList list, string evolveType, Func<T, CardData, bool> condition) where T : StatusEffectEvolve
+        {
+            List<CardData> slateForEvolution = new List<CardData>();
+            List<StatusEffectEvolve> evolveEffects = new List<StatusEffectEvolve>();
+            foreach (CardData card in list)
+            {
+                foreach (CardData.StatusEffectStacks s in card.startWithEffects)
+                {
+                    if (s.data.type == evolveType)
+                    {
+                        if (condition( (T) s.data, card))
+                        {
+                            Debug.Log("[Pokefrost] Ready for evolution!");
+                            slateForEvolution.Add(card);
+                            evolveEffects.Add(((StatusEffectEvolve)s.data));
+                        }
+                        else
+                        {
+                            Debug.Log("[Pokefrost] Conditions not met.");
+                        }
+                    }
+                }
+            }
+            int count = slateForEvolution.Count;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (References.Player.data.inventory.deck.RemoveWhere((CardData a) => slateForEvolution[i].id == a.id))
+                {
+                    Debug.Log("[" + slateForEvolution[i].name + "] Removed From [" + References.Player.name + "] deck");
+                    evolveEffects[i].Evolve(Pokefrost.instance, slateForEvolution[i]);
+                }
+            }
         }
     }
 }

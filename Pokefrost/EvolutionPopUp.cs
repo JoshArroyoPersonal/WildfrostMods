@@ -15,9 +15,10 @@ namespace Pokefrost
     internal static class EvolutionPopUp
     {
         public static List<CardData> evolvedPokemonLastBattle = new List<CardData>(3);
-
         public static List<CardData> pokemonEvolvedIntoLastBattle = new List<CardData>(3);
+        private static bool WaitingToPopUp = false;
 
+        //Unused
         public static List<GameObject> silhouettes = new List<GameObject>();
 
         public static string EvoTitleKey1A = "websiteofsites.wildfrost.pokefrost.evo_title1a";
@@ -55,6 +56,16 @@ namespace Pokefrost
         {
             Console.commands.Add(new CommandFillEvolves());
             Console.commands.Add(new CommandFillEvolveDebug1());
+        }
+
+        public static IEnumerator DelayedRun()
+        {
+            if (WaitingToPopUp) { yield break; }
+
+            WaitingToPopUp = true;
+            yield return new WaitUntil(() => SceneManager.IsLoaded("MapNew"));
+            yield return Run();
+            WaitingToPopUp = false;
         }
 
         public static IEnumerator Run()

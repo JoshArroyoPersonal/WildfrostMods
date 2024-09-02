@@ -452,7 +452,7 @@
     <Compile Include="StatusEffectDuplicateEffect.cs" />
     <Compile Include="StatusEffectEvolveFromNode.cs" />
     <Compile Include="StatusEffectEvolveKirlia.cs" />
-    <Compile Include="StatusEffectEvolveNatu.cs" />
+    <Compile Include="StatusEffectEvolveFromCardPickup.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
     <Compile Include="StatusEffectFalseSwipe.cs" />
     <Compile Include="StatusEffectInstantAddDeck.cs" />

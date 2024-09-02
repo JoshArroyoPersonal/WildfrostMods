@@ -35,12 +35,17 @@ namespace Pokefrost
                     if (node.type.name == "CampaignNodeItem" || node.type.name == "CampaignNodeCurseItems")
                     {
                         string[] collection = node.data.Get<SaveCollection<string>>("cards").collection;
-                        target.SetCustomData("Future Sight ID", node.id);
-                        target.SetCustomData("Future Sight", collection.RandomItem());
-                        target.TryGetCustomData("Future Sight", out string value, "");
-                        Debug.Log($"[Pokefrost] Foresaw {value}");
-                        ids.Add(node.id);
-                        break;
+                        foreach(string item in collection.InRandomOrder())
+                        {
+                            if (Pokefrost.rotomAppliances.Contains(item)) { continue; }
+                            target.SetCustomData("Future Sight", item);
+                            target.TryGetCustomData("Future Sight", out string value, "");
+                            Debug.Log($"[Pokefrost] Foresaw {value}");
+                            target.SetCustomData("Future Sight ID", node.id);
+                            ids.Add(node.id);
+                            break;
+                        }
+                        
                     }
                     if (node.type.name == "CampaignNodeShop")
                     {
