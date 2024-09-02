@@ -203,22 +203,26 @@ namespace Pokefrost
             List<StatusEffectEvolve> evolveEffects = new List<StatusEffectEvolve>();
             foreach (CardData card in list)
             {
-                foreach (CardData.StatusEffectStacks s in card.startWithEffects)
+                if (card.cardType.name != "Leader")
                 {
-                    if (s.data.type == evolveType)
+                    foreach (CardData.StatusEffectStacks s in card.startWithEffects)
                     {
-                        if (condition( (T) s.data, card))
+                        if (s.data.type == evolveType)
                         {
-                            Debug.Log("[Pokefrost] Ready for evolution!");
-                            slateForEvolution.Add(card);
-                            evolveEffects.Add(((StatusEffectEvolve)s.data));
-                        }
-                        else
-                        {
-                            Debug.Log("[Pokefrost] Conditions not met.");
+                            if (condition((T)s.data, card))
+                            {
+                                Debug.Log("[Pokefrost] Ready for evolution!");
+                                slateForEvolution.Add(card);
+                                evolveEffects.Add(((StatusEffectEvolve)s.data));
+                            }
+                            else
+                            {
+                                Debug.Log("[Pokefrost] Conditions not met.");
+                            }
                         }
                     }
                 }
+
             }
             int count = slateForEvolution.Count;
 
