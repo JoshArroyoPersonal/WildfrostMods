@@ -33,8 +33,8 @@ namespace Pokefrost
     public class Pokefrost : WildfrostMod
     {
         public static string[] basicPool = new string[] {"spheal", "croagunk", "toxicroak", "salazzle", "magcargo", "kirlia", "gardevoir", "gallade" };
-        public static string[] magicPool = new string[] { "cubone", "marowak", "alolanmarowak", "carvanha", "sharpedo", "duskull", "dusclops", "litwick", "lampent", "chandelure" };
-        public static string[] clunkPool = new string[] { "weezing", "hippowdon", "trubbish", "garbodor" };
+        public static string[] magicPool = new string[] { "cubone", "marowak", "alolanmarowak", "muk", "carvanha", "sharpedo", "duskull", "dusclops", "litwick", "lampent", "chandelure" };
+        public static string[] clunkPool = new string[] { "weezing", "aron", "lairon", "aggron", "hippowdon", "trubbish", "garbodor" };
 
         internal List<CardDataBuilder> list;
         internal List<CardUpgradeDataBuilder> charmlist;
@@ -1669,6 +1669,12 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
+            StatusEffectApplyXWhenUnitIsKilled dieBoost = Ext.CreateStatus<StatusEffectApplyXWhenUnitIsKilled>("When Unit Is Killed Boost Effects", "When an ally or enemy is killed, boost effects")
+                .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            dieBoost.enemy = true;
+            statusList.Add(dieBoost);
+
             StatusEffectWhileActiveX reduceattackdescrp = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Reduce Attack To Enemies", "While active, reduce <keyword=attack> of all enemies by <{a}>", boostable: true)
                 .ApplyX(Get<StatusEffectData>("Ongoing Reduce Attack"), StatusEffectApplyX.ApplyToFlags.Enemies)
                 .Register(this);
@@ -2028,6 +2034,16 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(burnStream);
 
+            StatusEffectApplyXOnCardPlayed incCounter2 = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Increase Targets Counter", "Increase target's <keyword=counter> by <{a}>", boostable: true)
+                .ApplyX(Get<StatusEffectData>("Increase Max Counter"), StatusEffectApplyX.ApplyToFlags.Target)
+                .Register(this);
+            statusList.Add(incCounter2);
+
+            StatusEffectApplyXOnCardPlayed boostRight = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Boost Effects of Rightmost Card", "Boost the effects of the rightmost card in hand by <{a}>", boostable: true)
+                .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.RightCardInHand)
+                .Register(this);
+            statusList.Add(boostRight);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -2307,9 +2323,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("slowbro", "Slowbro")
-                    .SetStats(10, 1, 4)
+                    .SetStats(10, 1, 5)
                     .SetSprites("slowbro.png", "slowbroBG.png")
-                    .SStartEffects(("On Card Played Increase Targets and Own Max Counter",1))
+                    .SStartEffects(("On Card Played Increase Targets Counter", 1))
                 );
 
             list.Add(
@@ -2483,9 +2499,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("jolteon", "Jolteon")
-                    .SetStats(4, 2, 3)
+                    .SetStats(4, 3, 3)
                     .SetSprites("jolteon.png", "jolteonBG.png")
-                    .SStartEffects(("MultiHit", 1))
+                    .SAttackEffects(("Jolted", 1))
                     .STraits(("Draw", 1))
                 );
 
@@ -2519,6 +2535,7 @@ namespace Pokefrost
                     .SetStats(5, 2, 5)
                     .SetSprites("furret.png", "furretBG.png")
                     .SStartEffects(("On Turn Escape To Self", 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -2532,6 +2549,7 @@ namespace Pokefrost
                     {
                         c.createScripts = new CardScript[] { ScriptableObject.CreateInstance<CardScriptForsee>() };
                     })
+                    .AddPool()
                 );
 
             list.Add(
@@ -2554,9 +2572,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("espeon", "Espeon")
-                    .SetStats(3, 3, 3)
+                    .SetStats(4, 3, 3)
                     .SetSprites("espeon.png", "espeonBG.png")
-                    .SStartEffects(("Give Cards In Hand Juice", 1))
+                    .SStartEffects(("On Card Played Boost Effects of Rightmost Card", 1))
                 );
 
             list.Add(
@@ -2809,6 +2827,7 @@ namespace Pokefrost
                     .SetSprites("aron.png", "aronBG.png")
                     .STraits(("Recycle",1))
                     .SStartEffects(("Evolve Aron", 10), ("Fidget Button", 1))
+                    .AddPool("ClunkUnitPool")
                 );
 
             list.Add(
@@ -2969,6 +2988,16 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("ambipom", "Ambipom")
+                    .SetStats(6, 2, 3)
+                    .SetSprites("ambipom.png", "ambipomBG.png")
+                    .SStartEffects(("When Unit Is Killed Boost Effects", 1), ("MultiHit", 1))
+                    .STraits(("Pickup", 2))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("honchkrow", "Honchkrow", idleAnim: "SquishAnimationProfile")
                     .SetStats(7, 4, 4)
                     .SetSprites("honchkrow.png", "honchkrowBG.png")
@@ -3027,7 +3056,7 @@ namespace Pokefrost
                     .SetSprites("lumineon.png", "lumineonBG.png")
                     .SStartEffects(("While Active Unlimited Lumin", 1))
                     .STraits(("Salvage", 1))
-                    .AddPool("GeneralUnitPool")
+                    .AddPool()
                 );
 
             /*list.Add(
