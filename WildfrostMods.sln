@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestMod", "TestMod\TestMod.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Robo", "Robo\Robo.csproj", "{8C506072-D31C-4B47-8846-341966706EA2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test2", "Test2\Test2.csproj", "{FB669BE1-43B4-4A96-B89A-915ABC673680}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8C506072-D31C-4B47-8846-341966706EA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8C506072-D31C-4B47-8846-341966706EA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8C506072-D31C-4B47-8846-341966706EA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB669BE1-43B4-4A96-B89A-915ABC673680}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB669BE1-43B4-4A96-B89A-915ABC673680}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB669BE1-43B4-4A96-B89A-915ABC673680}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB669BE1-43B4-4A96-B89A-915ABC673680}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
