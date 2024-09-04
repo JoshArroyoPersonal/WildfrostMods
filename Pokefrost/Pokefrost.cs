@@ -1891,7 +1891,7 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(snowstream);
 
-            StatusEffectAddAttackEffects snowPunch = Ext.CreateStatus<StatusEffectAddAttackEffects>("All Hits Apply Snow", "While active, everyone applies <{a}><keyword=snow>", boostable:true)
+            StatusEffectAddAttackEffects snowPunch = Ext.CreateStatus<StatusEffectAddAttackEffects>("All Hits Apply Snow", boostable:true)
                 .Register(this);
             snowPunch.effectToApply = Get<StatusEffectData>("Snow");
             statusList.Add(snowPunch);
@@ -2043,6 +2043,13 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.RightCardInHand)
                 .Register(this);
             statusList.Add(boostRight);
+
+            StatusEffectWhileActiveX snowImmuneAllies = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Allies Have ImmuneToSnow", "While active, allies <keyword=immunetosnow>")
+                .ApplyX(Get<StatusEffectData>("ImmuneToSnow"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+            statusList.Add(snowImmuneAllies);
+
+            Get<KeywordData>("immunetosnow").showName = true;
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
@@ -3002,7 +3009,7 @@ namespace Pokefrost
                     .SetStats(7, 4, 4)
                     .SetSprites("honchkrow.png", "honchkrowBG.png")
                     .STraits(("Pluck", 1))
-                    .SStartEffects(("Buff Card In Deck On Kill", 1))
+                    .SStartEffects(("Buff Card In Deck On Kill", 2))
                 );
 
             list.Add(
@@ -3059,20 +3066,21 @@ namespace Pokefrost
                     .AddPool()
                 );
 
-            /*list.Add(
+            list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("snover", "Snover")
-                    .SetStats(6, 4, 4)
+                    .SetStats(8, 4, 4)
                     .SetSprites("snover.png", "snoverBG.png")
-                );*/
+                    .SStartEffects(("While Active Snowstorm", 1), ("While Active All Hits Apply Snow", 1), ("ImmuneToSnow", 1))
+                    .AddPool("SnowUnitPool")
+                );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("abomasnow", "Abomasnow")
                     .SetStats(10, 4, 4)
                     .SetSprites("abomasnow.png", "abomasnowBG.png")
-                    .SStartEffects(("While Active Snowstorm", 1), ("While Active All Hits Apply Snow", 1), ("ImmuneToSnow", 1))
-                    .AddPool("SnowUnitPool")
+                    .SStartEffects(("While Active Snowstorm", 1), ("While Active All Hits Apply Snow", 1), ("ImmuneToSnow", 1), ("While Active Allies Have ImmuneToSnow", 1))
                 );
 
             list.Add(
@@ -3136,41 +3144,41 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("rotomheat", "Rotom Heat", bloodProfile: "Blood Profile Black")
-                    .SetStats(5, 5, 4)
+                    .SetStats(8, 5, 4)
                     .SetSprites("rotomheat.png", "rotomBG.png")
-                    .SStartEffects(("On Card Played Increase Attack Of Cards In Hand", 3))
+                    .SStartEffects(("On Card Played Increase Attack Of Cards In Hand", 3), ("Jolted", 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("rotomwash", "Rotom Wash", bloodProfile: "Blood Profile Black")
-                    .SetStats(10, 5, 4)
+                    .SetStats(10, 4, 4)
                     .SetSprites("rotomwash.png", "rotomBG.png")
-                    .SStartEffects(("When Hit Cleanse Team", 1))
+                    .SStartEffects(("When Hit Cleanse Team", 1), ("Jolted", 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("rotomfrost", "Rotom Frost", bloodProfile: "Blood Profile Black")
-                    .SetStats(10, 2, 4)
+                    .SetStats(12, 3, 4)
                     .SetSprites("rotomfrost.png", "rotomBG.png")
-                    .SStartEffects(("When Hit Apply Frost To RandomEnemy", 3))
+                    .SStartEffects(("When Hit Apply Frost To RandomEnemy", 3), ("Jolted", 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("rotomfan", "Rotom Fan", bloodProfile: "Blood Profile Black")
-                    .SetStats(6, 4, 4)
+                    .SetStats(9, 4, 4)
                     .SetSprites("rotomfan.png", "rotomBG.png")
-                    .SStartEffects(("Redraw Cards", 1))
+                    .SStartEffects(("Redraw Cards", 1), ("Jolted", 1))
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("rotommow", "Rotom Mow", idleAnim: "ShakeAnimationProfile", bloodProfile: "Blood Profile Black")
-                    .SetStats(7, 3, 0)
+                    .SetStats(9, 3, 0)
                     .SetSprites("rotommow.png", "rotomBG.png")
-                    .SStartEffects(("Trigger When Card Destroyed", 1))
+                    .SStartEffects(("Trigger When Card Destroyed", 1), ("Jolted", 1))
                 );
 
             list.Add(
