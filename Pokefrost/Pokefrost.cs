@@ -1825,19 +1825,21 @@ namespace Pokefrost
 
             KeywordData chainkey = this.CreateBasicKeyword("conduit", "Conduit", "Does an effect whenever anyone takes damage from <keyword=jolted>");
             chainkey.showName = true;
-            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to a random enemy")
+            StatusEffectApplyXWhenAnyoneTakesDamage joltChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to a random enemy")
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.RandomEnemy)
                 .Register(this);
             joltChain.targetDamageType = "jolt";
+            joltChain.applyEqualAmount = true;
             statusList.Add(joltChain);
 
-            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage enemyChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To Front Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to front enemy")
+            StatusEffectApplyXWhenAnyoneTakesDamage enemyChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To Front Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to front enemy")
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
             enemyChain.targetDamageType = "jolt";
+            enemyChain.applyEqualAmount = true;
             statusList.Add(joltChain);
 
-            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltTrigger = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Trigger", "<keyword=conduit>: Trigger")
+            StatusEffectApplyXWhenAnyoneTakesDamage joltTrigger = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamage>("When Anyone Takes Jolted Damage Trigger", "<keyword=conduit>: Trigger")
                 .ApplyX(Get<StatusEffectData>("Trigger (High Prio)"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             joltTrigger.targetDamageType = "jolt";
@@ -2050,6 +2052,11 @@ namespace Pokefrost
             statusList.Add(snowImmuneAllies);
 
             Get<KeywordData>("immunetosnow").showName = true;
+
+            StatusEffectApplyXOnCardPlayed purify = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Cleanse Targets", "<keyword=cleanse> targets")
+                .ApplyX(Get<StatusEffectData>("Cleanse"), StatusEffectApplyX.ApplyToFlags.Target)
+                .Register(this);
+            statusList.Add(purify);
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
@@ -3535,7 +3542,7 @@ namespace Pokefrost
                     .SetStats(100, 5, 5)
                     .SetSprites("hooh.png", "hoohBG.png")
                     .WithCardType("Boss")
-                    .SStartEffects(("Give Revive To Allies",1), ("Revive", 1), ("ImmuneToSnow", 1))
+                    .SStartEffects(("Give Revive To Allies",1), ("Revive", 1), ("ImmuneToSnow", 1), ("On Card Played Cleanse Targets", 1))
                     .STraits(("Backline",1))
                     .WithValue(50)
                 );
