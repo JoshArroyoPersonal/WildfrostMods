@@ -15,7 +15,7 @@ namespace Pokefrost
         {
             if (target.enabled && target.alive && hit.Offensive && hit.damageType == targetDamageType)
             {
-                damageAmount = hit.damageDealt;
+                damageAmount = hit.damage + hit.damageBlocked;
                 return Battle.IsOnBoard(target);
             }
 

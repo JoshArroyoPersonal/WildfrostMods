@@ -1825,18 +1825,16 @@ namespace Pokefrost
 
             KeywordData chainkey = this.CreateBasicKeyword("conduit", "Conduit", "Does an effect whenever anyone takes damage from <keyword=jolted>");
             chainkey.showName = true;
-            StatusEffectApplyXWhenAnyoneTakesDamage joltChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to a random enemy")
+            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage joltChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to a random enemy")
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.RandomEnemy)
                 .Register(this);
             joltChain.targetDamageType = "jolt";
-            joltChain.applyEqualAmount = true;
             statusList.Add(joltChain);
 
-            StatusEffectApplyXWhenAnyoneTakesDamage enemyChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To Front Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to front enemy")
+            StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage enemyChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To Front Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to front enemy")
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
             enemyChain.targetDamageType = "jolt";
-            enemyChain.applyEqualAmount = true;
             statusList.Add(joltChain);
 
             StatusEffectApplyXWhenAnyoneTakesDamage joltTrigger = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamage>("When Anyone Takes Jolted Damage Trigger", "<keyword=conduit>: Trigger")
@@ -2687,7 +2685,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("raikou", "Raikou")
-                    .SetStats(9, 0, 4)
+                    .SetStats(9, 2, 3)
                     .SetSprites("raikou.png", "raikouBG.png")
                     .SAttackEffects(("Jolted", 2))
                     .SStartEffects(("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", 1))
@@ -2703,7 +2701,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("entei", "Entei")
-                    .SetStats(8, 0, 3)
+                    .SetStats(5, 1, 4)
                     .SetSprites("entei.png", "enteiBG.png")
                     .SAttackEffects(("Burning", 3))
                     .SStartEffects(("Hits All NonBurning Targets", 1))
@@ -2719,7 +2717,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("suicune", "Suicune")
-                    .SetStats(8, 0, 3)
+                    .SetStats(7, 1, 5)
                     .SetSprites("suicune.png", "suicuneBG.png")
                     .SStartEffects(("Gain Juice On Hit", 1), ("Give Your Juice To All", 1))
                     .WithCardType("Leader")
@@ -2939,7 +2937,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("latias", "Latias")
-                    .SetStats(8, 0, 3)
+                    .SetStats(5, 2, 3)
                     .SetSprites("latias.png", "latiasBG.png")
                     .SStartEffects(("When Hit Transfer Resist to Random Ally", 1), ("Temp Resist", 1))
                     .WithCardType("Leader")
@@ -2954,7 +2952,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("latios", "Latios")
-                    .SetStats(8, 0, 3)
+                    .SetStats(5, 2, 3)
                     .SetSprites("latios.png", "latiosBG.png")
                     .SStartEffects(("On Card Played Transfer Attack to Random Ally", 5), ("Ongoing Increase Attack", 5))
                     .WithCardType("Leader")
@@ -3206,7 +3204,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("darkrai", "Darkrai")
-                    .SetStats(6, 3, 4)
+                    .SetStats(7, 3, 3)
                     .SetSprites("darkrai.png", "darkraiBG.png")
                     .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1), SStack("Frenzy Equal To Curses In Hand", 1))
                     .WithCardType("Leader")
