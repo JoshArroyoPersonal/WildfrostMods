@@ -53,9 +53,18 @@ namespace Pokefrost
 
         internal static GameObject pokefrostUI;
 
+        public static Sprite sprite;
+
         public Pokefrost(string modDirectory) : base(modDirectory)
         {
             instance = this;
+        }
+
+        public Sprite ReplaceSprite(uint ex, Vector4 v)
+        {
+            Texture2D tex = ImagePath("Panel.png").ToTex();
+            sprite = Sprite.Create(tex, new Rect(50 , 50 , tex.width - 50, tex.height - 50), new Vector2(0.5f, 0.5f), 100, ex, SpriteMeshType.FullRect, v);
+            return sprite;
         }
 
         private void CreateModAssets()
@@ -996,7 +1005,7 @@ namespace Pokefrost
             StatusEffectXActsLikeShell snowActsLikeShell = ScriptableObject.CreateInstance<StatusEffectXActsLikeShell>();
             snowActsLikeShell.name = "Snow Acts Like Shell";
             snowActsLikeShell.targetType = "snow";
-            snowActsLikeShell.imagePath = ImagePath("shnell.png");
+            snowActsLikeShell.sprite = ImagePath("shnell.png").ToSprite();
             collection.SetString(snowActsLikeShell.name + "_text", "Uses <keyword=snow> as <keyword=shell>");
             snowActsLikeShell.textKey = collection.GetString(snowActsLikeShell.name + "_text");
             snowActsLikeShell.ModAdded = this;
@@ -2150,8 +2159,8 @@ namespace Pokefrost
 
             StatusEffectEvolveSlowpoke ev19 = ScriptableObject.CreateInstance<StatusEffectEvolveSlowpoke>();
             ev19.Autofill("Evolve Slowpoke", "<keyword=evolve>: Visit a <Blingsnail Cave> with or without <sprite name=crown>", this);
-            ev19.evolveUncrowned = "websiteofsites.wildfrost.pokefrost.slowbro";
-            ev19.evolveCrowned = "websiteofsites.wildfrost.pokefrost.slowking";
+            ev19.evolveUncrowned = "slowbro";
+            ev19.evolveCrowned = "slowking";
             ev19.targetNodeName = "Blingsnail Cave";
             ev19.Confirm();
             statusList.Add(ev19);
@@ -3801,6 +3810,55 @@ namespace Pokefrost
             preLoaded = true;
         }
 
+        public static List<GameModifierDataBuilder> bells = new List<GameModifierDataBuilder>();
+
+        private void CreateModAssetsBells()
+        {
+            bells.Add(
+                new GameModifierDataBuilder(this)
+                .Create("BlessingSpicune")
+                .WithTitle("Suicune Bell of Juice")
+                .WithDescription("Give <1><keyword=spicune> to <2> random cards in deck. When <keyword=spicune> lost, apply <keyword=spicune> to a random card in deck")
+                .WithRingSfxEvent(Get<GameModifierData>("DoubleBlingsFromCombos").ringSfxEvent)
+                .WithSystemsToAdd("BounceJuiceModifierSystem")
+                .SubscribeToAfterAllBuildEvent(
+                    (data) =>
+                    {
+                        //bell sprite
+                        Texture2D tex = ImagePath("suicuneBell.png").ToTex();
+                        data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 1f), 314);
+
+                        //dinger sprite
+                        Texture2D tex2 = ImagePath("suicuneDinger.png").ToTex();
+                        data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
+
+                        //The deck script
+                        ScriptRunScriptsOnDeckAlt script = ScriptableObject.CreateInstance<ScriptRunScriptsOnDeckAlt>();
+                            //The card script in the deck script
+                            CardScriptAddPassiveEffect subScript = ScriptableObject.CreateInstance<CardScriptAddPassiveEffect>();
+                            subScript.effect = Get<StatusEffectData>("Spicune");
+                            subScript.countRange = new Vector2Int(1, 1);
+                            //Target constraints
+                            TargetConstraintCanBeBoosted boostable = ScriptableObject.CreateInstance<TargetConstraintCanBeBoosted>();
+                            TargetConstraintHasStatus hasStatus = ScriptableObject.CreateInstance<TargetConstraintHasStatus>();
+                            hasStatus.status = subScript.effect;
+                            hasStatus.not = true;
+                        script.scripts = new CardScript[] { subScript };
+                        script.constraints = new TargetConstraint[] { boostable, hasStatus };
+                        script.countRange = new Vector2Int(2, 2);
+                        data.startScripts = new Script[] { script };
+
+                        RewardPool basicBells = Extensions.GetRewardPool("GeneralModifierPool");
+                        basicBells.list.Add(data);
+                        basicBells.list.Add(data);
+                        basicBells.list.Add(data);
+                        basicBells.list.Add(data);
+                        basicBells.list.Add(data);
+                        basicBells.list.Add(data);
+                    })
+                );
+        }
+
         private void CreateEvents()
         {
             /*CampaignNodeTypeBetterEvent cn = ScriptableObject.CreateInstance<CampaignNodeTypeBetterEvent>();
@@ -3992,9 +4050,10 @@ namespace Pokefrost
             if (!preLoaded)
             {
                 CreateModAssetsCards();
+                CreateModAssetsCharms();
+                CreateModAssetsBells();
                 AddGreetings();
-            }
-            CreateModAssetsCharms();
+            }     
             CreateEvents();
             MiscLocalizationStrings();
             base.Load();
@@ -4002,13 +4061,14 @@ namespace Pokefrost
             //Events.OnSceneLoaded += PokemonEdits;
             
             Events.OnBattleEnd += StatusEffectEvolve.CheckEvolve;
-            Events.PostBattle += DisplayEvolutions;
+            //Events.PostBattle += DisplayEvolutions;
             Events.OnEntityOffered += GetShiny;
             Events.OnCampaignStart += ShinyPet;
             Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             Events.OnSceneLoaded += BattleFuse;
             Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
+            //Events.OnCampaignLoadPreset += RollForEvent;
 
 
             //Pokemon specific events
@@ -4076,6 +4136,7 @@ namespace Pokefrost
             Events.OnCampaignLoaded -= CountNatus;
             Events.OnMapNodeReveal -= NatuForsee;
             Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
+            //Events.OnCampaignLoadPreset -= RollForEvent;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
             RemoveFromPools();
@@ -4084,6 +4145,63 @@ namespace Pokefrost
             Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
+        }
+
+        public static bool added = false;
+        static string[] preset;
+        private void RollForEvent(ref string[] lines)
+        {
+            int width = lines.Length;
+            int length = lines[0].Length;
+            preset = lines;
+            Debug.Log($"[Pokefrost] {width} {length}");
+            for (int i = 0; i < length; i++)
+            {
+                if (lines[0][i] == 'B' && lines[width - 1].Length > i && lines[width - 1][i] == '0')
+                {
+                    lines[0] = lines[0].Insert(i + 1, "b");
+                    lines[width-2] = lines[width - 2].Insert(i + 1, "6");
+                    lines[width-1] = lines[width - 1].Insert(i + 1, "2");
+                    for(int j=1; j<width-2; j++)
+                    {
+                        lines[j] = lines[j].Insert(i + 1, " ");
+                    }
+                    added = true;
+                    Debug.Log("[Pokefrost] Inserted");
+                    return;
+                }
+            }
+        }
+
+        private void EraseNode()
+        {
+            CampaignNode bossNode = null;
+            CampaignNode erasedNode = null;
+            foreach(CampaignNode node in Campaign.instance.nodes)
+            {
+                if (bossNode == null && node.type.name == "CampaignNodeBoss" && node.areaIndex == 0)
+                {
+                    Debug.Log("[Pokefrost] Found boss node");
+                    bossNode = node;
+                    continue;
+                }
+                if (bossNode != null)
+                {
+                    if (node.type.name == "CampaignNodeBattle")
+                    {
+                        Debug.Log("[Pokefrost] Found battle node");
+                        bossNode.connections = node.connections;
+                        node.connections = new List<CampaignNode.Connection>();
+                        break;
+                        //node.connections.Do((n) => Campaign.GetNode(n.otherId).connectedTo = bossNode.id);
+                    }
+                }
+            }
+
+            if (erasedNode != null)
+            {
+                Campaign.instance.nodes.Remove(erasedNode);
+            }
         }
 
         private void CountNatus()
@@ -4444,7 +4562,7 @@ namespace Pokefrost
         {
             if (EvolutionPopUp.evolvedPokemonLastBattle.Count > 0)
             {
-                References.instance.StartCoroutine(EvolutionPopUp.Run());
+                References.instance.StartCoroutine(EvolutionPopUp.DelayedRun());
             }
         }
 
@@ -4484,6 +4602,7 @@ namespace Pokefrost
             {
                 case "CardData": return list.Cast<T>().ToList();
                 case "CardUpgradeData": return charmlist.Cast<T>().ToList();
+                case "GameModifierData": return bells.Cast<T>().ToList();
             }
 
             return base.AddAssets<T, Y>();
@@ -4780,6 +4899,26 @@ namespace Pokefrost
                     __instance.mentionedCards.Add(data2);
                 }
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(GameObjectExt), "AddComponentByName")]
+    class PatchAddComponent
+    {
+        static string assem => typeof(PatchAddComponent).Assembly.GetName().Name;
+        static string namesp => typeof(PatchAddComponent).Namespace;
+
+        static Component Postfix(Component __result, GameObject gameObject, string componentName)
+        {
+            if (__result == null)
+            {
+                Type type = Type.GetType(namesp + "." + componentName + "," + assem);
+                if (type != null)
+                {
+                    return gameObject.AddComponent(type);
+                }
+            }
+            return __result;
         }
     }
 }

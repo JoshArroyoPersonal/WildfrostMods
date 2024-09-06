@@ -30,7 +30,7 @@ namespace Pokefrost
 
         public override bool RunPostApplyStatusEvent(StatusEffectApply apply)
         {
-            if (!apply.applier || apply.applier == target || !apply.target || !apply.effectData || target.silenced) { return false; }
+            if (!apply.applier || apply.applier == target || !apply.target || !apply.effectData || apply.count - apply.effectData.temporary <= 0  || target.silenced) { return false; }
 
             List<Entity> candidates = GetTargets();
             if (!candidates.Contains(apply.target)) { return false; }
