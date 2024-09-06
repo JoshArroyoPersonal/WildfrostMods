@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.Events;
 
 namespace Pokefrost
 {
@@ -15,9 +16,12 @@ namespace Pokefrost
 
         public int amountToClear;
 
+        public static event UnityAction<Entity, int> OnJuiceCleared;
+
         public override void Init()
         {
-            base.OnActionPerformed += ActionPerformed;
+            base.OnCardPlayed += CardPlayed;
+            //base.OnActionPerformed += ActionPerformed;
         }
 
         public override bool RunStackEvent(int stacks)
@@ -33,6 +37,7 @@ namespace Pokefrost
             {
                 cardPlayed = true;
                 amountToClear = current;
+                
             }
 
             return false;
@@ -63,7 +68,16 @@ namespace Pokefrost
                 current -= amount2;
                 target.effectBonus -= amount2;
                 yield return CountDown(target, amount2);
+                if (count == 0)
+                {
+                    OnJuiceCleared?.Invoke(target, amount2);
+                }
             }
+        }
+
+        public IEnumerator CardPlayed(Entity entity, Entity[] targets)
+        {
+            yield return Clear(amountToClear);
         }
 
         public override bool RunEndEvent()

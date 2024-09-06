@@ -61,7 +61,7 @@ namespace Pokefrost
             PickupRoutine.Create(titleText.Replace("{0}",target.data.title));
             RewardPool[] pools = GetPools();
             constraint = AddressableLoader.Get<StatusEffectPickup>("StatusEffectData", name).constraint;
-            yield return PickupRoutine.AddRandomCards(Math.Min(15, GetAmount()), pools, constraint);
+            yield return PickupRoutine.AddRandomCards(Math.Min(cap, GetAmount()), pools, constraint);
             yield return PickupRoutine.Run();
             Debug.Log($"[Pokefrost] Ending {target.data.id}");
             yield return null;

@@ -70,6 +70,7 @@ namespace Pokefrost
 
         public static IEnumerator Run()
         {
+            if (evolvedPokemonLastBattle.Count == 0) { yield break; }
             stringTable = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
             eventProgress = 0;
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");

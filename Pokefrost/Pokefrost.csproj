@@ -430,6 +430,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BattleGenerationScriptHooh.cs" />
+    <Compile Include="BellClasses.cs" />
     <Compile Include="ButtonClasses.cs" />
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
     <Compile Include="CardScripts.cs" />

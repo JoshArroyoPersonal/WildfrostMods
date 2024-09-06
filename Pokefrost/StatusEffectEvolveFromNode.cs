@@ -110,12 +110,12 @@ namespace Pokefrost
 
     public class StatusEffectEvolveSlowpoke : StatusEffectEvolveFromNode
     {
-        public string evolveUncrowned = "websiteofsites.pokefrost.slowbro";
-        public string evolveCrowned = "websiteofsites.pokefrost.slowking";
+        public string evolveUncrowned = "slowbro";
+        public string evolveCrowned = "slowking";
         public override void Autofill(string n, string descrip, WildfrostMod mod)
         {
             base.Autofill(n, descrip, mod);
-            evolutionCardName = "websiteofsites.pokefrost.slowbro";
+            evolutionCardName = "slowking";
         }
 
         public override void Evolve(WildfrostMod mod, CardData preEvo)

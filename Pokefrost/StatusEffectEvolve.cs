@@ -141,7 +141,7 @@ namespace Pokefrost
         {
             CardData evolution = mod.Get<CardData>(evolutionCardName).Clone();
 
-            if (preEvo.mainSprite.name == "shiny")
+            if (preEvo.mainSprite?.name == "shiny")
             {
                 string[] splitName = evolutionCardName.Split('.');
                 string trueName = splitName[splitName.Length - 1];
@@ -165,6 +165,13 @@ namespace Pokefrost
                     References.PlayerData.inventory.upgrades.Add(mod.Get<CardUpgradeData>(upgrade.name).Clone());
                 }
             }
+
+            if (preEvo.cardType.name == "Leader")
+            {
+                evolution.cardType = preEvo.cardType;
+                evolution.SetCustomData("OverrideCardType", "Leader");
+            }
+
             Card card = CardManager.Get(evolution, null, References.Player, false, true);
             //Checks for renames
             CardData basePreEvo = mod.Get<CardData>(preEvo.name);
@@ -179,7 +186,14 @@ namespace Pokefrost
                 Events.InvokeRename(card.entity, preEvo.title);
             }
 
-            References.Player.data.inventory.deck.Add(card.entity.data);
+            if (preEvo.cardType.name == "Leader")
+            {
+                References.Player.data.inventory.deck.Insert(0, card.entity.data);
+            }
+            else
+            {
+                References.Player.data.inventory.deck.Add(card.entity.data);
+            }
             Events.InvokeEntityShowUnlocked(card.entity);
             //evolvedPokemonLastBattle.Add(preEvo.name);
             //pokemonEvolvedIntoLastBattle.Add(evolutionCardName);
