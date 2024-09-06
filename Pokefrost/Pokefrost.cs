@@ -69,6 +69,8 @@ namespace Pokefrost
 
         private void CreateModAssets()
         {
+            Ext.LoadPanels(this);
+
             pokefrostUI = new GameObject("PokefrostUI");
             pokefrostUI.SetActive(false);
             GameObject.DontDestroyOnLoad(pokefrostUI);
@@ -119,7 +121,9 @@ namespace Pokefrost
             shroomconstraint.status = Get<StatusEffectData>("Shroom");
 
             StringTable keycollection = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
-            KeywordData evolvekey = Get<KeywordData>("explode").InstantiateKeepName();
+
+            this.CreateBasicKeyword("Evolve", "Evolve", "If the condition is met at the end of battle evolve into a new Pokemon|Inactive while in reserve");
+            /*KeywordData evolvekey = Get<KeywordData>("explode").InstantiateKeepName();
             evolvekey.name = "Evolve";
             keycollection.SetString(evolvekey.name + "_text", "Evolve");
             evolvekey.titleKey = keycollection.GetString(evolvekey.name + "_text");
@@ -128,27 +132,32 @@ namespace Pokefrost
             evolvekey.panelSprite = this.ImagePath("panel.png").ToSprite();
             evolvekey.panelColor = new Color(1f, 1f, 1f);
             evolvekey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", evolvekey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", evolvekey);*/
 
-            KeywordData tauntkey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            KeywordData tauntkey = this.CreateBasicKeyword("Taunt", "Taunt", "All enemies are <keyword=taunted>");
+            /*KeywordData tauntkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             tauntkey.name = "Taunt";
             keycollection.SetString(tauntkey.name + "_text", "Taunt");
             tauntkey.titleKey = keycollection.GetString(tauntkey.name + "_text");
             keycollection.SetString(tauntkey.name + "_desc", "All enemies are <keyword=taunted>");
             tauntkey.descKey = keycollection.GetString(tauntkey.name + "_desc");
             tauntkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntkey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntkey);*/
 
-            KeywordData tauntedkey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            KeywordData tauntedkey = this.CreateBasicKeyword("Taunted", "Taunted", "Target only enemies with <keyword=taunt>|Hits them all!");
+            /*KeywordData tauntedkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             tauntedkey.name = "Taunted";
             keycollection.SetString(tauntedkey.name + "_text", "Taunted");
             tauntedkey.titleKey = keycollection.GetString(tauntedkey.name + "_text");
             keycollection.SetString(tauntedkey.name + "_desc", "Target only enemies with <keyword=taunt>|Hits them all!");
             tauntedkey.descKey = keycollection.GetString(tauntedkey.name + "_desc");
             tauntedkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntedkey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntedkey);*/
 
-            KeywordData randomkey = Get<KeywordData>("hit").InstantiateKeepName();
+            this.CreateBasicKeyword("Random Effect", "Random Effect", "Does a random effect from the listed options")
+                .ChangeColor(new Color(0, 0, 0), new Color(0.1f, 0.1f, 0.1f))
+                .ChangePanel(color: new Color(0.75f, 0.42f, 0.94f));
+            /*KeywordData randomkey = Get<KeywordData>("hit").InstantiateKeepName();
             randomkey.name = "Random Effect";
             keycollection.SetString(randomkey.name + "_text", "Random Effect");
             randomkey.titleKey = keycollection.GetString(randomkey.name + "_text");
@@ -158,13 +167,11 @@ namespace Pokefrost
             randomkey.bodyColour = new Color(0.1f, 0.1f, 0.1f);
             randomkey.titleColour = new Color(0, 0, 0);
             randomkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", randomkey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", randomkey);*/
 
-            KeywordData debuffKey = this.CreateBasicKeyword("debuffed", "Debuffed", "Has a negative status");
-            debuffKey.showName = true;
+            this.CreateBasicKeyword("debuffed", "Debuffed", "Has a negative status");
 
-            KeywordData legendKey = this.CreateBasicKeyword("legendary", "Legendary", "Counts as an additional leader|You lose when all your leaders die");
-            legendKey.showName = true;
+            this.CreateBasicKeyword("legendary", "Legendary", "Counts as an additional leader|You lose when all your leaders die");
 
             StatusEffectFreeTrait wilder = ScriptableObject.CreateInstance<StatusEffectFreeTrait>();
             wilder.trait = this.Get<TraitData>("Wild");
@@ -189,8 +196,11 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wilder);
             statusList.Add(wilder);
 
-            //Overshroom Start
-            GameObject gameObject = new GameObject("OvershroomIcon");
+            KeywordData overshroomkey = this.CreateIconKeyword("Overshroom", "Overshroom", "Acts like both <sprite name=overload> and <sprite name=shroom>|Counts as both too!", "overshroomicon")
+                .ChangeColor(title: new Color(0, 0.6f, 0.6f), note: new Color(0, 0.6f, 0.6f));
+
+            this.CreateIcon("OvershroomIcon", ImagePath("overshroomicon.png").ToSprite(), "overshroom", "shroom", Color.black, new KeywordData[] { overshroomkey });
+            /*GameObject gameObject = new GameObject("OvershroomIcon");
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
             StatusIcon overshroomicon = gameObject.AddComponent<StatusIcon>();
             Dictionary<string, GameObject> dicty = CardManager.cardIcons;
@@ -221,8 +231,8 @@ namespace Pokefrost
             gameObject.SetActive(true);
             overshroomicon.type = "overshroom";
             dicty["overshroom"] = gameObject;
-            
 
+            
             KeywordData overshroomkey = Get<KeywordData>("shroom").InstantiateKeepName();
             overshroomkey.name = "Overshroom";
             keycollection.SetString(overshroomkey.name + "_text", "Overshroom");
@@ -237,7 +247,7 @@ namespace Pokefrost
             overshroomkey.iconName = "overshroomicon";
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", overshroomkey);
 
-            cardPopUp.keywords = new KeywordData[1] { overshroomkey };
+            cardPopUp.keywords = new KeywordData[1] { overshroomkey };*/
 
             StatusEffectDummy dummyoverload = ScriptableObject.CreateInstance<StatusEffectDummy>();
             dummyoverload.name = "Overload";
@@ -737,14 +747,15 @@ namespace Pokefrost
             TraitData bombard1trait = Get<TraitData>("Bombard 1");
             TraitData bombard2trait = Get<TraitData>("Bombard 2");
 
-            KeywordData pluckkey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            KeywordData pluckkey = this.CreateBasicKeyword("Pluck", "Pluck", "Hits lowest health target in row|Prioritizes front target in case of tie");
+            /*KeywordData pluckkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             pluckkey.name = "Pluck";
             keycollection.SetString(pluckkey.name + "_text", "Pluck");
             pluckkey.titleKey = keycollection.GetString(pluckkey.name + "_text");
             keycollection.SetString(pluckkey.name + "_desc", "Hits lowest health target in row|Prioritizes front target in case of tie");
             pluckkey.descKey = keycollection.GetString(pluckkey.name + "_desc");
             pluckkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", pluckkey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", pluckkey);*/
 
             TargetModeLowHealth lowhealthtarget = ScriptableObject.CreateInstance<TargetModeLowHealth>();
             StatusEffectChangeTargetMode pluckmode = Get<StatusEffectData>("Hit Random Target").InstantiateKeepName() as StatusEffectChangeTargetMode;
@@ -1072,7 +1083,8 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", frenzyDeath);
             statusList.Add(frenzyDeath);
 
-            KeywordData wonderGuardKey = ScriptableObject.CreateInstance<KeywordData>();
+            this.CreateBasicKeyword("WonderGuard", "WonderGuard", "Immune to direct damage");
+            /*KeywordData wonderGuardKey = ScriptableObject.CreateInstance<KeywordData>();
             wonderGuardKey.name = "WonderGuard";
             keycollection.SetString(wonderGuardKey.name + "_text", "Wonder Guard");
             wonderGuardKey.titleKey = keycollection.GetString(wonderGuardKey.name + "_text");
@@ -1081,7 +1093,7 @@ namespace Pokefrost
             wonderGuardKey.showIcon = false;
             wonderGuardKey.showName = true;
             wonderGuardKey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", wonderGuardKey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", wonderGuardKey);*/
 
             StatusEffectImmuneToDamage wonderGuard = ScriptableObject.CreateInstance<StatusEffectImmuneToDamage>();
             wonderGuard.name = "Wonder Guard";
@@ -1101,7 +1113,10 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", summonShedinja);
             statusList.Add(summonShedinja);
 
-            KeywordData sketchkey = Get<KeywordData>("hit").InstantiateKeepName();
+            this.CreateBasicKeyword("Sketch", "Sketch", "When deployed, permanently copy the effects of a random enemy in the row|Counts down")
+                .ChangeColor(body: Color.black, note: Color.black)
+                .ChangePanel(this.ImagePath("sketchpaint.png").ToSprite(), Color.white);
+            /*KeywordData sketchkey = Get<KeywordData>("hit").InstantiateKeepName();
             sketchkey.name = "Sketch";
             keycollection.SetString(sketchkey.name + "_text", "Sketch");
             sketchkey.titleKey = keycollection.GetString(sketchkey.name + "_text");
@@ -1114,7 +1129,7 @@ namespace Pokefrost
             sketchkey.show = true;
             sketchkey.showName = true;
             sketchkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", sketchkey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", sketchkey);*/
 
             StatusEffectSketch sketch = ScriptableObject.CreateInstance<StatusEffectSketch>();
             sketch.name = "Sketch";
@@ -1248,7 +1263,8 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", iceball);
             statusList.Add(iceball);
 
-            KeywordData revivekey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            this.CreateBasicKeyword("Revive", "Revive", "Cut <keyword=health> and <keyword=attack> in half instead of dying|Once per run!");
+            /*KeywordData revivekey = Get<KeywordData>("hellbent").InstantiateKeepName();
             revivekey.name = "Revive";
             keycollection.SetString(revivekey.name + "_text", "Revive");
             revivekey.titleKey = keycollection.GetString(revivekey.name + "_text");
@@ -1256,7 +1272,7 @@ namespace Pokefrost
             revivekey.noteColour = new Color(0.8f, 0.3f, 0.3f);
             revivekey.descKey = keycollection.GetString(revivekey.name + "_desc");
             revivekey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", revivekey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", revivekey);*/
 
             StatusEffectRevive revive = ScriptableObject.CreateInstance<StatusEffectRevive>();
             revive.name = "Revive";
@@ -1300,14 +1316,15 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", immuneindirect);
             statusList.Add(immuneindirect);
 
-            KeywordData immaterialkey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            KeywordData immaterialkey = this.CreateBasicKeyword("Immaterial", "Immaterial", "Immune to indirect damage and prevents reactions");
+            /*KeywordData immaterialkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             immaterialkey.name = "Immaterial";
             keycollection.SetString(immaterialkey.name + "_text", "Immaterial");
             immaterialkey.titleKey = keycollection.GetString(immaterialkey.name + "_text");
             keycollection.SetString(immaterialkey.name + "_desc", "Immune to indirect damage and prevents reactions");
             immaterialkey.descKey = keycollection.GetString(immaterialkey.name + "_desc");
             immaterialkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", immaterialkey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", immaterialkey);*/
 
             TraitData immaterialtrait = ScriptableObject.CreateInstance<TraitData>();
             immaterialtrait.name = "Immaterial";
@@ -1330,14 +1347,15 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", endturndraw);
             statusList.Add(endturndraw);
 
-            KeywordData dreamkey = Get<KeywordData>("hellbent").InstantiateKeepName();
+            KeywordData dreamkey = this.CreateBasicKeyword("Dream", "Dream", "Changes to a random card each turn|Destroyed after use or discard");
+            /*KeywordData dreamkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             dreamkey.name = "Dream";
             keycollection.SetString(dreamkey.name + "_text", "Dream");
             dreamkey.titleKey = keycollection.GetString(dreamkey.name + "_text");
             keycollection.SetString(dreamkey.name + "_desc", "Changes to a random card each turn|Destroyed after use or discard");
             dreamkey.descKey = keycollection.GetString(dreamkey.name + "_desc");
             dreamkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", dreamkey);
+            AddressableLoader.AddToGroup<KeywordData>("KeywordData", dreamkey);*/
 
             StatusEffectDreamDummy dreamer = ScriptableObject.CreateInstance<StatusEffectDreamDummy>();
             dreamer.name = "Trigger When Dream Card Played";
@@ -1917,7 +1935,6 @@ namespace Pokefrost
             statusList.Add(synchronize);
 
             KeywordData syncKeyword = Ext.CreateBasicKeyword(this, "synchronize", "Synchronize", "Whenever an effect is applied to ally ahead, also apply it to self|Watch out for debuffs!");
-            syncKeyword.showName = true;
             syncKeyword.canStack = false;
 
             TraitData syncTrait = Ext.CreateTrait<TraitData>("Synchronize", this, syncKeyword, synchronize);
@@ -1972,7 +1989,7 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(natuSummon);
 
-            this.CreateBasicKeyword("prophesized", "Prophesized", "The card is fated to be in your deck").showName = true;
+            this.CreateBasicKeyword("prophesized", "Prophesized", "The card is fated to be in your deck");
 
 
             this.CreateBasicKeyword("fidget", "Fidget", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate");
@@ -2026,7 +2043,6 @@ namespace Pokefrost
             statusList.Add(luminSummonAttack);
 
             KeywordData salvageKeyword = Ext.CreateBasicKeyword(this, "salvage", "Salvage", "Add a <Lumin Part> to hand that can combine into <card=LuminVase> with <keyword=zoomlin> and <keyword=consume>");
-            salvageKeyword.showName = true;
             salvageKeyword.canStack = false;
 
             TraitData salvageTrait = Ext.CreateTrait<TraitData>("Salvage", this, salvageKeyword, luminSummonAttack);
@@ -4212,7 +4228,7 @@ namespace Pokefrost
             //Events.PostBattle += DisplayEvolutions;
             Events.OnEntityOffered += GetShiny;
             Events.OnCampaignStart += ShinyPet;
-            Events.OnStatusIconCreated += PatchOvershroom;
+            //Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             Events.OnSceneLoaded += BattleFuse;
             Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
@@ -4242,7 +4258,6 @@ namespace Pokefrost
             ((StatusEffectApplyRandomOnCardPlayed)Get<StatusEffectData>("On Card Played Buff Marowak")).applyConstraints = new TargetConstraint[1] { onlymarowak };
 
             //DebugShiny();
-            //Events.OnCardDataCreated += Wildparty;
             Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             References.instance.StartCoroutine(UICollector.CollectPrefabs());
@@ -4278,22 +4293,19 @@ namespace Pokefrost
             Events.OnCampaignGenerated -= ApplianceSpawns;
             Events.OnCardDraw -= HowManyCardsDrawn;
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
-            Events.OnStatusIconCreated -= PatchOvershroom;
+            //Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
             Events.OnEntityFlee -= FurretFlee;
             Events.OnSceneLoaded -= BattleFuse;
             Events.OnCampaignLoaded -= CountNatus;
             Events.OnMapNodeReveal -= NatuForsee;
-            Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
+            Events.OnEntitySelect -= StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
             //Events.OnCampaignLoadPreset -= RollForEvent;
             Events.OnEntityCreated -= FixImage;
-            //Events.OnEntitySelect -= NatuForsee;
-            //Events.OnEntityCountDown -= TauntedFailsafe;
             CardManager.cardIcons["overshroom"].Destroy();
             CardManager.cardIcons.Remove("overshroom");
-            RemoveFromPools();
+            UnloadFromClasses();
             RevertVanillaChanges();
-            //Events.OnCardDataCreated -= Wildparty;
             Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
 
@@ -4509,25 +4521,18 @@ namespace Pokefrost
             yield return sequence.StartCoroutine("CreateCards", everyType);
         }
 
-        private void RemoveFromPools()
+        public void UnloadFromClasses()
         {
-            string[] poolsToCheck = { "GeneralUnitPool", "BasicUnitPool", "GeneralItemPool", "MagicUnitPool", "ClunkUnitPool", "GeneralCharmPool" };
-            RewardPool pool;
-            foreach (string poolName in poolsToCheck)
+            List<ClassData> tribes = AddressableLoader.GetGroup<ClassData>("ClassData");
+            foreach (ClassData tribe in tribes)
             {
-                pool = Extensions.GetRewardPool(poolName);
-                if (pool == null)
+                if (tribe == null || tribe.rewardPools == null) { continue; } //This isn't even a tribe; skip it.
+
+                foreach (RewardPool pool in tribe.rewardPools)
                 {
-                    Debug.Log($"[Pokefrost] Unknown pool name: {poolName}");
-                    continue;
-                }
-                Debug.Log($"[Pokefrost] {poolName}");
-                for (int i = pool.list.Count - 1; i >= 0; i--)
-                {
-                    if (pool.list[i] == null || pool.list[i]?.ModAdded == this)
-                    {
-                        pool.list.RemoveAt(i);
-                    }
+                    if (pool == null) { continue; }; //This isn't even a reward pool; skip it.
+
+                    pool.list.RemoveAllWhere((item) => item == null || item.ModAdded == this); //Find and remove everything that needs to be removed.
                 }
             }
         }

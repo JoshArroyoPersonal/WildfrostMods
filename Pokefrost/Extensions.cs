@@ -17,6 +17,16 @@ namespace Pokefrost
         public static StringTable Collection => LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);
         public static StringTable KeyCollection => LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
 
+        public static Sprite panel;
+        public static Sprite panelSmall;
+
+        public static void LoadPanels(WildfrostMod mod)
+        {
+            Texture2D tex = mod.ImagePath("Panel.png").ToTex();
+            panel = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), 0.5f * Vector2.one, 15000, 0, SpriteMeshType.FullRect, new Vector4(25, 175, 200, 25));
+            tex = mod.ImagePath("PanelSmall.png").ToTex();
+            panelSmall = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), 0.5f * Vector2.one, 15000, 0, SpriteMeshType.FullRect, new Vector4(50, 125, 150, 50));
+        }
         public static T[] RemoveNulls<T>(this T[] data, WildfrostMod mod) where T : DataFile
         {
             List<T> list = data.ToList();
@@ -166,7 +176,7 @@ namespace Pokefrost
             return gameObject;
         }
 
-        public static KeywordData CreateBasicKeyword(this WildfrostMod mod, string name, string title, string desc)
+        public static KeywordData CreateBasicKeyword(this WildfrostMod mod, string name, string title, string desc, bool useSmallPanel = false)
         {
             KeywordData data = ScriptableObject.CreateInstance<KeywordData>();
             data.name = name;
@@ -176,11 +186,13 @@ namespace Pokefrost
             data.descKey = KeyCollection.GetString(data.name + "_desc");
             data.ModAdded = mod;
             data.showName = true;
+            data.panelSprite = useSmallPanel ? panelSmall : panel;
+            data.panelColor = new Color(0.15f, 0.15f, 0.15f, 0.90f);
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", data);
             return data;
         }
 
-        public static KeywordData CreateIconKeyword(this WildfrostMod mod, string name, string title, string desc, string icon)
+        public static KeywordData CreateIconKeyword(this WildfrostMod mod, string name, string title, string desc, string icon, bool useSmallPanel = false)
         {
             KeywordData data = ScriptableObject.CreateInstance<KeywordData>();
             data.name = name;
@@ -192,16 +204,26 @@ namespace Pokefrost
             data.showName = false;
             data.iconName = icon;
             data.ModAdded = mod;
+            data.panelSprite = useSmallPanel ? panelSmall : panel;
+            data.panelColor = new Color(0.15f, 0.15f, 0.15f, 0.90f);
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", data);
             return data;
         }
 
-        public static KeywordData ChangeColor(this KeywordData kData, Color? title = null, Color? body = null, Color? note = null)
+        public static KeywordData ChangeColor(this KeywordData data, Color? title = null, Color? body = null, Color? note = null)
         {
-            if (title is Color c1) { kData.titleColour = c1; }
-            if (body is Color c2) { kData.bodyColour = c2; }
-            if (note is Color c3) { kData.noteColour = c3; }
-            return kData;
+            if (title is Color c1) { data.titleColour = c1; }
+            if (body is Color c2) { data.bodyColour = c2; }
+            if (note is Color c3) { data.noteColour = c3; }
+            return data;
+        }
+
+        public static KeywordData ChangePanel(this KeywordData data, Sprite panel = null, Color? color = null)
+        {
+            if (panel != null) { data.panelSprite = panel; }
+            if (color is Color c1) { data.panelColor = c1; }
+            else { data.panelColor = Color.white; }
+            return data;
         }
 
         public static T CreateStatusButton<T>(this WildfrostMod mod, string name, string type, string iconGroup = "counter") where T : StatusEffectData
