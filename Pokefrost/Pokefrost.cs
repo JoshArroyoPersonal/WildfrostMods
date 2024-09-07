@@ -3030,7 +3030,6 @@ namespace Pokefrost
                     .SetSprites("ambipom.png", "ambipomBG.png")
                     .SStartEffects(("When Unit Is Killed Boost Effects", 1), ("MultiHit", 1))
                     .STraits(("Pickup", 2))
-                    .AddPool()
                 );
 
             list.Add(
