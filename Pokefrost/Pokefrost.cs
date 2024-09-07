@@ -3979,23 +3979,12 @@ namespace Pokefrost
         private void CreateModAssetsBells()
         {
             bells.Add(
-                new GameModifierDataBuilder(this)
-                .Create("BlessingSpicune")
-                .WithTitle("Suicune Bell of Juice")
-                .WithDescription("Give <1><keyword=spicune> to <2> random cards in deck. When <keyword=spicune> lost, apply <keyword=spicune> to a random card in deck")
-                .WithRingSfxEvent(Get<GameModifierData>("DoubleBlingsFromCombos").ringSfxEvent)
+                this.CreateBell("BlessingSpicune", "Suicune Bell of Juice", "Give <1><keyword=spicune> to <2> random cards in deck. When <keyword=spicune> lost, apply <keyword=spicune> to a random card in deck")
+                .ChangeSprites("suicuneBell.png", "suicuneDinger.png")
                 .WithSystemsToAdd("BounceJuiceModifierSystem")
                 .SubscribeToAfterAllBuildEvent(
                     (data) =>
                     {
-                        //bell sprite
-                        Texture2D tex = ImagePath("suicuneBell.png").ToTex();
-                        data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 1f), 314);
-
-                        //dinger sprite
-                        Texture2D tex2 = ImagePath("suicuneDinger.png").ToTex();
-                        data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
-
                         //The deck script
                         ScriptRunScriptsOnDeckAlt script = ScriptableObject.CreateInstance<ScriptRunScriptsOnDeckAlt>();
                             //The card script in the deck script
@@ -4012,15 +4001,19 @@ namespace Pokefrost
                         script.countRange = new Vector2Int(2, 2);
                         data.startScripts = new Script[] { script };
 
-                        RewardPool basicBells = Extensions.GetRewardPool("GeneralModifierPool");
+                        /*RewardPool basicBells = Extensions.GetRewardPool("GeneralModifierPool");
                         basicBells.list.Add(data);
                         basicBells.list.Add(data);
                         basicBells.list.Add(data);
                         basicBells.list.Add(data);
                         basicBells.list.Add(data);
-                        basicBells.list.Add(data);
+                        basicBells.list.Add(data);*/
                     })
                 );
+
+            bells.Add(
+                this.CreateBell("hoohEvent", "Mystery Part", "<Quest>: Prove your strength against the <3> <Legendary Beasts>.")
+                .ChangeSprites("mysteryJello.png"));
         }
 
         private void CreateEvents()
@@ -4233,6 +4226,7 @@ namespace Pokefrost
             Events.OnSceneLoaded += BattleFuse;
             Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
             //Events.OnCampaignLoadPreset += RollForEvent;
+            Events.OnCampaignGenerated += AddEventItems;
 
 
             //Pokemon specific events
@@ -4286,7 +4280,7 @@ namespace Pokefrost
             //Events.OnSceneLoaded -= PokemonEdits;
             Events.OnBattleEnd -= PokemonPostBattle;
             Events.OnBattleEnd -= StatusEffectEvolve.CheckEvolve;
-            Events.PostBattle -= DisplayEvolutions;
+            //Events.PostBattle -= DisplayEvolutions;
             Events.OnEntityOffered -= GetShiny;
             Events.OnEntityEnterBackpack -= RotomFuse;
             Events.OnCampaignStart -= ShinyPet;
@@ -4308,7 +4302,30 @@ namespace Pokefrost
             RevertVanillaChanges();
             Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
+            Events.OnCampaignGenerated -= AddEventItems;
 
+        }
+
+        private async Task AddEventItems()
+        {
+            Debug.Log("[Pokefrost] Starting...");
+            for (int i = 0; i < References.Campaign.nodes.Count; i++)
+            {
+                CampaignNode node = References.Campaign.nodes[i];
+                if (node.type is CampaignNodeTypeBoss)
+                {
+                    Debug.Log("[Pokefrost] Found boss node");
+                    CampaignNodeTypeBoss.RewardData rewards = node.data.Get<CampaignNodeTypeBoss.RewardData>("rewards");
+                    List<BossRewardData.Data> rewardList = rewards.rewards;
+                    BossRewardDataModifier.Data data = new BossRewardDataModifier.Data
+                    {
+                        modifierName = "websiteofsites.wildfrost.pokefrost.hoohEvent"
+                    };
+                    rewardList.Add(data);
+                    Debug.Log("[Pokefrost] Success!");
+                    break;
+                }
+            }
         }
 
         public static bool added = false;
