@@ -433,8 +433,10 @@
     <Compile Include="BellClasses.cs" />
     <Compile Include="ButtonClasses.cs" />
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
+    <Compile Include="CampaignNodeTypeSpecialBattle.cs" />
     <Compile Include="CardScripts.cs" />
     <Compile Include="CombineCardInBattleSystem.cs" />
+    <Compile Include="EventBattleManager.cs" />
     <Compile Include="StatusEffectAdAttackEffects.cs" />
     <Compile Include="DumbFixes.cs" />
     <Compile Include="EventRoutineTrade.cs" />

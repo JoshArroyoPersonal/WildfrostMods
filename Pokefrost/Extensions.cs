@@ -272,7 +272,7 @@ namespace Pokefrost
             //Dinger Sprite
             if (!dinger.IsNullOrEmpty())
             {
-                Texture2D tex2 = Pokefrost.instance.ImagePath("suicuneDinger.png").ToTex();
+                Texture2D tex2 = Pokefrost.instance.ImagePath(dinger).ToTex();
                 data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
             }
             return b;
@@ -292,6 +292,13 @@ namespace Pokefrost
                 {
                     data.key = key;
                 });
+        }
+
+        public static CampaignNodeTypeBuilder BetterBattle(this CampaignNodeTypeBuilder cn, WildfrostMod mod)
+        {
+            MapNode mapNode = mod.Get<CampaignNodeType>("CampaignNodeBattle").mapNodePrefab.InstantiateKeepName();
+            mapNode.transform.SetParent(Pokefrost.pokefrostUI.transform, false);
+            return cn.WithMapNodePrefab(mapNode);
         }
 
         public static void Register(this CampaignNodeTypeBuilder cn, WildfrostMod mod)
