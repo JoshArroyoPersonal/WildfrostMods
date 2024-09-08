@@ -3999,57 +3999,33 @@ namespace Pokefrost
                         script.constraints = new TargetConstraint[] { boostable, hasStatus };
                         script.countRange = new Vector2Int(2, 2);
                         data.startScripts = new Script[] { script };
+
+                        RewardPool pool = Extensions.GetRewardPool("GeneralModifierPool");
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+
                     })
                 );
 
 
             bells.Add(
-                new GameModifierDataBuilder(this)
-                .Create("BlessingEntei")
-                .WithTitle("Entei Bell of Ignition")
-                .WithDescription("At the start of each turn if no enemies are <keyword=burning>'d, apply <3><keyword=burning> to a random enemy")
-                .WithRingSfxEvent(Get<GameModifierData>("DoubleBlingsFromCombos").ringSfxEvent)
+                this.CreateBell("BlessingEntei", "Entei Bell of Ignition", "At the start of each turn if no enemies are <keyword=burning>'d, apply <3><keyword=burning> to a random enemy")
+                .ChangeSprites("enteiBell.png", "enteiDinger.png")
                 .WithSystemsToAdd("AlwaysIgniteModifierSystem")
-                .SubscribeToAfterAllBuildEvent(
-                    (data) =>
-                    {
-                        //bell sprite
-                        Texture2D tex = ImagePath("enteiBell.png").ToTex();
-                        data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 1f), 314);
-
-                        //dinger sprite
-                        Texture2D tex2 = ImagePath("enteiDinger.png").ToTex();
-                        data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
-
-                    })
                 );
 
             bells.Add(
-                new GameModifierDataBuilder(this)
-                .Create("BlessingRaikou")
-                .WithTitle("Raikou Bell of Zoomlin")
-                .WithDescription("After <Redraw Bell> is hit, give a random card in hand <keyword=zoomlin>")
-                .WithRingSfxEvent(Get<GameModifierData>("DoubleBlingsFromCombos").ringSfxEvent)
-                .WithSystemsToAdd("GiveZoomlinModifierSystem")
-                .SubscribeToAfterAllBuildEvent(
-                    (data) =>
-                    {
-                        //bell sprite
-                        Texture2D tex = ImagePath("raikouBell.png").ToTex();
-                        data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 1f), 314);
-
-                        //dinger sprite
-                        Texture2D tex2 = ImagePath("raikouDinger.png").ToTex();
-                        data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
-
-                        RewardPool basicBells = Extensions.GetRewardPool("GeneralModifierPool");
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);*/
-                    })
+                this.CreateBell("BlessingRaikou", "Raikou Bell of Zoomlin", "After <Redraw Bell> is hit, give a random card in hand <keyword=zoomlin>")
+                .ChangeSprites("raikouBell.png", "raikouDinger.png")
+                .WithSystemsToAdd("AlwaysIgniteModifierSystem")
                 );
 
             bells.Add(
@@ -4297,8 +4273,6 @@ namespace Pokefrost
             Events.OnEntityEnterBackpack += RotomFuse;
             Events.OnEntityFlee += FurretFlee;
             MoreEvents.OnCampaignGenerated += ApplianceSpawns;
-            Events.OnCardDraw += HowManyCardsDrawn;
-            Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnCampaignLoaded += CountNatus;
             Events.OnMapNodeReveal += NatuForsee;
             Events.OnEntityCreated += FixImage;
@@ -4349,8 +4323,6 @@ namespace Pokefrost
             Events.OnEntityEnterBackpack -= RotomFuse;
             Events.OnCampaignStart -= ShinyPet;
             MoreEvents.OnCampaignGenerated -= ApplianceSpawns;
-            Events.OnCardDraw -= HowManyCardsDrawn;
-            Events.OnBattlePhaseStart -= ResetCardsDrawn;
             //Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
             Events.OnEntityFlee -= FurretFlee;
@@ -4586,21 +4558,6 @@ namespace Pokefrost
                 Events.InvokeRename(entity, fusedRotom.title);
             }
             Events.OnEntityEnterBackpack -= RotomAdjust;
-        }
-
-        public static int cardsdrawn = 0;
-        private void HowManyCardsDrawn(int arg)
-        {
-            if (cardsdrawn == 0)
-            {
-                cardsdrawn = arg;
-            }
-
-        }
-
-        private void ResetCardsDrawn(Battle.Phase arg0)
-        {
-            cardsdrawn = 0;
         }
 
         private void PokemonEdits(Scene scene)
