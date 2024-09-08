@@ -39,6 +39,97 @@ namespace Pokefrost
         }
     }
 
+    public class AlwaysIgniteModifierSystem : GameSystem
+    {
+
+        StatusEffectData status = Pokefrost.instance.Get<StatusEffectData>("Burning");
+        int count = 3;
+
+        public void OnEnable()
+        {
+            Events.OnBattlePreTurnStart += ApplyIgnite;
+        }
+
+        public void OnDisable()
+        {
+            Events.OnBattlePreTurnStart -= ApplyIgnite;
+        }
+
+        private void ApplyIgnite(int turn)
+        {
+            if (Battle.instance == null) { return; }
+
+            HashSet<Entity> enemies = Battle.GetAllUnits(Battle.instance.enemy);
+
+            if (enemies.Count == 0) { return; }
+
+            foreach (Entity entity in enemies)
+            {
+                if (entity.statusEffects.FirstOrDefault((s) => s.type == "burning") != null)
+                {
+                    return;
+                }
+            }
+
+            Entity target = enemies.RandomItems(1)[0];
+
+            ActionQueue.Stack(new ActionApplyStatus(target, null, status, count));
+
+
+        }
+    }
+
+
+    public class GiveZoomlinModifierSystem : GameSystem
+    {
+
+        TargetConstraint[] targetConstraints = Pokefrost.instance.Get<StatusEffectData>("Temporary Zoomlin").targetConstraints;
+
+        public void OnEnable()
+        {
+            Events.OnRedrawBellHit += Zoomin;
+        }
+
+        public void OnDisable()
+        {
+            Events.OnRedrawBellHit -= Zoomin;
+        }
+
+        private void Zoomin(RedrawBellSystem arg0)
+        {
+            StartCoroutine(DumbWait());
+        }
+
+        public IEnumerator DumbWait()
+        {
+            yield return new WaitUntil(() => ActionQueue.Empty);
+            ActionQueue.Add(new ActionSequence(GiveZoomlin()));
+        }
+
+        public IEnumerator GiveZoomlin()
+        {
+            List<Entity> list = References.Player.handContainer.Where((e) =>
+            {
+                foreach (TargetConstraint targetConstraint in targetConstraints)
+                {
+                    if (!targetConstraint.Check(e))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+                
+            }).ToList();
+            if (list.Count == 0) { yield break; }
+            Entity rando = list.RandomItem();
+            yield return StatusEffectSystem.Apply(rando, null, Pokefrost.instance.Get<StatusEffectData>("Temporary Zoomlin"), 1);
+        }
+    }
+
+
+
+
     public class ScriptRunScriptsOnDeckAlt : Script
     {
         [SerializeField]

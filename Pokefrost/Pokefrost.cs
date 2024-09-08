@@ -4010,6 +4010,48 @@ namespace Pokefrost
                         script.constraints = new TargetConstraint[] { boostable, hasStatus };
                         script.countRange = new Vector2Int(2, 2);
                         data.startScripts = new Script[] { script };
+                    })
+                );
+
+
+            bells.Add(
+                new GameModifierDataBuilder(this)
+                .Create("BlessingEntei")
+                .WithTitle("Entei Bell of Ignition")
+                .WithDescription("At the start of each turn if no enemies are <keyword=burning>'d, apply <3><keyword=burning> to a random enemy")
+                .WithRingSfxEvent(Get<GameModifierData>("DoubleBlingsFromCombos").ringSfxEvent)
+                .WithSystemsToAdd("AlwaysIgniteModifierSystem")
+                .SubscribeToAfterAllBuildEvent(
+                    (data) =>
+                    {
+                        //bell sprite
+                        Texture2D tex = ImagePath("enteiBell.png").ToTex();
+                        data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 1f), 314);
+
+                        //dinger sprite
+                        Texture2D tex2 = ImagePath("enteiDinger.png").ToTex();
+                        data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
+
+                    })
+                );
+
+            bells.Add(
+                new GameModifierDataBuilder(this)
+                .Create("BlessingRaikou")
+                .WithTitle("Raikou Bell of Zoomlin")
+                .WithDescription("After <Redraw Bell> is hit, give a random card in hand <keyword=zoomlin>")
+                .WithRingSfxEvent(Get<GameModifierData>("DoubleBlingsFromCombos").ringSfxEvent)
+                .WithSystemsToAdd("GiveZoomlinModifierSystem")
+                .SubscribeToAfterAllBuildEvent(
+                    (data) =>
+                    {
+                        //bell sprite
+                        Texture2D tex = ImagePath("raikouBell.png").ToTex();
+                        data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 1f), 314);
+
+                        //dinger sprite
+                        Texture2D tex2 = ImagePath("raikouDinger.png").ToTex();
+                        data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
 
                         RewardPool basicBells = Extensions.GetRewardPool("GeneralModifierPool");
                         basicBells.list.Add(data);
@@ -4020,6 +4062,10 @@ namespace Pokefrost
                         basicBells.list.Add(data);
                     })
                 );
+
+
+
+
         }
 
         private void CreateEvents()
