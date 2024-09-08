@@ -239,7 +239,7 @@ namespace Pokefrost
             return status;
         }
 
-        public static CampaignNodeTypeBuilder CreateCampaignNodeType<T>(WildfrostMod mod, string name, string letter, bool canSkip = true) where T : CampaignNodeType
+        public static CampaignNodeTypeBuilder CreateCampaignNodeType<T>(this WildfrostMod mod, string name, string letter, bool canSkip = true) where T : CampaignNodeType
         {
             return new CampaignNodeTypeBuilder(mod)
                 .Create<T>(name)
@@ -249,6 +249,33 @@ namespace Pokefrost
                 .WithCanSkip(canSkip)
                 .WithLetter(letter)
                 .WithZoneName(name);
+        }
+
+        public static GameModifierDataBuilder CreateBell(this WildfrostMod mod, string name, string title, string description)
+        {
+            return new GameModifierDataBuilder(mod)
+                .Create(name)
+                .WithTitle(title)
+                .WithDescription(description)
+                .WithRingSfxEvent(mod.Get<GameModifierData>("DoubleBlingsFromCombos").ringSfxEvent);
+        }
+
+        public static GameModifierDataBuilder ChangeSprites(this GameModifierDataBuilder b, string bell = null, string dinger = null)
+        {
+            GameModifierData data = b._data;
+            //Bell Sprite
+            if (!bell.IsNullOrEmpty())
+            {
+                Texture2D tex = Pokefrost.instance.ImagePath(bell).ToTex();
+                data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 1f), 314);
+            }
+            //Dinger Sprite
+            if (!dinger.IsNullOrEmpty())
+            {
+                Texture2D tex2 = Pokefrost.instance.ImagePath(dinger).ToTex();
+                data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
+            }
+            return b;
         }
 
         public static CampaignNodeTypeBuilder BetterEvent(this CampaignNodeTypeBuilder cn, string key, WildfrostMod mod)
@@ -265,6 +292,13 @@ namespace Pokefrost
                 {
                     data.key = key;
                 });
+        }
+
+        public static CampaignNodeTypeBuilder BetterBattle(this CampaignNodeTypeBuilder cn, WildfrostMod mod)
+        {
+            MapNode mapNode = mod.Get<CampaignNodeType>("CampaignNodeBattle").mapNodePrefab.InstantiateKeepName();
+            mapNode.transform.SetParent(Pokefrost.pokefrostUI.transform, false);
+            return cn.WithMapNodePrefab(mapNode);
         }
 
         public static void Register(this CampaignNodeTypeBuilder cn, WildfrostMod mod)

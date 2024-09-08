@@ -43,13 +43,12 @@ namespace Pokefrost
                             Debug.Log($"[Pokefrost] Foresaw {value}");
                             target.SetCustomData("Future Sight ID", node.id);
                             ids.Add(node.id);
-                            break;
+                            return;
                         }
                         
                     }
                     if (node.type.name == "CampaignNodeShop")
                     {
-                        bool falg = false;
                         ShopRoutine.Data data2 = node.data.Get<ShopRoutine.Data>("shopData");
                         foreach (int item in data2.items.GetIndices().InRandomOrder())
                         {
@@ -59,14 +58,9 @@ namespace Pokefrost
                                 target.SetCustomData("Future Sight", data2.items[item].cardDataName);
                                 target.TryGetCustomData("Future Sight", out string value, "");
                                 Debug.Log($"[Pokefrost] Foresaw {value}");
-                                falg = true;
                                 ids.Add(node.id);
-                                break;
+                                return;
                             }
-                        }
-                        if (falg)
-                        {
-                            break;
                         }
                     }
                 }

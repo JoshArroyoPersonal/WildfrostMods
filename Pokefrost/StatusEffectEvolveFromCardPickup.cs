@@ -42,7 +42,7 @@ namespace Pokefrost
         public override bool CardSelected(CardData self, Entity selectedCard)
         {
             self.TryGetCustomData("Future Sight", out string cardName, CardName);
-            return cardName == selectedCard.data.name;
+            return (cardName == selectedCard.data.name);
         }
     }
 }

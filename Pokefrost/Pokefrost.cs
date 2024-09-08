@@ -25,8 +25,8 @@ using System.Configuration;
 using UnityEngine.Localization.Components;
 using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
-using BattleEditor;
 using static Mono.Security.X509.X509Stores;
+using UnityEngine.Events;
 
 namespace Pokefrost
 {
@@ -3978,23 +3978,12 @@ namespace Pokefrost
         private void CreateModAssetsBells()
         {
             bells.Add(
-                new GameModifierDataBuilder(this)
-                .Create("BlessingSpicune")
-                .WithTitle("Suicune Bell of Juice")
-                .WithDescription("Give <1><keyword=spicune> to <2> random cards in deck. When <keyword=spicune> lost, apply <keyword=spicune> to a random card in deck")
-                .WithRingSfxEvent(Get<GameModifierData>("DoubleBlingsFromCombos").ringSfxEvent)
+                this.CreateBell("BlessingSpicune", "Suicune Bell of Juice", "Give <1><keyword=spicune> to <2> random cards in deck. When <keyword=spicune> lost, apply <keyword=spicune> to a random card in deck")
+                .ChangeSprites("suicuneBell.png", "suicuneDinger.png")
                 .WithSystemsToAdd("BounceJuiceModifierSystem")
                 .SubscribeToAfterAllBuildEvent(
                     (data) =>
                     {
-                        //bell sprite
-                        Texture2D tex = ImagePath("suicuneBell.png").ToTex();
-                        data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 1f), 314);
-
-                        //dinger sprite
-                        Texture2D tex2 = ImagePath("suicuneDinger.png").ToTex();
-                        data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
-
                         //The deck script
                         ScriptRunScriptsOnDeckAlt script = ScriptableObject.CreateInstance<ScriptRunScriptsOnDeckAlt>();
                             //The card script in the deck script
@@ -4059,13 +4048,27 @@ namespace Pokefrost
                         basicBells.list.Add(data);
                         basicBells.list.Add(data);
                         basicBells.list.Add(data);
-                        basicBells.list.Add(data);
+                        basicBells.list.Add(data);*/
                     })
                 );
 
+            bells.Add(
+                this.CreateBell("hoohEvent", "Mystery Part", "<Quest>: Prove your strength against the <3> <Legendary Beasts>")
+                .ChangeSprites("mysteryJello.png", "noDinger.png")
+                .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
+                );
 
+            bells.Add(
+                this.CreateBell("darkraiEvent", "Lunar Feather", "<Quest>: Follow <Cresselia> to confront <Darkrai>")
+                .ChangeSprites("lunarFeather.png", "noDinger.png")
+                .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
+                );
 
-
+            bells.Add(
+                this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the port before the ship leaves")
+                .ChangeSprites("eonTicket.png","noDinger.png")
+                .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
+                );
         }
 
         private void CreateEvents()
@@ -4097,6 +4100,10 @@ namespace Pokefrost
             keycollection.SetString(EventRoutineTrade.Seq2Key, "{0} for {1}?");
             keycollection.SetString(EventRoutineTrade.TradeConfirm, "Confirm");
             keycollection.SetString(EventRoutineTrade.TradeCancel, "Cancel");
+
+            Ext.CreateCampaignNodeType<CampaignNodeTypeSpecialBattle>(this, "specialBattle", "e")
+                .BetterBattle(this)
+                .Register(this);
         }
 
         /*
@@ -4266,7 +4273,12 @@ namespace Pokefrost
             CreateEvents();
             MiscLocalizationStrings();
             base.Load();
-            CreateBattles();
+            if (EventBattleManager.instance == null)
+            {
+                new EventBattleManager();
+            }
+            EventBattleManager.instance.Enable(this);
+
             //Events.OnSceneLoaded += PokemonEdits;
             
             Events.OnBattleEnd += StatusEffectEvolve.CheckEvolve;
@@ -4277,14 +4289,14 @@ namespace Pokefrost
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             Events.OnSceneLoaded += BattleFuse;
             Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
-            //Events.OnCampaignLoadPreset += RollForEvent;
+            
 
 
             //Pokemon specific events
             Events.OnBattleEnd += PokemonPostBattle;
             Events.OnEntityEnterBackpack += RotomFuse;
             Events.OnEntityFlee += FurretFlee;
-            Events.OnCampaignGenerated += ApplianceSpawns;
+            MoreEvents.OnCampaignGenerated += ApplianceSpawns;
             Events.OnCardDraw += HowManyCardsDrawn;
             Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnCampaignLoaded += CountNatus;
@@ -4328,14 +4340,15 @@ namespace Pokefrost
         public override void Unload()
         {
             base.Unload();
+            EventBattleManager.instance.Disable(this);
             //Events.OnSceneLoaded -= PokemonEdits;
             Events.OnBattleEnd -= PokemonPostBattle;
             Events.OnBattleEnd -= StatusEffectEvolve.CheckEvolve;
-            Events.PostBattle -= DisplayEvolutions;
+            //Events.PostBattle -= DisplayEvolutions;
             Events.OnEntityOffered -= GetShiny;
             Events.OnEntityEnterBackpack -= RotomFuse;
             Events.OnCampaignStart -= ShinyPet;
-            Events.OnCampaignGenerated -= ApplianceSpawns;
+            MoreEvents.OnCampaignGenerated -= ApplianceSpawns;
             Events.OnCardDraw -= HowManyCardsDrawn;
             Events.OnBattlePhaseStart -= ResetCardsDrawn;
             //Events.OnStatusIconCreated -= PatchOvershroom;
@@ -4356,62 +4369,7 @@ namespace Pokefrost
 
         }
 
-        public static bool added = false;
-        static string[] preset;
-        private void RollForEvent(ref string[] lines)
-        {
-            int width = lines.Length;
-            int length = lines[0].Length;
-            preset = lines;
-            Debug.Log($"[Pokefrost] {width} {length}");
-            for (int i = 0; i < length; i++)
-            {
-                if (lines[0][i] == 'B' && lines[width - 1].Length > i && lines[width - 1][i] == '0')
-                {
-                    lines[0] = lines[0].Insert(i + 1, "b");
-                    lines[width-2] = lines[width - 2].Insert(i + 1, "6");
-                    lines[width-1] = lines[width - 1].Insert(i + 1, "2");
-                    for(int j=1; j<width-2; j++)
-                    {
-                        lines[j] = lines[j].Insert(i + 1, " ");
-                    }
-                    added = true;
-                    Debug.Log("[Pokefrost] Inserted");
-                    return;
-                }
-            }
-        }
-
-        private void EraseNode()
-        {
-            CampaignNode bossNode = null;
-            CampaignNode erasedNode = null;
-            foreach(CampaignNode node in Campaign.instance.nodes)
-            {
-                if (bossNode == null && node.type.name == "CampaignNodeBoss" && node.areaIndex == 0)
-                {
-                    Debug.Log("[Pokefrost] Found boss node");
-                    bossNode = node;
-                    continue;
-                }
-                if (bossNode != null)
-                {
-                    if (node.type.name == "CampaignNodeBattle")
-                    {
-                        Debug.Log("[Pokefrost] Found battle node");
-                        bossNode.connections = node.connections;
-                        node.connections = new List<CampaignNode.Connection>();
-                        break;
-                        //node.connections.Do((n) => Campaign.GetNode(n.otherId).connectedTo = bossNode.id);
-                    }
-                }
-            }
-
-            if (erasedNode != null)
-            {
-                Campaign.instance.nodes.Remove(erasedNode);
-            }
-        }
+        
 
         private void CountNatus()
         {
@@ -4462,49 +4420,7 @@ namespace Pokefrost
             woollydrekeat.illegalEffects = woollydrekeat.illegalEffects.RemoveNulls(this);
         }
 
-        private void CreateBattles()
-        {
-
-            new BattleDataEditor(this, "Darkrai")
-                .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
-                .SetNameRef("Cursed Nightmares")
-                .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
-                .StartWavePoolData(0, "Curses!")
-                .ConstructWaves(4, 0, "SMMS")
-                .StartWavePoolData(1, "More curses")
-                .ConstructWaves(4, 1, "HMMG", "GMMH", "HSMG", "SSHG")
-                .StartWavePoolData(2, "Darkrai is here!")
-                .ConstructWaves(3, 9, "DMH", "DGH")
-                .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeBattle")
-                .AddBattleToLoader().RegisterBattle(6); //Loads and makes it the mandatory first fight
-
-            new BattleDataEditor(this, "Lati Twins")
-                .SetSprite(this.ImagePath("smeargleCharm.png").ToSprite())
-                .SetNameRef("Deadly Duos")
-                .EnemyDictionary(('P', "enemy_plusle"), ('M', "enemy_minun"), ('V', "enemy_volbeat"), ('I', "enemy_illumise"), ('D', "enemy_dustox"), ('B', "enemy_beautifly"), ('G', "enemy_gorebyss"), ('H', "enemy_huntail"), ('S', "enemy_solrock"), ('L', "enemy_lunatone"), ('A', "enemy_latias"), ('O', "enemy_latios"))
-                .StartWavePoolData(0, "Charging up")
-                .ConstructWaves(4, 0, "PMVI")
-                .StartWavePoolData(1, "Scary")
-                .ConstructWaves(4, 1, "DBGH")
-                .StartWavePoolData(2, "Lati!")
-                .ConstructWaves(4, 9, "SLAO")
-                .GiveMiniBossesCharms(new string[2] { "enemy_latias", "enemy_latios"}, "CardUpgradeBattle")
-                .AddBattleToLoader().RegisterBattle(6); //Loads and makes it the mandatory first fight
-
-            BattleDataEditor hooh = new BattleDataEditor(this, "Ho-Oh")
-                .SetSprite(this.ImagePath("darkraiCharm.png").ToSprite())
-                .SetNameRef("Mt. Faraway")
-                .EnemyDictionary(('H', "enemy_hooh"), ('E', "enemy_entei"), ('R', "enemy_raikou"), ('S', "enemy_suicune"), ('V', "enemy_vaporeon"), ('J', "enemy_jolteon"), ('F', "enemy_flareon"), ('P', "enemy_espeon"), ('U', "enemy_umbreon"), ('L', "enemy_leafeon"), ('G', "enemy_glaceon"), ('Y', "enemy_sylveon"))
-                .StartWavePoolData(0, "Mystery")
-                .ConstructWaves(1, 0, "H")
-                .StartWavePoolData(1, "Beasts")
-                .ConstructWaves(2, 1, "EF", "RJ", "SV")
-                .StartWavePoolData(2, "Eeveeloutions")
-                .ConstructWaves(2, 9, "PU", "GL", "Y")
-                .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeBattle")
-                .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
-                .AddBattleToLoader().RegisterBattle(6); //Loads and makes it the mandatory first fight
-        }
+        
 
         private void SceneLoaded(Scene scene)
         {
@@ -4582,7 +4498,7 @@ namespace Pokefrost
             }
         }
 
-        private async Task ApplianceSpawns()
+        private void ApplianceSpawns()
         {
             if (References.PlayerData.inventory.deck.FirstOrDefault((CardData c) => { return c.name == "websiteofsites.wildfrost.pokefrost.rotom"; }) == null)
             {
@@ -5129,6 +5045,21 @@ namespace Pokefrost
                 }
             }
             return __result;
+        }
+    }
+
+    [HarmonyPatch(typeof(Events))]
+    public class MoreEvents
+    {
+        public static event UnityAction OnCampaignGenerated;
+
+        [HarmonyPatch("InvokeCampaignGenerated")]
+        static void Postfix()
+        {
+            if (OnCampaignGenerated != null)
+            {
+                OnCampaignGenerated.Invoke();
+            }
         }
     }
 }
