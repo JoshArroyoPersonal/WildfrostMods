@@ -27,6 +27,7 @@ using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
 using static Mono.Security.X509.X509Stores;
 using UnityEngine.Events;
+using static Mono.Security.X509.X520;
 
 namespace Pokefrost
 {
@@ -2569,7 +2570,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("furret", "Furret")
-                    .SetStats(5, 2, 5)
+                    .SetStats(15, 2, 5)
                     .SetSprites("furret.png", "furretBG.png")
                     .SStartEffects(("On Turn Escape To Self", 1))
                     .AddPool()
@@ -3633,7 +3634,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_lunatone", "Lunatone")
-                    .SetStats(8, null, 5)
+                    .SetStats(16, null, 4)
                     .SetSprites("lunatone.png", "lunatoneBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3643,7 +3644,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_solrock", "Solrock")
-                    .SetStats(8, null, 5)
+                    .SetStats(16, null, 4)
                     .SetSprites("solrock.png", "solrockBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3675,7 +3676,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_latias", "Latias")
-                    .SetStats(30, 2, 5)
+                    .SetStats(35, 2, 5)
                     .SetSprites("latias.png", "latiasBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
@@ -4821,7 +4822,7 @@ namespace Pokefrost
             swappers.Add(CreateSwapper("Give Thick Club", "On Card Played Buff Marowak", minBoost: 0, maxBoost: 1));
             swappers.Add(CreateSwapper("While Active Increase Effects To Hand", "Ongoing Increase Effects", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("Give Slowking Crown", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Give Combo to Card in Hand", "On Turn Apply Attack To Self", minBoost: 2, maxBoost: 3));
+            swappers.Add(CreateSwapper("Give Combo to Card in Hand", "On Turn Apply Attack To Self", minBoost: 0, maxBoost: 1));
             swappers.Add(CreateSwapper("Discard Rightmost Button", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("When Deployed Sketch", attackOption: "Null", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("Trigger All Button", "When Destroyed Trigger To Allies", minBoost: 0, maxBoost: 0));
@@ -5019,4 +5020,6 @@ namespace Pokefrost
             }
         }
     }
+
+
 }
