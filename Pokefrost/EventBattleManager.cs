@@ -57,7 +57,7 @@ namespace Pokefrost
                 .ConstructWaves(4, 1, "HMMG", "GMMH", "HSMG", "SSHG")
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
-                .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeBattle")
+                .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeDemonize", "CradUpgradeInk")
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 
             new BattleDataEditor(mod, "Lati Twins")
@@ -70,7 +70,8 @@ namespace Pokefrost
                 .ConstructWaves(4, 1, "VIGH")
                 .StartWavePoolData(2, "Lati!")
                 .ConstructWaves(4, 9, "SLAO")
-                .GiveMiniBossesCharms(new string[2] { "enemy_latias", "enemy_latios" }, "CardUpgradeBattle")
+                .GiveMiniBossesCharms(new string[1] { "enemy_latias" }, "CardUpgradeHeartmist", "CardUpgradeAcorn")
+                .GiveMiniBossesCharms(new string[1] { "enemy_latios" }, "CardUpgradeSpice", "CardUpgradeBattle")
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 
             BattleDataEditor hooh = new BattleDataEditor(mod, "Ho-Oh")
@@ -83,7 +84,10 @@ namespace Pokefrost
                 .ConstructWaves(2, 1, "EF", "RJ", "SV")
                 .StartWavePoolData(2, "Eeveeloutions")
                 .ConstructWaves(2, 9, "PU", "GL", "Y")
-                .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeBattle")
+                .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeCloudberry", "CardUpgradeBlock")
+                .GiveMiniBossesCharms(new string[1] { "enemy_suicune" }, "CardUpgradeBlock", "CardUpgradeBoost")
+                .GiveMiniBossesCharms(new string[1] { "enemy_raikou" }, "CardUpgradeSun", "CardUpgradeBarrage")
+                .GiveMiniBossesCharms(new string[1] { "enemy_entei" }, "CardUpgradeAttackAndHealth", "CardUpgradeTrashBad")
                 .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 

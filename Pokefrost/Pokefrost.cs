@@ -4001,18 +4001,6 @@ namespace Pokefrost
                         script.countRange = new Vector2Int(2, 2);
                         data.startScripts = new Script[] { script };
 
-                        RewardPool pool = Extensions.GetRewardPool("GeneralModifierPool");
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-
                     })
                 );
 
@@ -4045,6 +4033,22 @@ namespace Pokefrost
                 this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the port before the ship leaves")
                 .ChangeSprites("eonTicket.png","noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
+                .SubscribeToAfterAllBuildEvent(
+                    (data) =>
+                    {
+                        RewardPool pool = Extensions.GetRewardPool("GeneralModifierPool");
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                    }
+                    )
                 );
         }
 
