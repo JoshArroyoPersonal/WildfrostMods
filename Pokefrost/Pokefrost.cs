@@ -2082,6 +2082,21 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(purify);
 
+            StatusEffectApplyXWhenHit joltHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Jolted To Attacker", "When hit, apply <{a}><keyword=jolted> to the attacker")
+                .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.Attacker)
+                .Register(this);
+            statusList.Add(joltHit);
+
+            StatusEffectApplyXWhenHit burnHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Burning To Attacker", "When hit, apply <{a}><keyword=burning> to the attacker")
+                .ApplyX(Get<StatusEffectData>("Burning"), StatusEffectApplyX.ApplyToFlags.Attacker)
+                .Register(this);
+            statusList.Add(burnHit);
+
+            StatusEffectApplyXWhenHit juiceHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Spicune To Attacker", "When hit, apply <{a}><keyword=spicune> to the attacker")
+                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Attacker)
+                .Register(this);
+            statusList.Add(juiceHit);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -3539,6 +3554,16 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("quest_raikou", "Raikou")
+                    .WithCardType("Enemy")
+                    .SetStats(6, null, 4)
+                    .SetSprites("raikou.png", "raikouBG.png")
+                    .SetStartWithEffect(SStack("When Hit Apply Jolted To Attacker", 1), SStack("On Turn Escape To Self", 1))
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("enemy_entei", "Entei")
                     .SetStats(25, 0, 4)
                     .SetSprites("entei.png", "enteiBG.png")
@@ -3551,11 +3576,31 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("quest_entei", "Entei")
+                    .WithCardType("Enemy")
+                    .SetStats(8, 5, 6)
+                    .SetSprites("entei.png", "raikouBG.png")
+                    .SetStartWithEffect(SStack("When Hit Apply Burning To Attacker", 3), SStack("On Turn Escape To Self", 1))
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("enemy_suicune", "Suicune")
                     .SetStats(35, 2, 4)
                     .SetSprites("suicune.png", "suicuneBG.png")
                     .WithCardType("Miniboss")
                     .SStartEffects(("Gain Juice On Hit", 1), ("Give Your Juice To Allies", 1), ("ImmuneToSnow", 1))
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("quest_suicune", "Suicune")
+                    .WithCardType("Enemy")
+                    .SetStats(10, null, 5)
+                    .SetSprites("suicune.png", "suicuneBG.png")
+                    .SetStartWithEffect(SStack("When Hit Apply Spicune To Attacker", 1), SStack("On Turn Escape To Self", 1))
                     .WithValue(50)
                 );
 
@@ -3752,7 +3797,7 @@ namespace Pokefrost
                     .WithCardType("Summoned")
                     .SetStats(4, null, 6)
                     .SetSprites("cresselia.png", "cresseliaBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Gain Dream Card To Hand", 1))
+                    .SetStartWithEffect(SStack("On Card Played Gain Dream Card To Hand", 1), SStack("Cannot Recall", 1))
                 );
 
             list.Add(
@@ -4018,6 +4063,21 @@ namespace Pokefrost
                 );
 
             bells.Add(
+                this.CreateBell("BlessingDarkrai", "Darkrai Bell of Destruction", "Redraw Bell Counter -1. When <Redraw Bell> is hit, destroy the rightmost card in hand before redrawing")
+                .ChangeSprites("darkraiBell.png", "darkraiDinger.png")
+                .WithSystemsToAdd("DestoryCardSystem")
+                .SubscribeToAfterAllBuildEvent(
+                    (data) =>
+                    {
+                        ScriptChangeRedrawBellCounter script = ScriptableObject.CreateInstance<ScriptChangeRedrawBellCounter>();
+                        script.add = true;
+                        script.value = -1;
+                        data.startScripts = new Script[] { script };
+
+                    })
+                );
+
+            bells.Add(
                 this.CreateBell("hoohEvent", "Mystery Part", "<Quest>: Prove your strength against the <3> <Legendary Beasts>")
                 .ChangeSprites("mysteryJello.png", "noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
@@ -4027,28 +4087,13 @@ namespace Pokefrost
                 this.CreateBell("darkraiEvent", "Lunar Feather", "<Quest>: Follow <Cresselia> to confront <Darkrai>")
                 .ChangeSprites("lunarFeather.png", "noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
+                .WithSystemsToAdd("SpawnCresslia")
                 );
 
             bells.Add(
                 this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the port before the ship leaves")
                 .ChangeSprites("eonTicket.png","noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
-                .SubscribeToAfterAllBuildEvent(
-                    (data) =>
-                    {
-                        RewardPool pool = Extensions.GetRewardPool("GeneralModifierPool");
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                    }
-                    )
                 );
         }
 

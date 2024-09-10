@@ -128,6 +128,74 @@ namespace Pokefrost
     }
 
 
+    public class DestoryCardSystem : GameSystem
+    {
+
+        Entity target;
+
+        public void OnEnable()
+        {
+            Events.OnRedrawBellHit += DestoryCard;
+        }
+
+        public void OnDisable()
+        {
+            Events.OnRedrawBellHit -= DestoryCard;
+        }
+
+        private void DestoryCard(RedrawBellSystem arg0)
+        {
+            CardContainer handContainer = References.Player.handContainer;
+            if ((object)handContainer != null && handContainer.Count > 0)
+            {
+                target = References.Player.handContainer[0];
+                if (target != null)
+                {
+                    ActionQueue.Add(new ActionKill(target));
+                }
+                
+            }
+        }
+    }
+
+    public class SpawnCresslia : GameSystem
+    {
+
+        public void OnEnable()
+        {
+            Events.OnBattleStart += Spawn;
+        }
+
+        public void OnDisable()
+        {
+            Events.OnBattleStart -= Spawn;
+        }
+
+        private void Spawn()
+        {
+            StartCoroutine(TrueSpawn());
+        }
+
+        private IEnumerator TrueSpawn()
+        {
+            CardContainer slot = Battle.instance.GetRows(References.Player).RandomItem();
+            Debug.Log("[Pokefrost] Got Slot");
+            CardData data = Pokefrost.instance.Get<CardData>("quest_cresselia").Clone();
+            Debug.Log("[Pokefrost] Got Data");
+            Card card = CardManager.Get(data, References.Battle.playerCardController, References.Player, inPlay: true, isPlayerCard: true);
+            Debug.Log("[Pokefrost] Got Card");
+            card.entity.flipper.FlipDownInstant();
+            card.transform.localPosition = new Vector3(-15f, 0f, 0f);
+            yield return card.UpdateData();
+            slot.Add(card.entity);
+            Debug.Log("[Pokefrost] Added to Slot");
+            slot.TweenChildPositions();
+            ActionQueue.Add(new ActionReveal(card.entity));
+            ActionQueue.Add(new ActionRunEnableEvent(card.entity));
+            yield return ActionQueue.Wait();
+            yield break;
+        }
+    }
 
 
     public class ScriptRunScriptsOnDeckAlt : Script
