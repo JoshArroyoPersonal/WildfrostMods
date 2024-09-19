@@ -49,7 +49,7 @@ namespace Pokefrost
 
             new BattleDataEditor(mod, "Darkrai")
                 .SetSprite(mod.ImagePath("darkraiCharm.png").ToSprite())
-                .SetNameRef("Cursed Nightmares")
+                .SetNameRef("Dark Crater Pit")
                 .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
                 .StartWavePoolData(0, "Curses!")
                 .ConstructWaves(4, 0, "SMMS")
@@ -57,20 +57,21 @@ namespace Pokefrost
                 .ConstructWaves(4, 1, "HMMG", "GMMH", "HSMG", "SSHG")
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
-                .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeBattle")
+                .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeDemonize", "CradUpgradeInk")
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 
             new BattleDataEditor(mod, "Lati Twins")
                 .SetSprite(mod.ImagePath("smeargleCharm.png").ToSprite())
-                .SetNameRef("Deadly Duos")
+                .SetNameRef("Southern Island")
                 .EnemyDictionary(('P', "enemy_plusle"), ('M', "enemy_minun"), ('V', "enemy_volbeat"), ('I', "enemy_illumise"), ('D', "enemy_dustox"), ('B', "enemy_beautifly"), ('G', "enemy_gorebyss"), ('H', "enemy_huntail"), ('S', "enemy_solrock"), ('L', "enemy_lunatone"), ('A', "enemy_latias"), ('O', "enemy_latios"))
                 .StartWavePoolData(0, "Charging up")
-                .ConstructWaves(4, 0, "PMVI")
+                .ConstructWaves(4, 0, "PMDB")
                 .StartWavePoolData(1, "Scary")
-                .ConstructWaves(4, 1, "DBGH")
+                .ConstructWaves(4, 1, "VIGH")
                 .StartWavePoolData(2, "Lati!")
                 .ConstructWaves(4, 9, "SLAO")
-                .GiveMiniBossesCharms(new string[2] { "enemy_latias", "enemy_latios" }, "CardUpgradeBattle")
+                .GiveMiniBossesCharms(new string[1] { "enemy_latias" }, "CardUpgradeHeartmist", "CardUpgradeAcorn")
+                .GiveMiniBossesCharms(new string[1] { "enemy_latios" }, "CardUpgradeSpice", "CardUpgradeBattle")
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 
             BattleDataEditor hooh = new BattleDataEditor(mod, "Ho-Oh")
@@ -83,7 +84,10 @@ namespace Pokefrost
                 .ConstructWaves(2, 1, "EF", "RJ", "SV")
                 .StartWavePoolData(2, "Eeveeloutions")
                 .ConstructWaves(2, 9, "PU", "GL", "Y")
-                .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeBattle")
+                .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeCloudberry", "CardUpgradeBlock")
+                .GiveMiniBossesCharms(new string[1] { "enemy_suicune" }, "CardUpgradeBlock", "CardUpgradeBoost")
+                .GiveMiniBossesCharms(new string[1] { "enemy_raikou" }, "CardUpgradeSun", "CardUpgradeBarrage")
+                .GiveMiniBossesCharms(new string[1] { "enemy_entei" }, "CardUpgradeAttackAndHealth", "CardUpgradeTrashBad")
                 .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 

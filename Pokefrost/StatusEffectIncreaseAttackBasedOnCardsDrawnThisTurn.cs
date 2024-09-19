@@ -15,15 +15,37 @@ namespace Pokefrost
 
         public int currentAmount;
         public int amount;
+        public int newAmount;
+        public int cardsDrawn;
         public override bool HasTurnEndRoutine => true;
         public override bool HasActionPerformedRoutine => true;
+
+        public override void Init()
+        {
+            Events.OnCardDraw += HowManyCardsDrawn;
+            base.Init();
+        }
+
+        public void OnDestroy()
+        {
+            Events.OnCardDraw -= HowManyCardsDrawn;
+        }
+
+        public void HowManyCardsDrawn(int arg)
+        {
+            if (cardsDrawn == 0) 
+            {
+                Debug.Log("[Sneasel] Truely drew " + arg.ToString() + " cards");
+                cardsDrawn += arg;
+            }
+        }
 
         public override IEnumerator ActionPerformedRoutine(PlayAction action)
         {
             Debug.Log(action.Name.ToString());
             if (action.Name == "ActionDraw")
             {
-                yield return Activate(Pokefrost.cardsdrawn);
+                yield return Activate(cardsDrawn);
             }
             yield break;
         }
@@ -42,10 +64,8 @@ namespace Pokefrost
             Debug.Log(arg.ToString());
             amount = GetAmount() * arg;
             currentAmount += amount;
-            Debug.Log(currentAmount.ToString());
-            Debug.Log(amount.ToString());
-            Debug.Log(((count + target.effectBonus) * target.effectFactor).ToString());
-            Pokefrost.cardsdrawn = 0;
+            cardsDrawn = 0;
+            Debug.Log("[Sneasel] Gains " + amount.ToString() + " attack");
             yield return StatusEffectSystem.Apply(target, target, effectToGain, amount, temporary: true);
         }
 

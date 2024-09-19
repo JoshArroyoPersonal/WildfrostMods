@@ -27,6 +27,7 @@ using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
 using static Mono.Security.X509.X509Stores;
 using UnityEngine.Events;
+using static Mono.Security.X509.X520;
 
 namespace Pokefrost
 {
@@ -2111,7 +2112,20 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(purify);
 
+            StatusEffectApplyXWhenHit joltHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Jolted To Attacker", "When hit, apply <{a}><keyword=jolted> to the attacker")
+                .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.Attacker)
+                .Register(this);
+            statusList.Add(joltHit);
 
+            StatusEffectApplyXWhenHit burnHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Burning To Attacker", "When hit, apply <{a}><keyword=burning> to the attacker")
+                .ApplyX(Get<StatusEffectData>("Burning"), StatusEffectApplyX.ApplyToFlags.Attacker)
+                .Register(this);
+            statusList.Add(burnHit);
+
+            StatusEffectApplyXWhenHit juiceHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Spicune To Attacker", "When hit, apply <{a}><keyword=spicune> to the attacker")
+                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Attacker)
+                .Register(this);
+            statusList.Add(juiceHit);
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
@@ -2618,7 +2632,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("furret", "Furret")
-                    .SetStats(5, 2, 5)
+                    .SetStats(15, 2, 5)
                     .SetSprites("furret.png", "furretBG.png")
                     .SStartEffects(("On Turn Escape To Self", 1))
                     .AddPool()
@@ -3587,6 +3601,16 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("quest_raikou", "Raikou")
+                    .WithCardType("Enemy")
+                    .SetStats(6, null, 4)
+                    .SetSprites("raikou.png", "raikouBG.png")
+                    .SetStartWithEffect(SStack("When Hit Apply Jolted To Attacker", 1), SStack("On Turn Escape To Self", 1))
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("enemy_entei", "Entei")
                     .SetStats(25, 0, 4)
                     .SetSprites("entei.png", "enteiBG.png")
@@ -3599,11 +3623,31 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("quest_entei", "Entei")
+                    .WithCardType("Enemy")
+                    .SetStats(8, 5, 6)
+                    .SetSprites("entei.png", "raikouBG.png")
+                    .SetStartWithEffect(SStack("When Hit Apply Burning To Attacker", 3), SStack("On Turn Escape To Self", 1))
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("enemy_suicune", "Suicune")
                     .SetStats(35, 2, 4)
                     .SetSprites("suicune.png", "suicuneBG.png")
                     .WithCardType("Miniboss")
                     .SStartEffects(("Gain Juice On Hit", 1), ("Give Your Juice To Allies", 1), ("ImmuneToSnow", 1))
+                    .WithValue(50)
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("quest_suicune", "Suicune")
+                    .WithCardType("Enemy")
+                    .SetStats(10, null, 5)
+                    .SetSprites("suicune.png", "suicuneBG.png")
+                    .SetStartWithEffect(SStack("When Hit Apply Spicune To Attacker", 1), SStack("On Turn Escape To Self", 1))
                     .WithValue(50)
                 );
 
@@ -3682,7 +3726,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_lunatone", "Lunatone")
-                    .SetStats(8, null, 5)
+                    .SetStats(16, null, 4)
                     .SetSprites("lunatone.png", "lunatoneBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3692,7 +3736,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_solrock", "Solrock")
-                    .SetStats(8, null, 5)
+                    .SetStats(16, null, 4)
                     .SetSprites("solrock.png", "solrockBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3724,7 +3768,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_latias", "Latias")
-                    .SetStats(30, 2, 5)
+                    .SetStats(35, 2, 5)
                     .SetSprites("latias.png", "latiasBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
@@ -3800,7 +3844,7 @@ namespace Pokefrost
                     .WithCardType("Summoned")
                     .SetStats(4, null, 6)
                     .SetSprites("cresselia.png", "cresseliaBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Gain Dream Card To Hand", 1))
+                    .SetStartWithEffect(SStack("On Card Played Gain Dream Card To Hand", 1), SStack("Cannot Recall", 1))
                 );
 
             list.Add(
@@ -4049,13 +4093,34 @@ namespace Pokefrost
                         script.countRange = new Vector2Int(2, 2);
                         data.startScripts = new Script[] { script };
 
-                        /*RewardPool basicBells = Extensions.GetRewardPool("GeneralModifierPool");
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);
-                        basicBells.list.Add(data);*/
+                    })
+                );
+
+
+            bells.Add(
+                this.CreateBell("BlessingEntei", "Entei Bell of Ignition", "At the start of each turn if no enemies are <keyword=burning>'d, apply <3><keyword=burning> to a random enemy")
+                .ChangeSprites("enteiBell.png", "enteiDinger.png")
+                .WithSystemsToAdd("AlwaysIgniteModifierSystem")
+                );
+
+            bells.Add(
+                this.CreateBell("BlessingRaikou", "Raikou Bell of Zoomlin", "After <Redraw Bell> is hit, give a random card in hand <keyword=zoomlin>")
+                .ChangeSprites("raikouBell.png", "raikouDinger.png")
+                .WithSystemsToAdd("AlwaysIgniteModifierSystem")
+                );
+
+            bells.Add(
+                this.CreateBell("BlessingDarkrai", "Darkrai Bell of Destruction", "Redraw Bell Counter -1. When <Redraw Bell> is hit, destroy the rightmost card in hand before redrawing")
+                .ChangeSprites("darkraiBell.png", "darkraiDinger.png")
+                .WithSystemsToAdd("DestoryCardSystem")
+                .SubscribeToAfterAllBuildEvent(
+                    (data) =>
+                    {
+                        ScriptChangeRedrawBellCounter script = ScriptableObject.CreateInstance<ScriptChangeRedrawBellCounter>();
+                        script.add = true;
+                        script.value = -1;
+                        data.startScripts = new Script[] { script };
+
                     })
                 );
 
@@ -4069,6 +4134,7 @@ namespace Pokefrost
                 this.CreateBell("darkraiEvent", "Lunar Feather", "<Quest>: Follow <Cresselia> to confront <Darkrai>")
                 .ChangeSprites("lunarFeather.png", "noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
+                .WithSystemsToAdd("SpawnCresslia")
                 );
 
             bells.Add(
@@ -4296,8 +4362,6 @@ namespace Pokefrost
             Events.OnEntityEnterBackpack += RotomFuse;
             Events.OnEntityFlee += FurretFlee;
             MoreEvents.OnCampaignGenerated += ApplianceSpawns;
-            Events.OnCardDraw += HowManyCardsDrawn;
-            Events.OnBattlePhaseStart += ResetCardsDrawn;
             Events.OnCampaignLoaded += CountNatus;
             Events.OnMapNodeReveal += NatuForsee;
             Events.OnEntityCreated += FixImage;
@@ -4347,8 +4411,6 @@ namespace Pokefrost
             Events.OnEntityEnterBackpack -= RotomFuse;
             Events.OnCampaignStart -= ShinyPet;
             MoreEvents.OnCampaignGenerated -= ApplianceSpawns;
-            Events.OnCardDraw -= HowManyCardsDrawn;
-            Events.OnBattlePhaseStart -= ResetCardsDrawn;
             //Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
             Events.OnEntityFlee -= FurretFlee;
@@ -4585,21 +4647,6 @@ namespace Pokefrost
                 Events.InvokeRename(entity, fusedRotom.title);
             }
             Events.OnEntityEnterBackpack -= RotomAdjust;
-        }
-
-        public static int cardsdrawn = 0;
-        private void HowManyCardsDrawn(int arg)
-        {
-            if (cardsdrawn == 0)
-            {
-                cardsdrawn = arg;
-            }
-
-        }
-
-        private void ResetCardsDrawn(Battle.Phase arg0)
-        {
-            cardsdrawn = 0;
         }
 
         private void PokemonEdits(Scene scene)
@@ -4865,7 +4912,7 @@ namespace Pokefrost
             swappers.Add(CreateSwapper("Give Thick Club", "On Card Played Buff Marowak", minBoost: 0, maxBoost: 1));
             swappers.Add(CreateSwapper("While Active Increase Effects To Hand", "Ongoing Increase Effects", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("Give Slowking Crown", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Give Combo to Card in Hand", "On Turn Apply Attack To Self", minBoost: 2, maxBoost: 3));
+            swappers.Add(CreateSwapper("Give Combo to Card in Hand", "On Turn Apply Attack To Self", minBoost: 0, maxBoost: 1));
             swappers.Add(CreateSwapper("Discard Rightmost Button", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("When Deployed Sketch", attackOption: "Null", minBoost: 0, maxBoost: 0));
             swappers.Add(CreateSwapper("Trigger All Button", "When Destroyed Trigger To Allies", minBoost: 0, maxBoost: 0));
@@ -5063,4 +5110,6 @@ namespace Pokefrost
             }
         }
     }
+
+
 }
