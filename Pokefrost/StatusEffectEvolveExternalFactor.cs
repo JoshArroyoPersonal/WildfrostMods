@@ -28,6 +28,11 @@ namespace Pokefrost
             result = (References.Player.drawContainer.Count + References.Player.handContainer.Count + References.Player.discardContainer.Count == 0);
         }
 
+        public static void ReturnTrueIfThickDeck(int t)
+        {
+            result = (References.PlayerData.inventory.deck.Where((c) => c.cardType.name == "Item").Count() >= t);
+        }
+
         public static void ReturnTrueIfEnoughJunk(int t)
         {
             int junk = 0;

@@ -13,12 +13,13 @@ namespace Pokefrost
     {
 
         public static Dictionary<string, string> upgradeMap = new Dictionary<string, string>();
-        public Func<StatusEffectApply, bool> constraint = ReturnTrue;
+        public Func<StatusEffectEvolveFromStatusApplied, StatusEffectApply, bool> constraint = ReturnTrue;
         public string faction;
         public string targetType; //shroom
         public bool persist = true;
 
         public bool threshold = false;
+        public bool once = false;
 
         public override void Init()
         {
@@ -33,12 +34,29 @@ namespace Pokefrost
             }
         }
 
-        public static bool ReturnTrue(StatusEffectApply apply)
+        public static bool ReturnTrue(StatusEffectEvolveFromStatusApplied instance, StatusEffectApply apply)
         {
             return true;
         }
 
-        public virtual void SetConstraints(Func<StatusEffectApply, bool> f)
+        public static bool ReturnTrueIfEnoughAffected(StatusEffectEvolveFromStatusApplied instance, StatusEffectApply apply)
+        {
+            if (instance.count == 0) { return false; }
+
+            int count = 0;
+            List<Entity> entities = Battle.GetCardsOnBoard();
+            foreach (Entity entity in entities)
+            {
+                if (entity.FindStatus(instance.targetType) != null)
+                {
+                    count++;
+                }
+            }
+
+            return (count == instance.count);
+        }
+
+        public virtual void SetConstraints(Func<StatusEffectEvolveFromStatusApplied, StatusEffectApply, bool> f)
         {
             constraint = f;
         }
@@ -55,18 +73,23 @@ namespace Pokefrost
 
         public override bool RunPostApplyStatusEvent(StatusEffectApply apply)
         {
-            bool result1 = constraint(apply);
+            if (apply?.effectData?.type != targetType) { return false; }
+
+            bool result1 = constraint(this,apply);
             bool result2 = false;
-            bool result3 = (apply?.effectData?.type == targetType);
-            if (faction == "ally")
+            switch(faction)
             {
-                result2 = (apply?.applier?.owner == target?.owner);
+                case "ally":
+                    result2 = (apply?.applier?.owner == target?.owner);
+                    break;
+                case "toSelf":
+                    result2 = (apply?.target == target);
+                    break;
+                case "all":
+                    result2 = true;
+                    break;
             }
-            if (faction == "toSelf")
-            {
-                result2 = (apply?.target == target);
-            }
-            if (result1 && result2 && result3)
+            if (result1 && result2)
             {
                 UnityEngine.Debug.Log("[Pokefrost] Confirmed Status!");
                 foreach (StatusEffectData statuses in target.statusEffects)
@@ -79,6 +102,10 @@ namespace Pokefrost
                             {
                                 this.count = 0;
                             }
+                        }
+                        else if (once)
+                        {
+                            this.count = 0;
                         }
                         else
                         {

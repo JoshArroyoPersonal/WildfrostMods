@@ -66,6 +66,19 @@ namespace Pokefrost
 
     }
 
+    public class TargetConstraintHasLastRecycled : TargetConstraint
+    {
+        public override bool Check(CardData targetData)
+        {
+            return (Campaign.FindCharacterNode(References.Player).id == StatusEffectAllCardsAreRecycled.PatchRecycle.node && (bool)StatusEffectAllCardsAreRecycled.PatchRecycle.lastDestroyed);
+        }
+
+        public override bool Check(Entity target)
+        {
+            return Check(target.data);
+        }
+    }
+
     public class TargetConstraintHasSlowkingCrown : TargetConstraint
     {
         public override bool Check(Entity target)

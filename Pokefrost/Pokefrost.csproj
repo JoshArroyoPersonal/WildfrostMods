@@ -452,6 +452,7 @@
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectBurning.cs" />
     <Compile Include="StatusEffectChangeData.cs" />
+    <Compile Include="StatusEffectConvertEffects.cs" />
     <Compile Include="StatusEffectDuplicateEffect.cs" />
     <Compile Include="StatusEffectEvolveFromNode.cs" />
     <Compile Include="StatusEffectEvolveKirlia.cs" />

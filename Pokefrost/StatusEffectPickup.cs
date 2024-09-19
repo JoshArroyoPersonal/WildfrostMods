@@ -35,26 +35,14 @@ namespace Pokefrost
         {
             if (target.IsAliveAndExists())
             {
-                BlockingQueue.Add(target.data.id);
-                Events.PreBattleEnd += Pickup;
-                Events.PostBattle += RemovePickup;
+                string titleText = (cap <= GetAmount()) ? cappedText : text;
+                PickupRoutine.Queue(titleText.Replace("{0}", target.data.title), Math.Min(cap, GetAmount()));
             }
-        }
-
-        public virtual async Task Pickup()
-        {  
-            target.StartCoroutine(Run());
-        }
-
-        public void RemovePickup(CampaignNode _)
-        {
-            Events.PreBattleEnd -= Pickup;
-            Events.PostBattle -= RemovePickup;
         }
 
         public virtual IEnumerator Run()
         {
-            Debug.Log($"[Pokefrost] Queued {target.data.id}");
+            /*Debug.Log($"[Pokefrost] Queued {target.data.id}");
             yield return new WaitUntil(() => BlockingQueue[0] == target.data.id);
             Debug.Log($"[Pokefrost] Starting {target.data.id}");
             string titleText = (cap <= GetAmount()) ? cappedText : text;
@@ -66,7 +54,8 @@ namespace Pokefrost
             Debug.Log($"[Pokefrost] Ending {target.data.id}");
             yield return null;
             BlockingQueue.Remove(target.data.id);
-            Debug.Log($"[Pokefrost] Ended {target.data.id}");
+            Debug.Log($"[Pokefrost] Ended {target.data.id}");*/
+            yield break;
 
         }
 
@@ -84,7 +73,7 @@ namespace Pokefrost
             return pools.ToArray();
         }
 
-        protected RewardPool[] GetPools()
+        protected static RewardPool[] GetPools()
         {
             List<ClassData> tribes = AddressableLoader.GetGroup<ClassData>("ClassData");
             ClassData tribe = tribes[0];

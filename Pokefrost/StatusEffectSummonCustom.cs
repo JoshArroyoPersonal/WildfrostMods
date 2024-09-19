@@ -31,6 +31,23 @@ namespace Pokefrost
         }
     }
 
+    internal class StatusEffectInstantSummonLastRecycled : StatusEffectInstantSummon
+    {
+        public override IEnumerator Process()
+        {
+            if (StatusEffectAllCardsAreRecycled.PatchRecycle.lastDestroyed != null)
+            {
+                targetSummon.summonCard = StatusEffectAllCardsAreRecycled.PatchRecycle.lastDestroyed;
+                StatusEffectAllCardsAreRecycled.PatchRecycle.lastDestroyed = null;
+                yield return base.Process();
+            }
+            else
+            {
+                yield return Remove();
+            }
+        }
+    }
+
 
     internal class StatusEffectInstantSummonLuminPart : StatusEffectInstantSummon
     {

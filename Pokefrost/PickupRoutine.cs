@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.XR;
 using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
@@ -18,6 +19,13 @@ namespace Pokefrost
         static ChooseNewCardSequence sequence;
         static Transform deadCards;
 
+        static List<(string, int)> queue = new List<(string,int)>();
+
+        public static void Queue(string name, int amount)
+        {
+            queue.Add((name, amount));
+        }
+
         public static void Debug1()
         {
             Create("<color=#8F0>Pizza Frog</color> Found A Card");
@@ -26,7 +34,7 @@ namespace Pokefrost
         public static void Debug2(int amount = 4)
         {
             RewardPool r = Extensions.GetRewardPool("GeneralItemPool");
-            References.instance.StartCoroutine(AddRandomCards(amount, new RewardPool[] { r }, (c) => c.cardType.name != "Friendly"));
+            References.instance.StartCoroutine(AddRandomCards(amount, new RewardPool[] { r }));
         }
 
         public static async Task Debug3()
@@ -39,6 +47,18 @@ namespace Pokefrost
             Events.PreBattleEnd += Debug3;
         }
 
+        public static void OnSceneChanged(Scene scene)
+        {
+            if (scene.name == "Battle")
+            {
+                queue.Clear();
+            }
+            if (scene.name == "MapNew")
+            {
+                References.instance.StartCoroutine(RunMultiple());
+            }
+        }
+
         public static void Create(string text)
         {
             if (objectGroup != null)
@@ -46,14 +66,16 @@ namespace Pokefrost
                 objectGroup.GetComponentInChildren<FloatingText>().SetText(text);
                 return;
             }
-
+            //"CameraContainer/CameraMover/MinibossZoomer/CameraPositioner/CameraPointer/Animator/Rumbler/Shaker/InspectSystem"
+            //"Canvas/HandOverlay
+            //Canvas/Padding/HUD/DeckpackLayout/Deckpack/Animator/
             objectGroup = new GameObject("SelectCardRoutine");
             objectGroup.SetActive(false);
-            objectGroup.transform.SetParent(GameObject.Find("CameraContainer/CameraMover/MinibossZoomer/CameraPositioner/CameraPointer/Animator/Rumbler/Shaker/InspectSystem").transform);
+            objectGroup.transform.SetParent(GameObject.Find("Canvas/Padding/HUD/DeckpackLayout").transform.parent.GetChild(0));
             objectGroup.transform.SetAsFirstSibling();
 
             GameObject background = UICollector.PullPrefab("Box", "Background", objectGroup);
-            background.GetComponent<RectTransform>().sizeDelta = 25 * Vector2.one;
+            background.GetComponent<RectTransform>().sizeDelta = new Vector2(20,15);
             background.GetComponent<Image>().color = new Color(0, 0, 0, 0.8f);
 
             GameObject title = UICollector.PullPrefab("Text", "Title", objectGroup);
@@ -95,7 +117,7 @@ namespace Pokefrost
             sequence.cardGroupLayout = obj;
         }
 
-        public static IEnumerator AddRandomCards(int amount, RewardPool[] rewards, Func<CardData, bool> criteria)
+        public static IEnumerator AddRandomCards(int amount, RewardPool[] rewards)
         {
             CardHand hand = obj.GetComponent<CardHand>();
             Debug.Log("[Pokefrost] Cleared!");
@@ -110,7 +132,7 @@ namespace Pokefrost
             Routine.Clump clump = new Routine.Clump();
             foreach (CardData card in cards.InRandomOrder())
             {
-                if (criteria(card))
+                if (card.cardType.name != "Friendly")
                 {
                     Card item = CardManager.Get(card.Clone(), obj.GetComponent<CardController>(), References.Player, false, true);
                     clump.Add(item.UpdateData());
@@ -126,12 +148,51 @@ namespace Pokefrost
             obj.GetComponent<CardContainer>().TweenChildPositions();
         }
 
+        public static IEnumerator RunMultiple()
+        {
+            Debug.Log($"[Pokefrost] Starting... {queue.Count};");
+            Button button = GameObject.Find("Canvas/Padding/HUD/DeckpackLayout").GetComponentInChildren<Button>(true);
+            button.onClick.AddListener(ToggleVisibility);
+            for(int i = queue.Count-1; i>=0; i--)
+            {
+                Create(queue[i].Item1);
+                yield return AddRandomCards(queue[i].Item2, GetPools());
+                yield return Run();
+            }
+            button.onClick.RemoveListener(ToggleVisibility);
+
+            queue.Clear();
+        }
+
+        public static void ToggleVisibility()
+        {
+            objectGroup.SetActive(!objectGroup.activeSelf);
+        }
+
         public static IEnumerator Run()
         {
             obj.SetActive(true);
             sequence.cardController.Enable();
             sequence.promptEnd = obj.GetComponent<CardHand>().entities.Count == 0;
             yield return objectGroup.GetComponent<ChooseNewCardSequence>().Run();
+        }
+
+        public static RewardPool[] GetPools()
+        {
+            List<ClassData> tribes = AddressableLoader.GetGroup<ClassData>("ClassData");
+            ClassData tribe = tribes[0];
+            string tribeName = References.Player.name;
+            Debug.Log($"[Pokefrost] {tribeName}");
+            foreach (ClassData t in tribes)
+            {
+                if (tribeName.ToLower().Contains(t.name.ToLower()))
+                {
+                    tribe = t;
+                    break;
+                }
+            }
+
+            return tribe.rewardPools.Where((r) => r != null && r.type == "Items" && !r.isGeneralPool).ToArray();
         }
 
         public static void Select(Entity entity)

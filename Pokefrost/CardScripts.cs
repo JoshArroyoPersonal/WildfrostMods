@@ -111,9 +111,9 @@ namespace Pokefrost
             script.traitB = traitB;
             return script;
         }
-
     }
 
+    
 
     public class LeaderScripts
     {

@@ -142,8 +142,8 @@ namespace Pokefrost
 
                     Debug.Log("[Pokefrost] Returning battle node");
                     CampaignNode prevNode = Campaign.instance.nodes[i - 1];
-                    node.connections = prevNode.connections;
                     if (node.connections.Count > 0) { return; }
+                    node.connections = prevNode.connections;
                     prevNode.connections = new List<CampaignNode.Connection>
                     {
                         new CampaignNode.Connection()
