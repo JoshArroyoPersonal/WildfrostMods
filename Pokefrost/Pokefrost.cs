@@ -116,7 +116,7 @@ namespace Pokefrost
 
             StringTable keycollection = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
 
-            this.CreateBasicKeyword("Evolve", "Evolve", "If the condition is met at the end of battle evolve into a new Pokemon|Inactive while in reserve");
+            this.CreateBasicKeyword("evolve", "Evolve", "If the condition is met at the end of battle evolve into a new Pokemon|Inactive while in reserve");
             /*KeywordData evolvekey = Get<KeywordData>("explode").InstantiateKeepName();
             evolvekey.name = "Evolve";
             keycollection.SetString(evolvekey.name + "_text", "Evolve");
@@ -128,7 +128,7 @@ namespace Pokefrost
             evolvekey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", evolvekey);*/
 
-            KeywordData tauntkey = this.CreateBasicKeyword("Taunt", "Taunt", "All enemies are <keyword=taunted>");
+            KeywordData tauntkey = this.CreateBasicKeyword("taunt", "Taunt", "All enemies are <keyword=taunted>");
             /*KeywordData tauntkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             tauntkey.name = "Taunt";
             keycollection.SetString(tauntkey.name + "_text", "Taunt");
@@ -138,7 +138,7 @@ namespace Pokefrost
             tauntkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntkey);*/
 
-            KeywordData tauntedkey = this.CreateBasicKeyword("Taunted", "Taunted", "Target only enemies with <keyword=taunt>|Hits them all!");
+            KeywordData tauntedkey = this.CreateBasicKeyword("taunted", "Taunted", "Target only enemies with <keyword=taunt>|Hits them all!");
             /*KeywordData tauntedkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             tauntedkey.name = "Taunted";
             keycollection.SetString(tauntedkey.name + "_text", "Taunted");
@@ -148,7 +148,7 @@ namespace Pokefrost
             tauntedkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntedkey);*/
 
-            this.CreateBasicKeyword("Random Effect", "Random Effect", "Does a random effect from the listed options")
+            this.CreateBasicKeyword("randomeffect", "Random Effect", "Does a random effect from the listed options")
                 .ChangeColor(new Color(0, 0, 0), new Color(0.1f, 0.1f, 0.1f))
                 .ChangePanel(color: new Color(0.75f, 0.42f, 0.94f));
             /*KeywordData randomkey = Get<KeywordData>("hit").InstantiateKeepName();
@@ -190,7 +190,7 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wilder);
             statusList.Add(wilder);
 
-            KeywordData overshroomkey = this.CreateIconKeyword("Overshroom", "Overshroom", "Acts like both <sprite name=overload> and <sprite name=shroom>|Counts as both too!", "overshroomicon")
+            KeywordData overshroomkey = this.CreateIconKeyword("overshroom", "Overshroom", "Acts like both <sprite name=overload> and <sprite name=shroom>|Counts as both too!", "overshroomicon")
                 .ChangeColor(title: new Color(0, 0.6f, 0.6f), note: new Color(0, 0.6f, 0.6f));
 
             this.CreateIcon("OvershroomIcon", ImagePath("overshroomicon.png").ToSprite(), "overshroom", "shroom", Color.black, new KeywordData[] { overshroomkey });
@@ -696,7 +696,7 @@ namespace Pokefrost
             triattack.applyFormat = "";
             triattack.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             triattack.keyword = "";
-            triattack.hiddenKeywords = new KeywordData[] {Get<KeywordData>("random effect")};
+            triattack.hiddenKeywords = new KeywordData[] {Get<KeywordData>("randomeffect")};
             triattack.targetConstraints = new TargetConstraint[0];
             collection.SetString(triattack.name + "_text", "Apply <{a}><keyword=shroom>/<keyword=overload>/<keyword=weakness> randomly");
             triattack.textKey = collection.GetString(triattack.name + "_text");
@@ -741,7 +741,7 @@ namespace Pokefrost
             TraitData bombard1trait = Get<TraitData>("Bombard 1");
             TraitData bombard2trait = Get<TraitData>("Bombard 2");
 
-            KeywordData pluckkey = this.CreateBasicKeyword("Pluck", "Pluck", "Hits lowest health target in row|Prioritizes front target in case of tie");
+            KeywordData pluckkey = this.CreateBasicKeyword("pluck", "Pluck", "Hits lowest health target in row|Prioritizes front target in case of tie");
             /*KeywordData pluckkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             pluckkey.name = "Pluck";
             keycollection.SetString(pluckkey.name + "_text", "Pluck");
@@ -1077,7 +1077,7 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", frenzyDeath);
             statusList.Add(frenzyDeath);
 
-            this.CreateBasicKeyword("WonderGuard", "WonderGuard", "Immune to direct damage");
+            this.CreateBasicKeyword("wonderguard", "Wonder Guard", "Immune to direct damage");
             /*KeywordData wonderGuardKey = ScriptableObject.CreateInstance<KeywordData>();
             wonderGuardKey.name = "WonderGuard";
             keycollection.SetString(wonderGuardKey.name + "_text", "Wonder Guard");
@@ -1107,9 +1107,9 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", summonShedinja);
             statusList.Add(summonShedinja);
 
-            this.CreateBasicKeyword("Sketch", "Sketch", "When deployed, permanently copy the effects of a random enemy in the row|Counts down")
+            this.CreateBasicKeyword("sketch", "Sketch", "When deployed, permanently copy the effects of a random enemy in the row|Counts down")
                 .ChangeColor(body: Color.black, note: Color.black)
-                .ChangePanel(this.ImagePath("sketchpaint.png").ToSprite(), Color.white);
+                .ChangePanel(this.ImagePath("sketchpaint.png").ToSprite(), new Color(0.9f, 0.9f, 0.8f));
             /*KeywordData sketchkey = Get<KeywordData>("hit").InstantiateKeepName();
             sketchkey.name = "Sketch";
             keycollection.SetString(sketchkey.name + "_text", "Sketch");
@@ -3874,6 +3874,17 @@ namespace Pokefrost
             }
         }
 
+        private static readonly string[] summoner = { "nincada" }; //Had to do something funky because shedinjamask isn't checked under normal circumstances. Junk also works.
+        private static readonly string[] summoned = { "shedinja" };
+
+        private void AddShades()
+        {
+            for(int i=0; i<summoner.Length; i++)
+            {
+                CreatedByLookup.Add(GUID + "." + summoned[i], GUID + "." + summoner[i]);
+            }
+        }
+
         private void CreateModAssetsCharms()
         {
             Debug.Log("[Pokefrost] Loading Charms");
@@ -4326,6 +4337,7 @@ namespace Pokefrost
                 CreateModAssetsCharms();
                 CreateModAssetsBells();
                 AddGreetings();
+                AddShades();
             }     
             CreateEvents();
             MiscLocalizationStrings();
@@ -5104,5 +5116,9 @@ namespace Pokefrost
         }
     }
 
-
+    [HarmonyPatch(typeof(References), nameof(References.Classes), MethodType.Getter)]
+    static class FixClassesGetter
+    {
+        static void Postfix(ref ClassData[] __result) => __result = AddressableLoader.GetGroup<ClassData>("ClassData").ToArray();
+    }
 }

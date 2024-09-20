@@ -20,6 +20,11 @@ namespace Pokefrost
         public static Sprite panel;
         public static Sprite panelSmall;
 
+        public static void AddLookup(string summoned, string summoner)
+        {
+            CreatedByLookup.lookup[summoned] = summoner;
+        }
+
         public static void LoadPanels(WildfrostMod mod)
         {
             Texture2D tex = mod.ImagePath("Panel.png").ToTex();
