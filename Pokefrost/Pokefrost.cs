@@ -12,22 +12,15 @@ using Rewired;
 using UnityEngine.Localization;
 using System.IO;
 using TMPro;
-using Rewired.Utils.Attributes;
-using System.Runtime.CompilerServices;
 using static CombineCardSystem;
 using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
 using static Text;
 using System.Collections;
 using WildfrostHopeMod.Utils;
 using UnityEngine.UI;
-using System.Runtime.Remoting.Messaging;
-using System.Configuration;
-using UnityEngine.Localization.Components;
 using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
-using static Mono.Security.X509.X509Stores;
 using UnityEngine.Events;
-using static Mono.Security.X509.X520;
 
 namespace Pokefrost
 {
@@ -97,7 +90,7 @@ namespace Pokefrost
             Debug.Log("Got Glyph");
             Debug.Log("[Josh] Changed icon_sheet");*/
 
-            Debug.Log(this.ImagePath(""));
+            //Debug.Log(this.ImagePath(""));
             pokefrostSprites = HopeUtils.CreateSpriteAsset("pokefrostSprites", directoryWithPNGs: this.ImagePath("Sprites"), textures: new Texture2D[] {  }, sprites: new Sprite[] {  });
             foreach(var character in pokefrostSprites.spriteCharacterTable)
             {
@@ -1202,7 +1195,7 @@ namespace Pokefrost
             triggerslowking.name = "On Card Played Trigger All Slowking Crowns";
             triggerslowking.effectToApply = Get<StatusEffectData>("Trigger (High Prio)");
             triggerslowking.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies;
-            triggerslowking.applyConstraints = new TargetConstraint[] { new TargetConstraintHasSlowkingCrown() };
+            triggerslowking.applyConstraints = new TargetConstraint[] { ScriptableObject.CreateInstance<TargetConstraintHasSlowkingCrown>() };
             triggerslowking.canBeBoosted = false;
             triggerslowking.doPing = true;
             collection.SetString(triggerslowking.name + "_text", "Trigger <sprite name=slowking_crown>'d allies");
@@ -4138,7 +4131,7 @@ namespace Pokefrost
                 );
 
             bells.Add(
-                this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the port before the ship leaves")
+                this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the port before the ship departs")
                 .ChangeSprites("eonTicket.png","noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
                 );
@@ -4730,7 +4723,7 @@ namespace Pokefrost
             }
         }
 
-        private void PatchOvershroom(StatusIcon icon)
+        /*private void PatchOvershroom(StatusIcon icon)
         {
 
             string[] newtypes = new string[] { "burning", "jolted", "juice", "overshroom" };
@@ -4744,7 +4737,7 @@ namespace Pokefrost
                 icon.afterUpdate.AddListener(icon.SetText);
                 icon.onValueDown.AddListener(icon.CheckDestroy);
             }
-        }
+        }*/
 
         public void BattleFuse(Scene scene)
         {

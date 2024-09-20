@@ -431,6 +431,7 @@
   <ItemGroup>
     <Compile Include="BattleGenerationScriptHooh.cs" />
     <Compile Include="BellClasses.cs" />
+    <Compile Include="BossRewardDataCard.cs" />
     <Compile Include="ButtonClasses.cs" />
     <Compile Include="CampaignNodeTypeBetterEvent.cs" />
     <Compile Include="CampaignNodeTypeSpecialBattle.cs" />
