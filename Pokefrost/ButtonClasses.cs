@@ -106,6 +106,19 @@ namespace Pokefrost
 
         public static readonly string Key_Snowed = "websiteofsites.wildfrost.pokefrost.buttonSnowed";
         public static readonly string Key_Inked = "websiteofsites.wildfrost.pokefrost.buttonInked";
+        public static readonly string Key_Generic = "websiteofsites.wildfrost.pokefrost.buttonGeneric";
+        public static readonly string Key_Autotomize = "websiteofsites.wildfrost.pokefrost.buttonAutotomize";
+
+        public string genericPopup;
+
+        public static void DefineStrings()
+        {
+            StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+            tooltips.SetString(Key_Snowed, "Snowed!");
+            tooltips.SetString(Key_Inked, "Inked!");
+            tooltips.SetString(Key_Generic, "Not yet!");
+            tooltips.SetString(Key_Autotomize, "Please recycle!");
+        }
 
         public PlayFromFlags playFrom = PlayFromFlags.Board;
         public bool finiteUses = false;
@@ -113,6 +126,7 @@ namespace Pokefrost
         protected bool unusedThisTurn = true;
         public bool endTurn = false;
         public float timing = 0.2f;
+        public TargetConstraint[] clickConstraints = new TargetConstraint[0];
 
         public override void Init()
         {
@@ -130,6 +144,27 @@ namespace Pokefrost
 
         public virtual void RunButtonClicked()
         {
+            if (target.IsSnowed)
+            {
+                PopupText(Key_Snowed);
+                return;
+            }
+
+            if(target.silenced)
+            {
+                PopupText(Key_Inked);
+                return;
+            }
+
+            foreach (var constraint in clickConstraints)
+            {
+                if (!constraint.Check(target))
+                {
+                    PopupText(genericPopup ?? Key_Generic);
+                    return;
+                }
+            }
+
             if ((bool)References.Battle && References.Battle.phase == Battle.Phase.Play 
                 && CorrectPlace() 
                 && !target.IsSnowed 
@@ -140,27 +175,18 @@ namespace Pokefrost
                 target.StartCoroutine(ButtonClicked());
                 unusedThisTurn = false;
             }
+        }
 
-            if ((bool) target.IsSnowed || target.silenced)
+        public virtual void PopupText(string s)
+        {
+            NoTargetTextSystem noText = GameSystem.FindObjectOfType<NoTargetTextSystem>();
+            if (noText != null)
             {
-                NoTargetTextSystem noText = GameSystem.FindObjectOfType<NoTargetTextSystem>();
-                if (noText != null)
-                {
-                    TMP_Text textElement = noText.textElement;
-                    if ((bool)target.IsSnowed)
-                    {
-                        StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
-                        textElement.text = tooltips.GetString(Key_Snowed).GetLocalizedString();
-                    }
-                    if ((bool)target.silenced)
-                    {
-                        StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
-                        textElement.text = tooltips.GetString(Key_Inked).GetLocalizedString();
-                    }
-                    noText.PopText(target.transform.position);
-                }
+                TMP_Text textElement = noText.textElement;
+                StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+                textElement.text = tooltips.GetString(s).GetLocalizedString();
+                noText.PopText(target.transform.position);
             }
-
         }
 
         public bool CheckFlag(PlayFromFlags flag) => (playFrom & flag) != 0;

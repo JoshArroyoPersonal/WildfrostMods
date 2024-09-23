@@ -12,22 +12,15 @@ using Rewired;
 using UnityEngine.Localization;
 using System.IO;
 using TMPro;
-using Rewired.Utils.Attributes;
-using System.Runtime.CompilerServices;
 using static CombineCardSystem;
 using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
 using static Text;
 using System.Collections;
 using WildfrostHopeMod.Utils;
 using UnityEngine.UI;
-using System.Runtime.Remoting.Messaging;
-using System.Configuration;
-using UnityEngine.Localization.Components;
 using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
-using static Mono.Security.X509.X509Stores;
 using UnityEngine.Events;
-using static Mono.Security.X509.X520;
 
 namespace Pokefrost
 {
@@ -97,7 +90,7 @@ namespace Pokefrost
             Debug.Log("Got Glyph");
             Debug.Log("[Josh] Changed icon_sheet");*/
 
-            Debug.Log(this.ImagePath(""));
+            //Debug.Log(this.ImagePath(""));
             pokefrostSprites = HopeUtils.CreateSpriteAsset("pokefrostSprites", directoryWithPNGs: this.ImagePath("Sprites"), textures: new Texture2D[] {  }, sprites: new Sprite[] {  });
             foreach(var character in pokefrostSprites.spriteCharacterTable)
             {
@@ -123,7 +116,7 @@ namespace Pokefrost
 
             StringTable keycollection = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
 
-            this.CreateBasicKeyword("Evolve", "Evolve", "If the condition is met at the end of battle evolve into a new Pokemon|Inactive while in reserve");
+            this.CreateBasicKeyword("evolve", "Evolve", "If the condition is met at the end of battle evolve into a new Pokemon|Inactive while in reserve");
             /*KeywordData evolvekey = Get<KeywordData>("explode").InstantiateKeepName();
             evolvekey.name = "Evolve";
             keycollection.SetString(evolvekey.name + "_text", "Evolve");
@@ -135,7 +128,7 @@ namespace Pokefrost
             evolvekey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", evolvekey);*/
 
-            KeywordData tauntkey = this.CreateBasicKeyword("Taunt", "Taunt", "All enemies are <keyword=taunted>");
+            KeywordData tauntkey = this.CreateBasicKeyword("taunt", "Taunt", "All enemies are <keyword=taunted>");
             /*KeywordData tauntkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             tauntkey.name = "Taunt";
             keycollection.SetString(tauntkey.name + "_text", "Taunt");
@@ -145,7 +138,7 @@ namespace Pokefrost
             tauntkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntkey);*/
 
-            KeywordData tauntedkey = this.CreateBasicKeyword("Taunted", "Taunted", "Target only enemies with <keyword=taunt>|Hits them all!");
+            KeywordData tauntedkey = this.CreateBasicKeyword("taunted", "Taunted", "Target only enemies with <keyword=taunt>|Hits them all!");
             /*KeywordData tauntedkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             tauntedkey.name = "Taunted";
             keycollection.SetString(tauntedkey.name + "_text", "Taunted");
@@ -155,7 +148,7 @@ namespace Pokefrost
             tauntedkey.ModAdded = this;
             AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntedkey);*/
 
-            this.CreateBasicKeyword("Random Effect", "Random Effect", "Does a random effect from the listed options")
+            this.CreateBasicKeyword("randomeffect", "Random Effect", "Does a random effect from the listed options")
                 .ChangeColor(new Color(0, 0, 0), new Color(0.1f, 0.1f, 0.1f))
                 .ChangePanel(color: new Color(0.75f, 0.42f, 0.94f));
             /*KeywordData randomkey = Get<KeywordData>("hit").InstantiateKeepName();
@@ -197,7 +190,7 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wilder);
             statusList.Add(wilder);
 
-            KeywordData overshroomkey = this.CreateIconKeyword("Overshroom", "Overshroom", "Acts like both <sprite name=overload> and <sprite name=shroom>|Counts as both too!", "overshroomicon")
+            KeywordData overshroomkey = this.CreateIconKeyword("overshroom", "Overshroom", "Acts like both <sprite name=overload> and <sprite name=shroom>|Counts as both too!", "overshroomicon")
                 .ChangeColor(title: new Color(0, 0.6f, 0.6f), note: new Color(0, 0.6f, 0.6f));
 
             this.CreateIcon("OvershroomIcon", ImagePath("overshroomicon.png").ToSprite(), "overshroom", "shroom", Color.black, new KeywordData[] { overshroomkey });
@@ -703,7 +696,7 @@ namespace Pokefrost
             triattack.applyFormat = "";
             triattack.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             triattack.keyword = "";
-            triattack.hiddenKeywords = new KeywordData[] {Get<KeywordData>("random effect")};
+            triattack.hiddenKeywords = new KeywordData[] {Get<KeywordData>("randomeffect")};
             triattack.targetConstraints = new TargetConstraint[0];
             collection.SetString(triattack.name + "_text", "Apply <{a}><keyword=shroom>/<keyword=overload>/<keyword=weakness> randomly");
             triattack.textKey = collection.GetString(triattack.name + "_text");
@@ -748,7 +741,7 @@ namespace Pokefrost
             TraitData bombard1trait = Get<TraitData>("Bombard 1");
             TraitData bombard2trait = Get<TraitData>("Bombard 2");
 
-            KeywordData pluckkey = this.CreateBasicKeyword("Pluck", "Pluck", "Hits lowest health target in row|Prioritizes front target in case of tie");
+            KeywordData pluckkey = this.CreateBasicKeyword("pluck", "Pluck", "Hits lowest health target in row|Prioritizes front target in case of tie");
             /*KeywordData pluckkey = Get<KeywordData>("hellbent").InstantiateKeepName();
             pluckkey.name = "Pluck";
             keycollection.SetString(pluckkey.name + "_text", "Pluck");
@@ -1084,7 +1077,7 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", frenzyDeath);
             statusList.Add(frenzyDeath);
 
-            this.CreateBasicKeyword("WonderGuard", "WonderGuard", "Immune to direct damage");
+            this.CreateBasicKeyword("wonderguard", "Wonder Guard", "Immune to direct damage");
             /*KeywordData wonderGuardKey = ScriptableObject.CreateInstance<KeywordData>();
             wonderGuardKey.name = "WonderGuard";
             keycollection.SetString(wonderGuardKey.name + "_text", "Wonder Guard");
@@ -1114,9 +1107,9 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", summonShedinja);
             statusList.Add(summonShedinja);
 
-            this.CreateBasicKeyword("Sketch", "Sketch", "When deployed, permanently copy the effects of a random enemy in the row|Counts down")
+            this.CreateBasicKeyword("sketch", "Sketch", "When deployed, permanently copy the effects of a random enemy in the row|Counts down")
                 .ChangeColor(body: Color.black, note: Color.black)
-                .ChangePanel(this.ImagePath("sketchpaint.png").ToSprite(), Color.white);
+                .ChangePanel(this.ImagePath("sketchpaint.png").ToSprite(), new Color(0.9f, 0.9f, 0.8f));
             /*KeywordData sketchkey = Get<KeywordData>("hit").InstantiateKeepName();
             sketchkey.name = "Sketch";
             keycollection.SetString(sketchkey.name + "_text", "Sketch");
@@ -1202,7 +1195,7 @@ namespace Pokefrost
             triggerslowking.name = "On Card Played Trigger All Slowking Crowns";
             triggerslowking.effectToApply = Get<StatusEffectData>("Trigger (High Prio)");
             triggerslowking.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies;
-            triggerslowking.applyConstraints = new TargetConstraint[] { new TargetConstraintHasSlowkingCrown() };
+            triggerslowking.applyConstraints = new TargetConstraint[] { ScriptableObject.CreateInstance<TargetConstraintHasSlowkingCrown>() };
             triggerslowking.canBeBoosted = false;
             triggerslowking.doPing = true;
             collection.SetString(triggerslowking.name + "_text", "Trigger <sprite name=slowking_crown>'d allies");
@@ -1996,6 +1989,20 @@ namespace Pokefrost
 
             this.CreateBasicKeyword("prophesized", "Prophesized", "The card is fated to be in your deck");
 
+            this.CreateBasicKeyword("lavaplume", "Lava Plume", "<Free Action>: Convert the front enemy's <keyword=spice> into <keyword=burning>|Click to activate\nOnce per turn");
+            this.CreateButtonIcon("magcargoLavaPlume", ImagePath("kingdrabutton.png").ToSprite(), "lavaPlume", "", Color.white, new KeywordData[] { Get<KeywordData>("lavaplume") });
+
+            StatusEffectConvertEffects spiceToBurning = Ext.CreateStatus<StatusEffectConvertEffects>("Instance Convert Spice To Burning")
+                .Register(this);
+            spiceToBurning.effectA = "Spice";
+            spiceToBurning.effectB = "Burning";
+            statusList.Add(spiceToBurning);
+
+            StatusTokenApplyX lavaPlume = this.CreateStatusButton<StatusTokenApplyX>("Convert Spice To Burning To Front Enemy", "lavaPlume")
+                .ApplyX(spiceToBurning, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
+                .Register(this);
+            lavaPlume.oncePerTurn = true;
+            statusList.Add(lavaPlume);
 
             this.CreateBasicKeyword("fidget", "Fidget", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate");
             this.CreateButtonIcon("aronFidget", ImagePath("aronbutton.png").ToSprite(), "fidget", "", Color.white, new KeywordData[] { Get<KeywordData>("fidget") });
@@ -2027,6 +2034,22 @@ namespace Pokefrost
                 .ApplyX(unlimitedLumin, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             statusList.Add(unlimitedLuminWhileActive);
+
+            this.CreateBasicKeyword("autotomize", "Autotomize", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate\nRecycle to refresh");
+            this.CreateButtonIcon("aggronAutotomize", ImagePath("aronbutton.png").ToSprite(), "autotomize", "", Color.white, new KeywordData[] { Get<KeywordData>("autotomize") });
+
+            StatusEffectInstantSummonLastRecycled lastRecycled = Ext.CreateStatus<StatusEffectInstantSummonLastRecycled>("Instant Summon Last Recycled To Hand")
+                .Register(this);
+            lastRecycled.targetSummon = holderSummon;
+            lastRecycled.summonPosition = StatusEffectInstantSummon.Position.Hand;
+            statusList.Add(lastRecycled);
+
+            StatusTokenApplyX autotomize = this.CreateStatusButton<StatusTokenApplyX>("Autotomize Button", "autotomize")
+                .ApplyX(lastRecycled, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            autotomize.clickConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintHasLastRecycled>() };
+            autotomize.genericPopup = StatusTokenApplyX.Key_Autotomize;
+            statusList.Add(autotomize);
 
             StatusEffectSummon luminHolderSummon = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             luminHolderSummon.name = "Summon Lumin Goop or Broken Vase";
@@ -2328,6 +2351,23 @@ namespace Pokefrost
             ev26.SetEvolution("xatu");
             ev26.Confirm();
             statusList.Add(ev26);
+
+            StatusEffectEvolveExternalFactor ev27 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
+            ev27.Autofill("Evolve Aipom", "<keyword=evolve>: Have <color=#FFCA57>{a}</color> <Items> in deck", this);
+            ev27.SetEvolution("ambipom");
+            ev27.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfThickDeck);
+            ev27.Confirm();
+            statusList.Add(ev27);
+
+            StatusEffectEvolveFromStatusApplied ev28 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
+            ev28.Autofill("Evolve Snover", "<keyword=evolve>: <{a}> units <keyword=snow>'d at once", this);
+            ev28.SetEvolution("abomasnow");
+            ev28.SetConstraints(StatusEffectEvolveFromStatusApplied.ReturnTrueIfEnoughAffected);
+            ev28.targetType = "snow";
+            ev28.faction = "all";
+            ev28.once = true;
+            ev28.Confirm();
+            statusList.Add(ev28);
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -2661,7 +2701,7 @@ namespace Pokefrost
                     .CreateUnit("aipom", "Aipom")
                     .SetStats(6, 3, 3)
                     .SetSprites("aipom.png", "aipomBG.png")
-                    .SStartEffects(("On Kill Boost Effects", 1))
+                    .SStartEffects(("On Kill Boost Effects", 1), ("Evolve Aipom", 12))
                     .STraits(("Pickup", 2))
                     .AddPool()
                 );
@@ -2724,7 +2764,7 @@ namespace Pokefrost
                     .CreateUnit("magcargo", "Magcargo", idleAnim: "GoopAnimationProfile")
                     .SetStats(15, 0, 6)
                     .SetSprites("magcargo.png", "magcargoBG.png")
-                    .SStartEffects(("When Hit Apply Spice To Allies & Enemies & Self", 1))
+                    .SStartEffects(("When Hit Apply Spice To Allies & Enemies & Self", 1), ("Convert Spice To Burning To Front Enemy", 1))
                     .AddPool("BasicUnitPool")
                 );
 
@@ -2923,7 +2963,7 @@ namespace Pokefrost
                     .SetStats(4, 6, 4)
                     .SetSprites("aron.png", "aronBG.png")
                     .STraits(("Recycle",1))
-                    .SStartEffects(("Evolve Aron", 10), ("Fidget Button", 1))
+                    .SStartEffects(("Evolve Aron", 8), ("Fidget Button", 1))
                     .AddPool("ClunkUnitPool")
                 );
 
@@ -2933,7 +2973,7 @@ namespace Pokefrost
                     .SetStats(6, 6, 4)
                     .SetSprites("lairon.png", "laironBG.png")
                     .STraits(("Recycle", 1))
-                    .SStartEffects(("While Active All Cards Are Recyclable", 1),("Evolve Lairon",1))
+                    .SStartEffects(("While Active All Cards Are Recyclable", 1),("Evolve Lairon",2))
                 );
 
             list.Add(
@@ -2942,7 +2982,7 @@ namespace Pokefrost
                     .SetStats(8, 6, 4)
                     .SetSprites("aggron.png", "aggronBG.png")
                     .STraits(("Recycle", 1))
-                    .SStartEffects(("While Active All Cards Are Recyclable", 1))
+                    .SStartEffects(("While Active All Cards Are Recyclable", 1), ("Autotomize Button", 1))
                 );
 
             list.Add(
@@ -3061,7 +3101,7 @@ namespace Pokefrost
                     .CreateUnit("piplup", "Piplup", bloodProfile: "Blood Profile Snow")
                     .SetStats(6, 2, 3)
                     .SetSprites("piplup.png", "piplupBG.png")
-                    .SStartEffects(("When Snow Applied To Self Gain Equal Attack", 1), ("Evolve Piplup", 8))
+                    .SStartEffects(("When Snow Applied To Self Gain Equal Attack", 1), ("Evolve Piplup", 10))
                     .AddPool()
                 );
 
@@ -3070,7 +3110,7 @@ namespace Pokefrost
                     .CreateUnit("prinplup", "Prinplup", bloodProfile: "Blood Profile Snow")
                     .SetStats(7, 2, 3)
                     .SetSprites("prinplup.png", "prinplupBG.png")
-                    .SStartEffects(("Snow Acts Like Shell", 1), ("When Snow Applied To Self Gain Equal Attack", 1), ("Evolve Prinplup", 10))
+                    .SStartEffects(("Snow Acts Like Shell", 1), ("When Snow Applied To Self Gain Equal Attack", 1), ("Evolve Prinplup", 11))
                 );
 
             list.Add(
@@ -3168,7 +3208,7 @@ namespace Pokefrost
                     .CreateUnit("snover", "Snover")
                     .SetStats(8, 4, 4)
                     .SetSprites("snover.png", "snoverBG.png")
-                    .SStartEffects(("While Active Snowstorm", 1), ("While Active All Hits Apply Snow", 1), ("ImmuneToSnow", 1))
+                    .SStartEffects(("While Active Snowstorm", 1), ("While Active All Hits Apply Snow", 1), ("ImmuneToSnow", 1), ("Evolve Snover",4))
                     .AddPool("SnowUnitPool")
                 );
 
@@ -3894,6 +3934,17 @@ namespace Pokefrost
             }
         }
 
+        private static readonly string[] summoner = { "nincada" }; //Had to do something funky because shedinjamask isn't checked under normal circumstances. Junk also works.
+        private static readonly string[] summoned = { "shedinja" };
+
+        private void AddShades()
+        {
+            for(int i=0; i<summoner.Length; i++)
+            {
+                CreatedByLookup.Add(GUID + "." + summoned[i], GUID + "." + summoner[i]);
+            }
+        }
+
         private void CreateModAssetsCharms()
         {
             Debug.Log("[Pokefrost] Loading Charms");
@@ -4168,7 +4219,7 @@ namespace Pokefrost
                 );
 
             bells.Add(
-                this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the port before the ship leaves")
+                this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the port before the ship departs")
                 .ChangeSprites("eonTicket.png","noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
                 );
@@ -4312,13 +4363,7 @@ namespace Pokefrost
             {
                 if (card.name.Contains("websiteofsites.wildfrost.pokefrost") && card.cardType.name == "Friendly" && UnityEngine.Random.Range(0, 1f) < shinyrate)
                 {
-                    string[] splitName = card.name.Split('.');
-                    string trueName = splitName[3];
-                    Sprite sprite = this.ImagePath("shiny_" + trueName + ".png").ToSprite();
-                    sprite.name = "shiny";
-                    card.mainSprite = sprite;
-                    CardData.StatusEffectStacks[] shinystatus = { new CardData.StatusEffectStacks(Get<StatusEffectData>("Shiny"), 1) };
-                    card.startWithEffects = card.startWithEffects.Concat(shinystatus).ToArray();
+                    Shinify(card);
                 }
             }
         }
@@ -4327,22 +4372,19 @@ namespace Pokefrost
         {
             if (entity.data.name.Contains("websiteofsites.wildfrost.pokefrost") && entity.data.cardType.name == "Friendly" && UnityEngine.Random.Range(0, 1f) < shinyrate)
             {
-                string[] splitName = entity.data.name.Split('.');
-                string trueName = splitName[3];
-                string fileName = this.ImagePath("shiny_" + trueName + ".png");
-                Debug.Log("shiny_" + trueName);
-                if (!System.IO.File.Exists(fileName))
-                {
-                    Debug.Log("[Pokefrost] Oops, shiny file not found. Contact devs.");
-                    return;
-                }
-                Sprite sprite = this.ImagePath("shiny_" + trueName + ".png").ToSprite();
-                sprite.name = "shiny";
-                entity.data.mainSprite = sprite;
-                entity.GetComponent<Card>().mainImage.sprite = sprite;
-                CardData.StatusEffectStacks[] shinystatus = { new CardData.StatusEffectStacks(Get<StatusEffectData>("Shiny"), 1) };
-                entity.data.startWithEffects = entity.data.startWithEffects.Concat(shinystatus).ToArray();
+                Shinify(entity.data);
             }
+        }
+
+        internal void Shinify(CardData card)
+        {
+            string[] splitName = card.name.Split('.');
+            string trueName = splitName[3];
+            Sprite sprite = this.ImagePath("shiny_" + trueName + ".png").ToSprite();
+            sprite.name = "shiny";
+            card.mainSprite = sprite;
+            CardData.StatusEffectStacks[] shinystatus = { new CardData.StatusEffectStacks(Get<StatusEffectData>("Shiny"), 1) };
+            card.startWithEffects = card.startWithEffects.Concat(shinystatus).ToArray();
         }
 
         private void DebugShiny()
@@ -4372,6 +4414,7 @@ namespace Pokefrost
                 CreateModAssetsCharms();
                 CreateModAssetsBells();
                 AddGreetings();
+                AddShades();
             }     
             CreateEvents();
             MiscLocalizationStrings();
@@ -4392,6 +4435,7 @@ namespace Pokefrost
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             Events.OnSceneLoaded += BattleFuse;
             Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
+            Events.OnSceneChanged += PickupRoutine.OnSceneChanged;
             
 
 
@@ -4427,8 +4471,7 @@ namespace Pokefrost
             StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
             StringTable ui = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
 
-            tooltips.SetString(StatusTokenApplyX.Key_Snowed, "Snowed!");
-            tooltips.SetString(StatusTokenApplyX.Key_Inked, "Inked!");
+            StatusTokenApplyX.DefineStrings();
 
             ui.SetString(EvolutionPopUp.EvoTitleKey1A, "Huh? <#ff0>{0}</color> is evolving?");
             ui.SetString(EvolutionPopUp.EvoTitleKey1B, "Huh? <#ff0>{0}</color> Pokemon are evolving?");
@@ -4465,6 +4508,7 @@ namespace Pokefrost
             RevertVanillaChanges();
             Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
+            Events.OnSceneChanged -= PickupRoutine.OnSceneChanged;
 
         }
 
@@ -4545,24 +4589,24 @@ namespace Pokefrost
             }
         }
 
-        private static IEnumerator PokemonPhoto2()
+        private IEnumerator PokemonPhoto2()
         {
-            string[] everyGeneration = { "websiteofsites.wildfrost.pokefrost.farfetchd", "websiteofsites.wildfrost.pokefrost.muk",
-                "websiteofsites.wildfrost.pokefrost.furret", "websiteofsites.wildfrost.pokefrost.aipom", "websiteofsites.wildfrost.pokefrost.kirlia",
-                "websiteofsites.wildfrost.pokefrost.gardevoir", "websiteofsites.wildfrost.pokefrost.gallade",
-                "websiteofsites.wildfrost.pokefrost.natu", "websiteofsites.wildfrost.pokefrost.xatu", "websiteofsites.wildfrost.pokefrost.abomasnow",
-                "websiteofsites.wildfrost.pokefrost.aron", "websiteofsites.wildfrost.pokefrost.lairon", "websiteofsites.wildfrost.pokefrost.aggron",
-                "websiteofsites.wildfrost.pokefrost.lumineon", "websiteofsites.wildfrost.pokefrost.chimecho", "websiteofsites.wildfrost.pokefrost.palafin"
+            string[] everyGeneration = { "farfetchd", "muk",
+                "furret", "aipom", "kirlia",
+                "gardevoir", "gallade",
+                "natu", "xatu", "abomasnow",
+                "aron", "lairon", "aggron",
+                "lumineon"
             };
 
-            string[] everyType = { "websiteofsites.wildfrost.pokefrost.raikou", "websiteofsites.wildfrost.pokefrost.entei", "websiteofsites.wildfrost.pokefrost.suicune",
-                "websiteofsites.wildfrost.pokefrost.hooh", "websiteofsites.wildfrost.pokefrost.latias", "websiteofsites.wildfrost.pokefrost.latios",
-                "websiteofsites.wildfrost.pokefrost.cresselia", "websiteofsites.wildfrost.pokefrost.darkrai", "websiteofsites.wildfrost.pokefrost.enemy_beautifly",
-                "websiteofsites.wildfrost.pokefrost.enemy_dustox", "websiteofsites.wildfrost.pokefrost.enemy_plusle", "websiteofsites.wildfrost.pokefrost.enemy_volbeat",
-                "websiteofsites.wildfrost.pokefrost.enemy_illumise", "websiteofsites.wildfrost.pokefrost.enemy_minun", "websiteofsites.wildfrost.pokefrost.enemy_lunatone",
-                "websiteofsites.wildfrost.pokefrost.enemy_solrock", "websiteofsites.wildfrost.pokefrost.enemy_huntail", "websiteofsites.wildfrost.pokefrost.enemy_gorebyss",
-                "websiteofsites.wildfrost.pokefrost.enemy_hypno", "websiteofsites.wildfrost.pokefrost.enemy_mismagius", "websiteofsites.wildfrost.pokefrost.enemy_spiritomb",
-                "websiteofsites.wildfrost.pokefrost.enemy_magmortar"
+            string[] everyType = { "raikou", "entei", "suicune",
+                "hooh", "latias", "latios",
+                "cresselia", "darkrai", "enemy_beautifly",
+                "enemy_dustox", "enemy_plusle", "enemy_volbeat",
+                "enemy_illumise", "enemy_minun", "enemy_lunatone",
+                "enemy_solrock", "enemy_huntail", "enemy_gorebyss",
+                "enemy_hypno", "enemy_mismagius", "enemy_spiritomb",
+                "enemy_magmortar"
             };
 
 
@@ -4571,14 +4615,14 @@ namespace Pokefrost
             CardFramesUnlockedSequence sequence = GameObject.FindObjectOfType<CardFramesUnlockedSequence>();
             TextMeshProUGUI titleObject = sequence.GetComponentInChildren<TextMeshProUGUI>(true);
             titleObject.text = $"10 New Companions";
-            yield return sequence.StartCoroutine("CreateCards", everyGeneration);
+            yield return sequence.StartCoroutine("CreateCards", everyGeneration.Select((n) => GUID + "." + n).ToArray());
 
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             yield return SceneManager.Load("CardFramesUnlocked", SceneType.Temporary);
             sequence = GameObject.FindObjectOfType<CardFramesUnlockedSequence>();
             titleObject = sequence.GetComponentInChildren<TextMeshProUGUI>(true);
             titleObject.text = $"Pokemon of Every Type";
-            yield return sequence.StartCoroutine("CreateCards", everyType);
+            yield return sequence.StartCoroutine("CreateCards", everyType.Select((n) => GUID + "." + n).ToArray());
         }
 
         public void UnloadFromClasses()
@@ -4768,7 +4812,7 @@ namespace Pokefrost
             }
         }
 
-        private void PatchOvershroom(StatusIcon icon)
+        /*private void PatchOvershroom(StatusIcon icon)
         {
 
             string[] newtypes = new string[] { "burning", "jolted", "juice", "overshroom" };
@@ -4782,7 +4826,7 @@ namespace Pokefrost
                 icon.afterUpdate.AddListener(icon.SetText);
                 icon.onValueDown.AddListener(icon.CheckDestroy);
             }
-        }
+        }*/
 
         public void BattleFuse(Scene scene)
         {
@@ -4825,13 +4869,15 @@ namespace Pokefrost
             if (entity.owner == References.Player && entity.name == "websiteofsites.wildfrost.pokefrost.furret" && entity.data.cardType.name == "Friendly")
             {
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.AppendLine(entity.data.title);
-                stringBuilder.AppendLine(References.Player.data.inventory.deck[0].title);
-                stringBuilder.AppendLine(StatsSystem.instance.Stats.Count("battlesWon").ToString());
-                stringBuilder.AppendLine(DateTime.Now.ToString());
-                foreach(CardUpgradeData upgrade in entity.data.upgrades)
-                {
-                    stringBuilder.AppendLine(upgrade.name);
+                stringBuilder.AppendLine(entity.data.title);                                //0: nickname
+                stringBuilder.AppendLine(References.Player.data.inventory.deck[0].title);   //1: leader name
+                stringBuilder.AppendLine(StatsSystem.instance.Stats.Count("battlesWon").ToString()); //2: location
+                stringBuilder.AppendLine(DateTime.Now.ToString());                          //3: timestap
+                string s = (entity.FindStatus("shiny") != null) ? "Hasty" : "Modest";
+                stringBuilder.AppendLine(s);                                                //4: "nature"
+                foreach (CardUpgradeData upgrade in entity.data.upgrades)
+                {   
+                    stringBuilder.AppendLine(upgrade.name);                                 //5+: charms
                 }
                 
                 System.IO.File.WriteAllText(fileName, stringBuilder.ToString());
@@ -5147,5 +5193,9 @@ namespace Pokefrost
         }
     }
 
-
+    [HarmonyPatch(typeof(References), nameof(References.Classes), MethodType.Getter)]
+    static class FixClassesGetter
+    {
+        static void Postfix(ref ClassData[] __result) => __result = AddressableLoader.GetGroup<ClassData>("ClassData").ToArray();
+    }
 }

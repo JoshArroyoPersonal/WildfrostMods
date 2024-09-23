@@ -8,6 +8,10 @@ using System.Threading.Tasks;
 
 namespace Pokefrost
 {
+
+    //Also see
+    //StatusEffectInstanceSummonLastRecycled in StatusEffectSummonCustom.cs
+
     internal class StatusEffectAllCardsAreRecycled : StatusEffectData
     {
         public bool added = false;
@@ -54,10 +58,13 @@ namespace Pokefrost
         }
 
         [HarmonyPatch(typeof(StatusEffectRecycle), "GetTargets")]
-        class PatchRecycle
+        internal class PatchRecycle
         {
             public static int active = 0;
             public static bool Active => active != 0;
+
+            public static CardData lastDestroyed = null;
+            public static int node = -1;
             static void Prefix(StatusEffectRecycle __instance, ref int requiredAmount, out List<Entity> __state)
             {
                 int count = 0;
@@ -100,11 +107,17 @@ namespace Pokefrost
                     __result = true;
                 }
                 __instance.toDestroy.AddRange(__state);
+                if (__instance.toDestroy.Count != 0)
+                {
+                    lastDestroyed = __instance.toDestroy[__instance.toDestroy.Count - 1].data;
+                    node = Campaign.FindCharacterNode(References.Player).id;
+                }
+                
             }
         }
 
         [HarmonyPatch(typeof(DestroyTargetSystem), "ShowTargets")]
-        class PatchShowRecycleTargets
+        internal class PatchShowRecycleTargets
         {
             static void Prefix(DestroyTargetSystem __instance, Entity entity)
             {

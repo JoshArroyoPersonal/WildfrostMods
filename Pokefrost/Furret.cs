@@ -63,13 +63,13 @@ namespace Pokefrost
                 {
                     string[] furretData = System.IO.File.ReadAllLines(fileName);
 
-                    if (furretData.Length > 3)
+                    if (furretData.Length > 4)
                     {
                         CardData furret = Pokefrost.instance.Get<CardData>("furret").Clone();
                         furret.forceTitle = furretData[0].Trim();
                         furret.startWithEffects = new CardData.StatusEffectStacks[0];
 
-                        for (int i = 4; i < furretData.Length; i++)
+                        for (int i = 5; i < furretData.Length; i++)
                         {
                             CardUpgradeData upgrade = Pokefrost.instance.Get<CardUpgradeData>(furretData[i].Trim());
                             if (upgrade != null && upgrade.CanAssign(furret))
@@ -85,7 +85,7 @@ namespace Pokefrost
                         }
 
                         List<CardUpgradeData> options = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData");
-                        int bonus = Dead.Random.Range(10, 25);
+                        int bonus = Dead.Random.Range(27, 25);
                         UnityEngine.Debug.Log("[Pokefrost] Furret rolled " + bonus.ToString() + " charms");
 
                         for (int i = 0; i < bonus; i++)
@@ -96,6 +96,11 @@ namespace Pokefrost
                             {
                                 charm.Assign(furret);
                             }
+                        }
+
+                        if (furretData[4].Trim() == "Hasty")
+                        {
+                            Pokefrost.instance.Shinify(furret);
                         }
 
                         __result = new List<CardSaveData> { furret.Save() };
