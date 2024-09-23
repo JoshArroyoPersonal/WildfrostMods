@@ -46,7 +46,7 @@ namespace Pokefrost
                 }
 
                 target.display.promptUpdateDescription = true;
-                target.PromptUpdate();  
+                target.PromptUpdate();
             }
         }
 

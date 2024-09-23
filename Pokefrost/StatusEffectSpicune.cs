@@ -37,6 +37,7 @@ namespace Pokefrost
             {
                 cardPlayed = true;
                 amountToClear = current;
+                return true;
                 
             }
 
