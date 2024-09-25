@@ -450,6 +450,7 @@
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectAllCardsAreRecycled.cs" />
     <Compile Include="StatusEffectApplyXOnHitOtherwiseY.cs" />
+    <Compile Include="StatusEffectApplyXOnRecall.cs" />
     <Compile Include="StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectBurning.cs" />

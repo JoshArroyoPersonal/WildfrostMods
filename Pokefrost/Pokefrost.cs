@@ -1694,6 +1694,10 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
 
+            StatusEffectApplyXWhenDestroyed onDeathBoost = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destroyed Boost Allies", "When destroyed, boost effects of all allies by <{a}>", boostable:true)
+                .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+
             KeywordData falseswipekey = this.CreateBasicKeyword("falseswipe", "False Swipe", "Deals nonlethal damage|Except to Clunkers");
             falseswipekey.showName = true;
 
@@ -2105,10 +2109,50 @@ namespace Pokefrost
                 .Register(this);
             statusList.Add(burnHit);
 
-            StatusEffectApplyXWhenHit juiceHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Spicune To Attacker", "When hit, apply <{a}><keyword=spicune> to the attacker")
-                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Attacker)
+            StatusEffectApplyXWhenHit juiceHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Spicune To All Allies And Enemies", "When hit, apply <{a}><keyword=spicune> to allies and enemies")
+                .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Enemies)
                 .Register(this);
             statusList.Add(juiceHit);
+
+            StatusEffectApplyXOnRecall recallTest1 = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Gain Spice On Recall", "When recalled gain <{a}><keyword=spice>")
+                .ApplyX(Get<StatusEffectData>("Spice"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(recallTest1);
+
+            StatusEffectApplyXOnRecall recallTest2 = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Gain Barrage On Recall", "When recalled gain <keyword=barrage>")
+                .ApplyX(Get<StatusEffectData>("Temporary Barrage"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            recallTest2.once = true;
+            statusList.Add(recallTest2);
+
+            StatusEffectApplyXOnRecall recallTest3 = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Trigger On Recall", "When recalled trigger")
+                .ApplyX(Get<StatusEffectData>("Trigger (High Prio)"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            statusList.Add(recallTest3);
+
+            StatusEffectApplyXWhenAllyIsHit heroEffect = Ext.CreateStatus<StatusEffectApplyXWhenAllyIsHit>("Trigger Against Attacker When Ally Is Hit")
+                .ApplyX(Get<StatusEffectData>("Trigger Against"), StatusEffectApplyX.ApplyToFlags.Attacker)
+                .Register(this);
+            heroEffect.isReaction = true;
+            statusList.Add(heroEffect);
+
+            KeywordData heroKey = this.CreateBasicKeyword("hero", "Hero", "When an ally is hit, counterattack");
+            heroKey.showName = true;
+
+            TraitData heroTrait = Ext.CreateTrait<TraitData>("Hero", this, heroKey, heroEffect);
+            heroTrait.isReaction = true;
+
+            StatusEffectTemporaryTrait tempHero = Ext.CreateStatus<StatusEffectTemporaryTrait>("Temporary Hero")
+                .Register(this);
+            tempHero.trait = heroTrait;
+            statusList.Add(tempHero);
+
+            StatusEffectApplyXOnRecall recallHero = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Gain Hero On Recall", "When recalled gain <keyword=hero>")
+                .ApplyX(tempHero, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            recallHero.once = true;
+            statusList.Add(recallHero);
+
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
@@ -2988,6 +3032,13 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("chimecho", "Chimecho")
+                    .SetStats(6, 3, 0)
+                    .SetSprites("chimecho.png", "chimechoBG.png")
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("absol", "Absol")
                     .SetStats(5, 5, 2)
                     .SetSprites("absol.png", "absolBG.png")
@@ -3119,16 +3170,17 @@ namespace Pokefrost
                     .CreateUnit("croagunk", "Croagunk", bloodProfile: "Blood Profile Fungus")
                     .SetStats(6, 2, 5)
                     .SetSprites("croagunk.png", "croagunkBG.png")
-                    .SStartEffects(("On Hit Equal Shroom To Target", 1), ("Evolve Croagunk", 80))
+                    .SStartEffects(("On Hit Equal Shroom To Target", 1), ("Evolve Croagunk", 50))
                     .AddPool("BasicUnitPool")
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("toxicroak", "Toxicroak", bloodProfile: "Blood Profile Fungus")
-                    .SetStats(6, 3, 4)
+                    .SetStats(6, 2, 4)
                     .SetSprites("toxicroak.png", "toxicroakBG.png")
                     .SStartEffects(("On Hit Equal Shroom To Target", 1))
+                    .STraits(("Fury", 4))
                 );
 
             list.Add(
@@ -3425,6 +3477,14 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("palafin", "Palafin")
+                    .SetStats(4, 2, 4)
+                    .SetSprites("palafin.png", "palafinBG.png")
+                    .SStartEffects(("Gain Hero On Recall", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("kingambit", "Kingambit", idleAnim: "GiantAnimationProfile")
                     .SetStats(10, 5, 5)
                     .SetSprites("kingambit.png", "kingambitBG.png")
@@ -3630,7 +3690,7 @@ namespace Pokefrost
                     .WithCardType("Enemy")
                     .SetStats(10, null, 5)
                     .SetSprites("suicune.png", "suicuneBG.png")
-                    .SetStartWithEffect(SStack("When Hit Apply Spicune To Attacker", 1), SStack("On Turn Escape To Self", 1))
+                    .SetStartWithEffect(SStack("When Hit Apply Spicune To All Allies And Enemies", 1), SStack("On Turn Escape To Self", 1))
                     .WithValue(50)
                 );
 
@@ -3672,7 +3732,7 @@ namespace Pokefrost
                     .SetSprites("plusle.png", "plusleBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
-                    .SetStartWithEffect(SStack("While Active Increase Attack To Allies", 1), SStack("When Hit Boost Allies", 1))
+                    .SetStartWithEffect(SStack("While Active Increase Attack To Allies", 1), SStack("When Destroyed Boost Allies", 1))
                 );
 
             list.Add(
@@ -3682,7 +3742,7 @@ namespace Pokefrost
                     .SetSprites("minun.png", "minunBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
-                    .SetStartWithEffect(SStack("While Active Reduce Attack To Enemies", 1), SStack("When Hit Boost Allies", 1))
+                    .SetStartWithEffect(SStack("While Active Reduce Attack To Enemies", 1), SStack("When Destroyed Boost Allies", 1))
                 );
 
             list.Add(
@@ -3833,7 +3893,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_darkrai", "Darkrai")
-                    .SetStats(50, 2, 4)
+                    .SetStats(66, 2, 4)
                     .SetSprites("darkrai.png", "darkraiBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
@@ -4104,6 +4164,23 @@ namespace Pokefrost
                 );
 
             bells.Add(
+                this.CreateBell("BlessingHooh", "Ho-Oh Bell of Friendship", "Allies get recalled to the top of your deck")
+                .ChangeSprites("hoohBell.png", "hoohDinger.png")
+                .WithSystemsToAdd("RecallToTopModifierSystem")
+                .SubscribeToAfterAllBuildEvent(
+                    (data) =>
+                    {
+                        RewardPool pool = Extensions.GetRewardPool("GeneralModifierPool");
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                        pool.list.Add(data);
+                    }
+                    )
+                );
+
+            bells.Add(
                 this.CreateBell("BlessingDarkrai", "Darkrai Bell of Destruction", "Redraw Bell Counter -1. When <Redraw Bell> is hit, destroy the rightmost card in hand before redrawing")
                 .ChangeSprites("darkraiBell.png", "darkraiDinger.png")
                 .WithSystemsToAdd("DestoryCardSystem")
@@ -4128,7 +4205,7 @@ namespace Pokefrost
                 this.CreateBell("darkraiEvent", "Lunar Feather", "<Quest>: Follow <Cresselia> to confront <Darkrai>")
                 .ChangeSprites("lunarFeather.png", "noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
-                .WithSystemsToAdd("SpawnCresslia")
+                .WithSystemsToAdd("SpawnCressliaModifierSystem")
                 );
 
             bells.Add(

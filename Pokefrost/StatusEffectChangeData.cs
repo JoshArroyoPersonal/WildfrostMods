@@ -159,12 +159,4 @@ namespace Pokefrost
         }
 
     }
-
-    internal class StatusEffectApplyXWhenDiscardedFixed : StatusEffectApplyXWhenDiscarded
-    {
-        public void OnDestroy() 
-        {
-            Events.OnActionQueued -= ActionQueued;
-        }
-    }
 }

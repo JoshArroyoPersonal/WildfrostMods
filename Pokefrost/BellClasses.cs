@@ -256,6 +256,99 @@ namespace Pokefrost
         {
             UpdateProgress(2);
         }
+
+        private void QuestFailed(Entity arg0, DeathType arg1)
+        {
+            if (arg0.name == "websiteofsites.wildfrost.pokefrost.quest_cresselia")
+            {
+                //Removes battle from map
+                throw new NotImplementedException();
+            }
+        }
+
+    }
+
+    public class RecallToTopModifierSystem : GameSystem
+    {
+        public enum Container
+        {
+            DrawPile,
+            Hand,
+            DiscardPile
+        }
+
+        public Container toContainer = Container.Hand;
+
+        public void OnEnable()
+        {
+            Events.OnActionQueued += EntityDiscard;
+        }
+
+        public void OnDisable()
+        {
+            Events.OnActionQueued -= EntityDiscard;
+        }
+
+        public void EntityDiscard(PlayAction action)
+        {
+            if (action is ActionMove actionMove && actionMove.toContainers.Contains(References.Player.discardContainer) && Battle.IsOnBoard(actionMove.entity.containers) )
+            {
+                Debug.Log("[Pokefrost] "+actionMove.entity.containers.ToString());
+                StartCoroutine(PutOnTop(actionMove.entity));
+            }
+        }
+
+        private IEnumerator PutOnTop(Entity target)
+        {
+            Debug.Log("[Pokefrost] Here!");
+            yield return new WaitUntil(() => ActionQueue.Empty);
+            CardContainer cc = References.Player.drawContainer;
+            int index = cc.Count;
+            CardPocketSequence sequence = UnityEngine.Object.FindObjectOfType<CardPocketSequence>();
+            CardPocketSequence.Card card = null;
+            if (sequence != null)
+            {
+                int i = 0;
+                while (sequence.cards.Count > 0)
+                {
+                    if (sequence.cards[i].entity == target)
+                    {
+                        card = sequence.cards[i];
+                        target.transform.SetParent(MonoBehaviourSingleton<References>.instance.transform, worldPositionStays: true);
+                        sequence.cards.RemoveAt(i);
+                        break;
+                    }
+
+                    i++;
+                }
+
+                sequence.promptEnd = true;
+                yield return new WaitUntil(() => !sequence.isActiveAndEnabled);
+                card.Reset();
+                card.Return();
+                yield return new WaitForSeconds(0.25f);
+            }
+
+            if (cc.Contains(target))
+            {
+                index--;
+            }
+
+
+            yield return Sequences.CardMove(target, new CardContainer[1] { cc }, index);
+            CardContainer[] preContainers = target.preContainers;
+            foreach (CardContainer c in preContainers)
+            {
+                c.TweenChildPositions();
+            }
+
+            if (!target.preContainers.Contains(cc))
+            {
+                cc.TweenChildPositions();
+            }
+
+            yield break;
+        }
     }
 
 

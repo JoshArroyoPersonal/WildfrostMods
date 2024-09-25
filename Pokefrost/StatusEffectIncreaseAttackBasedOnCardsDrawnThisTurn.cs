@@ -33,20 +33,17 @@ namespace Pokefrost
 
         public void HowManyCardsDrawn(int arg)
         {
-            if (cardsDrawn == 0) 
-            {
-                Debug.Log("[Sneasel] Truely drew " + arg.ToString() + " cards");
-                cardsDrawn += arg;
-            }
+            cardsDrawn = Math.Min(arg, References.Player.drawContainer.Count);
+            target.StartCoroutine(Activate(cardsDrawn));
         }
 
         public override IEnumerator ActionPerformedRoutine(PlayAction action)
         {
-            Debug.Log(action.Name.ToString());
+            /*Debug.Log(action.Name.ToString());
             if (action.Name == "ActionDraw")
             {
                 yield return Activate(cardsDrawn);
-            }
+            }*/
             yield break;
         }
 

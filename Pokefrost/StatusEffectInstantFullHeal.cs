@@ -42,6 +42,7 @@ namespace Pokefrost
 
             for (int j = target.statusEffects.Count - 1; j >= 0; j--)
             {
+                if (target.statusEffects[j].HasDescOrIsKeyword)
 
                 if (target.statusEffects[j].GetType() == typeof(StatusEffectWhileActiveX))
                 {
@@ -56,6 +57,9 @@ namespace Pokefrost
 
             }
 
+            target.attackEffects = new List<CardData.StatusEffectStacks> { };
+
+            target.traits.Clear();
             target.PromptUpdate();
             yield return base.Process();
         }
