@@ -4,11 +4,54 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Pokefrost
 {
     internal class CampaignNodeTypeSpecialBattle : CampaignNodeTypeBattle
     {
+        public override IEnumerator Run(CampaignNode node)
+        {
+            bool flag = false;
+            QuestSystem theQuest = null;
+            foreach (QuestSystem quest in Campaign.instance.systems.GetComponents<QuestSystem>())
+            {
+                if (quest.CheckConditions())
+                {
+                    flag = true;
+                    theQuest = quest;
+                    break;
+                }
+            }
+            if (!flag)
+            {
+                foreach (QuestSystem quest in Campaign.instance.gameObject.GetComponents<QuestSystem>())
+                {
+                    if (quest.CheckConditions())
+                    {
+                        flag = true;
+                        theQuest = quest;
+                        break;
+                    }
+                }
+            }
+            if (flag)
+            {
+                Debug.Log("[Pokefrost] Quest succeeded! Entering bonus battle...");
+                theQuest.QuestBattleStart();
+                yield return base.Run(node);
+                theQuest.QuestBattleFinish();
+            }
+            else
+            {
+                Debug.Log("[Pokefrost] Quest failed. Skipping bonus battle...");
+                node.SetCleared();
+                yield return Sequences.Wait(1f);
+                References.Map.Continue();
+            }
+        }
+
+
         public override IEnumerator SetUp(CampaignNode node)
         {
             BattleData battle = null;
