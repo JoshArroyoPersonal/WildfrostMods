@@ -186,24 +186,29 @@ namespace Pokefrost
         public virtual void QuestBattleFinish() { }
     }
 
-    public class SpawnCresslia : QuestSystem
+    public class SpawnCressliaModifierSystem : QuestSystem
     {
         public override string ProgressName => "Dreams";
 
+
+        //Progress KEY
+        //0 -> Cresselia is alive. Darkrai battle has not occurred.
+        //1 -> Cresselia is dead. Darkrai battle will be skipped.
+        //2 -> Darkrai battle has been finished.
         public void OnEnable()
         {
             Events.OnBattleStart += Spawn;
-            Events.OnEntityKilled += CheckCresselia;
+            Events.OnEntityKilled += CheckCresseliaAlive;
             FindProgress();
         }
 
         public void OnDisable()
         {
             Events.OnBattleStart -= Spawn;
-            Events.OnEntityKilled -= CheckCresselia;
+            Events.OnEntityKilled -= CheckCresseliaAlive;
         }
 
-        private void CheckCresselia(Entity entity, DeathType deathType)
+        private void CheckCresseliaAlive(Entity entity, DeathType deathType)
         {
             if (entity?.data?.name != "websiteofsites.wildfrost.pokefrost.quest_cresselia")
             {
@@ -255,15 +260,6 @@ namespace Pokefrost
         public override void QuestBattleFinish()
         {
             UpdateProgress(2);
-        }
-
-        private void QuestFailed(Entity arg0, DeathType arg1)
-        {
-            if (arg0.name == "websiteofsites.wildfrost.pokefrost.quest_cresselia")
-            {
-                //Removes battle from map
-                throw new NotImplementedException();
-            }
         }
 
     }
