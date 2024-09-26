@@ -161,8 +161,20 @@ namespace Pokefrost
 
     }
 
+    public class TargetConstraintHeight : TargetConstraint
+    {
+        int height = 1;
+        public override bool Check(Entity entity)
+        {
+            if (entity.height == height)
+            {
+                return !not;
+            }
 
+            return not;
+        }
 
+    }
 
 
 }

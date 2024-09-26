@@ -154,7 +154,7 @@ namespace Pokefrost
             KeywordData overshroomkey = this.CreateIconKeyword("overshroom", "Overshroom", "Acts like both <sprite name=overload> and <sprite name=shroom>|Counts as both too!", "overshroomicon")
                 .ChangeColor(title: new Color(0, 0.6f, 0.6f), note: new Color(0, 0.6f, 0.6f));
 
-            this.CreateIcon("OvershroomIcon", ImagePath("overshroomicon.png").ToSprite(), "overshroom", "shroom", Color.black, new KeywordData[] { overshroomkey });
+            this.CreateIcon("OvershroomIcon", ImagePath("overshroomicon.png").ToSprite(), "overshroom", "shroom", Color.black, new KeywordData[] { overshroomkey }, -1);
             /*GameObject gameObject = new GameObject("OvershroomIcon");
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
             StatusIcon overshroomicon = gameObject.AddComponent<StatusIcon>();
@@ -1567,7 +1567,7 @@ namespace Pokefrost
 
 
             this.CreateIconKeyword("jolted", "Jolted", "Take damage after triggering | Does not count down!", "joltedicon").ChangeColor(note: new Color(0.98f, 0.89f, 0.61f));
-            this.CreateIcon("joltedicon", ImagePath("joltedicon.png").ToSprite(), "jolted", "counter", Color.black, new KeywordData[] { Get<KeywordData>("jolted") });
+            this.CreateIcon("joltedicon", ImagePath("joltedicon.png").ToSprite(), "jolted", "counter", Color.black, new KeywordData[] { Get<KeywordData>("jolted") }, -1);
                 //.transform.GetChild(0).transform.localPosition = new Vector3 (-0.09f, 0.125f, 0f);
 
             StatusEffectJolted jolted = Ext.CreateStatus<StatusEffectJolted>("Jolted", null, type:"jolted")
@@ -1601,7 +1601,7 @@ namespace Pokefrost
             spicune.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
 
             this.CreateIconKeyword("burning", "Ignite", "Explodes when hit, damaging all targets in row then clearing | Applying more increases the explosion!", "burningicon").ChangeColor(title: new Color(1f, 0.2f, 0.2f), note: new Color(1f, 0.2f, 0.2f));
-            this.CreateIcon("burningicon", ImagePath("burningicon.png").ToSprite(), "burning", "spice", Color.white, new KeywordData[] { Get<KeywordData>("burning") })
+            this.CreateIcon("burningicon", ImagePath("burningicon.png").ToSprite(), "burning", "spice", Color.white, new KeywordData[] { Get<KeywordData>("burning") }, -1)
                 .GetComponentInChildren<TextMeshProUGUI>(true).gameObject.transform.localPosition = new Vector3 (0, -0.06f, 0);
 
             StatusEffectBurning burning = Ext.CreateStatus<StatusEffectBurning>("Burning", null, type: "burning")
@@ -1947,7 +1947,7 @@ namespace Pokefrost
                 .Register(this);
 
             this.CreateBasicKeyword("autotomize", "Autotomize", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate\nRecycle to refresh");
-            this.CreateButtonIcon("aggronAutotomize", ImagePath("aronbutton.png").ToSprite(), "autotomize", "", Color.white, new KeywordData[] { Get<KeywordData>("autotomize") });
+            this.CreateButtonIcon("aggronAutotomize", ImagePath("aggronbutton.png").ToSprite(), "autotomize", "", Color.white, new KeywordData[] { Get<KeywordData>("autotomize") });
 
             StatusEffectInstantSummonLastRecycled lastRecycled = Ext.CreateStatus<StatusEffectInstantSummonLastRecycled>("Instant Summon Last Recycled To Hand")
                 .Register(this);
@@ -2030,9 +2030,16 @@ namespace Pokefrost
                 .Register(this);
             recallTest2.once = true;
 
-            StatusEffectApplyXOnRecall recallTest3 = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Trigger On Recall", "When recalled trigger")
+            StatusEffectApplyXOnRecall recallTrigger = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Trigger On Recall")
                 .ApplyX(Get<StatusEffectData>("Trigger (High Prio)"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
+            recallTrigger.isReaction = true;
+
+            KeywordData uturnKey = this.CreateBasicKeyword("uturn", "U-Turn", "Trigger when recalled");
+            uturnKey.showName = true;
+
+            TraitData uturnTrait = Ext.CreateTrait<TraitData>("U-Turn", this, uturnKey, recallTrigger);
+            uturnTrait.isReaction = true;
 
             StatusEffectApplyXWhenAllyIsHit heroEffect = Ext.CreateStatus<StatusEffectApplyXWhenAllyIsHit>("Trigger Against Attacker When Ally Is Hit")
                 .ApplyX(Get<StatusEffectData>("Trigger Against"), StatusEffectApplyX.ApplyToFlags.Attacker)
@@ -2052,6 +2059,15 @@ namespace Pokefrost
                 .ApplyX(tempHero, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             recallHero.once = true;
+
+            StatusEffectRetreat retreat = Ext.CreateStatus<StatusEffectRetreat>("Instant Retreat")
+                .Register(this);
+
+            StatusEffectApplyXOnCardPlayedMaybe randomTest = Ext.CreateStatus<StatusEffectApplyXOnCardPlayedMaybe>("Maybe Make Front Enemy Retreat", "<{a}>% chance to send the front enemy to the next wave", boostable:true)
+                .ApplyX(retreat, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
+                .Register(this);
+
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -2734,7 +2750,7 @@ namespace Pokefrost
                     .CreateUnit("ludicolo", "Ludicolo")
                     .SetStats(10, 4, 0)
                     .SetSprites("ludicolo.png", "ludicoloBG.png")
-                    .SStartEffects(("Trigger All Button",1), ("Trigger All Listener_1", 1))
+                    .SStartEffects(("Trigger All Button",1), ("Trigger All Listener_1", 1), ("On Turn Heal Allies", 2))
                     .AddPool()
                 );
 
@@ -3220,11 +3236,20 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
+                    .CreateUnit("whimsicott", "Whimsicott", idleAnim: "FloatAnimationProfile")
+                    .SetStats(2, null, 4)
+                    .SetSprites("whimsicott.png", "whimsicottBG.png")
+                    .SStartEffects(("Maybe Make Front Enemy Retreat", 50))
+                    .AddPool()
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
                     .CreateUnit("crustle", "Crustle", idleAnim: "GiantAnimationProfile", bloodProfile: "Blood Profile Husk")
                     .SetStats(8, 3, 4)
                     .SetSprites("crustle.png", "crustleBG.png")
                     .SStartEffects(("When Hit Add Scrap Pile To Hand", 1))
-                    .AddPool()
+                    .AddPool("ClunkUnitPool")
                 );
 
             list.Add(
@@ -3349,7 +3374,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("palafin", "Palafin")
-                    .SetStats(4, 2, 4)
+                    .SetStats(6, 3, 4)
                     .SetSprites("palafin.png", "palafinBG.png")
                     .SStartEffects(("Gain Hero On Recall", 1))
                 );
@@ -4333,6 +4358,8 @@ namespace Pokefrost
             StringTable ui = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
 
             StatusTokenApplyX.DefineStrings();
+            StatusEffectApplyXOnCardPlayedMaybe.DefineStrings();
+            StatusEffectRetreat.DefineStrings();
 
             ui.SetString(EvolutionPopUp.EvoTitleKey1A, "Huh? <#ff0>{0}</color> is evolving?");
             ui.SetString(EvolutionPopUp.EvoTitleKey1B, "Huh? <#ff0>{0}</color> Pokemon are evolving?");
@@ -4457,7 +4484,7 @@ namespace Pokefrost
                 "gardevoir", "gallade",
                 "natu", "xatu", "abomasnow",
                 "aron", "lairon", "aggron",
-                "lumineon"
+                "lumineon", "chimecho", "palafin", "whimsicott"
             };
 
             string[] everyType = { "raikou", "entei", "suicune",

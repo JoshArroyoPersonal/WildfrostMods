@@ -449,6 +449,7 @@
     <Compile Include="PickupRoutine.cs" />
     <Compile Include="ScriptableAmounts.cs" />
     <Compile Include="StatusEffectAllCardsAreRecycled.cs" />
+    <Compile Include="StatusEffectApplyXOnCardPlayedMaybe.cs" />
     <Compile Include="StatusEffectApplyXOnHitOtherwiseY.cs" />
     <Compile Include="StatusEffectApplyXOnRecall.cs" />
     <Compile Include="StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage.cs" />
@@ -468,6 +469,7 @@
     <Compile Include="StatusEffectJolted.cs" />
     <Compile Include="StatusEffectMoveCard.cs" />
     <Compile Include="StatusEffectPickup.cs" />
+    <Compile Include="StatusEffectRetreat.cs" />
     <Compile Include="StatusEffectRevive.cs" />
     <Compile Include="StatusEffectRunScript.cs" />
     <Compile Include="StatusEffectSketch.cs" />
