@@ -141,7 +141,7 @@ namespace Pokefrost
             return gameObject;
         }
 
-        public static GameObject CreateIcon(this WildfrostMod mod, string name, Sprite sprite, string type, string copyTextFrom, Color textColor, KeywordData[] keys)
+        public static GameObject CreateIcon(this WildfrostMod mod, string name, Sprite sprite, string type, string copyTextFrom, Color textColor, KeywordData[] keys, int posX = 1)
         {
             GameObject gameObject = new GameObject(name);
             UnityEngine.Object.DontDestroyOnLoad(gameObject);
@@ -169,6 +169,7 @@ namespace Pokefrost
             cardHover.IsMaster = false;
             CardPopUpTarget cardPopUp = gameObject.AddComponent<CardPopUpTarget>();
             cardPopUp.keywords = keys;
+            cardPopUp.posX = posX;
             cardHover.pop = cardPopUp;
             RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
