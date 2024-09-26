@@ -20,6 +20,19 @@ namespace Pokefrost
         public static Sprite panel;
         public static Sprite panelSmall;
 
+        public static void PopupText(Transform transform, string s, bool localized = true)
+        {
+            NoTargetTextSystem noText = GameSystem.FindObjectOfType<NoTargetTextSystem>();
+            if (noText != null)
+            {
+                TMP_Text textElement = noText.textElement;
+                StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
+                String text = localized ? tooltips.GetString(s).GetLocalizedString() : s;
+                textElement.text = text;
+                noText.PopText(transform.position);
+            }
+        }
+
         public static void AddLookup(string summoned, string summoner)
         {
             CreatedByLookup.lookup[summoned] = summoner;
@@ -93,6 +106,7 @@ namespace Pokefrost
         public static T Register<T>(this T status, WildfrostMod mod) where T : StatusEffectData
         {
             status.ModAdded = mod;
+            Pokefrost.statusList.Add(status);
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", status);
             return status;
         }

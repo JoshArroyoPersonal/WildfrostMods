@@ -38,11 +38,12 @@ namespace Pokefrost
                         foreach(string item in collection.InRandomOrder())
                         {
                             if (Pokefrost.rotomAppliances.Contains(item)) { continue; }
+                            if (NotConsumeOrClunker(item)) { continue; }
+
                             target.SetCustomData("Future Sight", item);
                             target.TryGetCustomData("Future Sight", out string value, "");
                             Debug.Log($"[Pokefrost] Foresaw {value}");
                             target.SetCustomData("Future Sight ID", node.id);
-                            ids.Add(node.id);
                             return;
                         }
                         
@@ -54,11 +55,12 @@ namespace Pokefrost
                         {
                             if (data2.items[item].category == "Items")
                             {
+                                if (NotConsumeOrClunker(data2.items[item].cardDataName)) { continue; }
+
                                 target.SetCustomData("Future Sight ID", node.id);
                                 target.SetCustomData("Future Sight", data2.items[item].cardDataName);
                                 target.TryGetCustomData("Future Sight", out string value, "");
                                 Debug.Log($"[Pokefrost] Foresaw {value}");
-                                ids.Add(node.id);
                                 return;
                             }
                         }
@@ -66,6 +68,26 @@ namespace Pokefrost
                 }
 
             }
+        }
+
+        private bool NotConsumeOrClunker(string name)
+        {
+            CardData data = Pokefrost.instance.Get<CardData>(name);
+            if (data?.cardType?.name != "Item")
+            {
+                if (data.traits != null)
+                {
+                    foreach (var trait in data.traits)
+                    {
+                        if (trait.data == null || trait.data.name == "Consume")
+                        {
+                            return false;
+                        }
+                    }
+                }
+                return true;//Not Consume Item
+            }
+            return false;
         }
     }
 
@@ -113,7 +135,34 @@ namespace Pokefrost
         }
     }
 
-    
+    public class EntityCardScriptReturnProphCard : EntityCardScript
+    {
+        public override IEnumerator Run(Entity entity, int stack)
+        {
+            string name = ProphCard(entity);
+            List<Entity> targets = References.Player.discardContainer.entities.Clone();
+            targets.AddRange(References.Player.drawContainer);
+            for(int i=targets.Count-1; i>=0; i--)
+            {
+                if (targets[i].data.name == name)
+                {
+                    yield return Sequences.CardMove(targets[i], new CardContainer[] { References.Player.handContainer });
+                    //yield return new WaitForSeconds(0.1f);
+                    if (--stack <= 0)
+                    {
+                        break;
+                    }
+                }
+                ActionQueue.Stack(new ActionRevealAll(References.Player.handContainer));
+            }
+        }
+
+        public string ProphCard(Entity entity)
+        {
+            entity.data.TryGetCustomData<string>("Future Sight", out string value, "");
+            return value;
+        }
+    }
 
     public class LeaderScripts
     {

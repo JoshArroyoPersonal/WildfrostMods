@@ -42,6 +42,7 @@ namespace Pokefrost
         public virtual void Confirm()
         {
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", this);
+            Pokefrost.statusList.Add(this);
         }
 
         public virtual void FindDeckCopy()
