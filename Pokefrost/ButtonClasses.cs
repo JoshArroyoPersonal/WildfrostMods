@@ -93,7 +93,7 @@ namespace Pokefrost
 
     public class StatusTokenApplyX : StatusEffectApplyX, IStatusToken
     {
-        //Standard Code I wish I can put into IStatusToken
+        //Standard Code I wish I can put this into IStatusToken
         [Flags]
         public enum PlayFromFlags
         {
@@ -144,6 +144,11 @@ namespace Pokefrost
 
         public virtual void RunButtonClicked()
         {
+            if (References.Battle == null)
+            {
+                return;
+            }
+
             if (target.IsSnowed)
             {
                 PopupText(Key_Snowed);
@@ -165,7 +170,7 @@ namespace Pokefrost
                 }
             }
 
-            if ((bool)References.Battle && References.Battle.phase == Battle.Phase.Play 
+            if (References.Battle.phase == Battle.Phase.Play 
                 && CorrectPlace() 
                 && !target.IsSnowed 
                 && target.owner == References.Player

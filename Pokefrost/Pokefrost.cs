@@ -97,22 +97,12 @@ namespace Pokefrost
                 character.scale = 1.3f;
             }
 
-            TargetConstraintHasStatus snowconstraint = new TargetConstraintHasStatus();
-            snowconstraint.status = Get<StatusEffectData>("Snow");
-            TargetConstraintHasStatus demonconstraint = new TargetConstraintHasStatus();
-            demonconstraint.status = Get<StatusEffectData>("Demonize");
-            TargetConstraintHasStatus bomconstraint = new TargetConstraintHasStatus();
-            bomconstraint.status = Get<StatusEffectData>("Weakness");
-            TargetConstraintHasStatus frostconstraint = new TargetConstraintHasStatus();
-            frostconstraint.status = Get<StatusEffectData>("Frost");
-            TargetConstraintHasStatus hazeconstraint = new TargetConstraintHasStatus();
-            hazeconstraint.status = Get<StatusEffectData>("Haze");
-            TargetConstraintHasStatus inkconstraint = new TargetConstraintHasStatus();
-            inkconstraint.status = Get<StatusEffectData>("Null");
-            TargetConstraintHasStatus overburnconstraint = new TargetConstraintHasStatus();
-            overburnconstraint.status = Get<StatusEffectData>("Overload");
-            TargetConstraintHasStatus shroomconstraint = new TargetConstraintHasStatus();
-            shroomconstraint.status = Get<StatusEffectData>("Shroom");
+            TargetConstraintHasStatus SCon(string name)
+            {
+                TargetConstraintHasStatus constraint = ScriptableObject.CreateInstance<TargetConstraintHasStatus>();
+                constraint.status = Get<StatusEffectData>(name);
+                return constraint;
+            }
 
             StringTable keycollection = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
 
@@ -992,7 +982,7 @@ namespace Pokefrost
             StatusEffectApplyXOnCardPlayed triggerclunker = Get<StatusEffectData>("On Card Played Trigger RandomAlly").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
             triggerclunker.name = "Trigger Clunker Ahead";
             triggerclunker.applyToFlags = StatusEffectApplyX.ApplyToFlags.AllyInFrontOf;
-            TargetConstraintIsCardType clunkerconstraint = new TargetConstraintIsCardType();
+            TargetConstraintIsCardType clunkerconstraint = ScriptableObject.CreateInstance<TargetConstraintIsCardType>();
             clunkerconstraint.allowedTypes = new CardType[] { Get<CardType>("Clunker") };
             triggerclunker.applyConstraints = triggerclunker.applyConstraints.Append(clunkerconstraint).ToArray();
             collection.SetString(triggerclunker.name + "_text", "Trigger <Clunker> ahead");
@@ -1245,7 +1235,7 @@ namespace Pokefrost
             iceball.mainEffect = doubleattacker;
             iceball.otherEffect = halfAttacker;
             iceball.applyConstraints = new TargetConstraint[0];
-            iceball.applyConstraints2 = new TargetConstraint[] { snowconstraint };
+            iceball.applyConstraints2 = new TargetConstraint[] { SCon("Snow") };
             iceball.applyToFlags = StatusEffectApplyX.ApplyToFlags.Target;
             iceball.targetMustBeAlive = false;
             iceball.canBeBoosted = false;
@@ -1411,7 +1401,7 @@ namespace Pokefrost
             statusList.Add(tempdream);
 
             StatusEffectSummon goop1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
-            goop1.summonCard = Get<CardData>("LuminSealant");
+            goop1.summonCard = Get<CardData>("Sword");
             goop1.name = "Summon Lumin Goop";
             goop1.gainTrait = tempdream;
             collection.SetString(goop1.name + "_text", "Summon Lumin Goop");

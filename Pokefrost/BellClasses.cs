@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine.AddressableAssets;
 using UnityEngine;
+using System.Xml.Linq;
 
 namespace Pokefrost
 {
@@ -158,24 +159,77 @@ namespace Pokefrost
         }
     }
 
-    public class SpawnCressliaModifierSystem : GameSystem
+    public abstract class QuestSystem : GameSystem
     {
+        public int progress = 0;
+        public virtual string ProgressName => "Quest";
 
+        public virtual void UpdateProgress(int value)
+        {
+            progress = value;
+            EventSaveSystem.Add(ProgressName, value);
+        }
+
+        public virtual void FindProgress()
+        {
+            int value = EventSaveSystem.Get(ProgressName);
+            if (value != -1)
+            {
+                progress = value;
+            }
+        }
+
+        public abstract bool CheckConditions();
+
+        public virtual void QuestBattleStart() { }
+
+        public virtual void QuestBattleFinish() { }
+    }
+
+    public class SpawnCressliaModifierSystem : QuestSystem
+    {
+        public override string ProgressName => "Dreams";
+
+
+        //Progress KEY
+        //0 -> Cresselia is alive. Darkrai battle has not occurred.
+        //1 -> Cresselia is dead. Darkrai battle will be skipped.
+        //2 -> Darkrai battle has been finished.
         public void OnEnable()
         {
             Events.OnBattleStart += Spawn;
-            Events.OnEntityKilled += QuestFailed;
+            Events.OnEntityKilled += CheckCresseliaAlive;
+            FindProgress();
         }
 
         public void OnDisable()
         {
             Events.OnBattleStart -= Spawn;
-            Events.OnEntityKilled -= QuestFailed;
+            Events.OnEntityKilled -= CheckCresseliaAlive;
+        }
+
+        private void CheckCresseliaAlive(Entity entity, DeathType deathType)
+        {
+            if (entity?.data?.name != "websiteofsites.wildfrost.pokefrost.quest_cresselia")
+            {
+                return;
+            }
+            foreach(Entity card in References.Battle.cards)
+            {
+                if (card?.data?.name == "websiteofsites.wildfrost.pokefrost.quest_cresselia" && card.IsAliveAndExists())
+                {
+                    return;
+                }
+            }
+            UpdateProgress(1);
         }
 
         private void Spawn()
         {
-            StartCoroutine(TrueSpawn());
+            if (progress == 0)
+            {
+                StartCoroutine(TrueSpawn());
+            }
         }
 
         private IEnumerator TrueSpawn()
@@ -195,16 +249,17 @@ namespace Pokefrost
             ActionQueue.Add(new ActionReveal(card.entity));
             ActionQueue.Add(new ActionRunEnableEvent(card.entity));
             yield return ActionQueue.Wait();
-            yield break;
         }
 
-        private void QuestFailed(Entity arg0, DeathType arg1)
+        public override bool CheckConditions()
         {
-            if (arg0.name == "websiteofsites.wildfrost.pokefrost.quest_cresselia")
-            {
-                //Removes battle from map
-                throw new NotImplementedException();
-            }
+            Debug.Log($"[Pokefrost] Checking Progress... {progress}");
+            return (progress == 0);
+        }
+
+        public override void QuestBattleFinish()
+        {
+            UpdateProgress(2);
         }
 
     }
