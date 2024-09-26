@@ -2026,7 +2026,7 @@ namespace Pokefrost
             statusList.Add(unlimitedLuminWhileActive);
 
             this.CreateBasicKeyword("autotomize", "Autotomize", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate\nRecycle to refresh");
-            this.CreateButtonIcon("aggronAutotomize", ImagePath("aronbutton.png").ToSprite(), "autotomize", "", Color.white, new KeywordData[] { Get<KeywordData>("autotomize") });
+            this.CreateButtonIcon("aggronAutotomize", ImagePath("aggronbutton.png").ToSprite(), "autotomize", "", Color.white, new KeywordData[] { Get<KeywordData>("autotomize") });
 
             StatusEffectInstantSummonLastRecycled lastRecycled = Ext.CreateStatus<StatusEffectInstantSummonLastRecycled>("Instant Summon Last Recycled To Hand")
                 .Register(this);
@@ -2160,8 +2160,12 @@ namespace Pokefrost
             recallHero.once = true;
             statusList.Add(recallHero);
 
-            StatusEffectApplyXOnCardPlayedMaybe randomTest = Ext.CreateStatus<StatusEffectApplyXOnCardPlayedMaybe>("Maybe Summon Dregg", "<{a}/%> chance to summon <card=Dregg>", boostable:true)
-                .ApplyX(Get<StatusEffectData>("Instant Summon Dregg"), StatusEffectApplyX.ApplyToFlags.Self)
+            StatusEffectRetreat retreat = Ext.CreateStatus<StatusEffectRetreat>("Instant Retreat")
+                .Register(this);
+            statusList.Add(retreat);
+
+            StatusEffectApplyXOnCardPlayedMaybe randomTest = Ext.CreateStatus<StatusEffectApplyXOnCardPlayedMaybe>("Maybe Make Front Enemy Retreat", "<{a}>% chance to send the front enemy to the next wave", boostable:true)
+                .ApplyX(retreat, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
             statusList.Add(randomTest);
 
@@ -3362,9 +3366,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("whimsicott", "Whimsicott", idleAnim: "FloatAnimationProfile")
-                    .SetStats(2, null, 6)
+                    .SetStats(2, null, 4)
                     .SetSprites("whimsicott.png", "whimsicottBG.png")
-                    .SStartEffects(("Maybe Summon Dregg", 50))
+                    .SStartEffects(("Maybe Make Front Enemy Retreat", 50))
                     .AddPool()
                 );
 
@@ -4484,6 +4488,7 @@ namespace Pokefrost
 
             StatusTokenApplyX.DefineStrings();
             StatusEffectApplyXOnCardPlayedMaybe.DefineStrings();
+            StatusEffectRetreat.DefineStrings();
 
             ui.SetString(EvolutionPopUp.EvoTitleKey1A, "Huh? <#ff0>{0}</color> is evolving?");
             ui.SetString(EvolutionPopUp.EvoTitleKey1B, "Huh? <#ff0>{0}</color> Pokemon are evolving?");

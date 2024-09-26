@@ -468,6 +468,7 @@
     <Compile Include="StatusEffectJolted.cs" />
     <Compile Include="StatusEffectMoveCard.cs" />
     <Compile Include="StatusEffectPickup.cs" />
+    <Compile Include="StatusEffectRetreat.cs" />
     <Compile Include="StatusEffectRevive.cs" />
     <Compile Include="StatusEffectRunScript.cs" />
     <Compile Include="StatusEffectSketch.cs" />

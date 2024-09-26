@@ -37,6 +37,11 @@ namespace Pokefrost
 
         public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
         {
+            if (entity != target)
+            {
+                return false;
+            }
+
             int chance = GetAmount(entity);
 
             int roll = Dead.Random.Range(1,100);
