@@ -453,6 +453,7 @@
     <Compile Include="StatusEffectApplyXOnHitOtherwiseY.cs" />
     <Compile Include="StatusEffectApplyXOnRecall.cs" />
     <Compile Include="StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage.cs" />
+    <Compile Include="StatusEffectApplyXWhenCertainCardPlayed.cs" />
     <Compile Include="StatusEffectApplyXWhileStatused.cs" />
     <Compile Include="StatusEffectBurning.cs" />
     <Compile Include="StatusEffectChangeData.cs" />

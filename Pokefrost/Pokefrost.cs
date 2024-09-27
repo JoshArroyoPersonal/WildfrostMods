@@ -107,40 +107,11 @@ namespace Pokefrost
             StringTable keycollection = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
 
             this.CreateBasicKeyword("evolve", "Evolve", "If the condition is met at the end of battle evolve into a new Pokemon|Inactive while in reserve");
-            /*KeywordData evolvekey = Get<KeywordData>("explode").InstantiateKeepName();
-            evolvekey.name = "Evolve";
-            keycollection.SetString(evolvekey.name + "_text", "Evolve");
-            evolvekey.titleKey = keycollection.GetString(evolvekey.name + "_text");
-            keycollection.SetString(evolvekey.name + "_desc", "If the condition is met at the end of battle evolve into a new Pokemon|Inactive while in reserve");
-            evolvekey.descKey = keycollection.GetString(evolvekey.name + "_desc");
-            evolvekey.panelSprite = this.ImagePath("panel.png").ToSprite();
-            evolvekey.panelColor = new Color(1f, 1f, 1f);
-            evolvekey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", evolvekey);*/
 
             KeywordData tauntkey = this.CreateBasicKeyword("taunt", "Taunt", "All enemies are <keyword=taunted>");
-            /*KeywordData tauntkey = Get<KeywordData>("hellbent").InstantiateKeepName();
-            tauntkey.name = "Taunt";
-            keycollection.SetString(tauntkey.name + "_text", "Taunt");
-            tauntkey.titleKey = keycollection.GetString(tauntkey.name + "_text");
-            keycollection.SetString(tauntkey.name + "_desc", "All enemies are <keyword=taunted>");
-            tauntkey.descKey = keycollection.GetString(tauntkey.name + "_desc");
-            tauntkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntkey);*/
-
             KeywordData tauntedkey = this.CreateBasicKeyword("taunted", "Taunted", "Target only enemies with <keyword=taunt>|Hits them all!");
-            /*KeywordData tauntedkey = Get<KeywordData>("hellbent").InstantiateKeepName();
-            tauntedkey.name = "Taunted";
-            keycollection.SetString(tauntedkey.name + "_text", "Taunted");
-            tauntedkey.titleKey = keycollection.GetString(tauntedkey.name + "_text");
-            keycollection.SetString(tauntedkey.name + "_desc", "Target only enemies with <keyword=taunt>|Hits them all!");
-            tauntedkey.descKey = keycollection.GetString(tauntedkey.name + "_desc");
-            tauntedkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", tauntedkey);*/
 
-            this.CreateBasicKeyword("randomeffect", "Random Effect", "Does a random effect from the listed options")
-                .ChangeColor(new Color(0, 0, 0), new Color(0.1f, 0.1f, 0.1f))
-                .ChangePanel(color: new Color(0.75f, 0.42f, 0.94f));
+            this.CreateBasicKeyword("randomeffect", "Random Effect", "Does a random effect from the listed options");
             /*KeywordData randomkey = Get<KeywordData>("hit").InstantiateKeepName();
             randomkey.name = "Random Effect";
             keycollection.SetString(randomkey.name + "_text", "Random Effect");
@@ -942,7 +913,7 @@ namespace Pokefrost
             increasehandattack.applyFormat = "";
             increasehandattack.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             increasehandattack.keyword = "";
-            increasehandattack.targetConstraints = new TargetConstraint[] { new TargetConstraintDoesDamage() };
+            increasehandattack.targetConstraints = new TargetConstraint[] { ScriptableObject.CreateInstance<TargetConstraintDoesDamage>() };
             collection.SetString(increasehandattack.name + "_text", "Add <+{a}><keyword=attack> to cards in hand");
             increasehandattack.textKey = collection.GetString(increasehandattack.name + "_text");
             increasehandattack.textOrder = 0;
@@ -1247,16 +1218,8 @@ namespace Pokefrost
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", iceball);
             statusList.Add(iceball);
 
-            this.CreateBasicKeyword("Revive", "Revive", "Cut <keyword=health> and <keyword=attack> in half instead of dying|Once per run!");
-            /*KeywordData revivekey = Get<KeywordData>("hellbent").InstantiateKeepName();
-            revivekey.name = "Revive";
-            keycollection.SetString(revivekey.name + "_text", "Revive");
-            revivekey.titleKey = keycollection.GetString(revivekey.name + "_text");
-            keycollection.SetString(revivekey.name + "_desc", "Cut <keyword=health> and <keyword=attack> in half instead of dying|Once per run!");
-            revivekey.noteColour = new Color(0.8f, 0.3f, 0.3f);
-            revivekey.descKey = keycollection.GetString(revivekey.name + "_desc");
-            revivekey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", revivekey);*/
+            this.CreateBasicKeyword("Revive", "Revive", "Cut <keyword=health> and <keyword=attack> in half instead of dying|Once per run!")
+                .ChangeColor(note: new Color(0.8f, 0.3f, 0.3f));
 
             StatusEffectRevive revive = ScriptableObject.CreateInstance<StatusEffectRevive>();
             revive.name = "Revive";
@@ -1420,18 +1383,15 @@ namespace Pokefrost
             StatusEffectGiveDreamCard givedream = Ext.CreateStatus<StatusEffectGiveDreamCard>("When Deployed Or Redraw, Gain Dream Card To Hand", "Gain a <keyword=dream> card on deploy and redraw", stackable: false)
                 .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(givedream);
 
             StatusEffectApplyXOnCardPlayed dreamonplay = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Gain Dream Card To Hand", "Gain a <keyword=dream> card", stackable: false)
                 .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(dreamonplay);
 
             StatusEffectApplyXWhenCardDestroyed keepOnDreamin = Ext.CreateStatus<StatusEffectApplyXWhenCardDestroyed>("When Card Destroyed, Gain Dream Card", "When a card is destroyed, gain a <keyword=dream> card")
                 .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             keepOnDreamin.mustBeOnBoard = false;
-            statusList.Add(keepOnDreamin);
 
             StatusEffectTemporaryTrait tempcrit = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             tempcrit.name = "Temporary Combo";
@@ -1459,12 +1419,10 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Enemies | StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             teeter.endTurn = true;
-            statusList.Add(teeter);
 
             StatusTokenApplyXListener teeter2 = Ext.CreateStatus<StatusTokenApplyXListener>("Trigger All Listener_1", type: "teeterDance_listener")
                 .ApplyX(Get<StatusEffectData>("Trigger"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
-            statusList.Add(teeter2);
 
             StatusEffectInstantFullHeal fullheal = Ext.CreateStatus<StatusEffectInstantFullHeal>("Heal Full")
                 .Register(this);
@@ -1480,12 +1438,10 @@ namespace Pokefrost
                 .Register(this);
             rest.endTurn = true;
             rest.finiteUses = true;
-            statusList.Add(rest);
 
             StatusTokenApplyXListener rest2 = Ext.CreateStatus<StatusTokenApplyXListener>("Rest Listener_1", type: "rest_listener")
                 .ApplyX(Get<StatusEffectData>("Remove Counter"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(rest2);
 
             this.CreateBasicKeyword("focusenergy", "Focus Energy", "<Free Action>: Discard the rightmost card in hand|Click to activate\nOnce per turn");
             this.CreateButtonIcon("kingdraFocusEnergy", ImagePath("kingdrabutton.png").ToSprite(), "focusEnergy", "", Color.white, new KeywordData[] { Get<KeywordData>("focusenergy") });
@@ -1498,7 +1454,6 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Discard Self"), StatusEffectApplyX.ApplyToFlags.RightCardInHand)
                 .Register(this);
             focusEnergy.oncePerTurn = true;
-            statusList.Add(focusEnergy);
 
             StatusEffectApplyRandomOnCardPlayed buffmarowak = ScriptableObject.CreateInstance<StatusEffectApplyRandomOnCardPlayed>();
             buffmarowak.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Self;
@@ -1519,7 +1474,6 @@ namespace Pokefrost
             statusList.Add(buffmarowak);
             StatusEffectDreamDummy giveThickClub = Ext.CreateStatus<StatusEffectDreamDummy>("Give Thick Club", "Gain a <Thick Club> upon evolution and battle end")
                 .Register(this);
-            statusList.Add(giveThickClub);
 
             this.CreateBasicKeyword("curseofweakness", "Curse of Weakness", "While in hand, reduce <keyword=attack> of all allies by <1>|Cannot be cleared or replaced!").showName = true;
             this.CreateBasicKeyword("curseofpower", "Curse of Power", "While in hand, increase <keyword=attack> of all enemies by <1>|Cannot be cleared or replaced!").showName = true;
@@ -1536,40 +1490,34 @@ namespace Pokefrost
                 .Register(this);
             weakcurse.iconGroupName = "crown";
             weakcurse.visible = true;
-            statusList.Add(weakcurse);
 
             StatusEffectWhileInHandXUpdate powercurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("PowerCurse", type:"powercurse")
                 .ApplyX(Get<StatusEffectData>("Ongoing Increase Attack"), StatusEffectApplyX.ApplyToFlags.Enemies)
                 .Register(this);
             powercurse.iconGroupName = "crown";
             powercurse.visible = true;
-            statusList.Add(powercurse);
 
             StatusEffectWhileInHandXUpdate paracurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("ParaCurse", type:"paracurse")
                 .ApplyX(Get<StatusEffectData>("Temporary Unmovable"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
             paracurse.iconGroupName = "crown";
             paracurse.visible = true;
-            statusList.Add(paracurse);
 
             StatusEffectWhileInHandXUpdate frenzycurse = Ext.CreateStatus<StatusEffectWhileInHandXUpdate>("FrenzyCurse", type: "frenzycurse")
                 .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Allies|StatusEffectApplyX.ApplyToFlags.Enemies)
                 .Register(this);
             frenzycurse.iconGroupName = "crown";
             frenzycurse.visible = true;
-            statusList.Add(frenzycurse);
 
             StatusEffectApplyXPreTrigger darkraifrenzy = Ext.CreateStatus<StatusEffectApplyXPreTrigger>("Pre Trigger Gain Temp MultiHit Equal To Curses In Hand", "Attack an additional time for each <curse> in hand")
                 .ApplyX(Get<StatusEffectData>("MultiHit (Temporary, Not Visible)"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             darkraifrenzy.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCursesInHand>();
-            statusList.Add(darkraifrenzy);
 
             StatusEffectWhileActiveX darkraiTest = Ext.CreateStatus<StatusEffectWhileActiveX>("Frenzy Equal To Curses In Hand", "Has <keyword=frenzy> equal to <curses> in hand")
                 .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             darkraiTest.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCursesInHand>();
-            statusList.Add(darkraiTest);
 
             StatusEffectWhileActiveX garbFrenzy = Ext.CreateStatus<StatusEffectWhileActiveX>("Frenzy Equal To Scrap", "Has <keyword=frenzy> equal to <keyword=scrap>")
                 .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Self)
@@ -1577,7 +1525,6 @@ namespace Pokefrost
             ScriptableCurrentStatus scrapAmount = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
             scrapAmount.statusType = "scrap";
             garbFrenzy.scriptableAmount = scrapAmount;
-            statusList.Add(garbFrenzy);
 
             TargetConstraintStatusMoreThan weakcurseconstraint = ScriptableObject.CreateInstance<TargetConstraintStatusMoreThan>();
             weakcurseconstraint.not = true;
@@ -1607,19 +1554,16 @@ namespace Pokefrost
                 .ApplyX(weakcurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
                 .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, frenzycurseconstraint, dreamconstraint)
                 .Register(this);
-            statusList.Add(giveweakcurse);
 
             StatusEffectApplyXOnCardPlayed givepowercurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", "Give a card in hand <keyword=curseofpower>")
                 .ApplyX(powercurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
                 .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, frenzycurseconstraint, dreamconstraint)
                 .Register(this);
-            statusList.Add(givepowercurse);
 
             StatusEffectApplyXOnCardPlayed giveparacurse = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", "Give a card in hand <keyword=curseofpara>")
                 .ApplyX(paracurse, StatusEffectApplyX.ApplyToFlags.RandomCardInHand)
                 .SetApplyConstraints(weakcurseconstraint, powercurseconstraint, paracurseconstraint, frenzycurseconstraint, dreamconstraint)
                 .Register(this);
-            statusList.Add(giveparacurse);
 
 
             this.CreateIconKeyword("jolted", "Jolted", "Take damage after triggering | Does not count down!", "joltedicon").ChangeColor(note: new Color(0.98f, 0.89f, 0.61f));
@@ -1638,7 +1582,6 @@ namespace Pokefrost
             jolted.textInsert = "{a}";
             jolted.keyword = "jolted";
             jolted.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
-            statusList.Add(jolted);
 
             this.CreateIconKeyword("spicune", "Juice", "Temporarily boosts effects | Clears after triggering", "juice").ChangeColor(title: new Color(0.23f, 0.96f, 0.8f), note: new Color(0.23f, 0.96f, 0.8f));
             GameObject spicuneicon = this.CreateIcon("juiceicon", ImagePath("juiceicon.png").ToSprite(), "juice", "lumin", Color.black, new KeywordData[] { Get<KeywordData>("spicune") });
@@ -1656,7 +1599,6 @@ namespace Pokefrost
             spicune.textInsert = "{a}";
             spicune.keyword = "spicune";
             spicune.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
-            statusList.Add(spicune);
 
             this.CreateIconKeyword("burning", "Ignite", "Explodes when hit, damaging all targets in row then clearing | Applying more increases the explosion!", "burningicon").ChangeColor(title: new Color(1f, 0.2f, 0.2f), note: new Color(1f, 0.2f, 0.2f));
             this.CreateIcon("burningicon", ImagePath("burningicon.png").ToSprite(), "burning", "spice", Color.white, new KeywordData[] { Get<KeywordData>("burning") }, -1)
@@ -1674,7 +1616,6 @@ namespace Pokefrost
             burning.textInsert = "{a}";
             burning.keyword = "burning";
             burning.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
-            statusList.Add(burning);
 
             StatusEffectApplyXOnKill killboost = Ext.CreateStatus<StatusEffectApplyXOnKill>("On Kill Boost Effects", "Boost effects on kill")
                 .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.Self)
@@ -1684,7 +1625,6 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             dieBoost.enemy = true;
-            statusList.Add(dieBoost);
 
             StatusEffectWhileActiveX reduceattackdescrp = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Reduce Attack To Enemies", "While active, reduce <keyword=attack> of all enemies by <{a}>", boostable: true)
                 .ApplyX(Get<StatusEffectData>("Ongoing Reduce Attack"), StatusEffectApplyX.ApplyToFlags.Enemies)
@@ -1822,21 +1762,17 @@ namespace Pokefrost
             tarbutton.finiteUses = true;
             tarbutton.applyEqualAmount = true;
             tarbutton.fixedAmount = 1;
-            statusList.Add(tarbutton);
 
             StatusTokenApplyXListener tarbutton2 = Ext.CreateStatus<StatusTokenApplyXListener>("Tar Shot Listener_1", type: "tarshot_listener")
                 .ApplyX(Get<StatusEffectData>("Add Tar Blade To Deck"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(tarbutton2);
 
             StatusEffectInstantHitRedrawBell redrawTest = Ext.CreateStatus<StatusEffectInstantHitRedrawBell>("Hit Redraw Bell")
                 .Register(this);
-            statusList.Add(redrawTest);
 
             StatusEffectApplyXOnCardPlayed redrawOnPlay = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Hit Redraw Bell", "Hit <Redraw Bell>")
                 .ApplyX(redrawTest, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(redrawOnPlay);
 
             KeywordData chainkey = this.CreateBasicKeyword("conduit", "Conduit", "Does an effect whenever anyone takes damage from <keyword=jolted>");
             chainkey.showName = true;
@@ -1844,13 +1780,11 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.RandomEnemy)
                 .Register(this);
             joltChain.targetDamageType = "jolt";
-            statusList.Add(joltChain);
 
             StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage enemyChain = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamageEqualToDamage>("When Anyone Takes Jolted Damage Apply Equal Jolted To Front Enemy", "<keyword=conduit>: Apply equal <keyword=jolted> to front enemy")
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
             enemyChain.targetDamageType = "jolt";
-            statusList.Add(joltChain);
 
             StatusEffectApplyXWhenAnyoneTakesDamage joltTrigger = Ext.CreateStatus<StatusEffectApplyXWhenAnyoneTakesDamage>("When Anyone Takes Jolted Damage Trigger", "<keyword=conduit>: Trigger")
                 .ApplyX(Get<StatusEffectData>("Trigger (High Prio)"), StatusEffectApplyX.ApplyToFlags.Self)
@@ -1858,25 +1792,21 @@ namespace Pokefrost
             joltTrigger.targetDamageType = "jolt";
             joltTrigger.isReaction = true;
             joltTrigger.descColorHex = "F99C61";
-            statusList.Add(joltTrigger);
 
             StatusEffectApplyXWhenDestroyed shroomOnDeath = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destroyed Apply Shroom To All Enemies In Row", "When destroyed, apply <{a}><keyword=shroom> to all enemies in row", boostable: true)
                 .ApplyX(Get<StatusEffectData>("Shroom"), StatusEffectApplyX.ApplyToFlags.EnemiesInRow)
                 .Register(this);
             shroomOnDeath.targetMustBeAlive = false;
-            statusList.Add(shroomOnDeath);
 
             StatusEffectApplyXWhenDestroyed bomOnDeath = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destroyed Apply Bom To All Enemies In Row", "When destroyed, apply <{a}><keyword=weakness> to all enemies in row", boostable: true)
                 .ApplyX(Get<StatusEffectData>("Weakness"), StatusEffectApplyX.ApplyToFlags.EnemiesInRow)
                 .Register(this);
             bomOnDeath.targetMustBeAlive = false;
-            statusList.Add(bomOnDeath);
 
             StatusEffectBonusDamageEqualToX handSizeAttack = Ext.CreateStatus<StatusEffectBonusDamageEqualToX>("Deal Bonus Damage Equal To Cards In Hand", "Deal additional damage equal to cards in hand")
                 .Register(this);
             handSizeAttack.on = StatusEffectBonusDamageEqualToX.On.ScriptableAmount;
             handSizeAttack.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCardsInHand>();
-            statusList.Add(handSizeAttack);
 
             TargetModeStatus notBurnTargetMode = ScriptableObject.CreateInstance<TargetModeStatus>();
             notBurnTargetMode.missing = true;
@@ -1888,39 +1818,32 @@ namespace Pokefrost
             StatusEffectWeather sandstorm = Ext.CreateStatus<StatusEffectWeather>("Sandstorm")
                 .Register(this);
             sandstorm.color = new Color(1f, 1f, 0.75f);
-            statusList.Add(sandstorm);
 
             StatusEffectWhileActiveX sandstream = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Sandstorm")
                 .ApplyX(sandstorm, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(sandstream);
 
             StatusEffectWeather snowstorm = Ext.CreateStatus<StatusEffectWeather>("Snowstorm")
                 .Register(this);
             snowstorm.color = new Color(1f, 1f, 1f);
             snowstorm.intensityMultiplier = 5f;
-            statusList.Add(snowstorm);
 
             StatusEffectWhileActiveX snowstream = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Snowstorm")
                 .ApplyX(snowstorm, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(snowstream);
 
             StatusEffectAddAttackEffects snowPunch = Ext.CreateStatus<StatusEffectAddAttackEffects>("All Hits Apply Snow", boostable:true)
                 .Register(this);
             snowPunch.effectToApply = Get<StatusEffectData>("Snow");
-            statusList.Add(snowPunch);
 
             StatusEffectWhileActiveX snowPunchWhileActive = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active All Hits Apply Snow", "While active, everyone applies <{a}><keyword=snow>")
                 .ApplyX(snowPunch, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(snowPunch);
 
             StatusEffectDuplicateEffect synchronize = Ext.CreateStatus<StatusEffectDuplicateEffect>("Copy Effects Applied To Ally Ahead")
                 .ApplyX(null, StatusEffectApplyX.ApplyToFlags.AllyInFrontOf)
                 .Register(this);
             synchronize.applyEqualAmount = true;
-            statusList.Add(synchronize);
 
             KeywordData syncKeyword = Ext.CreateBasicKeyword(this, "synchronize", "Synchronize", "Whenever an effect is applied to ally ahead, also apply it to self|Watch out for debuffs!");
             syncKeyword.canStack = false;
@@ -1930,17 +1853,14 @@ namespace Pokefrost
             StatusEffectApplyXOnCardPlayed juiceToHand = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Cards In Hand Juice", "Apply <{a}><keyword=spicune> to cards in hand", boostable:true)
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Hand)
                 .Register(this);
-            statusList.Add(juiceToHand);
 
             StatusEffectApplyXOnCardPlayed juiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Allies Juice", "Apply <{a}><keyword=spicune> to allies", boostable: true)
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
-            statusList.Add(juiceToAllies);
 
             StatusEffectApplyXWhenHit juiceOnHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("Gain Juice On Hit", "When hit, gain <{a}><keyword=spicune>", boostable:true)
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(juiceOnHit);
 
             StatusEffectApplyXOnCardPlayed juiceToAll = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To All", "Apply current <keyword=spicune> to everything else")
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Enemies | StatusEffectApplyX.ApplyToFlags.Hand)
@@ -1948,36 +1868,45 @@ namespace Pokefrost
             ScriptableCurrentStatus myJuice = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
             myJuice.statusType = "juice";
             juiceToAll.scriptableAmount = myJuice;
-            statusList.Add(juiceToAll);
 
             StatusEffectApplyXOnCardPlayed YourjuiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To Allies", "Apply current <keyword=spicune> to allies")
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
             YourjuiceToAllies.scriptableAmount = myJuice;
-            statusList.Add(YourjuiceToAllies);
 
             StatusEffectApplyXOnCardPlayed reviveToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Revive To Allies", "Give <keyword=revive> to allies")
                 .ApplyX(Get<StatusEffectData>("Revive"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
-            statusList.Add(reviveToAllies);
 
             StatusEffectSummon holderSummon = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             holderSummon.name = "Summon Placeholder";
             holderSummon.Register(this);
-            statusList.Add(holderSummon);
 
             StatusEffectInstantSummonCustom futureSummon = Ext.CreateStatus<StatusEffectInstantSummonCustom>("Instant Summon Placeholder To Hand")
                 .Register(this);
             futureSummon.targetSummon = holderSummon;
             futureSummon.summonPosition = StatusEffectInstantSummon.Position.Hand;
-            statusList.Add(futureSummon);
 
             StatusEffectApplyXWhenDeployed natuSummon = Ext.CreateStatus<StatusEffectApplyXWhenDeployed>("When Deployed Summon Placeholder To Hand", "When deployed, add the <keyword=prophesized> card to hand")
                 .ApplyX(futureSummon, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(natuSummon);
 
             this.CreateBasicKeyword("prophesized", "Prophesized", "The card is fated to be in your deck");
+
+            StatusEffectInstantRunScript returnProphCard = Ext.CreateStatus<StatusEffectInstantRunScript>("Return Prophesized Card To Hand")
+                .Register(this);
+            returnProphCard.scriptList = new List<EntityCardScript> { ScriptableObject.CreateInstance<EntityCardScriptReturnProphCard>() };
+
+            StatusEffectApplyXOnTurn returnProphCard2 = Ext.CreateStatus<StatusEffectApplyXOnTurn>("On Turn Return Prophesized Card To Hand", "Return the <keyword=prophesized> card to hand")
+                .ApplyX(returnProphCard, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
+            var prophOfSwords = Ext.CreateStatus<StatusEffectApplyXWhenCertainCardPlayed>("When Prophesized Card Played Give Allies Attack", "When the <keyword=prophesized> card is played, add <+{a}><keyword=attack> to all allies",boostable:true)
+                .ApplyX(Get<StatusEffectData>("Increase Attack"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+            prophOfSwords.useCardName = false;
+            prophOfSwords.useCustomData = true;
+            prophOfSwords.customDataKey = "Future Sight";
 
             this.CreateBasicKeyword("lavaplume", "Lava Plume", "<Free Action>: Convert the front enemy's <keyword=spice> into <keyword=burning>|Click to activate\nOnce per turn");
             this.CreateButtonIcon("magcargoLavaPlume", ImagePath("kingdrabutton.png").ToSprite(), "lavaPlume", "", Color.white, new KeywordData[] { Get<KeywordData>("lavaplume") });
@@ -1986,13 +1915,11 @@ namespace Pokefrost
                 .Register(this);
             spiceToBurning.effectA = "Spice";
             spiceToBurning.effectB = "Burning";
-            statusList.Add(spiceToBurning);
 
             StatusTokenApplyX lavaPlume = this.CreateStatusButton<StatusTokenApplyX>("Convert Spice To Burning To Front Enemy", "lavaPlume")
                 .ApplyX(spiceToBurning, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
             lavaPlume.oncePerTurn = true;
-            statusList.Add(lavaPlume);
 
             this.CreateBasicKeyword("fidget", "Fidget", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate");
             this.CreateButtonIcon("aronFidget", ImagePath("aronbutton.png").ToSprite(), "fidget", "", Color.white, new KeywordData[] { Get<KeywordData>("fidget") });
@@ -2000,30 +1927,24 @@ namespace Pokefrost
             StatusEffectInstantRunScript fidgetEffect = Ext.CreateStatus<StatusEffectInstantRunScript>("Run Fidget Script")
                 .Register(this);
             fidgetEffect.scriptList = new List<EntityCardScript> { EntityCardScriptSwapTraits.Create(Get<TraitData>("Trash"), Get<TraitData>("Recycle")) };
-            statusList.Add(fidgetEffect);
 
             StatusTokenApplyX applyFidget = this.CreateStatusButton<StatusTokenApplyX>("Fidget Button", "fidget")
                 .ApplyX(Get<StatusEffectData>("Run Fidget Script"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(applyFidget);
 
             StatusEffectAllCardsAreRecycled allRecyclable = Ext.CreateStatus<StatusEffectAllCardsAreRecycled>("All Cards Are Recyclable")
                 .Register(this);
-            statusList.Add(allRecyclable);
 
             StatusEffectWhileActiveX allRecyclableWhileActive = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active All Cards Are Recyclable", "While active, all cards are recyclable")
                 .ApplyX(allRecyclable, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(allRecyclableWhileActive);
 
             StatusEffectUnlimitedLumin unlimitedLumin = Ext.CreateStatus<StatusEffectUnlimitedLumin>("Unlimited Lumin")
                 .Register(this);
-            statusList.Add(unlimitedLumin);
 
             StatusEffectWhileActiveX unlimitedLuminWhileActive = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Unlimited Lumin", "While active, <keyword=lumin> does not clear!")
                 .ApplyX(unlimitedLumin, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(unlimitedLuminWhileActive);
 
             this.CreateBasicKeyword("autotomize", "Autotomize", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate\nRecycle to refresh");
             this.CreateButtonIcon("aggronAutotomize", ImagePath("aggronbutton.png").ToSprite(), "autotomize", "", Color.white, new KeywordData[] { Get<KeywordData>("autotomize") });
@@ -2032,20 +1953,17 @@ namespace Pokefrost
                 .Register(this);
             lastRecycled.targetSummon = holderSummon;
             lastRecycled.summonPosition = StatusEffectInstantSummon.Position.Hand;
-            statusList.Add(lastRecycled);
 
             StatusTokenApplyX autotomize = this.CreateStatusButton<StatusTokenApplyX>("Autotomize Button", "autotomize")
                 .ApplyX(lastRecycled, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             autotomize.clickConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintHasLastRecycled>() };
             autotomize.genericPopup = StatusTokenApplyX.Key_Autotomize;
-            statusList.Add(autotomize);
 
             StatusEffectSummon luminHolderSummon = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             luminHolderSummon.name = "Summon Lumin Goop or Broken Vase";
             luminHolderSummon.summonCard = Get<CardData>("LuminSealant");
             luminHolderSummon.Register(this);
-            statusList.Add(luminHolderSummon);
 
             StatusEffectInstantSummonLuminPart luminPartSummon = Ext.CreateStatus<StatusEffectInstantSummonLuminPart>("Instant Summon Lumin Part")
                 .Register(this);
@@ -2053,12 +1971,10 @@ namespace Pokefrost
             luminPartSummon.summonPosition = StatusEffectInstantSummon.Position.Hand;
             luminPartSummon.card1 = Get<CardData>("LuminSealant");
             luminPartSummon.card2 = Get<CardData>("BrokenVase");
-            statusList.Add(luminPartSummon);
 
             StatusEffectApplyXOnCardPlayed luminSummonAttack = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Add Lumin Part To Hand")
                 .ApplyX(luminPartSummon, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(luminSummonAttack);
 
             KeywordData salvageKeyword = Ext.CreateBasicKeyword(this, "salvage", "Salvage", "Add a <Lumin Part> to hand that can combine into <card=LuminVase> with <keyword=zoomlin> and <keyword=consume>");
             salvageKeyword.canStack = false;
@@ -2070,66 +1986,54 @@ namespace Pokefrost
             burningToAllies.sameOwner = true;
             burningToAllies.includeSelf = false;
             burningToAllies.effectToApply = burning;
-            statusList.Add(burningToAllies);
 
             StatusEffectWhileActiveX burnStream = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Allied Hits Have Burning", "While active, allies apply <{a}><keyword=burning>")
                 .ApplyX(burningToAllies, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(burnStream);
 
             StatusEffectApplyXOnCardPlayed incCounter2 = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Increase Targets Counter", "Increase target's <keyword=counter> by <{a}>", boostable: true)
                 .ApplyX(Get<StatusEffectData>("Increase Max Counter"), StatusEffectApplyX.ApplyToFlags.Target)
                 .Register(this);
-            statusList.Add(incCounter2);
 
             StatusEffectApplyXOnCardPlayed boostRight = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Boost Effects of Rightmost Card", "Boost the effects of the rightmost card in hand by <{a}>", boostable: true)
                 .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.RightCardInHand)
                 .Register(this);
-            statusList.Add(boostRight);
 
             StatusEffectWhileActiveX snowImmuneAllies = Ext.CreateStatus<StatusEffectWhileActiveX>("While Active Allies Have ImmuneToSnow", "While active, allies <keyword=immunetosnow>")
                 .ApplyX(Get<StatusEffectData>("ImmuneToSnow"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
-            statusList.Add(snowImmuneAllies);
 
             Get<KeywordData>("immunetosnow").showName = true;
 
             StatusEffectApplyXOnCardPlayed purify = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Cleanse Targets", "<keyword=cleanse> targets")
                 .ApplyX(Get<StatusEffectData>("Cleanse"), StatusEffectApplyX.ApplyToFlags.Target)
                 .Register(this);
-            statusList.Add(purify);
 
             StatusEffectApplyXWhenHit joltHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Jolted To Attacker", "When hit, apply <{a}><keyword=jolted> to the attacker")
                 .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.Attacker)
                 .Register(this);
-            statusList.Add(joltHit);
 
             StatusEffectApplyXWhenHit burnHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Burning To Attacker", "When hit, apply <{a}><keyword=burning> to the attacker")
                 .ApplyX(Get<StatusEffectData>("Burning"), StatusEffectApplyX.ApplyToFlags.Attacker)
                 .Register(this);
-            statusList.Add(burnHit);
 
             StatusEffectApplyXWhenHit juiceHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Spicune To All Allies And Enemies", "When hit, apply <{a}><keyword=spicune> to allies and enemies")
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Enemies)
                 .Register(this);
-            statusList.Add(juiceHit);
 
             StatusEffectApplyXOnRecall recallTest1 = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Gain Spice On Recall", "When recalled gain <{a}><keyword=spice>")
                 .ApplyX(Get<StatusEffectData>("Spice"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
-            statusList.Add(recallTest1);
 
             StatusEffectApplyXOnRecall recallTest2 = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Gain Barrage On Recall", "When recalled gain <keyword=barrage>")
                 .ApplyX(Get<StatusEffectData>("Temporary Barrage"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             recallTest2.once = true;
-            statusList.Add(recallTest2);
 
             StatusEffectApplyXOnRecall recallTrigger = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Trigger On Recall")
                 .ApplyX(Get<StatusEffectData>("Trigger (High Prio)"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             recallTrigger.isReaction = true;
-            statusList.Add(recallTrigger);
 
             KeywordData uturnKey = this.CreateBasicKeyword("uturn", "U-turn", "Trigger when recalled");
             uturnKey.showName = true;
@@ -2141,7 +2045,6 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Trigger Against"), StatusEffectApplyX.ApplyToFlags.Attacker)
                 .Register(this);
             heroEffect.isReaction = true;
-            statusList.Add(heroEffect);
 
             KeywordData heroKey = this.CreateBasicKeyword("hero", "Hero", "When an ally is hit, counterattack");
             heroKey.showName = true;
@@ -2152,22 +2055,17 @@ namespace Pokefrost
             StatusEffectTemporaryTrait tempHero = Ext.CreateStatus<StatusEffectTemporaryTrait>("Temporary Hero")
                 .Register(this);
             tempHero.trait = heroTrait;
-            statusList.Add(tempHero);
-
             StatusEffectApplyXOnRecall recallHero = Ext.CreateStatus<StatusEffectApplyXOnRecall>("Gain Hero On Recall", "When recalled gain <keyword=hero>")
                 .ApplyX(tempHero, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             recallHero.once = true;
-            statusList.Add(recallHero);
 
             StatusEffectRetreat retreat = Ext.CreateStatus<StatusEffectRetreat>("Instant Retreat")
                 .Register(this);
-            statusList.Add(retreat);
 
             StatusEffectApplyXOnCardPlayedMaybe randomTest = Ext.CreateStatus<StatusEffectApplyXOnCardPlayedMaybe>("Maybe Make Front Enemy Retreat", "<{a}>% chance to send the front enemy to the next wave", boostable:true)
                 .ApplyX(retreat, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
-            statusList.Add(randomTest);
 
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -2175,19 +2073,16 @@ namespace Pokefrost
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
             ev1.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardTypeIsBossOrMiniboss);
             ev1.Confirm();
-            statusList.Add(ev1);
 
             StatusEffectEvolve ev2 = ScriptableObject.CreateInstance<StatusEffectEvolveEevee>();
             ev2.Autofill("Evolve Eevee", "<keyword=evolve>: Equip charm", this);
             ev2.SetEvolution("f");
             ev2.Confirm();
-            statusList.Add(ev2);
 
             StatusEffectEvolve ev3 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
             ev3.Autofill("Evolve Meowth", "<keyword=evolve>: Have <{a}><keyword=blings>", this);
             ev3.SetEvolution("websiteofsites.wildfrost.pokefrost.persian");
             ev3.Confirm();
-            statusList.Add(ev3);
 
             StatusEffectEvolveFromKill ev4 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev4.Autofill("Evolve Lickitung", "<keyword=evolve>: Consume <{a}> cards", this);
@@ -2195,14 +2090,12 @@ namespace Pokefrost
             ev4.anyKill = true;
             ev4.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardWasConsumed);
             ev4.Confirm();
-            statusList.Add(ev4);
 
             StatusEffectEvolveExternalFactor ev5 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
             ev5.Autofill("Evolve Munchlax", "<keyword=evolve>: Have an empty deck", this);
             ev5.SetEvolution("websiteofsites.wildfrost.pokefrost.snorlax");
             ev5.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfEmptyDeck);
             ev5.Confirm();
-            statusList.Add(ev5);
 
             StatusEffectEvolveFromStatusApplied ev6 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
             ev6.Autofill("Evolve Croagunk", "<keyword=evolve>: Team applies <{a}> <keyword=shroom>", this);
@@ -2210,7 +2103,6 @@ namespace Pokefrost
             ev6.targetType = "shroom";
             ev6.faction = "ally";
             ev6.Confirm();
-            statusList.Add(ev6);
 
             StatusEffectEvolveFromKill ev7 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev7.Autofill("Evolve Voltorb", "<keyword=evolve>: Kill 3 in a battle", this);
@@ -2218,7 +2110,6 @@ namespace Pokefrost
             ev7.SetConstraints(StatusEffectEvolveFromKill.ReturnTrue);
             ev7.persist = false;
             ev7.Confirm();
-            statusList.Add(ev7);
 
             StatusEffectEvolveFromHitApplied ev8 = ScriptableObject.CreateInstance<StatusEffectEvolveFromHitApplied>();
             ev8.Autofill("Evolve Carvanha", "<keyword=evolve>: Team deals <{a}> <keyword=teeth> damage", this);
@@ -2226,33 +2117,28 @@ namespace Pokefrost
             ev8.targetType = "spikes";
             ev8.faction = "ally";
             ev8.Confirm();
-            statusList.Add(ev8);
 
             StatusEffectEvolveExternalFactor ev9 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
             ev9.Autofill("Evolve Trubbish", "<keyword=evolve>: Have <4> <card=Junk> on battle end", this);
             ev9.SetEvolution("websiteofsites.wildfrost.pokefrost.garbodor");
             ev9.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfEnoughJunk);
             ev9.Confirm();
-            statusList.Add(ev9);
 
             StatusEffectEvolveFromKill ev10 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev10.Autofill("Evolve Litwick", "<keyword=evolve>: Kill <{a}> enemy", this);
             ev10.SetEvolution("websiteofsites.wildfrost.pokefrost.lampent");
             ev10.SetConstraints(StatusEffectEvolveFromKill.ReturnTrue);
             ev10.Confirm();
-            statusList.Add(ev10);
 
             StatusEffectEvolveNincada ev11 = ScriptableObject.CreateInstance<StatusEffectEvolveNincada>();
             ev11.Autofill("Evolve Nincada", "<keyword=evolve>: <{a}> battles", this);
             ev11.SetEvolution("websiteofsites.wildfrost.pokefrost.ninjask");
             ev11.Confirm();
-            statusList.Add(ev11);
 
             StatusEffectEvolveCrown ev12 = ScriptableObject.CreateInstance<StatusEffectEvolveCrown>();
             ev12.Autofill("Evolve Murkrow", "<keyword=evolve>: Wear <sprite name=crown>", this);
             ev12.SetEvolution("websiteofsites.wildfrost.pokefrost.honchkrow");
             ev12.Confirm();
-            statusList.Add(ev12);
 
             StatusEffectEvolveFromStatusApplied ev13 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
             ev13.Autofill("Evolve Piplup", "<keyword=evolve>: Team applies <{a}><keyword=snow>", this);
@@ -2260,7 +2146,6 @@ namespace Pokefrost
             ev13.targetType = "snow";
             ev13.faction = "ally";
             ev13.Confirm();
-            statusList.Add(ev13);
 
             StatusEffectEvolveFromStatusApplied ev14 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
             ev14.Autofill("Evolve Prinplup", "<keyword=evolve>: Apply <{a}><keyword=snow> to self", this);
@@ -2268,7 +2153,6 @@ namespace Pokefrost
             ev14.targetType = "snow";
             ev14.faction = "toSelf";
             ev14.Confirm();
-            statusList.Add(ev14);
 
             StatusEffectEvolvePlayCards ev15 = ScriptableObject.CreateInstance<StatusEffectEvolvePlayCards>();
             ev15.Autofill("Evolve Duskull", "<keyword=evolve>: Play {0} skulls", this);
@@ -2277,7 +2161,6 @@ namespace Pokefrost
             ev15.SetDispalyedNames("Azul", "Tiger", "Yeti");
             ev15.SetTextTemplate("{0}, {1}, and {2}");
             ev15.Confirm();
-            statusList.Add(ev15);
 
             StatusEffectEvolveFromStatusApplied ev16 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
             ev16.Autofill("Evolve Lampent", "<keyword=evolve>: Reach <{a}><keyword=overload>", this);
@@ -2286,21 +2169,18 @@ namespace Pokefrost
             ev16.faction = "toSelf";
             ev16.threshold = true;
             ev16.Confirm();
-            statusList.Add(ev16);
 
             StatusEffectEvolveFromNode ev17 = ScriptableObject.CreateInstance<StatusEffectEvolveFromNode>();
             ev17.Autofill("Evolve Haunter", "<keyword=evolve>: Witness a <Trade>", this);
             ev17.SetEvolution("websiteofsites.wildfrost.pokefrost.gengar");
             ev17.targetNodeName = "trade";
             ev17.Confirm();
-            statusList.Add(ev17);
 
             StatusEffectEvolveFromNode ev18 = ScriptableObject.CreateInstance<StatusEffectEvolveFromNode>();
             ev18.Autofill("Evolve Machoke", "<keyword=evolve>: Witness a <Trade>", this);
             ev18.SetEvolution("websiteofsites.wildfrost.pokefrost.machamp");
             ev18.targetNodeName = "trade";
             ev18.Confirm();
-            statusList.Add(ev18);
 
             StatusEffectEvolveSlowpoke ev19 = ScriptableObject.CreateInstance<StatusEffectEvolveSlowpoke>();
             ev19.Autofill("Evolve Slowpoke", "<keyword=evolve>: Visit a <Blingsnail Cave> with or without <sprite name=crown>", this);
@@ -2308,33 +2188,28 @@ namespace Pokefrost
             ev19.evolveCrowned = "slowking";
             ev19.targetNodeName = "Blingsnail Cave";
             ev19.Confirm();
-            statusList.Add(ev19);
 
             StatusEffectEvolvePlayCards ev20 = ScriptableObject.CreateInstance<StatusEffectEvolvePlayCards>();
             ev20.Autofill("Evolve Seadra", "<keyword=evolve>: Play <{a}> <keyword=combo> cards", this);
             ev20.SetEvolution("websiteofsites.wildfrost.pokefrost.kingdra");
             ev20.SetCardConstraint((entity, entities) => { return StatusEffectEvolvePlayCards.ReturnTrueIfTrait("Combo",entity); });
             ev20.Confirm();
-            statusList.Add(ev20);
 
             StatusEffectEvolveFromHitApplied ev21 = ScriptableObject.CreateInstance<StatusEffectEvolveFromHitApplied>();
             ev21.Autofill("Evolve Makuhita", "<keyword=evolve>: Deal <{a}> damage", this);
             ev21.Autofill2("self", "all");
             ev21.SetEvolution("websiteofsites.wildfrost.pokefrost.hariyama");
             ev21.Confirm();
-            statusList.Add(ev21);
 
             StatusEffectEvolveCubone ev22 = ScriptableObject.CreateInstance<StatusEffectEvolveCubone>();
             ev22.Autofill("Evolve Cubone", "<keyword=evolve>: Become injured <i><color=#A6A6A6>(by whom?)</i></color>", this);
             ev22.SetEvolutions("websiteofsites.wildfrost.pokefrost.marowak", "websiteofsites.wildfrost.pokefrost.alolanmarowak");
             ev22.Confirm();
-            statusList.Add(ev22);
 
             StatusEffectEvolveKirlia ev23 = ScriptableObject.CreateInstance<StatusEffectEvolveKirlia>();
             ev23.Autofill("Evolve Kirlia", "<keyword=evolve>: Gain <{a}> unique effects", this);
             ev23.SetEvolutions("gardevoir", "gallade");
             ev23.Confirm();
-            statusList.Add(ev23);
 
             StatusEffectEvolveFromKill ev24 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev24.Autofill("Evolve Aron", "<keyword=evolve>: Team <keyword=recycle><color=#FFCA57>s</color> <{a}> cards", this);
@@ -2342,7 +2217,6 @@ namespace Pokefrost
             ev24.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardWasRecycled);
             ev24.anyKill = true;
             ev24.Confirm();
-            statusList.Add(ev24);
 
             StatusEffectEvolveFromKill ev25 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev25.Autofill("Evolve Lairon", "<keyword=evolve>: Team <keyword=recycle><color=#FFCA57>s</color> <{a}> <keyword=recycle> card", this);
@@ -2350,20 +2224,17 @@ namespace Pokefrost
             ev25.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfRecycleCardWasRecycled);
             ev25.anyKill = true;
             ev25.Confirm();
-            statusList.Add(ev25);
 
             StatusEffectEvolveNatu ev26 = ScriptableObject.CreateInstance<StatusEffectEvolveNatu>();
             ev26.Autofill("Evolve Natu", "<keyword=evolve>: Fulfill the <Prophecy>", this);
             ev26.SetEvolution("xatu");
             ev26.Confirm();
-            statusList.Add(ev26);
 
             StatusEffectEvolveExternalFactor ev27 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
             ev27.Autofill("Evolve Aipom", "<keyword=evolve>: Have <color=#FFCA57>{a}</color> <Items> in deck", this);
             ev27.SetEvolution("ambipom");
             ev27.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfThickDeck);
             ev27.Confirm();
-            statusList.Add(ev27);
 
             StatusEffectEvolveFromStatusApplied ev28 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
             ev28.Autofill("Evolve Snover", "<keyword=evolve>: <{a}> units <keyword=snow>'d at once", this);
@@ -2373,7 +2244,6 @@ namespace Pokefrost
             ev28.faction = "all";
             ev28.once = true;
             ev28.Confirm();
-            statusList.Add(ev28);
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -2700,6 +2570,7 @@ namespace Pokefrost
                     .CreateUnit("xatu", "Xatu")
                     .SetStats(8, 3, 4)
                     .SetSprites("xatu.png", "xatuBG.png")
+                    .SStartEffects(("On Turn Return Prophesized Card To Hand", 1), ("When Prophesized Card Played Give Allies Attack", 1))
                 );
 
             list.Add(
@@ -2949,7 +2820,7 @@ namespace Pokefrost
                     .CreateUnit("nosepass", "Nosepass", bloodProfile: "Blood Profile Husk")
                     .SetStats(8, 4, 4)
                     .SetSprites("nosepass.png", "nosepassBG.png")
-                    .WithFlavour("My magnetic field attracts tons of charms from the sidelines")
+                    .WithFlavour("My magnetic field attracts tons of charms from the reserve")
                     .AddPool()
                 );
 
@@ -3967,11 +3838,11 @@ namespace Pokefrost
             CardUpgradeData fish = Get<CardUpgradeData>("CardUpgradeAimless");
             CardUpgradeData pom = Get<CardUpgradeData>("CardUpgradeBarrage");
             CardUpgradeData gnome = Get<CardUpgradeData>("CardUpgradeWildcard");
-            TargetConstraintHasTrait nopluck = new TargetConstraintHasTrait();
+            TargetConstraintHasTrait nopluck = ScriptableObject.CreateInstance<TargetConstraintHasTrait>();
             nopluck.name = "Does Not Have Pluck";
             nopluck.trait = Get<TraitData>("Pluck");
             nopluck.not = true;
-            TargetConstraintHasTrait noaimless = new TargetConstraintHasTrait();
+            TargetConstraintHasTrait noaimless = ScriptableObject.CreateInstance<TargetConstraintHasTrait>();
             noaimless.name = "Does Not Have Aimless";
             noaimless.trait = Get<TraitData>("Aimless");
             noaimless.not = true;
@@ -4482,7 +4353,7 @@ namespace Pokefrost
 
             Get<CardData>("websiteofsites.wildfrost.pokefrost.klefki").charmSlots = 100;
             ((StatusEffectSummon)Get<StatusEffectData>("Summon Shedinja")).summonCard = Get<CardData>("websiteofsites.wildfrost.pokefrost.shedinja");
-            TargetConstraintIsSpecificCard onlymarowak = new TargetConstraintIsSpecificCard();
+            TargetConstraintIsSpecificCard onlymarowak = ScriptableObject.CreateInstance<TargetConstraintIsSpecificCard>();
             onlymarowak.allowedCards = new CardData[1] { Get<CardData>("websiteofsites.wildfrost.pokefrost.marowak") };
             ((StatusEffectApplyRandomOnCardPlayed)Get<StatusEffectData>("On Card Played Buff Marowak")).applyConstraints = new TargetConstraint[1] { onlymarowak };
 

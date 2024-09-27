@@ -45,8 +45,9 @@ namespace Pokefrost
             else
             {
                 Debug.Log("[Pokefrost] Quest failed. Skipping bonus battle...");
-                node.SetCleared();
+                Ext.PopupText(References.Map.FindNode(Campaign.FindCharacterNode(References.Player)).transform, "Conditions Not Met!", false);
                 yield return Sequences.Wait(1f);
+                node.SetCleared();
                 References.Map.Continue();
             }
         }

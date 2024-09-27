@@ -41,53 +41,53 @@ namespace Pokefrost
             {
                 return;
             }
-            upgradeMap.Add("CardUpgradeOverload", "flareon");
-            upgradeMap.Add("CardUpgradeSpice", "flareon");
-            upgradeMap.Add("CardUpgradeBattle", "flareon");
-            upgradeMap.Add("CardUpgradeBombskull", "flareon");
-            upgradeMap.Add("CardUpgradeFlameberry", "flareon");
+            upgradeMap.Add("CardUpgradeOverload", flareon);
+            upgradeMap.Add("CardUpgradeSpice", flareon);
+            upgradeMap.Add("CardUpgradeBattle", flareon);
+            upgradeMap.Add("CardUpgradeBombskull", flareon);
+            upgradeMap.Add("CardUpgradeFlameberry", flareon);
 
-            upgradeMap.Add("CardUpgradeInk", "vaporeon");
-            upgradeMap.Add("CardUpgradeFury", "vaporeon");
-            upgradeMap.Add("CardUpgradeBlock", "vaporeon");
-            upgradeMap.Add("CardUpgradeRemoveCharmLimit", "vaporeon");
+            upgradeMap.Add("CardUpgradeInk", vaporeon);
+            upgradeMap.Add("CardUpgradeFury", vaporeon);
+            upgradeMap.Add("CardUpgradeBlock", vaporeon);
+            upgradeMap.Add("CardUpgradeRemoveCharmLimit", vaporeon);
 
-            upgradeMap.Add("CardUpgradeSpark", "jolteon");
-            upgradeMap.Add("CardUpgradeDraw", "jolteon");
-            upgradeMap.Add("CardUpgradeFrenzyReduceAttack", "jolteon");
-            upgradeMap.Add("CardUpgradeWildcard", "jolteon");
-            upgradeMap.Add("CardUpgradeGlass", "jolteon");
-            upgradeMap.Add("websiteofsites.wildfrost.pokefrost.CardUpgradeMagnemite", "jolteon");
+            upgradeMap.Add("CardUpgradeSpark", jolteon);
+            upgradeMap.Add("CardUpgradeDraw", jolteon);
+            upgradeMap.Add("CardUpgradeFrenzyReduceAttack", jolteon);
+            upgradeMap.Add("CardUpgradeWildcard", jolteon);
+            upgradeMap.Add("CardUpgradeGlass", jolteon);
+            upgradeMap.Add("websiteofsites.wildfrost.pokefrost.CardUpgradeMagnemite", jolteon);
 
-            upgradeMap.Add("CardUpgradeBalanced", "espeon");
-            upgradeMap.Add("CardUpgradeBom", "espeon");
-            upgradeMap.Add("CardUpgradeBoost", "espeon");
-            upgradeMap.Add("CardUpgradeSun", "espeon");
-            upgradeMap.Add("CardUpgradeBootleg", "espeon");
+            upgradeMap.Add("CardUpgradeBalanced", espeon);
+            upgradeMap.Add("CardUpgradeBom", espeon);
+            upgradeMap.Add("CardUpgradeBoost", espeon);
+            upgradeMap.Add("CardUpgradeSun", espeon);
+            upgradeMap.Add("CardUpgradeBootleg", espeon);
 
-            upgradeMap.Add("CardUpgradeGreed", "umbreon");
-            upgradeMap.Add("CardUpgradeTeethWhenHit", "umbreon");
-            upgradeMap.Add("CardUpgradeSpiky", "umbreon");
-            upgradeMap.Add("CardUpgradeDemonize", "umbreon");
-            upgradeMap.Add("websiteofsites.wildfrost.pokefrost.CardUpgradePluck", "umbreon");
+            upgradeMap.Add("CardUpgradeGreed", umbreon);
+            upgradeMap.Add("CardUpgradeTeethWhenHit", umbreon);
+            upgradeMap.Add("CardUpgradeSpiky", umbreon);
+            upgradeMap.Add("CardUpgradeDemonize", umbreon);
+            upgradeMap.Add("websiteofsites.wildfrost.pokefrost.CardUpgradePluck", umbreon);
 
-            upgradeMap.Add("CardUpgradeSnowball", "glaceon");
-            upgradeMap.Add("CardUpgradeFrosthand", "glaceon");
-            upgradeMap.Add("CardUpgradeSnowImmune", "glaceon");
-            upgradeMap.Add("CardUpgradeAttackIncreaseCounter", "glaceon");
-            upgradeMap.Add("CardUpgradeBlue", "glaceon");
+            upgradeMap.Add("CardUpgradeSnowball", glaceon);
+            upgradeMap.Add("CardUpgradeFrosthand", glaceon);
+            upgradeMap.Add("CardUpgradeSnowImmune", glaceon);
+            upgradeMap.Add("CardUpgradeAttackIncreaseCounter", glaceon);
+            upgradeMap.Add("CardUpgradeBlue", glaceon);
 
-            upgradeMap.Add("CardUpgradeAcorn", "leafeon");
-            upgradeMap.Add("CardUpgradeShellOnKill", "leafeon");
-            upgradeMap.Add("CardUpgradeShroom", "leafeon");
-            upgradeMap.Add("CardUpgradeShroomReduceHealth", "leafeon");
-            upgradeMap.Add("CardUpgradePlink", "leafeon");
+            upgradeMap.Add("CardUpgradeAcorn", leafeon);
+            upgradeMap.Add("CardUpgradeShellOnKill", leafeon);
+            upgradeMap.Add("CardUpgradeShroom", leafeon);
+            upgradeMap.Add("CardUpgradeShroomReduceHealth", leafeon);
+            upgradeMap.Add("CardUpgradePlink", leafeon);
 
-            upgradeMap.Add("CardUpgradeAttackAndHealth", "sylveon");
-            upgradeMap.Add("CardUpgradeHeart", "sylveon");
-            upgradeMap.Add("CardUpgradeCloudberry", "sylveon");
-            upgradeMap.Add("CardUpgradePig", "sylveon");
-            upgradeMap.Add("CardUpgradeHeartmist", "sylveon");
+            upgradeMap.Add("CardUpgradeAttackAndHealth", sylveon);
+            upgradeMap.Add("CardUpgradeHeart", sylveon);
+            upgradeMap.Add("CardUpgradeCloudberry", sylveon);
+            upgradeMap.Add("CardUpgradePig", sylveon);
+            upgradeMap.Add("CardUpgradeHeartmist", sylveon);
 
             
             //Abigail Mods
