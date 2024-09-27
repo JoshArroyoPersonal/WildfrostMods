@@ -2131,10 +2131,10 @@ namespace Pokefrost
             recallTrigger.isReaction = true;
             statusList.Add(recallTrigger);
 
-            KeywordData uturnKey = this.CreateBasicKeyword("uturn", "U-Turn", "Trigger when recalled");
+            KeywordData uturnKey = this.CreateBasicKeyword("uturn", "U-turn", "Trigger when recalled");
             uturnKey.showName = true;
 
-            TraitData uturnTrait = Ext.CreateTrait<TraitData>("U-Turn", this, uturnKey, recallTrigger);
+            TraitData uturnTrait = Ext.CreateTrait<TraitData>("U-turn", this, uturnKey, recallTrigger);
             uturnTrait.isReaction = true;
 
             StatusEffectApplyXWhenAllyIsHit heroEffect = Ext.CreateStatus<StatusEffectApplyXWhenAllyIsHit>("Trigger Against Attacker When Ally Is Hit")
@@ -3366,7 +3366,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("whimsicott", "Whimsicott", idleAnim: "FloatAnimationProfile")
-                    .SetStats(2, null, 4)
+                    .SetStats(5, 3, 4)
                     .SetSprites("whimsicott.png", "whimsicottBG.png")
                     .SStartEffects(("Maybe Make Front Enemy Retreat", 50))
                     .AddPool()
@@ -4057,6 +4057,18 @@ namespace Pokefrost
 
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
+                    .CreateCharm("CardUpgradeUturn")
+                    .WithTier(2)
+                    .WithImage("masquerainCharm.png")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .SetTraits(TStack("U-turn", 1))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .WithTitle("Masquerain Charm")
+                    .WithText("Gain <keyword=uturn>")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
                     .Create("CardUpgradeResist")
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithTier(2)
@@ -4135,9 +4147,9 @@ namespace Pokefrost
                     .Create("CrownSlowking")
                     .WithType(CardUpgradeData.Type.Crown)
                     .WithImage("slowking_crown.png")
-                    .ChangeCounter(2)
+                    .ChangeCounter(1)
                     .WithTitle("Shellder Crown")
-                    .WithText("Cards with Crowns are always played at the start of battle\n\nIncrease <keyword=counter> by <2>")
+                    .WithText("Cards with Crowns are always played at the start of battle\n\nIncrease <keyword=counter> by <1>")
                     //.SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
                     .SetCanBeRemoved(true)
             );
@@ -4192,7 +4204,7 @@ namespace Pokefrost
                 this.CreateBell("BlessingHooh", "Ho-Oh Bell of Friendship", "Allies get recalled to the top of your deck")
                 .ChangeSprites("hoohBell.png", "hoohDinger.png")
                 .WithSystemsToAdd("RecallToTopModifierSystem")
-                .SubscribeToAfterAllBuildEvent(
+                /*.SubscribeToAfterAllBuildEvent(
                     (data) =>
                     {
                         RewardPool pool = Extensions.GetRewardPool("GeneralModifierPool");
@@ -4202,7 +4214,7 @@ namespace Pokefrost
                         pool.list.Add(data);
                         pool.list.Add(data);
                     }
-                    )
+                    )*/
                 );
 
             bells.Add(
