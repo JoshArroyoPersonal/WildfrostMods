@@ -1,13 +1,16 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
+using HarmonyLib;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Localization.Tables;
+using static Mono.Security.X509.X509Stores;
 
 namespace Pokefrost
 {
@@ -230,6 +233,116 @@ namespace Pokefrost
         public override void QuestBattleFinish()
         {
             UpdateProgress(0);
+        }
+    }
+
+    public class GatekeeperModifierSystem : QuestSystem
+    {
+        public static string Key_Fled = "websiteofsites.wildfrost.pokefrost.gatekeeperFlee";
+
+        public override string ProgressName => "ThreeBeasts";
+        public string[] gatekeepers = new string[] { "quest_entei", "quest_suicune", "quest_raikou" };
+
+        [PokeLocalizer]
+        public static new void DefineStrings()
+        {
+            LocalizationHelper.GetCollection("UI Text", SystemLanguage.English).SetString(Key_Fled, "Nobody is here...");
+        }
+
+
+
+        //0 -> setup legendary beasts
+        //1 -> setup confirmed
+        //2 -> trial failed/end
+        public void OnEnable()
+        {
+            Events.OnEntityFlee += CheckFlee;
+            Events.PostBattle += ConfirmSpawn;
+            FindProgress();
+            if (progress == 0)
+            {
+                SpawnGatekeepers();
+            }
+        }
+
+        private void ConfirmSpawn(CampaignNode _)//Game has been saved, including spawns
+        {
+            if (progress == 0)
+            {
+                UpdateProgress(1);
+            }
+        }
+
+        public void OnDisable()
+        {
+            Events.OnEntityFlee -= CheckFlee;
+            Events.PostBattle -= ConfirmSpawn;
+        }
+
+        public void SpawnGatekeepers()
+        {
+            string[] names = gatekeepers.InRandomOrder().ToArray();
+            int id = Campaign.FindCharacterNode(References.Player).id;
+            int index = 0;
+            for (int i = 0; i < Campaign.instance.nodes.Count && index < names.Length; i++)
+            {
+                CampaignNode node = Campaign.instance.nodes[i];
+                if (node.id <= id) { continue; }
+
+                if (node.type is CampaignNodeTypeSpecialBattle) { break; }
+
+                if (node.type.isBattle)
+                {
+                    if (TryAddCard(names[index], node))
+                    {
+                        index++;
+                        continue;
+                    }
+                }
+            }
+        }
+
+        private bool TryAddCard(string name, CampaignNode node)
+        {
+            if (node.data.TryGetValue("waves", out object value))
+            {
+                BattleWaveManager.WaveData[] waves = ((SaveCollection<BattleWaveManager.WaveData>)value).collection;
+                for (int j = 0; j < waves.Length; j++)
+                {
+                    if (waves[j].Count < 6)
+                    {
+                        waves[j].AddCard(Pokefrost.instance.Get<CardData>(name));
+                        return true;
+                    }
+                }
+                if (waves.Length > 0)
+                {
+                    waves[0].AddCard(Pokefrost.instance.Get<CardData>(name));
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private void CheckFlee(Entity entity)
+        {
+            if (entity?.data?.name == null) { return; }
+
+            if (gatekeepers.Select(s => Pokefrost.instance.GUID + "." + s).Contains(entity.data.name))
+            {
+                UpdateProgress(2);
+            }
+        }
+
+        public override bool CheckConditions(out string failureText)
+        {
+            failureText = GetFailureText(Key_Fled);
+            return (progress == 1);
+        }
+
+        public override void QuestBattleFinish()
+        {
+            UpdateProgress(2);
         }
     }
 }

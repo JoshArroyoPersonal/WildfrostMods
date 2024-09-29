@@ -4109,6 +4109,7 @@ namespace Pokefrost
                 this.CreateBell("hoohEvent", "Mystery Part", "<Quest>: Prove your strength against the <3> <Legendary Beasts>")
                 .ChangeSprites("mysteryJello.png", "noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
+                .WithSystemsToAdd("GatekeeperModifierSystem")
                 );
 
             bells.Add(

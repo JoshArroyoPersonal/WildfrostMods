@@ -93,7 +93,7 @@ namespace Pokefrost
 
             battleList["Darkrai"] = "darkraiEvent";
             battleList["Lati Twins"] = "latiEvent";
-            battleList["Ho-oh"] = "hoohEvent";
+            battleList["Ho-Oh"] = "hoohEvent";
         }
 
         private void RollForEvent(ref string[] lines)
