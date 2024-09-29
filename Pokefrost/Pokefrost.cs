@@ -21,6 +21,7 @@ using UnityEngine.UI;
 using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
 using UnityEngine.Events;
+using System.Reflection;
 
 namespace Pokefrost
 {
@@ -1844,6 +1845,7 @@ namespace Pokefrost
                 .ApplyX(null, StatusEffectApplyX.ApplyToFlags.AllyInFrontOf)
                 .Register(this);
             synchronize.applyEqualAmount = true;
+            synchronize.eventPriority = -25;
 
             KeywordData syncKeyword = Ext.CreateBasicKeyword(this, "synchronize", "Synchronize", "Whenever an effect is applied to ally ahead, also apply it to self|Watch out for debuffs!");
             syncKeyword.canStack = false;
@@ -3094,7 +3096,7 @@ namespace Pokefrost
                     .CreateUnit("abomasnow", "Abomasnow")
                     .SetStats(10, 4, 4)
                     .SetSprites("abomasnow.png", "abomasnowBG.png")
-                    .SStartEffects(("While Active Snowstorm", 1), ("While Active All Hits Apply Snow", 1), ("ImmuneToSnow", 1), ("While Active Allies Have ImmuneToSnow", 1))
+                    .SStartEffects(("While Active Snowstorm", 1), ("While Active All Hits Apply Snow", 1), ("ImmuneToSnow", 1), ("While Active Snow Immune To Allies", 1))
                 );
 
             list.Add(
@@ -4098,7 +4100,7 @@ namespace Pokefrost
                 );
 
             bells.Add(
-                this.CreateBell("darkraiEvent", "Lunar Feather", "<Quest>: Follow <Cresselia> to confront <Darkrai>")
+                this.CreateBell("darkraiEvent", "Lunar Feather", "<Quest>: Protect <Cresselia> and confront <Darkrai>")
                 .ChangeSprites("lunarFeather.png", "noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
                 .WithSystemsToAdd("SpawnCressliaModifierSystem")
@@ -4108,6 +4110,7 @@ namespace Pokefrost
                 this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the port before the ship departs")
                 .ChangeSprites("eonTicket.png","noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
+                .WithSystemsToAdd("TicketTimerModifierSystem")
                 );
         }
 
@@ -4320,7 +4323,7 @@ namespace Pokefrost
             //Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             Events.OnSceneLoaded += BattleFuse;
-            Events.OnEntitySelect += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
+            Events.OnEntityChosen += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
             Events.OnSceneChanged += PickupRoutine.OnSceneChanged;
             
 
@@ -4356,6 +4359,8 @@ namespace Pokefrost
         {
             StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
             StringTable ui = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
+
+            PokeLocalizer.Run();
 
             StatusTokenApplyX.DefineStrings();
             StatusEffectApplyXOnCardPlayedMaybe.DefineStrings();
@@ -4776,6 +4781,24 @@ namespace Pokefrost
 
         }
 
+    }
+
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+    public class PokeLocalizer : Attribute
+    { 
+        public static void Run()
+        {
+            var methods = typeof(PokeLocalizer).Assembly.GetTypes()
+                      .SelectMany(t => t.GetMethods())
+                      .Where(m => m.GetCustomAttribute<PokeLocalizer>() != null)
+                      .ToArray();
+
+            Debug.Log($"[Pokefrost] {methods.Length}");
+            foreach(MethodInfo method in methods)
+            {
+                method.Invoke(null, null);
+            }
+        }
     }
 
     [HarmonyPatch(typeof(InspectSystem), "GetClass", new Type[]

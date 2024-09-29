@@ -10,7 +10,7 @@ namespace Pokefrost
 {
     internal class StatusEffectEvolveKirlia : StatusEffectEvolve
     {
-        public bool persist;
+        public bool persist = true;
         public string faction = "self";
         public static string[] evolutions = { "gardevoir", "gallade" };
         public override void Autofill(string n, string descrip, WildfrostMod mod)
@@ -62,7 +62,7 @@ namespace Pokefrost
                         //UnityEngine.Debug.Log("[Pokefrost] Updated card on board!");
                     }
                 }
-                if (this.count != 0)
+                if (!persist && this.count != 0)
                 {
                     return false;
                 }
