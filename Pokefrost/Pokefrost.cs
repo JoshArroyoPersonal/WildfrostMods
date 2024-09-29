@@ -245,7 +245,7 @@ namespace Pokefrost
             overshroom.applyFormat = "";
             overshroom.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             overshroom.keyword = "overshroom";
-            overshroom.targetConstraints = new TargetConstraint[1] { new TargetConstraintCanBeHit() };
+            overshroom.targetConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintCanBeHit>() };
             overshroom.textOrder = 0;
             overshroom.eventPriority = 99;
             overshroom.textInsert = "{a}";
@@ -1909,7 +1909,7 @@ namespace Pokefrost
             prophOfSwords.customDataKey = "Future Sight";
 
             this.CreateBasicKeyword("lavaplume", "Lava Plume", "<Free Action>: Convert the front enemy's <keyword=spice> into <keyword=burning>|Click to activate\nOnce per turn");
-            this.CreateButtonIcon("magcargoLavaPlume", ImagePath("kingdrabutton.png").ToSprite(), "lavaPlume", "", Color.white, new KeywordData[] { Get<KeywordData>("lavaplume") });
+            this.CreateButtonIcon("magcargoLavaPlume", ImagePath("magcargobutton.png").ToSprite(), "lavaPlume", "", Color.white, new KeywordData[] { Get<KeywordData>("lavaplume") });
 
             StatusEffectConvertEffects spiceToBurning = Ext.CreateStatus<StatusEffectConvertEffects>("Instance Convert Spice To Burning")
                 .Register(this);
@@ -3781,7 +3781,7 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("quest_cresselia", "Cresselia")
                     .WithCardType("Summoned")
-                    .SetStats(4, null, 6)
+                    .SetStats(6, null, 6)
                     .SetSprites("cresselia.png", "cresseliaBG.png")
                     .SetStartWithEffect(SStack("On Card Played Gain Dream Card To Hand", 1), SStack("Cannot Recall", 1))
                 );
