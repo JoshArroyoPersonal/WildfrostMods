@@ -3377,6 +3377,7 @@ namespace Pokefrost
                     .SetStats(6, 3, 4)
                     .SetSprites("palafin.png", "palafinBG.png")
                     .SStartEffects(("Gain Hero On Recall", 1))
+                    .AddPool()
                 );
 
             list.Add(
