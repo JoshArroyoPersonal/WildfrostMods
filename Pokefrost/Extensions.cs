@@ -287,15 +287,27 @@ namespace Pokefrost
             if (!bell.IsNullOrEmpty())
             {
                 Texture2D tex = Pokefrost.instance.ImagePath(bell).ToTex();
-                data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 1f), 314);
+                data.bellSprite = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(0.5f, 0.9f), 327);
             }
             //Dinger Sprite
             if (!dinger.IsNullOrEmpty())
             {
                 Texture2D tex2 = Pokefrost.instance.ImagePath(dinger).ToTex();
-                data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.7f), 314);
+                data.dingerSprite = Sprite.Create(tex2, new Rect(0, 0, tex2.width, tex2.height), new Vector2(0.5f, 1.5f), 327);
             }
             return b;
+        }
+
+        public static Sprite CreateBellSprite(float pivotx = 0.5f, float pivoty = 0.9f, int ppi = 327)
+        {
+            Texture2D tex = Pokefrost.instance.ImagePath("suicuneBell.png").ToTex();
+            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(pivotx, pivoty), ppi);
+        }
+
+        public static Sprite CreateDingerSprite(float pivotx = 0.5f, float pivoty = 1.5f, int ppi = 327)
+        {
+            Texture2D tex = Pokefrost.instance.ImagePath("suicuneDinger.png").ToTex();
+            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(pivotx, pivoty), ppi);
         }
 
         public static CampaignNodeTypeBuilder BetterEvent(this CampaignNodeTypeBuilder cn, string key, WildfrostMod mod)

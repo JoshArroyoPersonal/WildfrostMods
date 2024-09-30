@@ -12,11 +12,12 @@ namespace Pokefrost
     {
         public override IEnumerator Run(CampaignNode node)
         {
+            string failureText = "Conditions not met!";
             bool flag = false;
             QuestSystem theQuest = null;
             foreach (QuestSystem quest in Campaign.instance.systems.GetComponents<QuestSystem>())
             {
-                if (quest.CheckConditions())
+                if (quest.CheckConditions(out failureText))
                 {
                     flag = true;
                     theQuest = quest;
@@ -27,7 +28,7 @@ namespace Pokefrost
             {
                 foreach (QuestSystem quest in Campaign.instance.gameObject.GetComponents<QuestSystem>())
                 {
-                    if (quest.CheckConditions())
+                    if (quest.CheckConditions(out failureText))
                     {
                         flag = true;
                         theQuest = quest;
@@ -45,7 +46,7 @@ namespace Pokefrost
             else
             {
                 Debug.Log("[Pokefrost] Quest failed. Skipping bonus battle...");
-                Ext.PopupText(References.Map.FindNode(Campaign.FindCharacterNode(References.Player)).transform, "Conditions Not Met!", false);
+                Ext.PopupText(References.Map.FindNode(Campaign.FindCharacterNode(References.Player)).transform, failureText, false);
                 yield return Sequences.Wait(1f);
                 node.SetCleared();
                 References.Map.Continue();

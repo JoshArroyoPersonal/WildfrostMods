@@ -91,10 +91,7 @@ namespace Pokefrost
 
         public static int Get(string key)
         {
-            if (eventProgress == null)
-            {
-                LoadProgress(Campaign.Data);
-            }
+            LoadProgress(Campaign.Data);
 
             if (eventProgress.TryGetValue(key, out int value))
             {
