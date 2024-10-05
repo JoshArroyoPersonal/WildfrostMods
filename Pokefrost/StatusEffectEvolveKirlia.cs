@@ -13,6 +13,9 @@ namespace Pokefrost
         public bool persist = true;
         public string faction = "self";
         public static string[] evolutions = { "gardevoir", "gallade" };
+
+        
+
         public override void Autofill(string n, string descrip, WildfrostMod mod)
         {
             base.Autofill(n, descrip, mod);
@@ -22,6 +25,8 @@ namespace Pokefrost
             UnityEngine.Localization.Tables.StringTable collection = LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);
             collection.SetString(name + "_text", descrip);
             textKey = collection.GetString(name + "_text");
+
+
         }
 
         public void SetEvolutions(params string[] cardNames)
@@ -83,6 +88,22 @@ namespace Pokefrost
         {
             data.TryGetCustomData<string>("Effects Applied", out string value, "");
             data.SetCustomData("Effects Applied", value + ", " + newType.Replace(", ", ",a"));
+           
+        }
+
+        public void GardevoirOrGallade(CardData data, string newType)
+        {
+            data.TryGetCustomData<int>("Gardevoir", out int value, 0);
+            int change = 0;
+            if (Offensive.Contains(newType))
+            {
+                change--;
+            }
+            if (Defensive.Contains(newType))
+            {
+                change++;
+            }
+            data.SetCustomData("Gardevoir", value + change);
         }
 
         public override bool ReadyToEvolve(CardData cardData)
@@ -99,7 +120,8 @@ namespace Pokefrost
 
         public override void Evolve(WildfrostMod mod, CardData preEvo)
         {
-            evolutionCardName = evolutions.RandomItem();
+            preEvo.TryGetCustomData<int>("Gardevoir", out int value, 0);
+            evolutionCardName = (value >= 0) ? evolutions[0] : evolutions[1];
             base.Evolve(mod, preEvo);
         }
 
@@ -108,5 +130,26 @@ namespace Pokefrost
             evolutionCardName = evolutions.RandomItem();
             return base.EvolveForFinalBoss(mod);
         }
+
+        public static List<string> Offensive = new List<string> 
+        {
+            "damage up",
+            "lumin",
+            "frenzy",
+            //"counter down",
+            //"max counter down",
+            "spice",
+            "teeth"
+        };
+
+        public static List<string> Defensive = new List<string>
+        {
+            "block",
+            "heal",
+            "max health up",
+            "scrap",
+            "shell",
+
+        };
     }
 }

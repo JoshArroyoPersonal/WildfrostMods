@@ -47,7 +47,8 @@ namespace Pokefrost
         private void CreateBattles(Pokefrost mod)
         {
 
-            new BattleDataEditor(mod, "Darkrai")
+            new BattleDataEditor(mod)
+                .Create<BattleDataWithRewards>("Darkrai")
                 .SetSprite(mod.ImagePath("darkraiCharm.png").ToSprite())
                 .SetNameRef("Dark Crater Pit")
                 .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
@@ -58,9 +59,38 @@ namespace Pokefrost
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
                 .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeDemonize", "CradUpgradeInk")
+                .FreeModify<BattleDataWithRewards>(b =>
+                {
+                    b.dataGroups = new List<BossRewardData.Data>[3];
+                        var darkrai = new BossRewardDataCard.Data
+                        {
+                            type = BossRewardData.Type.Crown,
+                            cardDataName = "darkrai"
+                        };
+                        var cresselia = new BossRewardDataCard.Data
+                        {
+                            type = BossRewardData.Type.Crown,
+                            cardDataName = "cresselia"
+                        };
+                    b.dataGroups[0] = new List<BossRewardData.Data> { darkrai, cresselia };
+                        var darkraiCharm = new BossRewardDataRandomCharm.Data
+                        {
+                            type = BossRewardData.Type.Charm,
+                            upgradeName = Pokefrost.instance.GUID + "." + "CardUpgradeCurse"
+                        };
+                    b.dataGroups[1] = new List<BossRewardData.Data> { darkraiCharm };
+                        var darkraiBell = new BossRewardDataModifier.Data
+                        {
+                            type = BossRewardData.Type.Modifier,
+                            modifierName = Pokefrost.instance.GUID + "." + "BlessingDarkrai"
+                        };
+                    b.dataGroups[2] = new List<BossRewardData.Data> { darkraiBell };
+
+                })
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 
-            new BattleDataEditor(mod, "Lati Twins")
+            new BattleDataEditor(mod)
+                .Create<BattleDataWithRewards>("Lati Twins")
                 .SetSprite(mod.ImagePath("smeargleCharm.png").ToSprite())
                 .SetNameRef("Southern Island")
                 .EnemyDictionary(('P', "enemy_plusle"), ('M', "enemy_minun"), ('V', "enemy_volbeat"), ('I', "enemy_illumise"), ('D', "enemy_dustox"), ('B', "enemy_beautifly"), ('G', "enemy_gorebyss"), ('H', "enemy_huntail"), ('S', "enemy_solrock"), ('L', "enemy_lunatone"), ('A', "enemy_latias"), ('O', "enemy_latios"))
@@ -72,9 +102,38 @@ namespace Pokefrost
                 .ConstructWaves(4, 9, "SLAO")
                 .GiveMiniBossesCharms(new string[1] { "enemy_latias" }, "CardUpgradeHeartmist", "CardUpgradeAcorn")
                 .GiveMiniBossesCharms(new string[1] { "enemy_latios" }, "CardUpgradeSpice", "CardUpgradeBattle")
+                .FreeModify<BattleDataWithRewards>(b =>
+                {
+                    b.dataGroups = new List<BossRewardData.Data>[3];
+                    var darkrai = new BossRewardDataCard.Data
+                    {
+                        type = BossRewardData.Type.Crown,
+                        cardDataName = "darkrai"
+                    };
+                    var cresselia = new BossRewardDataCard.Data
+                    {
+                        type = BossRewardData.Type.Crown,
+                        cardDataName = "cresselia"
+                    };
+                    b.dataGroups[0] = new List<BossRewardData.Data> { darkrai, cresselia };
+                    var darkraiCharm = new BossRewardDataRandomCharm.Data
+                    {
+                        type = BossRewardData.Type.Charm,
+                        upgradeName = Pokefrost.instance.GUID + "." + "CardUpgradeCurse"
+                    };
+                    b.dataGroups[1] = new List<BossRewardData.Data> { darkraiCharm };
+                    var darkraiBell = new BossRewardDataModifier.Data
+                    {
+                        type = BossRewardData.Type.Modifier,
+                        modifierName = Pokefrost.instance.GUID + "." + "BlessingDarkrai"
+                    };
+                    b.dataGroups[2] = new List<BossRewardData.Data> { darkraiBell };
+
+                })
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 
-            BattleDataEditor hooh = new BattleDataEditor(mod, "Ho-Oh")
+            BattleDataEditor hooh = new BattleDataEditor(mod)
+                .Create<BattleDataWithRewards>("Ho-Oh")
                 .SetSprite(mod.ImagePath("darkraiCharm.png").ToSprite())
                 .SetNameRef("Mt. Faraway")
                 .EnemyDictionary(('H', "enemy_hooh"), ('E', "enemy_entei"), ('R', "enemy_raikou"), ('S', "enemy_suicune"), ('V', "enemy_vaporeon"), ('J', "enemy_jolteon"), ('F', "enemy_flareon"), ('P', "enemy_espeon"), ('U', "enemy_umbreon"), ('L', "enemy_leafeon"), ('G', "enemy_glaceon"), ('Y', "enemy_sylveon"))
@@ -89,6 +148,34 @@ namespace Pokefrost
                 .GiveMiniBossesCharms(new string[1] { "enemy_raikou" }, "CardUpgradeSun", "CardUpgradeBarrage")
                 .GiveMiniBossesCharms(new string[1] { "enemy_entei" }, "CardUpgradeAttackAndHealth", "CardUpgradeTrashBad")
                 .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
+                .FreeModify<BattleDataWithRewards>(b =>
+                {
+                    b.dataGroups = new List<BossRewardData.Data>[3];
+                    var darkrai = new BossRewardDataCard.Data
+                    {
+                        type = BossRewardData.Type.Crown,
+                        cardDataName = "darkrai"
+                    };
+                    var cresselia = new BossRewardDataCard.Data
+                    {
+                        type = BossRewardData.Type.Crown,
+                        cardDataName = "cresselia"
+                    };
+                    b.dataGroups[0] = new List<BossRewardData.Data> { darkrai, cresselia };
+                    var darkraiCharm = new BossRewardDataRandomCharm.Data
+                    {
+                        type = BossRewardData.Type.Charm,
+                        upgradeName = Pokefrost.instance.GUID + "." + "CardUpgradeCurse"
+                    };
+                    b.dataGroups[1] = new List<BossRewardData.Data> { darkraiCharm };
+                    var darkraiBell = new BossRewardDataModifier.Data
+                    {
+                        type = BossRewardData.Type.Modifier,
+                        modifierName = Pokefrost.instance.GUID + "." + "BlessingDarkrai"
+                    };
+                    b.dataGroups[2] = new List<BossRewardData.Data> { darkraiBell };
+
+                })
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 
             battleList["Darkrai"] = "darkraiEvent";

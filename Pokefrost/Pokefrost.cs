@@ -1842,15 +1842,41 @@ namespace Pokefrost
                 .Register(this);
 
             StatusEffectDuplicateEffect synchronize = Ext.CreateStatus<StatusEffectDuplicateEffect>("Copy Effects Applied To Ally Ahead")
-                .ApplyX(null, StatusEffectApplyX.ApplyToFlags.AllyInFrontOf)
+                .ApplyX(Get<StatusEffectData>("Gain Gold"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             synchronize.applyEqualAmount = true;
+            synchronize.whenAppliedFlags = StatusEffectApplyX.ApplyToFlags.AllyInFrontOf;
             synchronize.eventPriority = -25;
 
-            KeywordData syncKeyword = Ext.CreateBasicKeyword(this, "synchronize", "Synchronize", "Whenever an effect is applied to ally ahead, also apply it to self|Watch out for debuffs!");
+            KeywordData syncKeyword = Ext.CreateBasicKeyword(this, "synchronize", "Synchronize", "When a status effect or stat change is applied to ally ahead, also apply it to self|Watch out for debuffs!");
             syncKeyword.canStack = false;
 
             TraitData syncTrait = Ext.CreateTrait<TraitData>("Synchronize", this, syncKeyword, synchronize);
+
+            StatusEffectDuplicateEffect synchronize2 = Ext.CreateStatus<StatusEffectDuplicateEffect>("Copy Effects Applied To Ally Ahead For Row")
+                .ApplyX(Get<StatusEffectData>("Gain Gold"), StatusEffectApplyX.ApplyToFlags.Self | StatusEffectApplyX.ApplyToFlags.AllyBehind)
+                .Register(this);
+            synchronize2.applyEqualAmount = true;
+            synchronize2.whenAppliedFlags = StatusEffectApplyX.ApplyToFlags.AllyInFrontOf;
+            synchronize2.eventPriority = -25;
+
+            KeywordData sync2Keyword = Ext.CreateBasicKeyword(this, "synchronize2", "Synchronize II", "When a status effect or stat change is applied to ally ahead, also apply it to self <AND ally behind>|Watch out for debuffs!");
+            sync2Keyword.canStack = false;
+
+            TraitData sync2Trait = Ext.CreateTrait<TraitData>("Synchronize2", this, sync2Keyword, synchronize2);
+
+            StatusEffectApplyXInstant dummyInstant = Ext.CreateStatus<StatusEffectApplyXInstant>("Dummy Instant To Random Ally")
+                .ApplyX(null, StatusEffectApplyX.ApplyToFlags.RandomAlly);
+
+            StatusEffectDuplicateEffect synchronize3 = Ext.CreateStatus<StatusEffectDuplicateEffect>("Copy Effects Applied To Front Enemy", "When a <debuff> is applied to the front enemy, also apply it to a random enemy")
+                .ApplyX(dummyInstant, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
+                .Register(this);
+            synchronize3.applyEqualAmount = true;
+            synchronize3.instantCustom = true;
+            synchronize3.debuffsOnly = true;
+            synchronize3.whenAppliedFlags = StatusEffectApplyX.ApplyToFlags.FrontEnemy;
+            synchronize3.hiddenKeywords = new KeywordData[] { Get<KeywordData>("debuffed") };
+            synchronize3.eventPriority = -25;
 
             StatusEffectApplyXOnCardPlayed juiceToHand = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Cards In Hand Juice", "Apply <{a}><keyword=spicune> to cards in hand", boostable:true)
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Hand)
@@ -2069,6 +2095,17 @@ namespace Pokefrost
                 .ApplyX(retreat, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
 
+            StatusEffectPlayCardsInHand triggerAllAlliesInHand = Ext.CreateStatus<StatusEffectPlayCardsInHand>("Trigger Allies In Hand")
+                .Register(this);
+            TargetConstraint canTrigger = Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1];
+            TargetConstraintIsCardType isCompanion = ScriptableObject.CreateInstance<TargetConstraintIsCardType>();
+            isCompanion.allowedTypes = new CardType[] { Get<CardType>("Friendly") };
+            triggerAllAlliesInHand.applyConstraints = new TargetConstraint[] { canTrigger, isCompanion };
+
+            StatusEffectApplyXOnTurn chimechoTurn = Ext.CreateStatus<StatusEffectApplyXOnTurn>("On Turn Trigger Allies In Hand", "Trigger allies in hand")
+                .ApplyX(triggerAllAlliesInHand, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
@@ -2246,6 +2283,11 @@ namespace Pokefrost
             ev28.faction = "all";
             ev28.once = true;
             ev28.Confirm();
+
+            StatusEffectEvolveChingling ev29 = ScriptableObject.CreateInstance<StatusEffectEvolveChingling>();
+            ev29.Autofill("Evolve Chingling", "<keyword=evolve>: Collect <{a}> <Sun Bells>", this);
+            ev29.SetEvolution("chimecho");
+            ev29.Confirm();
 
             StatusEffectShiny shiny = ScriptableObject.CreateInstance<StatusEffectShiny>();
             shiny.name = "Shiny";
@@ -2762,15 +2804,16 @@ namespace Pokefrost
                     .SetStats(4, 2, 4)
                     .SetSprites("kirlia.png", "kirliaBG.png")
                     .STraits(("Synchronize", 1))
-                    .SStartEffects(("Evolve Kirlia",7))
+                    .SStartEffects(("Evolve Kirlia",8))
                     .AddPool("BasicUnitPool")
                 );
 
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("gardevoir", "Gardevoir")
-                    .SetStats(5, 5, 5)
+                    .SetStats(4, 2, 4)
                     .SetSprites("gardevoir.png", "gardevoirBG.png")
+                    .STraits(("Synchronize2", 1))
                 );
 
             list.Add(
@@ -2924,6 +2967,7 @@ namespace Pokefrost
                     .CreateUnit("chimecho", "Chimecho")
                     .SetStats(6, 3, 0)
                     .SetSprites("chimecho.png", "chimechoBG.png")
+                    .SStartEffects(("On Turn Trigger Allies In Hand",1), ("Trigger When Redraw Hit", 1))
                 );
 
             list.Add(
@@ -3032,7 +3076,7 @@ namespace Pokefrost
                     .CreateUnit("chingling", "Chingling", idleAnim: "HangAnimationProfile")
                     .SetStats(6, 3, 0)
                     .SetSprites("chingling.png", "chinglingBG.png")
-                    .SStartEffects(("Trigger When Redraw Hit", 1))
+                    .SStartEffects(("Trigger When Redraw Hit", 1), ("Evolve Chingling", 4))
                     .AddPool()
                 );
 
@@ -3134,8 +3178,10 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("gallade", "Gallade")
-                    .SetStats(5, 5, 5)
+                    .SetStats(5, 3, 4)
                     .SetSprites("gallade.png", "galladeBG.png")
+                    .SStartEffects(/*("Copy Effects Applied To Front Enemy",1),*/ ("MultiHit",1))
+                    .STraits(("Synchronize", 1))
                 );
 
             list.Add(
@@ -4907,7 +4953,7 @@ namespace Pokefrost
         {
             foreach (FinalBossEffectSwapper swapper in __instance.effectSwappers)
             {
-                if (swapper.effect.name == "Buff Card In Deck On Kill")
+                if (swapper.effect.name.Contains("Buff Card In Deck On Kill")) //If it's already there no need to check further.
                 {
                     return;
                 }
