@@ -111,6 +111,8 @@ namespace Pokefrost
 
         public string genericPopup;
 
+
+        [PokeLocalizer]
         public static void DefineStrings()
         {
             StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);

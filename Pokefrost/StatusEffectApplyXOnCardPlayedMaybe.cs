@@ -16,6 +16,7 @@ namespace Pokefrost
 
         public static readonly string Key_FailedFlip = "websiteofsites.wildfrost.pokefrost.failedflip";
 
+        [PokeLocalizer]
         public static void DefineStrings()
         {
             StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);

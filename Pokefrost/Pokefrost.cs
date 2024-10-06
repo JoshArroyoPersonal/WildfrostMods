@@ -251,6 +251,7 @@ namespace Pokefrost
             overshroom.eventPriority = 99;
             overshroom.textInsert = "{a}";
             overshroom.ModAdded = this;
+            overshroom.isStatus = true;
             overshroom.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overshroom);
             statusList.Add(overshroom);
@@ -1902,7 +1903,7 @@ namespace Pokefrost
                 .Register(this);
             YourjuiceToAllies.scriptableAmount = myJuice;
 
-            StatusEffectApplyXOnCardPlayed reviveToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Revive To Allies", "Give <keyword=revive> to allies")
+            StatusEffectApplyXOnCardPlayed reviveToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Revive To Allies", "Add <keyword=revive> to allies")
                 .ApplyX(Get<StatusEffectData>("Revive"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
 
@@ -1920,6 +1921,17 @@ namespace Pokefrost
                 .Register(this);
 
             this.CreateBasicKeyword("prophesized", "Prophesized", "The card is fated to be in your deck");
+
+            StatusEffectSummon holderSummon2 = Get<StatusEffectData>("Summon Plep").InstantiateKeepName() as StatusEffectSummon;
+
+            StatusEffectInstantSummonReserve reserveSummon = Ext.CreateStatus<StatusEffectInstantSummonReserve>("Instant Summon Companion From Reserve")
+                .Register(this);
+            reserveSummon.targetSummon = holderSummon2;
+            reserveSummon.summonPosition = StatusEffectInstantSummon.Position.InFrontOf;
+
+            StatusEffectApplyXOnCardPlayed SummonfromReserve = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Summon From Reserve", "Summon an ally from the reserve")
+                .ApplyX(reserveSummon, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
 
             StatusEffectInstantRunScript returnProphCard = Ext.CreateStatus<StatusEffectInstantRunScript>("Return Prophesized Card To Hand")
                 .Register(this);
@@ -2101,6 +2113,11 @@ namespace Pokefrost
             TargetConstraintIsCardType isCompanion = ScriptableObject.CreateInstance<TargetConstraintIsCardType>();
             isCompanion.allowedTypes = new CardType[] { Get<CardType>("Friendly") };
             triggerAllAlliesInHand.applyConstraints = new TargetConstraint[] { canTrigger, isCompanion };
+            StatusEffectApplyXWhenDestroyed reviveAll = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destoryed Give Revive To All Allies", "When destroyed, add <keyword=revive> to all allies")
+                .ApplyX(Get<StatusEffectData>("Revive"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+            reviveAll.targetMustBeAlive = false;
+
 
             StatusEffectApplyXOnTurn chimechoTurn = Ext.CreateStatus<StatusEffectApplyXOnTurn>("On Turn Trigger Allies In Hand", "Trigger allies in hand")
                 .ApplyX(triggerAllAlliesInHand, StatusEffectApplyX.ApplyToFlags.Self)
@@ -2782,6 +2799,7 @@ namespace Pokefrost
                     .SetStats(8, 0, 3)
                     .SetSprites("hooh.png", "hoohBG.png")
                     .WithText("<keyword=legendary>")
+                    .SStartEffects(("On Card Played Summon From Reserve", 1))
                     .FreeModify(
                     (data) =>
                     {
@@ -3425,6 +3443,7 @@ namespace Pokefrost
                     .SetStats(6, 3, 4)
                     .SetSprites("palafin.png", "palafinBG.png")
                     .SStartEffects(("Gain Hero On Recall", 1))
+                    .AddPool()
                 );
 
             list.Add(
@@ -3976,6 +3995,18 @@ namespace Pokefrost
 
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
+                    .Create("CardUpgradeSacredAsh")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(2)
+                    .WithImage("hoohCharm.png")
+                    .SetEffects(SStack("When Destoryed Give Revive To All Allies", 1))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .WithTitle("Ho-Oh Charm")
+                    .WithText("When charmed unit is destroyed, add <keyword=revive> to all allies")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeUturn")
                     .WithTier(2)
                     .WithImage("masquerainCharm.png")
@@ -4420,10 +4451,6 @@ namespace Pokefrost
             StringTable ui = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
 
             PokeLocalizer.Run();
-
-            StatusTokenApplyX.DefineStrings();
-            StatusEffectApplyXOnCardPlayedMaybe.DefineStrings();
-            StatusEffectRetreat.DefineStrings();
 
             ui.SetString(EvolutionPopUp.EvoTitleKey1A, "Huh? <#ff0>{0}</color> is evolving?");
             ui.SetString(EvolutionPopUp.EvoTitleKey1B, "Huh? <#ff0>{0}</color> Pokemon are evolving?");

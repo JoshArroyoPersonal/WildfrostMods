@@ -17,6 +17,7 @@ namespace Pokefrost
 
         public static readonly string Key_TooBig = "websiteofsites.wildfrost.pokefrost.toobig";
 
+        [PokeLocalizer]
         public static void DefineStrings()
         {
             StringTable tooltips = LocalizationHelper.GetCollection("Tooltips", SystemLanguage.English);
