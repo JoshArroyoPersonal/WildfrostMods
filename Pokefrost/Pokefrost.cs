@@ -251,6 +251,7 @@ namespace Pokefrost
             overshroom.eventPriority = 99;
             overshroom.textInsert = "{a}";
             overshroom.ModAdded = this;
+            overshroom.isStatus = true;
             overshroom.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", overshroom);
             statusList.Add(overshroom);
@@ -1876,7 +1877,7 @@ namespace Pokefrost
                 .Register(this);
             YourjuiceToAllies.scriptableAmount = myJuice;
 
-            StatusEffectApplyXOnCardPlayed reviveToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Revive To Allies", "Give <keyword=revive> to allies")
+            StatusEffectApplyXOnCardPlayed reviveToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Revive To Allies", "Add <keyword=revive> to allies")
                 .ApplyX(Get<StatusEffectData>("Revive"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
 
@@ -2068,6 +2069,11 @@ namespace Pokefrost
             StatusEffectApplyXOnCardPlayedMaybe randomTest = Ext.CreateStatus<StatusEffectApplyXOnCardPlayedMaybe>("Maybe Make Front Enemy Retreat", "<{a}>% chance to send the front enemy to the next wave", boostable:true)
                 .ApplyX(retreat, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
+
+            StatusEffectApplyXWhenDestroyed reviveAll = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destoryed Give Revive To All Allies", "When destroyed, add <keyword=revive> to all allies")
+                .ApplyX(Get<StatusEffectData>("Revive"), StatusEffectApplyX.ApplyToFlags.Allies)
+                .Register(this);
+            reviveAll.targetMustBeAlive = false;
 
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -3927,6 +3933,18 @@ namespace Pokefrost
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeCake").targetConstraints[1])
                     .WithTitle("Suicune Charm")
                     .WithText("Start with <4><keyword=spicune>")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
+                    .Create("CardUpgradeSacredAsh")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(2)
+                    .WithImage("hoohCharm.png")
+                    .SetEffects(SStack("When Destoryed Give Revive To All Allies", 1))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .WithTitle("Ho-Oh Charm")
+                    .WithText("When charmed unit is destroyed, add <keyword=revive> to all allies")
             );
 
             charmlist.Add(

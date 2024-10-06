@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine.Events;
 
 namespace Pokefrost
 {
@@ -81,6 +82,44 @@ namespace Pokefrost
             }
 
             return base.Process();
+
+
+        }
+    }
+
+    internal class StatusEffectInstantSummonReserve : StatusEffectInstantSummon
+    {
+
+        public CardDataList reserve;
+
+        public override void Init()
+        {
+            Events.OnBattleStart += GetReserve();
+        }
+
+        public UnityAction GetReserve()
+        {
+            CardDataList reserve = References.Player.data.inventory.reserve;
+            return null;
+        }
+
+        public override IEnumerator Process()
+        {
+
+            if (reserve.Count() > 0)
+            {
+                int r = Dead.Random.Range(0, reserve.Count()-1);
+                CardData summonCard = reserve[r];
+                if (summonCard != null)
+                {
+                    targetSummon.summonCard = summonCard;
+                }
+
+                return base.Process();
+
+            }
+
+            return null;
 
 
         }
