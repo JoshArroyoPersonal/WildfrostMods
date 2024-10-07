@@ -15,6 +15,10 @@ namespace Pokefrost
         private int maxChain = 3;
         private Dictionary<string, Vector2Int> amounts = new Dictionary<string, Vector2Int>();
 
+        public ApplyToFlags whenAppliedFlags;
+        public bool debuffsOnly = false;
+        public bool instantCustom = false;
+
         public override void Init()
         {
             base.PostApplyStatus += Copy;   
@@ -23,8 +27,10 @@ namespace Pokefrost
         public override bool RunApplyStatusEvent(StatusEffectApply apply)
         {
             if (!apply.applier || apply.applier == target || !apply.target || !apply.effectData || apply.effectData.type.IsNullOrWhitespace() || target.silenced) { return false; }
+            bool debuff = apply.effectData.isStatus && apply.effectData.offensive && apply.effectData.visible;
+            if (!debuff && debuffsOnly) { return false; }
 
-            List<Entity> candidates = GetTargets();
+            List<Entity> candidates = GetAppliedTargets();
             if (!candidates.Contains(apply.target)) { return false; }
 
             amounts[apply.effectData.type] = CurrentAmounts(apply.target, apply.effectData.type);
@@ -32,14 +38,30 @@ namespace Pokefrost
             return false;
         }
 
+        public List<Entity> GetAppliedTargets()
+        {
+            ApplyToFlags apply = applyToFlags;
+            applyToFlags = whenAppliedFlags;
+            List<Entity> entities = GetTargets();
+            applyToFlags = apply;
+            return entities;
+        }
+
         private IEnumerator Copy(StatusEffectApply apply)
         {
             chain++;
             if (chain == maxChain) { yield break; }
 
-            effectToApply = apply.effectData;
-            yield return Run(new List<Entity> { target }, apply.count);
-
+            
+            if (instantCustom && effectToApply is StatusEffectApplyXInstant effect)
+            {
+                effect.effectToApply = apply.effectData;
+            }
+            else 
+            {
+                effectToApply = apply.effectData;
+            }
+            yield return Run(GetTargets(), apply.count);
             chain = 0;
         }
 
@@ -47,7 +69,7 @@ namespace Pokefrost
         {
             if (!apply.applier || apply.applier == target || !apply.target || !apply.effectData || apply.effectData.type.IsNullOrWhitespace() || target.silenced) { return false; }
 
-            List<Entity> candidates = GetTargets();
+            List<Entity> candidates = GetAppliedTargets();
             if (!candidates.Contains(apply.target)) { return false; }
 
             if (!amounts.TryGetValue(apply.effectData.type, out Vector2Int amount))

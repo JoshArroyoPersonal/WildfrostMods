@@ -132,4 +132,32 @@ namespace Pokefrost
             base.Evolve(mod, preEvo);
         }
     }
+
+    public class StatusEffectEvolveChingling : StatusEffectEvolveFromNode
+    {
+        public override bool NodeVisit(string nodeName, CardData cardData)
+        {
+            GameObject objGroup = GameObject.Find("Canvas/Padding/HUD/ModifierIcons");
+            if (objGroup != null)
+            {
+                count = 0;
+                foreach (Transform t in objGroup.transform.GetAllChildren())
+                {
+                    if (t.name == "BellModifierIcon(Clone)")
+                    {
+                        count++;
+                    }
+                }
+
+                foreach (CardData.StatusEffectStacks statuses in cardData.startWithEffects)
+                {
+                    if (statuses.data.name == this.name)
+                    {
+                        return (statuses.count <= count);
+                    }
+                }
+            }
+            return false;
+        }
+    }
 }

@@ -72,6 +72,11 @@ namespace Pokefrost
                 ["waves"] = battle.generationScript.Run(battle, 100)
             };
             isBattle = true;
+
+            if (battle is BattleDataWithRewards b)
+            {
+                b.AddRewards(node);
+            }
             
             yield break;
         }

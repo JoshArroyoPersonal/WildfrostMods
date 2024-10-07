@@ -45,7 +45,7 @@
     </Reference>
     <Reference Include="BattleEditor, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3158900413\BattleEditor.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\StreamingAssets\Mods\BattleEditor\BattleEditor.dll</HintPath>
     </Reference>
     <Reference Include="DeadExtensions">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\DeadExtensions.dll</HintPath>
@@ -429,6 +429,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BattleDataWithRewards.cs" />
     <Compile Include="BattleGenerationScriptHooh.cs" />
     <Compile Include="BellClasses.cs" />
     <Compile Include="BossRewardDataCard.cs" />
@@ -470,6 +471,7 @@
     <Compile Include="StatusEffectJolted.cs" />
     <Compile Include="StatusEffectMoveCard.cs" />
     <Compile Include="StatusEffectPickup.cs" />
+    <Compile Include="StatusEffectPlayCardsInHand.cs" />
     <Compile Include="StatusEffectRetreat.cs" />
     <Compile Include="StatusEffectRevive.cs" />
     <Compile Include="StatusEffectRunScript.cs" />
