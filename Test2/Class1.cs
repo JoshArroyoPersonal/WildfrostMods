@@ -10,7 +10,7 @@ using WildfrostHopeMod.VFX;
 using WildfrostHopeMod.SFX;
 using TMPro;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
-Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
+using Extensions = Deadpan.Enums.Engine.Components.Modding.Extensions;
 
 
 namespace Tutorial6_StatusIcons
