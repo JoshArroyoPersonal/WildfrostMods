@@ -128,6 +128,40 @@ namespace Pokefrost
         }
     }
 
+    public class GiveDreamCardModifierSystem : GameSystem
+    {
+
+        public void OnEnable()
+        {
+            Events.OnRedrawBellHit += Dream;
+        }
+
+        public void OnDisable()
+        {
+            Events.OnRedrawBellHit -= Dream;
+        }
+
+        private void Dream(RedrawBellSystem arg0)
+        {
+            StartCoroutine(DumbWait());
+        }
+
+        public IEnumerator DumbWait()
+        {
+            yield return new WaitUntil(() => ActionQueue.Empty);
+            ActionQueue.Add(new ActionSequence(GainDream()));
+        }
+
+        public IEnumerator GainDream()
+        {
+            List<Entity> list = References.Player.handContainer.ToList();
+            if (list.Count == 0) { yield break; }
+            Entity rando = list.RandomItem();
+            Debug.Log("[Pokefrost] "+rando.name);
+            yield return StatusEffectSystem.Apply(rando, rando, Pokefrost.instance.Get<StatusEffectData>("Instant Summon Dream Base In Hand"), 2);
+        }
+    }
+
 
     public class DestoryCardSystem : GameSystem
     {
