@@ -3609,7 +3609,7 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("quest_raikou", "Raikou")
                     .WithCardType("Enemy")
-                    .SetStats(6, null, 4)
+                    .SetStats(6, null, 5)
                     .SetSprites("raikou.png", "raikouBG.png")
                     .SetStartWithEffect(SStack("When Hit Apply Jolted To Attacker", 1), SStack("On Turn Escape To Self", 1))
                     .WithValue(50)
@@ -3631,7 +3631,7 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("quest_entei", "Entei")
                     .WithCardType("Enemy")
-                    .SetStats(8, 5, 6)
+                    .SetStats(8, 5, 7)
                     .SetSprites("entei.png", "raikouBG.png")
                     .SetStartWithEffect(SStack("When Hit Apply Burning To Attacker", 3), SStack("On Turn Escape To Self", 1))
                     .WithValue(50)
@@ -3651,7 +3651,7 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("quest_suicune", "Suicune")
                     .WithCardType("Enemy")
-                    .SetStats(10, null, 5)
+                    .SetStats(10, null, 6)
                     .SetSprites("suicune.png", "suicuneBG.png")
                     .SetStartWithEffect(SStack("When Hit Apply Spicune To All Allies And Enemies", 1), SStack("On Turn Escape To Self", 1))
                     .WithValue(50)
@@ -4168,6 +4168,12 @@ namespace Pokefrost
                 );
 
             bells.Add(
+                this.CreateBell("BlessingLatios", "Latios Bell of Rushdown", "For the first minute of battle, the <Redraw Bell> fully recharges every turn")
+                .ChangeSprites("eonTicket.png", "noDinger.png")
+                .WithSystemsToAdd("InitialBellCounterReductionModifierSystem")
+                );
+
+            bells.Add(
                 this.CreateBell("BlessingDarkrai", "Darkrai Bell of Destruction", "Redraw Bell Counter -1. When <Redraw Bell> is hit, destroy the rightmost card in hand before redrawing")
                 .ChangeSprites("darkraiBell.png", "darkraiDinger.png")
                 .WithSystemsToAdd("DestoryCardSystem")
@@ -4442,6 +4448,7 @@ namespace Pokefrost
             Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             References.instance.StartCoroutine(UICollector.CollectPrefabs());
+            References.instance.StartCoroutine(Commands.AddCustomCommands());
             preLoaded = true;
         }
 

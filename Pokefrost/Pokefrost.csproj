@@ -438,6 +438,7 @@
     <Compile Include="CampaignNodeTypeSpecialBattle.cs" />
     <Compile Include="CardScripts.cs" />
     <Compile Include="CombineCardInBattleSystem.cs" />
+    <Compile Include="CustomCommands.cs" />
     <Compile Include="EventBattleManager.cs" />
     <Compile Include="EventSaveSystem.cs" />
     <Compile Include="QuestSystem.cs" />
