@@ -1381,6 +1381,7 @@ namespace Pokefrost
             goop2.textKey = collection.GetString(goop2.name + "_text");
             goop2.ModAdded = this;
             statusList.Add(goop2);
+            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", goop2);
 
             StatusEffectGiveDreamCard givedream = Ext.CreateStatus<StatusEffectGiveDreamCard>("When Deployed Or Redraw, Gain Dream Card To Hand", "Gain a <keyword=dream> card on deploy and redraw", stackable: false)
                 .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
@@ -1390,10 +1391,11 @@ namespace Pokefrost
                 .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
-            StatusEffectApplyXWhenCardDestroyed keepOnDreamin = Ext.CreateStatus<StatusEffectApplyXWhenCardDestroyed>("When Card Destroyed, Gain Dream Card", "When a card is destroyed, gain a <keyword=dream> card")
+            StatusEffectApplyXWhenCardDestroyed keepOnDreamin = Ext.CreateStatus<StatusEffectApplyXWhenCardDestroyed>("When Card Destroyed, Gain Dream Card", "When an allied card is destroyed, gain a <keyword=dream> card")
                 .ApplyX(goop2, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             keepOnDreamin.mustBeOnBoard = false;
+            keepOnDreamin.canBeEnemy = false;
 
             StatusEffectTemporaryTrait tempcrit = Get<StatusEffectData>("Temporary Aimless").InstantiateKeepName() as StatusEffectTemporaryTrait;
             tempcrit.name = "Temporary Combo";
@@ -4147,7 +4149,7 @@ namespace Pokefrost
             bells.Add(
                 this.CreateBell("BlessingRaikou", "Raikou Bell of Zoomlin", "After <Redraw Bell> is hit, give a random card in hand <keyword=zoomlin>")
                 .ChangeSprites("raikouBell.png", "raikouDinger.png")
-                .WithSystemsToAdd("AlwaysIgniteModifierSystem")
+                .WithSystemsToAdd("GiveZoomlinModifierSystem")
                 );
 
             bells.Add(
@@ -4171,6 +4173,18 @@ namespace Pokefrost
                 this.CreateBell("BlessingLatios", "Latios Bell of Rushdown", "For the first minute of battle, the <Redraw Bell> fully recharges every turn")
                 .ChangeSprites("eonTicket.png", "noDinger.png")
                 .WithSystemsToAdd("InitialBellCounterReductionModifierSystem")
+                );
+
+            bells.Add(
+                this.CreateBell("BlessingLatias", "Latias Bell of Impatience", "When <Redraw Bell> is hit while not fully charged, draw 3 extra cards")
+                .ChangeSprites("latiasBell.png", "latiasDinger.png")
+                .WithSystemsToAdd("EarlyBellDrawModifierSystem")
+                );
+
+            bells.Add(
+                this.CreateBell("BlessingCresselia", "Cresselia Bell of Dreams", "When <Redraw Bell> is hit, add 2 <keyword=dream> cards to hand")
+                .ChangeSprites("cresseliaBell.png", "cresseliaDinger.png")
+                .WithSystemsToAdd("GiveDreamCardModifierSystem")
                 );
 
             bells.Add(
