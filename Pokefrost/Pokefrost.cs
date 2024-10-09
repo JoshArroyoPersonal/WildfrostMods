@@ -4170,7 +4170,13 @@ namespace Pokefrost
                 );
 
             bells.Add(
-                this.CreateBell("BlessingCresselia", "Cresselia Bell of Dreams", "When <Redraw Bell> is hit, add two <keyword=dream> cards to hand")
+                this.CreateBell("BlessingLatias", "Latias Bell of Impatience", "When <Redraw Bell> is hit while not fully charged, draw 3 extra cards")
+                .ChangeSprites("latiasBell.png", "latiasDinger.png")
+                .WithSystemsToAdd("EarlyBellDrawModifierSystem")
+                );
+
+            bells.Add(
+                this.CreateBell("BlessingCresselia", "Cresselia Bell of Dreams", "When <Redraw Bell> is hit, add 2 <keyword=dream> cards to hand")
                 .ChangeSprites("cresseliaBell.png", "cresseliaDinger.png")
                 .WithSystemsToAdd("GiveDreamCardModifierSystem")
                 );

@@ -162,6 +162,29 @@ namespace Pokefrost
         }
     }
 
+    public class EarlyBellDrawModifierSystem : GameSystem
+    {
+
+        public void OnEnable()
+        {
+            Events.OnRedrawBellHit += Draw;
+        }
+
+        public void OnDisable()
+        {
+            Events.OnRedrawBellHit -= Draw;
+        }
+
+        private void Draw(RedrawBellSystem arg0)
+        {
+            if (arg0.counter.current != 0)
+            {
+                ActionRedraw actionRedraw = new ActionRedraw(arg0.owner, 3);
+                ActionQueue.Add(actionRedraw);
+            }
+        }
+    }
+
 
     public class DestoryCardSystem : GameSystem
     {
