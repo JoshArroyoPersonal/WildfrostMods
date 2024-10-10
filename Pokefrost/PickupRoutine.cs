@@ -55,7 +55,7 @@ namespace Pokefrost
             }
             if (scene.name == "MapNew")
             {
-                References.instance.StartCoroutine(RunMultiple());
+                Campaign.instance.StartCoroutine(RunMultiple());
             }
         }
 
@@ -75,7 +75,7 @@ namespace Pokefrost
             objectGroup.transform.SetAsFirstSibling();
 
             GameObject background = UICollector.PullPrefab("Box", "Background", objectGroup);
-            background.GetComponent<RectTransform>().sizeDelta = new Vector2(20,15);
+            background.GetComponent<RectTransform>().sizeDelta = new Vector2(30,15);
             background.GetComponent<Image>().color = new Color(0, 0, 0, 0.8f);
 
             GameObject title = UICollector.PullPrefab("Text", "Title", objectGroup);
@@ -148,23 +148,25 @@ namespace Pokefrost
             obj.GetComponent<CardContainer>().TweenChildPositions();
         }
 
+        //Canvas/Padding/HUD/PlayerDisplay/DeckDisplay
+
         public static IEnumerator RunMultiple()
         {
-            Debug.Log($"[Pokefrost] Starting... {queue.Count};");
-            Button button = GameObject.Find("Canvas/Padding/HUD/DeckpackLayout").GetComponentInChildren<Button>(true);
-            button.onClick.AddListener(ToggleVisibility);
+            //Debug.Log($"[Pokefrost] Starting... {queue.Count};");
+            //Button button = GameObject.Find("Canvas/Padding/HUD/DeckpackLayout").GetComponentInChildren<Button>(true);
+            //button.onClick.AddListener(ToggleVisibility);
             for(int i = queue.Count-1; i>=0; i--)
             {
                 Create(queue[i].Item1);
                 yield return AddRandomCards(queue[i].Item2, GetPools());
                 yield return Run();
             }
-            button.onClick.RemoveListener(ToggleVisibility);
+            //button.onClick.RemoveListener(ToggleVisibility);
 
             queue.Clear();
         }
 
-        public static void ToggleVisibility()
+        public static void TempHide()
         {
             objectGroup.SetActive(!objectGroup.activeSelf);
         }
@@ -174,7 +176,21 @@ namespace Pokefrost
             obj.SetActive(true);
             sequence.cardController.Enable();
             sequence.promptEnd = obj.GetComponent<CardHand>().entities.Count == 0;
+            Campaign.instance.StartCoroutine(HideInDeckView());
             yield return objectGroup.GetComponent<ChooseNewCardSequence>().Run();
+        }
+
+        public static IEnumerator HideInDeckView()
+        {
+            GameObject obj = GameObject.Find("Canvas/Padding/PlayerDisplay/DeckDisplay");
+            while(true)
+            {
+                yield return new WaitUntil(() => obj.activeSelf);
+                yield return new WaitForSeconds(0.1f);
+                objectGroup.SetActive(false);
+                yield return new WaitUntil(() => !obj.activeSelf);
+                objectGroup.SetActive(true);
+            }
         }
 
         public static RewardPool[] GetPools()

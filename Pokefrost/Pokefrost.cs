@@ -4170,7 +4170,7 @@ namespace Pokefrost
                 );
 
             bells.Add(
-                this.CreateBell("BlessingLatios", "Latios Bell of Rushdown", "For the first minute of battle, the <Redraw Bell> fully recharges every turn")
+                this.CreateBell("BlessingLatios", "Latios Bell of Impulse", "For the first minute of battle, the <Redraw Bell> fully recharges every turn")
                 .ChangeSprites("eonTicket.png", "noDinger.png")
                 .WithSystemsToAdd("InitialBellCounterReductionModifierSystem")
                 );
@@ -5197,7 +5197,7 @@ namespace Pokefrost
     }
 
     [HarmonyPatch(typeof(Events))]
-    public class MoreEvents
+    class MoreEvents
     {
         public static event UnityAction OnCampaignGenerated;
 
@@ -5215,5 +5215,79 @@ namespace Pokefrost
     static class FixClassesGetter
     {
         static void Postfix(ref ClassData[] __result) => __result = AddressableLoader.GetGroup<ClassData>("ClassData").ToArray();
+    }
+
+    [HarmonyPatch(typeof(CharacterRewards), "Add", new Type[]
+    {
+        typeof(RewardPool)
+    })]
+    class PatchNullCheckForRewards
+    {
+        public static bool queuedWarning = false;
+        static void Prefix(RewardPool rewardPool)
+        {
+            for(int i = rewardPool.list.Count-1; i >=0; i--)
+            {
+                if (rewardPool.list[i] == null)
+                {
+                    rewardPool.list.RemoveAt(i);
+                    if (!queuedWarning)
+                    {
+                        Debug.LogError("[Pokefrost] Null Rewards!");
+                        References.instance.StartCoroutine(PromptWarning());
+                        queuedWarning = true;
+                    }
+                }
+            }
+        }
+
+        public static IEnumerator PromptWarning()
+        {
+            if (queuedWarning) { yield break; }
+
+            yield return new WaitUntil(() => SceneManager.IsLoaded("MapNew"));
+            StringTable ui = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
+            HelpPanelSystem.Show(ui.GetString(key));
+            HelpPanelSystem.SetEmote(Prompt.Emote.Type.Scared);
+            HelpPanelSystem.AddButton(HelpPanelSystem.ButtonType.Positive, ui.GetString(yesKey), "Select", null);
+            HelpPanelSystem.AddButton(HelpPanelSystem.ButtonType.Negative, ui.GetString(noKey), "Back", null);
+
+            queuedWarning = false;
+        }
+
+        static string key = "websiteofsites.wildfrost.pokefrost.unloadwarningkey";
+        static string yesKey = "websiteofsites.wildfrost.pokefrost.unloadwarningyeskey";
+        static string noKey = "websiteofsites.wildfrost.pokefrost.unloadwarningnokey";
+
+        [PokeLocalizer]
+        public static void DefineStrings()
+        {
+            StringTable ui = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
+            ui.SetString(key, "[Pokefrost]: Unloading anomolies detected.\nFor the best experience, please restart Wildfrost.");
+            ui.SetString(yesKey, "Of course!");
+            ui.SetString(noKey, "No way!");
+        }
+    }
+
+    [HarmonyPatch(typeof(FinalBossGenerationSettings), "RunScripts")]
+    class PatchNullCheckForFinalBossScripts
+    {
+        static void Prefix(FinalBossGenerationSettings __instance)
+        {
+            int length = __instance.cardModifiers.Length;
+            __instance.cardModifiers = __instance.cardModifiers.Where(x => x.card != null).ToArray();
+            if (length != __instance.cardModifiers.Length)
+            {
+                Debug.LogError("[Pokefrost] Null Scripts!");
+                if (!PatchNullCheckForRewards.queuedWarning)
+                {
+                    Debug.LogError("[Pokefrost] Null Rewards!");
+                    References.instance.StartCoroutine(PatchNullCheckForRewards.PromptWarning());
+                    PatchNullCheckForRewards.queuedWarning = true;
+                }
+            }
+        }
+
+
     }
 }

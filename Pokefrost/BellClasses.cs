@@ -428,8 +428,11 @@ namespace Pokefrost
             RedrawBellSystem bellSystem = GameObject.FindObjectOfType<RedrawBellSystem>();
             preCounter = bellSystem.counter.max;
             bellSystem.counter.max = 1;
-            bellSystem.counter.current = Math.Min(1, bellSystem.counter.current);
-            bellSystem.SetCounter(bellSystem.counter.current);
+            if (bellSystem.counter.current > 1)
+            {
+                bellSystem.counter.current = 1;
+                bellSystem.SetCounter(bellSystem.counter.current);
+            }
             timer.Play();
             active = true;
         }
