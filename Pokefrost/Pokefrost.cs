@@ -1895,14 +1895,14 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
-            StatusEffectApplyXOnCardPlayed juiceToAll = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To All", "Apply current <keyword=spicune> to everything else")
+            StatusEffectApplyXPreTurn juiceToAll = Ext.CreateStatus<StatusEffectApplyXPreTurn>("Give Your Juice To All", "Apply current <keyword=spicune> to everything else")
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Enemies | StatusEffectApplyX.ApplyToFlags.Hand)
                 .Register(this);
             ScriptableCurrentStatus myJuice = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
             myJuice.statusType = "juice";
             juiceToAll.scriptableAmount = myJuice;
 
-            StatusEffectApplyXOnCardPlayed YourjuiceToAllies = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Give Your Juice To Allies", "Apply current <keyword=spicune> to allies")
+            StatusEffectApplyXPreTurn YourjuiceToAllies = Ext.CreateStatus<StatusEffectApplyXPreTurn>("Give Your Juice To Allies", "Apply current <keyword=spicune> to allies")
                 .ApplyX(Get<StatusEffectData>("Spicune"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
             YourjuiceToAllies.scriptableAmount = myJuice;
@@ -3453,9 +3453,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("palafin", "Palafin")
-                    .SetStats(6, 3, 4)
+                    .SetStats(6, 3, 5)
                     .SetSprites("palafin.png", "palafinBG.png")
-                    .SStartEffects(("Gain Hero On Recall", 1))
+                    .SStartEffects(("Gain Hero On Recall", 1), ("MultiHit", 1))
                     .AddPool()
                 );
 
@@ -3622,7 +3622,7 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("quest_raikou", "Raikou")
                     .WithCardType("Enemy")
-                    .SetStats(6, null, 5)
+                    .SetStats(6, null, 6)
                     .SetSprites("raikou.png", "raikouBG.png")
                     .SetStartWithEffect(SStack("When Hit Apply Jolted To Attacker", 1), SStack("On Turn Escape To Self", 1))
                     .WithValue(50)
@@ -3644,7 +3644,7 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("quest_entei", "Entei")
                     .WithCardType("Enemy")
-                    .SetStats(8, 5, 7)
+                    .SetStats(8, 5, 8)
                     .SetSprites("entei.png", "raikouBG.png")
                     .SetStartWithEffect(SStack("When Hit Apply Burning To Attacker", 3), SStack("On Turn Escape To Self", 1))
                     .WithValue(50)
@@ -3664,7 +3664,7 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("quest_suicune", "Suicune")
                     .WithCardType("Enemy")
-                    .SetStats(10, null, 6)
+                    .SetStats(10, null, 7)
                     .SetSprites("suicune.png", "suicuneBG.png")
                     .SetStartWithEffect(SStack("When Hit Apply Spicune To All Allies And Enemies", 1), SStack("On Turn Escape To Self", 1))
                     .WithValue(50)
@@ -3673,7 +3673,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("enemy_hooh", "Ho-Oh")
-                    .SetStats(100, 5, 5)
+                    .SetStats(100, 5, 6)
                     .SetSprites("hooh.png", "hoohBG.png")
                     .WithCardType("Boss")
                     .SStartEffects(("Give Revive To Allies",1), ("Revive", 1), ("ImmuneToSnow", 1), ("On Card Played Cleanse Targets", 1))
