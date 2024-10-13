@@ -176,10 +176,10 @@ namespace Pokefrost
         public override bool RunApplyStatusEvent(StatusEffectApply apply)
         {
             //Debug.Log("[Test] ApplyStatusRoutine");
-            if (apply != null && target == apply?.target && apply.effectData?.offensive == true && (apply?.effectData.name == "Overload" || apply?.effectData.name == "Shroom"))
+            if (apply != null && target == apply?.target && apply.effectData?.offensive == true && types.Contains(apply?.effectData.name))
             {
                 Debug.Log("[Pokefrost] Changing to overshroom");
-                apply.effectData = AddressableLoader.Get<StatusEffectData>("StatusEffectData", "Overshroom");
+                apply.effectData = Pokefrost.instance.Get<StatusEffectData>("Overshroom");
             }
 
             return false;

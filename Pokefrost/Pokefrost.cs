@@ -1297,14 +1297,6 @@ namespace Pokefrost
             statusList.Add(endturndraw);
 
             KeywordData dreamkey = this.CreateBasicKeyword("Dream", "Dream", "Changes to a random card each turn|Destroyed after use or discard");
-            /*KeywordData dreamkey = Get<KeywordData>("hellbent").InstantiateKeepName();
-            dreamkey.name = "Dream";
-            keycollection.SetString(dreamkey.name + "_text", "Dream");
-            dreamkey.titleKey = keycollection.GetString(dreamkey.name + "_text");
-            keycollection.SetString(dreamkey.name + "_desc", "Changes to a random card each turn|Destroyed after use or discard");
-            dreamkey.descKey = keycollection.GetString(dreamkey.name + "_desc");
-            dreamkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", dreamkey);*/
 
             StatusEffectDreamDummy dreamer = ScriptableObject.CreateInstance<StatusEffectDreamDummy>();
             dreamer.name = "Trigger When Dream Card Played";
@@ -2125,88 +2117,89 @@ namespace Pokefrost
                 .ApplyX(triggerAllAlliesInHand, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
+            string a = "<color=#FFCA57>{a}</color>";
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
+            ev1.Autofill("Evolve Magikarp", $"<keyword=evolve>: Kill {a} bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
             ev1.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardTypeIsBossOrMiniboss);
             ev1.Confirm();
 
             StatusEffectEvolve ev2 = ScriptableObject.CreateInstance<StatusEffectEvolveEevee>();
-            ev2.Autofill("Evolve Eevee", "<keyword=evolve>: Equip charm", this);
+            ev2.Autofill("Evolve Eevee", $"<keyword=evolve>: Equip charm", this);
             ev2.SetEvolution("f");
             ev2.Confirm();
 
             StatusEffectEvolve ev3 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
-            ev3.Autofill("Evolve Meowth", "<keyword=evolve>: Have <{a}><keyword=blings>", this);
+            ev3.Autofill("Evolve Meowth", $"<keyword=evolve>: Have {a}<keyword=blings>", this);
             ev3.SetEvolution("websiteofsites.wildfrost.pokefrost.persian");
             ev3.Confirm();
 
             StatusEffectEvolveFromKill ev4 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev4.Autofill("Evolve Lickitung", "<keyword=evolve>: Consume <{a}> cards", this);
+            ev4.Autofill("Evolve Lickitung", $"<keyword=evolve>: Consume {a} cards", this);
             ev4.SetEvolution("websiteofsites.wildfrost.pokefrost.lickilicky");
             ev4.anyKill = true;
             ev4.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardWasConsumed);
             ev4.Confirm();
 
             StatusEffectEvolveExternalFactor ev5 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
-            ev5.Autofill("Evolve Munchlax", "<keyword=evolve>: Have an empty deck", this);
+            ev5.Autofill("Evolve Munchlax", $"<keyword=evolve>: Have an empty deck", this);
             ev5.SetEvolution("websiteofsites.wildfrost.pokefrost.snorlax");
             ev5.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfEmptyDeck);
             ev5.Confirm();
 
             StatusEffectEvolveFromStatusApplied ev6 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev6.Autofill("Evolve Croagunk", "<keyword=evolve>: Team applies <{a}> <keyword=shroom>", this);
+            ev6.Autofill("Evolve Croagunk", $"<keyword=evolve>: Team applies {a} <keyword=shroom>", this);
             ev6.SetEvolution("websiteofsites.wildfrost.pokefrost.toxicroak");
             ev6.targetType = "shroom";
             ev6.faction = "ally";
             ev6.Confirm();
 
             StatusEffectEvolveFromKill ev7 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev7.Autofill("Evolve Voltorb", "<keyword=evolve>: Kill 3 in a battle", this);
+            ev7.Autofill("Evolve Voltorb", $"<keyword=evolve>: Kill 3 in a battle", this);
             ev7.SetEvolution("websiteofsites.wildfrost.pokefrost.electrode");
             ev7.SetConstraints(StatusEffectEvolveFromKill.ReturnTrue);
             ev7.persist = false;
             ev7.Confirm();
 
             StatusEffectEvolveFromHitApplied ev8 = ScriptableObject.CreateInstance<StatusEffectEvolveFromHitApplied>();
-            ev8.Autofill("Evolve Carvanha", "<keyword=evolve>: Team deals <{a}> <keyword=teeth> damage", this);
+            ev8.Autofill("Evolve Carvanha", $"<keyword=evolve>: Team deals {a} <keyword=teeth> damage", this);
             ev8.SetEvolution("websiteofsites.wildfrost.pokefrost.sharpedo");
             ev8.targetType = "spikes";
             ev8.faction = "ally";
             ev8.Confirm();
 
             StatusEffectEvolveExternalFactor ev9 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
-            ev9.Autofill("Evolve Trubbish", "<keyword=evolve>: Have <4> <card=Junk> on battle end", this);
+            ev9.Autofill("Evolve Trubbish", $"<keyword=evolve>: Have <4> <card=Junk> on battle end", this);
             ev9.SetEvolution("websiteofsites.wildfrost.pokefrost.garbodor");
             ev9.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfEnoughJunk);
             ev9.Confirm();
 
             StatusEffectEvolveFromKill ev10 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev10.Autofill("Evolve Litwick", "<keyword=evolve>: Kill <{a}> enemy", this);
+            ev10.Autofill("Evolve Litwick", $"<keyword=evolve>: Kill {a} enemy", this);
             ev10.SetEvolution("websiteofsites.wildfrost.pokefrost.lampent");
             ev10.SetConstraints(StatusEffectEvolveFromKill.ReturnTrue);
             ev10.Confirm();
 
             StatusEffectEvolveNincada ev11 = ScriptableObject.CreateInstance<StatusEffectEvolveNincada>();
-            ev11.Autofill("Evolve Nincada", "<keyword=evolve>: <{a}> battles", this);
+            ev11.Autofill("Evolve Nincada", $"<keyword=evolve>: {a} battles", this);
             ev11.SetEvolution("websiteofsites.wildfrost.pokefrost.ninjask");
             ev11.Confirm();
 
             StatusEffectEvolveCrown ev12 = ScriptableObject.CreateInstance<StatusEffectEvolveCrown>();
-            ev12.Autofill("Evolve Murkrow", "<keyword=evolve>: Wear <sprite name=crown>", this);
+            ev12.Autofill("Evolve Murkrow", $"<keyword=evolve>: Wear <sprite name=crown>", this);
             ev12.SetEvolution("websiteofsites.wildfrost.pokefrost.honchkrow");
             ev12.Confirm();
 
             StatusEffectEvolveFromStatusApplied ev13 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev13.Autofill("Evolve Piplup", "<keyword=evolve>: Team applies <{a}><keyword=snow>", this);
+            ev13.Autofill("Evolve Piplup", $"<keyword=evolve>: Team applies {a}<keyword=snow>", this);
             ev13.SetEvolution("websiteofsites.wildfrost.pokefrost.prinplup");
             ev13.targetType = "snow";
             ev13.faction = "ally";
             ev13.Confirm();
 
             StatusEffectEvolveFromStatusApplied ev14 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev14.Autofill("Evolve Prinplup", "<keyword=evolve>: Apply <{a}><keyword=snow> to self", this);
+            ev14.Autofill("Evolve Prinplup", $"<keyword=evolve>: Apply {a}<keyword=snow> to self", this);
             ev14.SetEvolution("websiteofsites.wildfrost.pokefrost.empoleon");
             ev14.targetType = "snow";
             ev14.faction = "toSelf";
@@ -2221,7 +2214,7 @@ namespace Pokefrost
             ev15.Confirm();
 
             StatusEffectEvolveFromStatusApplied ev16 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev16.Autofill("Evolve Lampent", "<keyword=evolve>: Reach <{a}><keyword=overload>", this);
+            ev16.Autofill("Evolve Lampent", $"<keyword=evolve>: Reach {a}<keyword=overload>", this);
             ev16.SetEvolution("websiteofsites.wildfrost.pokefrost.chandelure");
             ev16.targetType = "overload";
             ev16.faction = "toSelf";
@@ -2229,73 +2222,73 @@ namespace Pokefrost
             ev16.Confirm();
 
             StatusEffectEvolveFromNode ev17 = ScriptableObject.CreateInstance<StatusEffectEvolveFromNode>();
-            ev17.Autofill("Evolve Haunter", "<keyword=evolve>: Witness a <Trade>", this);
+            ev17.Autofill("Evolve Haunter", $"<keyword=evolve>: Witness a <Trade>", this);
             ev17.SetEvolution("websiteofsites.wildfrost.pokefrost.gengar");
             ev17.targetNodeName = "trade";
             ev17.Confirm();
 
             StatusEffectEvolveFromNode ev18 = ScriptableObject.CreateInstance<StatusEffectEvolveFromNode>();
-            ev18.Autofill("Evolve Machoke", "<keyword=evolve>: Witness a <Trade>", this);
+            ev18.Autofill("Evolve Machoke", $"<keyword=evolve>: Witness a <Trade>", this);
             ev18.SetEvolution("websiteofsites.wildfrost.pokefrost.machamp");
             ev18.targetNodeName = "trade";
             ev18.Confirm();
 
             StatusEffectEvolveSlowpoke ev19 = ScriptableObject.CreateInstance<StatusEffectEvolveSlowpoke>();
-            ev19.Autofill("Evolve Slowpoke", "<keyword=evolve>: Visit a <Blingsnail Cave> with or without <sprite name=crown>", this);
+            ev19.Autofill("Evolve Slowpoke", $"<keyword=evolve>: Visit a <Blingsnail Cave> with or without <sprite name=crown>", this);
             ev19.evolveUncrowned = "slowbro";
             ev19.evolveCrowned = "slowking";
             ev19.targetNodeName = "Blingsnail Cave";
             ev19.Confirm();
 
             StatusEffectEvolvePlayCards ev20 = ScriptableObject.CreateInstance<StatusEffectEvolvePlayCards>();
-            ev20.Autofill("Evolve Seadra", "<keyword=evolve>: Play <{a}> <keyword=combo> cards", this);
+            ev20.Autofill("Evolve Seadra", $"<keyword=evolve>: Play {a} <keyword=combo> cards", this);
             ev20.SetEvolution("websiteofsites.wildfrost.pokefrost.kingdra");
             ev20.SetCardConstraint((entity, entities) => { return StatusEffectEvolvePlayCards.ReturnTrueIfTrait("Combo",entity); });
             ev20.Confirm();
 
             StatusEffectEvolveFromHitApplied ev21 = ScriptableObject.CreateInstance<StatusEffectEvolveFromHitApplied>();
-            ev21.Autofill("Evolve Makuhita", "<keyword=evolve>: Deal <{a}> damage", this);
+            ev21.Autofill("Evolve Makuhita", $"<keyword=evolve>: Deal {a} damage", this);
             ev21.Autofill2("self", "all");
             ev21.SetEvolution("websiteofsites.wildfrost.pokefrost.hariyama");
             ev21.Confirm();
 
             StatusEffectEvolveCubone ev22 = ScriptableObject.CreateInstance<StatusEffectEvolveCubone>();
-            ev22.Autofill("Evolve Cubone", "<keyword=evolve>: Become injured <i><color=#A6A6A6>(by whom?)</i></color>", this);
+            ev22.Autofill("Evolve Cubone", $"<keyword=evolve>: Become injured <i><color=#A6A6A6>(by whom?)</i></color>", this);
             ev22.SetEvolutions("websiteofsites.wildfrost.pokefrost.marowak", "websiteofsites.wildfrost.pokefrost.alolanmarowak");
             ev22.Confirm();
 
             StatusEffectEvolveKirlia ev23 = ScriptableObject.CreateInstance<StatusEffectEvolveKirlia>();
-            ev23.Autofill("Evolve Kirlia", "<keyword=evolve>: Gain <{a}> unique effects", this);
+            ev23.Autofill("Evolve Kirlia", $"<keyword=evolve>: Gain {a} unique effects", this);
             ev23.SetEvolutions("gardevoir", "gallade");
             ev23.Confirm();
 
             StatusEffectEvolveFromKill ev24 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev24.Autofill("Evolve Aron", "<keyword=evolve>: Team <keyword=recycle><color=#FFCA57>s</color> <{a}> cards", this);
+            ev24.Autofill("Evolve Aron", $"<keyword=evolve>: Team <keyword=recycle><color=#FFCA57>s</color> {a} cards", this);
             ev24.SetEvolution("lairon");
             ev24.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfCardWasRecycled);
             ev24.anyKill = true;
             ev24.Confirm();
 
             StatusEffectEvolveFromKill ev25 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
-            ev25.Autofill("Evolve Lairon", "<keyword=evolve>: Team <keyword=recycle><color=#FFCA57>s</color> <{a}> <keyword=recycle> card", this);
+            ev25.Autofill("Evolve Lairon", $"<keyword=evolve>: Team <keyword=recycle><color=#FFCA57>s</color> {a} <keyword=recycle> card", this);
             ev25.SetEvolution("aggron");
             ev25.SetConstraints(StatusEffectEvolveFromKill.ReturnTrueIfRecycleCardWasRecycled);
             ev25.anyKill = true;
             ev25.Confirm();
 
             StatusEffectEvolveNatu ev26 = ScriptableObject.CreateInstance<StatusEffectEvolveNatu>();
-            ev26.Autofill("Evolve Natu", "<keyword=evolve>: Fulfill the <Prophecy>", this);
+            ev26.Autofill("Evolve Natu", $"<keyword=evolve>: Fulfill the <Prophecy>", this);
             ev26.SetEvolution("xatu");
             ev26.Confirm();
 
             StatusEffectEvolveExternalFactor ev27 = ScriptableObject.CreateInstance<StatusEffectEvolveExternalFactor>();
-            ev27.Autofill("Evolve Aipom", "<keyword=evolve>: Have <color=#FFCA57>{a}</color> <Items> in deck", this);
+            ev27.Autofill("Evolve Aipom", $"<keyword=evolve>: Have {a} <Items> in deck", this);
             ev27.SetEvolution("ambipom");
             ev27.SetConstraint(StatusEffectEvolveExternalFactor.ReturnTrueIfThickDeck);
             ev27.Confirm();
 
             StatusEffectEvolveFromStatusApplied ev28 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev28.Autofill("Evolve Snover", "<keyword=evolve>: <{a}> units <keyword=snow>'d at once", this);
+            ev28.Autofill("Evolve Snover", $"<keyword=evolve>: {a} units <keyword=snow>'d at once", this);
             ev28.SetEvolution("abomasnow");
             ev28.SetConstraints(StatusEffectEvolveFromStatusApplied.ReturnTrueIfEnoughAffected);
             ev28.targetType = "snow";
@@ -2304,7 +2297,7 @@ namespace Pokefrost
             ev28.Confirm();
 
             StatusEffectEvolveChingling ev29 = ScriptableObject.CreateInstance<StatusEffectEvolveChingling>();
-            ev29.Autofill("Evolve Chingling", "<keyword=evolve>: Collect <{a}> <Sun Bells>", this);
+            ev29.Autofill("Evolve Chingling", $"<keyword=evolve>: Collect {a} <Sun Bells>", this);
             ev29.SetEvolution("chimecho");
             ev29.Confirm();
 
@@ -3283,7 +3276,7 @@ namespace Pokefrost
                     .CreateUnit("darkrai", "Darkrai")
                     .SetStats(7, 3, 3)
                     .SetSprites("darkrai.png", "darkraiBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1), SStack("Frenzy Equal To Curses In Hand", 1))
+                    .SStartEffects(("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1), ("Frenzy Equal To Curses In Hand", 1))
                     .WithCardType("Leader")
                     .WithText("<keyword=legendary>")
                     .FreeModify(
@@ -3536,7 +3529,7 @@ namespace Pokefrost
                     .CreateUnit("enemy_hypno", "Hypno")
                     .SetStats(20, 3, 4)
                     .SetSprites("hypno.png", "hypnoBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", 1))
+                    .SStartEffects(("On Card Played Give Random Card In Hand While In Hand Unmovable To Allies", 1))
                     .WithCardType("Enemy")
                     .WithValue(50)
                 );
@@ -3613,7 +3606,7 @@ namespace Pokefrost
                     .WithCardType("Enemy")
                     .SetStats(6, null, 5)
                     .SetSprites("raikou.png", "raikouBG.png")
-                    .SetStartWithEffect(SStack("When Hit Apply Jolted To Attacker", 1), SStack("On Turn Escape To Self", 1))
+                    .SStartEffects(("When Hit Apply Jolted To Attacker", 1), ("On Turn Escape To Self", 1))
                     .WithValue(50)
                 );
 
@@ -3635,7 +3628,7 @@ namespace Pokefrost
                     .WithCardType("Enemy")
                     .SetStats(8, 5, 7)
                     .SetSprites("entei.png", "raikouBG.png")
-                    .SetStartWithEffect(SStack("When Hit Apply Burning To Attacker", 3), SStack("On Turn Escape To Self", 1))
+                    .SStartEffects(("When Hit Apply Burning To Attacker", 3), ("On Turn Escape To Self", 1))
                     .WithValue(50)
                 );
 
@@ -3655,7 +3648,7 @@ namespace Pokefrost
                     .WithCardType("Enemy")
                     .SetStats(10, null, 6)
                     .SetSprites("suicune.png", "suicuneBG.png")
-                    .SetStartWithEffect(SStack("When Hit Apply Spicune To All Allies And Enemies", 1), SStack("On Turn Escape To Self", 1))
+                    .SStartEffects(("When Hit Apply Spicune To All Allies And Enemies", 1), ("On Turn Escape To Self", 1))
                     .WithValue(50)
                 );
 
@@ -3697,7 +3690,7 @@ namespace Pokefrost
                     .SetSprites("plusle.png", "plusleBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
-                    .SetStartWithEffect(SStack("While Active Increase Attack To Allies", 1), SStack("When Destroyed Boost Allies", 1))
+                    .SStartEffects(("While Active Increase Attack To Allies", 1), ("When Destroyed Boost Allies", 1))
                 );
 
             list.Add(
@@ -3707,7 +3700,7 @@ namespace Pokefrost
                     .SetSprites("minun.png", "minunBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
-                    .SetStartWithEffect(SStack("While Active Reduce Attack To Enemies", 1), SStack("When Destroyed Boost Allies", 1))
+                    .SStartEffects(("While Active Reduce Attack To Enemies", 1), ("When Destroyed Boost Allies", 1))
                 );
 
             list.Add(
@@ -3798,7 +3791,7 @@ namespace Pokefrost
                     .CreateUnit("enemy_mismagius", "Mismagius")
                     .SetStats(8, 0, 2)
                     .SetSprites("mismagius.png", "mismagiusBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1))
+                    .SStartEffects(("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1))
                     .WithCardType("Enemy")
                     .WithValue(50)
                 );
@@ -3808,7 +3801,7 @@ namespace Pokefrost
                     .CreateUnit("enemy_spiritomb", "Spiritomb")
                     .SetStats(12, 0, 0)
                     .SetSprites("spiritomb.png", "spiritombBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", 1), SStack("On Turn Apply Attack To Self", 1))
+                    .SStartEffects(("On Card Played Give Random Card In Hand While In Hand Reduce Attack To Allies", 1), ("On Turn Apply Attack To Self", 1))
                     .SetTraits(TStack("Smackback", 1))
                     .WithCardType("Enemy")
                     .WithValue(50)
@@ -3820,7 +3813,7 @@ namespace Pokefrost
                     .SetStats(10, 7, 5)
                     .SetSprites("magmortar.png", "magmortarBG.png")
                     .SetTraits(TStack("Longshot", 1), TStack("Explode", 2))
-                    .SetStartWithEffect(SStack("ImmuneToSnow", 1))
+                    .SStartEffects(("ImmuneToSnow", 1))
                     .WithCardType("Enemy")
                     .WithValue(50)
                 );
@@ -3852,7 +3845,7 @@ namespace Pokefrost
                     .WithCardType("Summoned")
                     .SetStats(6, null, 6)
                     .SetSprites("cresselia.png", "cresseliaBG.png")
-                    .SetStartWithEffect(SStack("On Card Played Gain Dream Card To Hand", 1), SStack("Cannot Recall", 1))
+                    .SStartEffects(("On Card Played Gain Dream Card To Hand", 1), ("Cannot Recall", 1))
                 );
 
             list.Add(
@@ -3862,7 +3855,7 @@ namespace Pokefrost
                     .SetSprites("darkrai.png", "darkraiBG.png")
                     .WithCardType("Miniboss")
                     .WithValue(50)
-                    .SetStartWithEffect(SStack("ImmuneToSnow", 1), SStack("Frenzy Equal To Curses In Hand", 1))
+                    .SStartEffects(("ImmuneToSnow", 1), ("Frenzy Equal To Curses In Hand", 1))
                 );
 
             list.Add(
@@ -3934,7 +3927,6 @@ namespace Pokefrost
                     .CreateCharm("CardUpgradeMagnemite")
                     .WithTier(1)
                     .WithImage("magnemiteCharm.png")
-                    .WithType(CardUpgradeData.Type.Charm)
                     .SetEffects(SStack("On Card Played Apply Shroom Overburn Or Bom", 1))
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeShroom").targetConstraints)
                     .SetBecomesTarget(true)
@@ -3947,7 +3939,6 @@ namespace Pokefrost
                     .CreateCharm("CardUpgradePluck")
                     .WithTier(0)
                     .WithImage("murkrowCharm.png")
-                    .WithType(CardUpgradeData.Type.Charm)
                     .SetTraits(TStack("Pluck", 1))
                     .SetConstraints(crow)
                     .ChangeDamage(1)
@@ -3960,7 +3951,6 @@ namespace Pokefrost
                     .CreateCharm("CardUpgradeSketch")
                     .WithTier(3)
                     .WithImage("smeargleCharm.png")
-                    .WithType(CardUpgradeData.Type.Charm)
                     .SetEffects(SStack("When Deployed Sketch", 1))
                     .SetTraits(TStack("Pigheaded", 1))
                     .ChangeDamage(-2)
@@ -5263,7 +5253,7 @@ namespace Pokefrost
         public static void DefineStrings()
         {
             StringTable ui = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
-            ui.SetString(key, "[Pokefrost]: Unloading anomolies detected.\nFor the best experience, please restart Wildfrost.");
+            ui.SetString(key, "Unloading Anomolies Detected|Most problems should be resolved. For the best experience, please restart Wildfrost.|-[Pokefrost]");
             ui.SetString(yesKey, "Of course!");
             ui.SetString(noKey, "No way!");
         }

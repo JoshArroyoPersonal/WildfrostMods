@@ -24,14 +24,15 @@ namespace Pokefrost
 
         public static void AddCommands()
         {
-            commands.Add(new CommandMultModifier());
+            commands.Add(new CommandModifier());
+            commands.Add(new CommandEvent());
         }
 
-        public class CommandMultModifier : Command
+        public class CommandModifier : Command
         {
-            public override string id => "poke.Modifier";
+            public override string id => "poke.modifier";
 
-            public override string format => "poke.Modifier <name>";
+            public override string format => "poke.modifier <name>";
 
             public override string desc => "Gives the corresponding modifier";
 
@@ -86,6 +87,41 @@ namespace Pokefrost
                 }
 
                 predictedArgs = list.ToArray();
+            }
+        }
+
+        public class CommandEvent : Command
+        {
+            public override string id => "poke.event";
+
+            public override string format => "poke.event <name>";
+
+            public override string desc => "Guarantees the specific event";
+
+            public override bool IsRoutine => false;
+            public override void Run(string args)
+            {
+                if (EventBattleManager.battleList.ContainsKey(args))
+                {
+                    string[] keys = EventBattleManager.battleList.Keys.ToArray();
+                    foreach (string key in keys)
+                    {
+                        if (key != args)
+                        {
+                            EventBattleManager.battleList.Remove(key);
+                        }
+                    }
+                }
+                else
+                {
+                    Fail($"Could not find key [{args}]");
+                }
+            }
+
+            public override IEnumerator GetArgOptions(string currentArgs)
+            {
+                predictedArgs = EventBattleManager.battleList.Keys.ToArray();
+                yield break;
             }
         }
     }

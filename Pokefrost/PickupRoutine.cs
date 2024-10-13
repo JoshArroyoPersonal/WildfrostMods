@@ -18,7 +18,9 @@ namespace Pokefrost
         static GameObject obj;
         static ChooseNewCardSequence sequence;
         static Transform deadCards;
-
+        static bool active = false;
+        public static bool Active => queue.Count != 0;
+    
         static List<(string, int)> queue = new List<(string,int)>();
 
         public static void Queue(string name, int amount)
@@ -49,13 +51,13 @@ namespace Pokefrost
 
         public static void OnSceneChanged(Scene scene)
         {
-            if (scene.name == "Battle")
+            if (scene.name == "Battle" || scene.name == "Town")
             {
                 queue.Clear();
             }
-            if (scene.name == "MapNew")
+            if (scene.name == "MapNew" && Active)
             {
-                Campaign.instance.StartCoroutine(RunMultiple());
+                ActionQueue.Stack(new ActionSequence(RunMultiple()));
             }
         }
 
@@ -155,6 +157,7 @@ namespace Pokefrost
             //Debug.Log($"[Pokefrost] Starting... {queue.Count};");
             //Button button = GameObject.Find("Canvas/Padding/HUD/DeckpackLayout").GetComponentInChildren<Button>(true);
             //button.onClick.AddListener(ToggleVisibility);
+
             for(int i = queue.Count-1; i>=0; i--)
             {
                 Create(queue[i].Item1);
@@ -162,13 +165,8 @@ namespace Pokefrost
                 yield return Run();
             }
             //button.onClick.RemoveListener(ToggleVisibility);
-
+            obj.SetActive(false);
             queue.Clear();
-        }
-
-        public static void TempHide()
-        {
-            objectGroup.SetActive(!objectGroup.activeSelf);
         }
 
         public static IEnumerator Run()
@@ -176,8 +174,9 @@ namespace Pokefrost
             obj.SetActive(true);
             sequence.cardController.Enable();
             sequence.promptEnd = obj.GetComponent<CardHand>().entities.Count == 0;
-            Campaign.instance.StartCoroutine(HideInDeckView());
+            Coroutine hide = Campaign.instance.StartCoroutine(HideInDeckView());
             yield return objectGroup.GetComponent<ChooseNewCardSequence>().Run();
+            Campaign.instance.StopCoroutine(hide);
         }
 
         public static IEnumerator HideInDeckView()

@@ -16,13 +16,14 @@ namespace Pokefrost
     {
         public static EventBattleManager instance;
 
-        public static readonly float minChance = 0.25f;
-        public static readonly float maxChance = 1f;
+        public static float minChance = 0.25f;
+        public static float maxChance = 1f;
 
         public bool successfulRoll = false;
 
         public static Dictionary<string, string> battleList = new Dictionary<string, string>();
         public static string battleChosen = "";
+        public static string forceBattle = "";
 
         public EventBattleManager() 
         {
@@ -50,7 +51,7 @@ namespace Pokefrost
 
             new BattleDataEditor(mod)
                 .Create<BattleDataWithRewards>("Darkrai")
-                .SetSprite(mod.ImagePath("darkraiCharm.png").ToSprite())
+                .SetSprite("MapDarkrai.png", 200)
                 .SetNameRef("Dark Crater Pit")
                 .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
                 .StartWavePoolData(0, "Curses!")

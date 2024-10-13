@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using EBM = Pokefrost.EventBattleManager;
 
 namespace Pokefrost
 {
@@ -53,16 +54,40 @@ namespace Pokefrost
             }
         }
 
+        internal virtual BattleData SelectBattle()
+        {
+            BattleData battle;
+            if (EBM.battleList.ContainsKey(EBM.forceBattle))
+            {
+                EBM.battleChosen = EBM.forceBattle;
+                return Pokefrost.instance.Get<BattleData>(EBM.forceBattle);
+            }
+            else
+            {
+                foreach (string battleName in EBM.battleList.Keys.InRandomOrder())
+                {
+                    battle = Pokefrost.instance.Get<BattleData>(battleName);
+                    if (battle != null)
+                    {
+                        EBM.battleChosen = battleName;
+                        return battle;
+                    }
+                }
+            }
+            throw new Exception("No Event Battle Found");
+        }
+
 
         public override IEnumerator SetUp(CampaignNode node)
         {
-            BattleData battle = null;
-            foreach(string battleName in EventBattleManager.battleList.Keys.InRandomOrder())
+            BattleData battle = SelectBattle();
+            
+            foreach(string battleName in EBM.battleList.Keys.InRandomOrder())
             {
                 battle = Pokefrost.instance.Get<BattleData>(battleName);
                 if (battle != null)
                 {
-                    EventBattleManager.battleChosen = battleName;
+                    EBM.battleChosen = battleName;
                     break;
                 }
             }

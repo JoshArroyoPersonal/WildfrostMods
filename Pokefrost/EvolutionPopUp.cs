@@ -63,11 +63,14 @@ namespace Pokefrost
             if (WaitingToPopUp) { yield break; }
 
             WaitingToPopUp = true;
-            yield return new WaitUntil(() => SceneManager.IsLoaded("MapNew"));
-            yield return Run();
+            yield return new WaitUntil(() => SceneManager.IsLoaded("MapNew") && !PickupRoutine.Active);
+            //yield return Run();
+            ActionSequence action = new ActionSequence(Run());
+            ActionQueue.Add(action);
             WaitingToPopUp = false;
         }
 
+        //Canvas/Padding/PlayerDisplay/CompanionRecovery/
         public static IEnumerator Run()
         {
             if (evolvedPokemonLastBattle.Count == 0) { yield break; }
@@ -81,6 +84,9 @@ namespace Pokefrost
             fader = UICollector.PullPrefab("Box", "Fader", sequence.gameObject);
             fader.GetComponent<Image>().color = new Color(1f, 1f, 1f, 0f);
             fader.SetActive(false);
+            Button back = sequence.group.GetComponentInChildren<Button>();
+            back.onClick.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
+            back.onClick.AddListener(() => End());
             yield return new WaitForSeconds(0.3f);
             GameObject obj = UICollector.PullPrefab("Button", "Continue Button", sequence.gameObject);
             obj.transform.position = translate;
@@ -91,40 +97,49 @@ namespace Pokefrost
 
             yield return Preevos();
             yield return new WaitUntil(() => eventProgress > 0);
-            fader.SetActive(true);
-            //SilhouetteFade(0f, 1f, duration, silTweenType);
-            yield return new WaitForSeconds(duration - overlap);
-            BackgroundFade(0f, 1f, fadeInDur, fadeInType);
-            yield return new WaitForSeconds(fadeInDur);
-            yield return Evos();
-            SfxSystem.OneShot("event:/sfx/inventory/charm_assign");
-            continueButton.gameObject.SetActive(false);
-            yield return new WaitForSeconds(hold);
-            BackgroundFade(1f, 0f, fadeOutDur, fadeOutType);
-            yield return new WaitForSeconds(fadeOutDur);
-            //SilhouetteFade(1f, 0f, duration, silTweenType);
-            fader.SetActive(false);
-            //yield return new WaitForSeconds(duration);
-            Pokefrost.SFX.TryPlaySound("evolution");
-            //continueButton.interactable = true;
-            yield return new WaitUntil(() => eventProgress > 1);
-            Routine.Clump clump = new Routine.Clump();
-            for(int i = sequence.container1.Count - 1; i >= 0; i--)
+            if (eventProgress == 1)
             {
-                clump.Add(new Routine(AssetLoader.Lookup<CardAnimation>("CardAnimations", "FlyToBackpack").Routine(sequence.container1[i])));
-                yield return new WaitForSeconds(frequency);
+                fader.SetActive(true);
+                yield return new WaitForSeconds(duration - overlap);
+                BackgroundFade(0f, 1f, fadeInDur, fadeInType);
+                yield return new WaitForSeconds(fadeInDur);
+                yield return Evos();
+                SfxSystem.OneShot("event:/sfx/inventory/charm_assign");
+                continueButton.gameObject.SetActive(false);
+                yield return new WaitForSeconds(hold);
+                BackgroundFade(1f, 0f, fadeOutDur, fadeOutType);
+                yield return new WaitForSeconds(fadeOutDur);
+                fader.SetActive(false);
+                Pokefrost.SFX.TryPlaySound("evolution");
+                //continueButton.interactable = true;
             }
-            yield return clump.WaitForEnd();
-            yield return new WaitForSeconds(endDelay);
-            End();
+            yield return new WaitUntil(() => eventProgress > 1);
+            if (eventProgress == 2)
+            {
+                Routine.Clump clump = new Routine.Clump();
+                for (int i = sequence.container1.Count - 1; i >= 0; i--)
+                {
+                    clump.Add(new Routine(AssetLoader.Lookup<CardAnimation>("CardAnimations", "FlyToBackpack").Routine(sequence.container1[i])));
+                    yield return new WaitForSeconds(frequency);
+                }
+                yield return clump.WaitForEnd();
+                yield return new WaitForSeconds(endDelay);
+            }
+            evolvedPokemonLastBattle.Clear();
+            pokemonEvolvedIntoLastBattle.Clear();
+            sequence.End();
         }
 
         public static void End()
         {
-            //RemoveSilhouettes();
-            evolvedPokemonLastBattle.Clear();
-            pokemonEvolvedIntoLastBattle.Clear();
-            sequence.End();
+            if (eventProgress == 0)
+            {
+                eventProgress = 3;
+            }
+            else if (eventProgress == 1)
+            {
+                eventProgress = 2;
+            }
         }
 
         public static void MoveCardToDeck(Entity entity)
@@ -176,9 +191,6 @@ namespace Pokefrost
             yield return CreateCardsAlt(pokemonEvolvedIntoLastBattle, true);
             //AttachSilhouettes(1f);
             //continueButton.GetComponentInChildren<TextMeshProUGUI>().SetText("Continue");
-            Button back = sequence.group.GetComponentInChildren<Button>();
-            back.onClick.SetPersistentListenerState(0, UnityEngine.Events.UnityEventCallState.Off);
-            back.onClick.AddListener(() => End());
         }
 
         private static Vector3 gap = new Vector3(0.4f, 0f, 0f);
@@ -211,48 +223,6 @@ namespace Pokefrost
             {
                 fader.GetComponent<Image>().color = Color.white.WithAlpha(a);
             });
-        }
-
-        public static void AttachSilhouettes(float alpha)
-        {
-            foreach(Entity entity in sequence.container1)
-            {
-                GameObject obj;
-                foreach(Transform transform in entity.GetComponentsInChildren<Transform>())
-                {
-                    if (transform.name == "ImageContainer")
-                    {
-                        obj = transform.GetChild(0).gameObject;
-                        GameObject box = UICollector.PullPrefab("Box", "Silhouette", obj);
-                        box.GetComponent<Image>().color = new Color(1f,1f,1f,alpha);
-                        obj.AddComponent<Mask>();
-                        silhouettes.Add(box);
-                        break;
-                    }
-                }
-            }
-        }
-
-        public static void SilhouetteFade(float from, float to, float dur, LeanTweenType type)
-        {
-            foreach(GameObject obj in silhouettes)
-            {
-                LeanTween.cancel(obj);
-                LeanTween.value(obj, from, to, dur).setEase(type).setOnUpdate(delegate (float a)
-                {
-                    obj.GetComponent<Image>().color = Color.white.WithAlpha(a);
-                });
-            }
-        }
-
-        public static void RemoveSilhouettes()
-        {
-            for(int i = silhouettes.Count - 1; i >= 0; i--)
-            {
-                silhouettes[i].transform.parent.GetComponent<Mask>().Destroy();
-                silhouettes[i].Destroy();
-            }
-            silhouettes.Clear();
         }
     }
 
