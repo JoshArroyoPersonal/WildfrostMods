@@ -1722,6 +1722,7 @@ namespace Pokefrost
             StatusEffectTransfer attacktransfer = Ext.CreateStatus<StatusEffectTransfer>("Transfer Attack to Random Ally")
                 .ApplyX(attacktransfereffects, StatusEffectApplyX.ApplyToFlags.RandomAlly)
                 .Register(this);
+            attacktransfer.targetConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintDoesDamage>() };
 
             StatusEffectApplyXOnCardPlayed attackhit = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Transfer Attack to Random Ally", "<keyword=transfer> '+{a}<keyword=attack>'")
                 .ApplyX(attacktransfer, StatusEffectApplyX.ApplyToFlags.Self)
@@ -1982,7 +1983,7 @@ namespace Pokefrost
                 .ApplyX(unlimitedLumin, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
-            this.CreateBasicKeyword("autotomize", "Autotomize", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate\nRecycle to refresh");
+            this.CreateBasicKeyword("autotomize", "Autotomize", "<Free Action>: Return the last <Recycled> card to hand|Click to activate\nRecycle to refresh");
             this.CreateButtonIcon("aggronAutotomize", ImagePath("aggronbutton.png").ToSprite(), "autotomize", "", Color.white, new KeywordData[] { Get<KeywordData>("autotomize") });
 
             StatusEffectInstantSummonLastRecycled lastRecycled = Ext.CreateStatus<StatusEffectInstantSummonLastRecycled>("Instant Summon Last Recycled To Hand")
@@ -3701,7 +3702,7 @@ namespace Pokefrost
                     .SetSprites("plusle.png", "plusleBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
-                    .SStartEffects(("While Active Increase Attack To Allies", 1), ("When Destroyed Boost Allies", 1))
+                    .SStartEffects(("While Active Increase Attack To Allies", 1), ("When Destroyed Boost Allies", 2))
                 );
 
             list.Add(
@@ -3711,7 +3712,7 @@ namespace Pokefrost
                     .SetSprites("minun.png", "minunBG.png")
                     .WithCardType("Enemy")
                     .WithValue(50)
-                    .SStartEffects(("While Active Reduce Attack To Enemies", 1), ("When Destroyed Boost Allies", 1))
+                    .SStartEffects(("While Active Reduce Attack To Enemies", 1), ("When Destroyed Boost Allies", 2))
                 );
 
             list.Add(
