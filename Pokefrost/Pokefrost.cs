@@ -1518,12 +1518,12 @@ namespace Pokefrost
                 .Register(this);
             darkraifrenzy.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCursesInHand>();
 
-            StatusEffectWhileActiveX darkraiTest = Ext.CreateStatus<StatusEffectWhileActiveX>("Frenzy Equal To Curses In Hand", "Has <keyword=frenzy> equal to <curses> in hand")
+            StatusEffectWhileExistingX darkraiTest = Ext.CreateStatus<StatusEffectWhileExistingX>("Frenzy Equal To Curses In Hand", "Has <keyword=frenzy> equal to <curses> in hand")
                 .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             darkraiTest.scriptableAmount = ScriptableObject.CreateInstance<ScriptableCursesInHand>();
 
-            StatusEffectWhileActiveX garbFrenzy = Ext.CreateStatus<StatusEffectWhileActiveX>("Frenzy Equal To Scrap", "Has <keyword=frenzy> equal to <keyword=scrap>")
+            StatusEffectWhileExistingX garbFrenzy = Ext.CreateStatus<StatusEffectWhileExistingX>("Frenzy Equal To Scrap", "Has <keyword=frenzy> equal to <keyword=scrap>")
                 .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
             ScriptableCurrentStatus scrapAmount = ScriptableObject.CreateInstance<ScriptableCurrentStatus>();
@@ -1663,6 +1663,8 @@ namespace Pokefrost
                 .Register(this);
             tempresist.trait = Get<TraitData>("Resist");
 
+            Ext.CreateBasicKeyword(this, "transfer", "Transfer", "Give this effect to a random ally");
+
             StatusEffectMultEffects resisttransfereffects1 = Ext.CreateStatus<StatusEffectMultEffects>("Effects for Transfering Resist to Random Ally")
                 .Register(this);
 
@@ -1670,7 +1672,7 @@ namespace Pokefrost
                 .ApplyX(resisttransfereffects1, StatusEffectApplyX.ApplyToFlags.RandomAlly)
                 .Register(this);
 
-            StatusEffectApplyXWhenHit resisthit1 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Random Ally", "When hit, <transfer> '<keyword=resist> {a}' to a random ally")
+            StatusEffectApplyXWhenHit resisthit1 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Random Ally", "When hit, <keyword=transfer> '<keyword=resist> {a}' to a random ally")
                 .ApplyX(resisttransfer1, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
@@ -1699,7 +1701,7 @@ namespace Pokefrost
                 .ApplyX(resisttransfereffects2, StatusEffectApplyX.ApplyToFlags.RandomAlly)
                 .Register(this);
 
-            StatusEffectApplyXWhenHit resisthit2 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Allies to Random Ally", "When hit, <transfer> 'While acitve, add <keyword=resist> {a} to all allies' to a random ally")
+            StatusEffectApplyXWhenHit resisthit2 = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer Resist to Allies to Random Ally", "When hit, <keyword=transfer> 'While acitve, add <keyword=resist> {a} to all allies'")
                 .ApplyX(resisttransfer2, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
@@ -1714,7 +1716,7 @@ namespace Pokefrost
                 .ApplyX(frenzytransfereffects, StatusEffectApplyX.ApplyToFlags.RandomAlly)
                 .Register(this);
 
-            StatusEffectApplyXWhenHit frenzyhit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer MultiHit to Random Ally", "When hit, <transfer> 'x{a}<keyword=frenzy>' to a random ally")
+            StatusEffectApplyXWhenHit frenzyhit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Transfer MultiHit to Random Ally", "When hit, <keyword=transfer> 'x{a}<keyword=frenzy>'")
                 .ApplyX(frenzytransfer, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
@@ -1729,7 +1731,7 @@ namespace Pokefrost
                 .ApplyX(attacktransfereffects, StatusEffectApplyX.ApplyToFlags.RandomAlly)
                 .Register(this);
 
-            StatusEffectApplyXOnCardPlayed attackhit = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Transfer Attack to Random Ally", "<Transfer> '+{a}<keyword=attack>' to a random ally")
+            StatusEffectApplyXOnCardPlayed attackhit = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Transfer Attack to Random Ally", "<keyword=transfer> '+{a}<keyword=attack>'")
                 .ApplyX(attacktransfer, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
@@ -2125,6 +2127,15 @@ namespace Pokefrost
                 .ApplyX(triggerAllAlliesInHand, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
 
+            StatusEffectWhileRedrawBellChargedX chargedFrenzy = Ext.CreateStatus<StatusEffectWhileRedrawBellChargedX>("While Redraw Bell Is Charged Gain Frenzy", "While the <Redraw Bell> is charged, gain <x{a}><keyword=frenzy>", boostable: true)
+                .ApplyX(Get<StatusEffectData>("MultiHit"), StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
+            StatusEffectApplyXWhenHit returnIgnite = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Apply Equal Burning To The Attacker", "When hit, apply equal <keyword=burning> to the attacker")
+                .ApplyX(burning, StatusEffectApplyX.ApplyToFlags.Attacker)
+                .Register(this);
+            returnIgnite.applyEqualAmount = true;
+            returnIgnite.targetMustBeAlive = false;
 
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", "<keyword=evolve>: Kill <{a}> bosses or minibosses", this);
@@ -2750,9 +2761,9 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("raikou", "Raikou")
-                    .SetStats(9, 2, 3)
+                    .SetStats(9, 3, 3)
                     .SetSprites("raikou.png", "raikouBG.png")
-                    .SAttackEffects(("Jolted", 2))
+                    .SAttackEffects(("Jolted", 3))
                     .SStartEffects(("When Anyone Takes Jolted Damage Apply Equal Jolted To A Random Enemy", 1))
                     .WithCardType("Leader")
                     .WithText("<keyword=legendary>")
@@ -2798,7 +2809,7 @@ namespace Pokefrost
                 new CardDataBuilder(this)
                     .CreateUnit("hooh", "Ho-Oh")
                     .WithCardType("Leader")
-                    .SetStats(8, 0, 3)
+                    .SetStats(8, 3, 3)
                     .SetSprites("hooh.png", "hoohBG.png")
                     .WithText("<keyword=legendary>")
                     .SStartEffects(("On Card Played Summon From Reserve", 1))
@@ -3012,7 +3023,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("latias", "Latias")
-                    .SetStats(5, 2, 3)
+                    .SetStats(6, 2, 3)
                     .SetSprites("latias.png", "latiasBG.png")
                     .SStartEffects(("When Hit Transfer Resist to Random Ally", 1), ("Temp Resist", 1))
                     .WithCardType("Leader")
@@ -3027,7 +3038,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("latios", "Latios")
-                    .SetStats(5, 2, 3)
+                    .SetStats(5, 3, 3)
                     .SetSprites("latios.png", "latiosBG.png")
                     .SStartEffects(("On Card Played Transfer Attack to Random Ally", 5), ("Ongoing Increase Attack", 5))
                     .WithCardType("Leader")
@@ -3266,7 +3277,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("cresselia", "Cresselia")
-                    .SetStats(8, 2, 4)
+                    .SetStats(2, 2, 4)
                     .SetSprites("cresselia.png", "cresseliaBG.png")
                     .SStartEffects(("When Card Destroyed, Gain Dream Card", 1))
                     .WithCardType("Leader")
@@ -3281,7 +3292,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("darkrai", "Darkrai")
-                    .SetStats(7, 3, 3)
+                    .SetStats(8, 4, 2)
                     .SetSprites("darkrai.png", "darkraiBG.png")
                     .SetStartWithEffect(SStack("On Card Played Give Random Card In Hand While In Hand Increase Attack To Enemies", 1), SStack("Frenzy Equal To Curses In Hand", 1))
                     .WithCardType("Leader")
@@ -3985,6 +3996,18 @@ namespace Pokefrost
 
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
+                    .Create("CardUpgradeBackBurn")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(2)
+                    .WithImage("enteiCharm.png")
+                    .SetEffects(SStack("When Hit Apply Equal Burning To The Attacker", 1))
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .WithTitle("Entei Charm")
+                    .WithText("When hit, apply equal <keyword=burning> to the attacker")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
                     .Create("CardUpgradeJuice")
                     .WithType(CardUpgradeData.Type.Charm)
                     .WithTier(2)
@@ -4033,6 +4056,17 @@ namespace Pokefrost
 
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
+                    .Create("CardUpgradeCharged")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(2)
+                    .WithImage("latiosCharm.png")
+                    .SetEffects(SStack("While Redraw Bell Is Charged Gain Frenzy", 1))
+                    .WithTitle("Latios Charm")
+                    .WithText("Gain <x1><keyword=frenzy> while the <Redraw Bell> is charged")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeTaunt")
                     .WithTier(1)
                     .WithImage("shieldonCharm.png")
@@ -4042,6 +4076,18 @@ namespace Pokefrost
                     .SetConstraints(Get<CardUpgradeData>("CardUpgradeHeart").targetConstraints)
                     .WithTitle("Shieldon Charm")
                     .WithText("Gain <keyword=taunt>\n<+3><keyword=health>")
+            );
+
+            charmlist.Add(
+                new CardUpgradeDataBuilder(this)
+                    .Create("CardUpgradeDuplicate")
+                    .WithType(CardUpgradeData.Type.Charm)
+                    .WithTier(2)
+                    .WithImage("cresseliaCharm.png")
+                    .SetScripts(ScriptableObject.CreateInstance<CardScriptCopy>())
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeFrenzyConsume").targetConstraints[0])
+                    .WithTitle("Cresselia Charm")
+                    .WithText("Duplicate an item card")
             );
 
             charmlist.Add(
