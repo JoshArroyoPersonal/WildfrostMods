@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -197,6 +198,47 @@ namespace Pokefrost
             counter.counterRange = new Vector2Int(min, max);
             return counter;
         }
+    }
+
+
+    public class CardScriptCopy : CardScript
+    {
+        public static float waitTime = 1f;
+        public override void Run(CardData target)
+        {
+            CardData copyData = target.Clone(runCreateScripts: false);
+            copyData.upgrades.RemoveAll((CardUpgradeData a) => a.type == CardUpgradeData.Type.Crown);
+            References.Player.data.inventory.deck.Add(copyData);
+
+            Card card = CardManager.Get(copyData, GameObject.FindObjectOfType<CardControllerDeck>(), References.Player, inPlay: false, isPlayerCard: true);
+
+            References.instance.StartCoroutine(Animation(card));
+
+        }
+
+
+        public IEnumerator Animation(Card card)
+        {
+
+            yield return new WaitForSeconds(waitTime);
+
+            yield return card.UpdateData();
+
+            Entity entity = card.entity;
+
+            CardContainerGrid[] cardGrids = GameObject.FindObjectsOfType<CardContainerGrid>();
+            foreach(CardContainerGrid cardGrid in cardGrids)
+            {
+                if (cardGrid.name == "ItemGrid")
+                {
+                    cardGrid.Add(entity);
+                }
+            }
+
+            GameObject.FindObjectOfType<DeckDisplaySequence>()?.UpdatePositions();
+        }
+
+
     }
 
 
