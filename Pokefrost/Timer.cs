@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Pokefrost
 {
@@ -16,6 +17,8 @@ namespace Pokefrost
 
         public float Time => time;
         private FloatingText Text => GetComponent<FloatingText>();
+
+        public event UnityAction OnFinished;
 
         internal static Timer Create(float time)
         {
@@ -71,6 +74,7 @@ namespace Pokefrost
                 Text.SetText(failFormat);
                 time = 0;
                 running = false;
+                OnFinished.Invoke();
                 return;
             }
             int intTime = (int)time;
@@ -88,7 +92,7 @@ namespace Pokefrost
         public bool running = false;
         public void Play()
         {
-            if (!running)
+            if (!running && time > 0)
             {
                 running = true;
                 StartCoroutine(Run());

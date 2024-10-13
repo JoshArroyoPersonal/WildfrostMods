@@ -30,17 +30,20 @@ namespace Pokefrost
             target.StartCoroutine(target.display.UpdateData(true));
             return false;
         }
+
+        public override bool RunTurnEndEvent(Entity entity)
+        {
+            return (entity == target);
+        }
+
         private IEnumerator TurnStart(Entity entity)
         {
-            if (entity == target)
-            {
-                ChangeCard();
-                yield return UpdateData();
-                target.PromptUpdate();
-                yield return target.display.UpdateData(true);
-                Card card = target.display as Card;
-                card.SetName(cardBase.title);
-            }
+            ChangeCard();
+            yield return UpdateData();
+            target.PromptUpdate();
+            yield return target.display.UpdateData(true);
+            Card card = target.display as Card;
+            card.SetName(cardBase.title);
             yield break;
         }
 
@@ -65,7 +68,8 @@ namespace Pokefrost
             foreach (CardData card in cards)
             {
                 Debug.Log($"[Test] {card.title}");
-                if (card.cardType.name == "Item" && card.traits != null && card.mainSprite?.name != "Nothing" && !card.traits.Exists((CardData.TraitStacks b) => (b.data.name == "Consume" || b.data.name == "Recycle") ))
+                //Must be an item, that is playable, that has a sprite, that does not have consume or recycle
+                if (card.cardType.name == "Item" && card.playType != Card.PlayType.None && card.mainSprite?.name != "Nothing" && (card.traits == null  || !card.traits.Exists((CardData.TraitStacks b) => (b.data.name == "Consume" || b.data.name == "Recycle")) ))
                 {
                     cardBase = card;
                     break;
@@ -96,15 +100,20 @@ namespace Pokefrost
             trueData.needsTarget = cardBase.needsTarget;
             trueData.playOnSlot = cardBase.playOnSlot;
             trueData.titleFallback = cardBase.titleFallback;
+            trueData.textKey = cardBase.textKey;
+            trueData.textInsert = cardBase.textInsert;
             Card card = target.display as Card;
             card.SetName(cardBase.title);
 
 
-            foreach (CardData.TraitStacks trait in cardBase.traits)
+            if (cardBase.traits != null)
             {
-                target.GainTrait(trait.data, trait.count, temporary: true);
+                foreach (CardData.TraitStacks trait in cardBase.traits)
+                {
+                    target.GainTrait(trait.data, trait.count, temporary: true);
+                }
+                yield return target.UpdateTraits();
             }
-            yield return target.UpdateTraits();
 
             foreach (CardData.StatusEffectStacks item in cardBase.startWithEffects)
             {

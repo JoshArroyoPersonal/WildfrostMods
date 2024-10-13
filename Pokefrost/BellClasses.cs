@@ -366,4 +366,87 @@ namespace Pokefrost
             }
         }
     }
+
+    public class InitialBellCounterReductionModifierSystem : ModifierSystem
+    {
+        Timer timer;
+        int preCounter;
+        bool active = false;
+        public void OnEnable()
+        {
+            Events.OnBattleStart += CreateTimer;
+            Events.OnBattlePreTurnStart += StartTimer;
+            Events.OnBattleEnd += HideTimer;
+        }
+
+        public void OnDisable()
+        {
+            Events.OnBattleStart -= CreateTimer;
+            Events.OnBattlePreTurnStart -= StartTimer;
+            Events.OnBattleEnd -= HideTimer;
+            if (timer)
+            {
+                timer.End();
+            }
+        }
+
+        private void HideTimer()
+        {
+            if (!timer) { return; }
+
+            timer.Hide();
+        }
+
+        private void StartTimer(int turn)
+        {
+            if (!timer) { return; }
+
+            if (turn == 0)
+            {
+                Activate();
+            }
+        }
+
+        private void CreateTimer()
+        {
+            if (!timer)
+            {
+                timer = Timer.Create(60);
+                timer.OnFinished += Deactivate;
+            }
+            else
+            {
+                timer.SetTime(60);
+                timer.Show();
+            }
+        }
+
+        public void Activate()
+        {
+            if (active) { return; }
+
+            RedrawBellSystem bellSystem = GameObject.FindObjectOfType<RedrawBellSystem>();
+            preCounter = bellSystem.counter.max;
+            bellSystem.counter.max = 1;
+            if (bellSystem.counter.current > 1)
+            {
+                bellSystem.counter.current = 1;
+                bellSystem.SetCounter(bellSystem.counter.current);
+            }
+            timer.Play();
+            active = true;
+        }
+
+        public void Deactivate()
+        {
+            if (!active) { return; }
+
+            RedrawBellSystem bellSystem = GameObject.FindObjectOfType<RedrawBellSystem>();
+            bellSystem.counter.max = preCounter;
+            Debug.Log("[Pokefrost] Set max.");
+            timer.Stop();
+            timer.Hide();
+            active = false;
+        }
+    }
 }

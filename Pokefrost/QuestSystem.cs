@@ -4,13 +4,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Localization.Tables;
-using static Mono.Security.X509.X509Stores;
 
 namespace Pokefrost
 {
@@ -307,7 +303,7 @@ namespace Pokefrost
             if (node.data.TryGetValue("waves", out object value))
             {
                 BattleWaveManager.WaveData[] waves = ((SaveCollection<BattleWaveManager.WaveData>)value).collection;
-                for (int j = 0; j < waves.Length; j++)
+                for (int j = 1; j < waves.Length; j++)
                 {
                     if (waves[j].Count < 6)
                     {

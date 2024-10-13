@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 using BattleEditor;
 using Debug = UnityEngine.Debug;
+using Data = BossRewardData.Data;
 using System.Collections;
 
 namespace Pokefrost
@@ -61,31 +62,21 @@ namespace Pokefrost
                 .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeDemonize", "CradUpgradeInk")
                 .FreeModify<BattleDataWithRewards>(b =>
                 {
-                    b.dataGroups = new List<BossRewardData.Data>[3];
-                        var darkrai = new BossRewardDataCard.Data
-                        {
-                            type = BossRewardData.Type.Crown,
-                            cardDataName = "darkrai"
-                        };
-                        var cresselia = new BossRewardDataCard.Data
-                        {
-                            type = BossRewardData.Type.Crown,
-                            cardDataName = "cresselia"
-                        };
-                    b.dataGroups[0] = new List<BossRewardData.Data> { darkrai, cresselia };
-                        var darkraiCharm = new BossRewardDataRandomCharm.Data
-                        {
-                            type = BossRewardData.Type.Charm,
-                            upgradeName = Pokefrost.instance.GUID + "." + "CardUpgradeCurse"
-                        };
-                    b.dataGroups[1] = new List<BossRewardData.Data> { darkraiCharm };
-                        var darkraiBell = new BossRewardDataModifier.Data
-                        {
-                            type = BossRewardData.Type.Modifier,
-                            modifierName = Pokefrost.instance.GUID + "." + "BlessingDarkrai"
-                        };
-                    b.dataGroups[2] = new List<BossRewardData.Data> { darkraiBell };
-
+                    b.dataGroups = new List<Data>[3];
+                    b.dataGroups[0] = new List<Data> 
+                    { 
+                        CreateCard("darkrai"), 
+                        CreateCard("cresselia")
+                    };
+                    b.dataGroups[1] = new List<Data>
+                    {
+                        CreateCharm("CardUpgradeCurse")
+                    };
+                    b.dataGroups[2] = new List<Data>
+                    {
+                        CreateBell("BlessingDarkrai"),
+                        CreateBell("BlessingCresselia")
+                    };
                 })
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
 
@@ -104,30 +95,21 @@ namespace Pokefrost
                 .GiveMiniBossesCharms(new string[1] { "enemy_latios" }, "CardUpgradeSpice", "CardUpgradeBattle")
                 .FreeModify<BattleDataWithRewards>(b =>
                 {
-                    b.dataGroups = new List<BossRewardData.Data>[3];
-                    var darkrai = new BossRewardDataCard.Data
+                    b.dataGroups = new List<Data>[3];
+                    b.dataGroups[0] = new List<Data>
                     {
-                        type = BossRewardData.Type.Crown,
-                        cardDataName = "darkrai"
+                        CreateCard("latias"),
+                        CreateCard("latios")
                     };
-                    var cresselia = new BossRewardDataCard.Data
+                    b.dataGroups[1] = new List<Data> //CHANGE
                     {
-                        type = BossRewardData.Type.Crown,
-                        cardDataName = "cresselia"
+                        CreateCharm("CardUpgradeCurse")
                     };
-                    b.dataGroups[0] = new List<BossRewardData.Data> { darkrai, cresselia };
-                    var darkraiCharm = new BossRewardDataRandomCharm.Data
+                    b.dataGroups[2] = new List<Data>
                     {
-                        type = BossRewardData.Type.Charm,
-                        upgradeName = Pokefrost.instance.GUID + "." + "CardUpgradeCurse"
+                        CreateBell("BlessingLatias"),
+                        CreateBell("BlessingLatios")
                     };
-                    b.dataGroups[1] = new List<BossRewardData.Data> { darkraiCharm };
-                    var darkraiBell = new BossRewardDataModifier.Data
-                    {
-                        type = BossRewardData.Type.Modifier,
-                        modifierName = Pokefrost.instance.GUID + "." + "BlessingDarkrai"
-                    };
-                    b.dataGroups[2] = new List<BossRewardData.Data> { darkraiBell };
 
                 })
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
@@ -150,30 +132,25 @@ namespace Pokefrost
                 .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
                 .FreeModify<BattleDataWithRewards>(b =>
                 {
-                    b.dataGroups = new List<BossRewardData.Data>[3];
-                    var darkrai = new BossRewardDataCard.Data
+                    b.dataGroups = new List<Data>[3];
+                    b.dataGroups[0] = new List<Data>
                     {
-                        type = BossRewardData.Type.Crown,
-                        cardDataName = "darkrai"
+                        CreateCard("raikou"),
+                        CreateCard("entei"),
+                        CreateCard("suicune"),
+                        CreateCard("hooh")
                     };
-                    var cresselia = new BossRewardDataCard.Data
+                    b.dataGroups[1] = new List<Data> //CHANGE
                     {
-                        type = BossRewardData.Type.Crown,
-                        cardDataName = "cresselia"
+                        CreateCharm("CardUpgradeCurse")
                     };
-                    b.dataGroups[0] = new List<BossRewardData.Data> { darkrai, cresselia };
-                    var darkraiCharm = new BossRewardDataRandomCharm.Data
+                    b.dataGroups[2] = new List<Data>
                     {
-                        type = BossRewardData.Type.Charm,
-                        upgradeName = Pokefrost.instance.GUID + "." + "CardUpgradeCurse"
+                        CreateBell("BlessingSpicune"),
+                        CreateBell("BlessingRaikou"),
+                        CreateBell("BlessingEntei"),
+                        CreateBell("BlessingHooh")
                     };
-                    b.dataGroups[1] = new List<BossRewardData.Data> { darkraiCharm };
-                    var darkraiBell = new BossRewardDataModifier.Data
-                    {
-                        type = BossRewardData.Type.Modifier,
-                        modifierName = Pokefrost.instance.GUID + "." + "BlessingDarkrai"
-                    };
-                    b.dataGroups[2] = new List<BossRewardData.Data> { darkraiBell };
 
                 })
                 .AddBattleToLoader(); //Loads and makes it the mandatory first fight
@@ -272,6 +249,33 @@ namespace Pokefrost
                 }
             }
             successfulRoll = false;
+        }
+
+        public static BossRewardDataCard.Data CreateCard(string cardName)
+        {
+            return new BossRewardDataCard.Data
+            {
+                type = BossRewardData.Type.Crown,
+                cardDataName = cardName
+            };
+        }
+
+        public static BossRewardDataRandomCharm.Data CreateCharm(string upgradeName)
+        {
+            return new BossRewardDataRandomCharm.Data
+            {
+                type = BossRewardData.Type.Charm,
+                upgradeName = Pokefrost.instance.GUID + "." + upgradeName
+            };
+        }
+
+        public static BossRewardDataModifier.Data CreateBell(string modifierName)
+        {
+            return new BossRewardDataModifier.Data
+            {
+                type = BossRewardData.Type.Modifier,
+                modifierName = Pokefrost.instance.GUID + "." + modifierName
+            };
         }
     }
 
