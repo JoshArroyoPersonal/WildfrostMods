@@ -71,7 +71,8 @@ namespace Pokefrost
                     };
                     b.dataGroups[1] = new List<Data>
                     {
-                        CreateCharm("CardUpgradeCurse")
+                        CreateCharm("CardUpgradeCurse"),
+                        CreateCharm("CardUpgradeDuplicate")
                     };
                     b.dataGroups[2] = new List<Data>
                     {
@@ -104,7 +105,8 @@ namespace Pokefrost
                     };
                     b.dataGroups[1] = new List<Data> //CHANGE
                     {
-                        CreateCharm("CardUpgradeCurse")
+                        CreateCharm("CardUpgradeResist"),
+                        CreateCharm("CardUpgradeCharged")
                     };
                     b.dataGroups[2] = new List<Data>
                     {
@@ -133,6 +135,8 @@ namespace Pokefrost
                 .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
                 .FreeModify<BattleDataWithRewards>(b =>
                 {
+                    b.bonusPulls = 1;
+                    b.bonusProfile = new List<int> { 0, 1, 1 }; //1 bonus charm/bell. Never another leader
                     b.dataGroups = new List<Data>[3];
                     b.dataGroups[0] = new List<Data>
                     {
@@ -143,7 +147,10 @@ namespace Pokefrost
                     };
                     b.dataGroups[1] = new List<Data> //CHANGE
                     {
-                        CreateCharm("CardUpgradeCurse")
+                        CreateCharm("CardUpgradeConduit"),
+                        CreateCharm("CardUpgradeBackBurn"),
+                        CreateCharm("CardUpgradeJuice"),
+                        CreateCharm("CardUpgradeSacredAsh")
                     };
                     b.dataGroups[2] = new List<Data>
                     {

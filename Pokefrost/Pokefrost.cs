@@ -4076,7 +4076,7 @@ namespace Pokefrost
                     .WithTier(2)
                     .WithImage("cresseliaCharm.png")
                     .SetScripts(ScriptableObject.CreateInstance<CardScriptCopy>())
-                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeFrenzyConsume").targetConstraints[0])
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeFrenzyConsume").targetConstraints[0], ScriptableObject.CreateInstance<TargetConstraintIsInDeck>())
                     .WithTitle("Cresselia Charm")
                     .WithText("Duplicate an item card")
             );

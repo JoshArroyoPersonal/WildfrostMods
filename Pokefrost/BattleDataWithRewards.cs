@@ -10,13 +10,18 @@ namespace Pokefrost
     {
         public List<BossRewardData.Data>[] dataGroups;
         public int canTake = 2;
+        public int bonusPulls = 0;
+        public List<int> minPulls;
+        public List<int> bonusProfile;
 
         public virtual void AddRewards(CampaignNode node)
         {
             List<BossRewardData.Data> rewards = new List<BossRewardData.Data>();
-            foreach (var group in dataGroups)
+
+            List<int> profile = DetermineProfile();
+            for (int i = 0; i < dataGroups.Length; i++)
             {
-                rewards.Add(group.RandomItem());
+                rewards.AddRange(dataGroups[i].InRandomOrder().Take(profile[i]));
             }
 
             node.data.Add("rewards", new CampaignNodeTypeBoss.RewardData
@@ -25,5 +30,45 @@ namespace Pokefrost
                 canTake = canTake
             });
         }
+
+        public virtual List<int> DetermineProfile()
+        {
+            List<int> profile;
+            if (minPulls == null)
+            {
+                profile = DefaultMinPulls();
+            }
+            else
+            {
+                profile = minPulls.Clone();
+            }
+            if (bonusPulls > 0 && bonusProfile != null)
+            {
+                int sum = 0;
+                foreach(int count in bonusProfile)
+                {
+                    sum += count;
+                }
+
+                int temp = bonusPulls;
+                while(temp > 0)
+                {
+                    int rand = Dead.Random.Range(1,sum);
+                    for(int i =0; i<bonusProfile.Count;i++)
+                    {
+                        rand -= bonusProfile[i];
+                        if (rand <= 0)
+                        {
+                            profile[i]++;
+                            temp--;
+                            break;
+                        }
+                    }
+                }
+            }
+            return profile;
+        }
+
+        public List<int> DefaultMinPulls() => dataGroups.Select(g => 1).ToList();
     }
 }
