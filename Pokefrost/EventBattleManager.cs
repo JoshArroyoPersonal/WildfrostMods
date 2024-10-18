@@ -60,7 +60,7 @@ namespace Pokefrost
                 .ConstructWaves(4, 1, "HMMG", "GMMH", "HSMG", "SSHG")
                 .StartWavePoolData(2, "Darkrai is here!")
                 .ConstructWaves(3, 9, "DMH", "DGH")
-                .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeDemonize", "CradUpgradeInk")
+                .GiveMiniBossesCharms(new string[1] { "enemy_darkrai" }, "CardUpgradeDemonize", "CardUpgradeInk")
                 .FreeModify<BattleDataWithRewards>(b =>
                 {
                     b.dataGroups = new List<Data>[3];
@@ -84,7 +84,7 @@ namespace Pokefrost
 
             new BattleDataEditor(mod)
                 .Create<BattleDataWithRewards>("Lati Twins")
-                .SetSprite(mod.ImagePath("smeargleCharm.png").ToSprite())
+                .SetSprite("MapLati.png", 200)
                 .SetNameRef("Southern Island")
                 .EnemyDictionary(('P', "enemy_plusle"), ('M', "enemy_minun"), ('V', "enemy_volbeat"), ('I', "enemy_illumise"), ('D', "enemy_dustox"), ('B', "enemy_beautifly"), ('G', "enemy_gorebyss"), ('H', "enemy_huntail"), ('S', "enemy_solrock"), ('L', "enemy_lunatone"), ('A', "enemy_latias"), ('O', "enemy_latios"))
                 .StartWavePoolData(0, "Charging up")
@@ -119,7 +119,7 @@ namespace Pokefrost
 
             BattleDataEditor hooh = new BattleDataEditor(mod)
                 .Create<BattleDataWithRewards>("Ho-Oh")
-                .SetSprite(mod.ImagePath("darkraiCharm.png").ToSprite())
+                .SetSprite("MapHooh.png", 200)
                 .SetNameRef("Mt. Faraway")
                 .EnemyDictionary(('H', "enemy_hooh"), ('E', "enemy_entei"), ('R', "enemy_raikou"), ('S', "enemy_suicune"), ('V', "enemy_vaporeon"), ('J', "enemy_jolteon"), ('F', "enemy_flareon"), ('P', "enemy_espeon"), ('U', "enemy_umbreon"), ('L', "enemy_leafeon"), ('G', "enemy_glaceon"), ('Y', "enemy_sylveon"))
                 .StartWavePoolData(0, "Mystery")

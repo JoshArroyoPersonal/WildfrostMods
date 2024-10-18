@@ -22,31 +22,34 @@ namespace Pokefrost
         }
     };
 
-        public static List<EyeData> Eyes()
+        public static void Eyes()
         {
-            List<EyeData> list = new List<EyeData>();
-
-            foreach (KeyValuePair<string, (float, float, float, float, float)[]> item in eyeDictionary)
+            //WARNING: The EyeData will NOT be removed upon unload. Call Eyes() underneath CreateModAssets() in the Load method. 
+            List<EyeData> list = new List<EyeData>()
             {
-                string key = item.Key;
-                EyeData eyeData = ScriptableObject.CreateInstance<EyeData>();
-                eyeData.cardData = key;
-                eyeData.name = eyeData.cardData + "EyeData";
-                List<(float, float, float, float, float)> list2 = item.Value.ToList();
-                foreach (var item2 in list2)
-                {
-                    eyeData.eyes = eyeData.eyes.AddItem(new EyeData.Eye
-                    {
-                        scale = new Vector2(item2.Item3, item2.Item4),
-                        position = new Vector2(item2.Item1, item2.Item2),
-                        rotation = item2.Item5
-                    }).ToArray();
-                }
+                //Put the output code here!
+                Eyes("websiteofsites.wildfrost.pokefrost.abomasnow", (0.36f,1.90f,1.20f,1.20f,0f), (-0.08f,1.90f,1.20f,1.20f,0f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.absol", (-0.32f,1.47f,0.80f,0.80f,0f), (-0.67f,1.46f,0.80f,0.80f,0f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.alolanmarowak", (0.50f,0.75f,0.70f,1.30f,45f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.alolansandslash", (1.09f,0.79f,0.50f,1.30f,340f), (0.62f,0.77f,0.80f,1.50f,40f)),
+            };
 
-                list.Add(eyeData);
-            }
+            AddressableLoader.AddRangeToGroup("EyeData", list);
+        }
 
-            return list;
+        public static EyeData Eyes(string cardName, params (float,float,float,float,float)[] data)
+        {
+            EyeData eyeData = ScriptableObject.CreateInstance<EyeData>();
+            eyeData.cardData = cardName;
+            eyeData.name = eyeData.cardData + "_EyeData";
+            eyeData.eyes = data.Select((e) => new EyeData.Eye
+            {
+                position = new Vector2(e.Item1, e.Item2),
+                scale = new Vector2(e.Item3, e.Item4),
+                rotation = e.Item5
+            }).ToArray();
+
+            return eyeData;
         }
     }
 }

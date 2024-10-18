@@ -4291,7 +4291,7 @@ namespace Pokefrost
             keycollection.SetString(EventRoutineTrade.TradeConfirm, "Confirm");
             keycollection.SetString(EventRoutineTrade.TradeCancel, "Cancel");
 
-            Ext.CreateCampaignNodeType<CampaignNodeTypeSpecialBattle>(this, "specialBattle", "e")
+            Ext.CreateCampaignNodeType<CampaignNodeTypeSpecialBattle>(this, "specialBattle", "e", canSkip: false)
                 .BetterBattle(this)
                 .Register(this);
         }
@@ -4487,7 +4487,7 @@ namespace Pokefrost
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
 
-            //AddressableLoader.AddRangeToGroup("EyeData", EyeDataAdder.Eyes());
+            EyeDataAdder.Eyes();
 
             Get<CardData>("websiteofsites.wildfrost.pokefrost.klefki").charmSlots = 100;
             ((StatusEffectSummon)Get<StatusEffectData>("Summon Shedinja")).summonCard = Get<CardData>("websiteofsites.wildfrost.pokefrost.shedinja");
