@@ -96,7 +96,7 @@ namespace Pokefrost
                 ["battle"] = battle.name,
                 ["waves"] = battle.generationScript.Run(battle, 100)
             };
-            isBattle = true;
+            //isBattle = true;
 
             if (battle is BattleDataWithRewards b)
             {

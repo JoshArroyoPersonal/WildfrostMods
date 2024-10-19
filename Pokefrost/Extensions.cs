@@ -267,6 +267,7 @@ namespace Pokefrost
                 .WithCanLink(true)
                 .WithInteractable(true)
                 .WithCanSkip(canSkip)
+                .WithMustClear(!canSkip)
                 .WithLetter(letter)
                 .WithZoneName(name);
         }
