@@ -1,5 +1,6 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
 using HarmonyLib;
+using Random_Junk;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -93,6 +94,18 @@ namespace Tutorial2
                     {
                         SStack("When Deployed Add Eggie To Hand",1)
                     };
+                })
+                );
+
+            assets.Add(
+                new StatusEffectDataBuilder(this).Create<StatusEffectInstantCombineCard>("Instant Combine Card Test")
+                .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+                {
+                    ((StatusEffectInstantCombineCard)data).cardNames = new string[] { "GuardianGnome", "SunburstDart"};
+                    ((StatusEffectInstantCombineCard)data).resultingCardName = "SplitBoss2";
+                    ((StatusEffectInstantCombineCard)data).spawnOnBoard = true;
+                    ((StatusEffectInstantCombineCard)data).changeDeck = true;
+                    ((StatusEffectInstantCombineCard)data).extraUpgrades = new List<CardUpgradeData> { TryGet<CardUpgradeData>("CardUpgradePlink"), TryGet<CardUpgradeData>("CardUpgradeBattle"), TryGet<CardUpgradeData>("CardUpgradeBootleg")};
                 })
                 );
 

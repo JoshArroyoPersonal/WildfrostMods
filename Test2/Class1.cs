@@ -201,7 +201,7 @@ namespace Tutorial6_StatusIcons
                 , new Color(1f, 1f, 1f), new Color(0.627f, 0.125f, 0.941f), new Color(0f, 0f, 0f));
 
             //make sure you icon is in both the images folder and the sprites subfolder
-            //Make sure the icon variable in CreateIconKeyword the name variable in CreateIcon and your png name are all the same, in this case they are vampicon
+            //Make sure the icon variable in CreateIconKeyword, the name variable in CreateIcon and your png name are all the same, in this case they are vampicon
             this.CreateIcon("vampicon", ImagePath("vampicon.png").ToSprite(), "vamp", "frost", Color.white, new KeywordData[] { Get<KeywordData>("vamp") })
                 .GetComponentInChildren<TextMeshProUGUI>(true).enabled = true;
 
