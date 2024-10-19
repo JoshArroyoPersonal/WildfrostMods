@@ -2525,7 +2525,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("weezing", "Weezing", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Husk")
-                    .SetStats(8, 2, 3)
+                    .SetStats(9, 4, 3)
                     .SetSprites("weezing.png", "weezingBG.png")
                     .SStartEffects(("Apply Ink to All", 4))
                     .AddPool("ClunkUnitPool")
