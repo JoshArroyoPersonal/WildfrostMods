@@ -123,7 +123,21 @@ namespace Random_Junk
                     EditDeck(combo.cardNames, combo.resultingCardName);
                 }
 
-                ActionQueue.Stack(action);
+                bool queueAction = true;
+                foreach (PlayAction playAction in ActionQueue.instance.queue)
+                {
+                    if (playAction.GetType() == action.GetType())
+                    {
+                        queueAction = false;
+                        break;
+                    }
+                }
+
+                if (queueAction)
+                {
+                    ActionQueue.Stack(action);
+                }
+           
             }
 
             yield return base.Process();

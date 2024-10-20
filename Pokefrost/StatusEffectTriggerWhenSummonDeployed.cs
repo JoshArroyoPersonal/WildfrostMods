@@ -54,7 +54,7 @@ namespace Pokefrost
             {
                 yield return Sequences.Wait(0.1f);
                 target.curveAnimator?.Ping();
-                yield return Sequences.Wait(0.5f);
+                yield return Sequences.Wait(0.2f);
                 ActionQueue.Stack(new ActionTrigger(target, null), fixedPosition: true);
             }
         }

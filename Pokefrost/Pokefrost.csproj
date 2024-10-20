@@ -565,6 +565,7 @@
     <Compile Include="EventBattleManager.cs" />
     <Compile Include="EventSaveSystem.cs" />
     <Compile Include="QuestSystem.cs" />
+    <Compile Include="ScriptableCardImages.cs" />
     <Compile Include="StatusEffectAdAttackEffects.cs" />
     <Compile Include="DumbFixes.cs" />
     <Compile Include="EventRoutineTrade.cs" />
