@@ -42,11 +42,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-Publicized">
-      <HintPath>..\..\..\..\Desktop\Managed\Assembly-CSharp-Publicized.dll</HintPath>
+      <HintPath>..\..\..\..\Documents\Assembly-CSharp-Publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BattleEditor">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\StreamingAssets\Mods\BattleEditor\BattleEditor.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3158900413\BattleEditor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DeadExtensions">
@@ -565,6 +565,7 @@
     <Compile Include="EventBattleManager.cs" />
     <Compile Include="EventSaveSystem.cs" />
     <Compile Include="QuestSystem.cs" />
+    <Compile Include="ScriptableCardImages.cs" />
     <Compile Include="StatusEffectAdAttackEffects.cs" />
     <Compile Include="DumbFixes.cs" />
     <Compile Include="EventRoutineTrade.cs" />

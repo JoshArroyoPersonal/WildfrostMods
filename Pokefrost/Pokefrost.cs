@@ -530,6 +530,7 @@ namespace Pokefrost
 
             StatusEffectSummon scrap1 = Get<StatusEffectData>("Summon Junk").InstantiateKeepName() as StatusEffectSummon;
             scrap1.summonCard = Get<CardData>("ScrapPile");
+            scrap1.gainTrait = Get<StatusEffectData>("Temporary Zoomlin");
             scrap1.name = "Summon Scrap Pile";
             collection.SetString(scrap1.name + "_text", "Summon Scrap Pile");
             scrap1.textKey = collection.GetString(scrap1.name + "_text");
@@ -548,7 +549,7 @@ namespace Pokefrost
             scrap3.effectToApply = Get<StatusEffectData>("Instant Summon Scrap Pile In Hand") as StatusEffectInstantSummon;
             scrap3.canBeBoosted = false;
             scrap3.name = "When Hit Add Scrap Pile To Hand";
-            collection.SetString(scrap3.name + "_text", "Add <card=ScrapPile> to hand when hit");
+            collection.SetString(scrap3.name + "_text", "When hit, add <card=ScrapPile> with <keyword=zoomlin> to hand");
             scrap3.textKey = collection.GetString(scrap3.name + "_text");
             scrap3.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", scrap3);
@@ -2163,7 +2164,7 @@ namespace Pokefrost
             ev5.Confirm();
 
             StatusEffectEvolveFromStatusApplied ev6 = ScriptableObject.CreateInstance<StatusEffectEvolveFromStatusApplied>();
-            ev6.Autofill("Evolve Croagunk", $"<keyword=evolve>: Team applies {a} <keyword=shroom>", this);
+            ev6.Autofill("Evolve Croagunk", $"<keyword=evolve>: Team applies {a}<keyword=shroom>", this);
             ev6.SetEvolution("websiteofsites.wildfrost.pokefrost.toxicroak");
             ev6.targetType = "shroom";
             ev6.faction = "ally";
@@ -2177,7 +2178,7 @@ namespace Pokefrost
             ev7.Confirm();
 
             StatusEffectEvolveFromHitApplied ev8 = ScriptableObject.CreateInstance<StatusEffectEvolveFromHitApplied>();
-            ev8.Autofill("Evolve Carvanha", $"<keyword=evolve>: Team deals {a} <keyword=teeth> damage", this);
+            ev8.Autofill("Evolve Carvanha", $"<keyword=evolve>: Team deals {a}<keyword=teeth> damage", this);
             ev8.SetEvolution("websiteofsites.wildfrost.pokefrost.sharpedo");
             ev8.targetType = "spikes";
             ev8.faction = "ally";
@@ -2527,7 +2528,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("weezing", "Weezing", idleAnim: "FloatAnimationProfile", bloodProfile: "Blood Profile Husk")
-                    .SetStats(8, 2, 3)
+                    .SetStats(9, 4, 3)
                     .SetSprites("weezing.png", "weezingBG.png")
                     .SStartEffects(("Apply Ink to All", 4))
                     .AddPool("ClunkUnitPool")
@@ -2593,7 +2594,7 @@ namespace Pokefrost
                     .CreateUnit("flareon", "Flareon")
                     .SetStats(4, 2, 3)
                     .SetSprites("flareon.png", "flareonBG.png")
-                    .SStartEffects(("While Active Allied Hits Have Burning", 1))
+                    .SStartEffects(("While Active Increase Attack To Allies", 2))
                     .SAttackEffects(("Burning", 2))
                 );
 
@@ -2939,7 +2940,7 @@ namespace Pokefrost
                     .CreateUnit("carvanha", "Carvanha", idleAnim: "FloatAnimationProfile")
                     .SetStats(6, 3, 4)
                     .SetSprites("carvanha.png", "carvanhaBG.png")
-                    .SStartEffects(("Teeth", 3), ("Evolve Carvanha", 50))
+                    .SStartEffects(("Teeth", 3), ("Evolve Carvanha", 30))
                     .AddPool("MagicUnitPool")
                 );
 
@@ -3140,7 +3141,7 @@ namespace Pokefrost
                     .SetStats(6, 2, 4)
                     .SetSprites("toxicroak.png", "toxicroakBG.png")
                     .SStartEffects(("On Hit Equal Shroom To Target", 1))
-                    .STraits(("Fury", 4))
+                    .STraits(("Fury", 2))
                 );
 
             list.Add(
@@ -3350,7 +3351,7 @@ namespace Pokefrost
                     .SetStats(3, 0, 2)
                     .SetSprites("litwick.png", "litwickBG.png")
                     .SAttackEffects(("Overload", 1))
-                    .SStartEffects(("Evolve Litwick", 1))
+                    .SStartEffects(("Evolve Litwick", 2))
                     .AddPool("MagicUnitPool")
                 );
 
@@ -3453,6 +3454,18 @@ namespace Pokefrost
                     .SetSprites("palafin.png", "palafinBG.png")
                     .SStartEffects(("Gain Hero On Recall", 1), ("MultiHit", 1))
                     .AddPool()
+                    .SubscribeToAfterAllBuildEvent(
+                    (data) =>
+                    {
+                        GameObject obj = Get<CardData>("Bolgo").scriptableImagePrefab.gameObject.InstantiateKeepName();
+                        Image image = obj.GetComponent<Bolgo>().image;
+                        obj.GetComponent<Bolgo>().Destroy();
+                        GameObject.DontDestroyOnLoad(obj);
+                        PalafinHero heroForm = obj.AddComponent<PalafinHero>();
+                        heroForm.image = image;
+                        data.scriptableImagePrefab = heroForm;
+                    }
+                    )
                 );
 
             list.Add(
@@ -3963,7 +3976,7 @@ namespace Pokefrost
             charmlist.Add(
                 new CardUpgradeDataBuilder(this)
                     .CreateCharm("CardUpgradeSketch")
-                    .WithTier(3)
+                    .WithTier(0)
                     .WithImage("smeargleCharm.png")
                     .SetEffects(SStack("When Deployed Sketch", 1))
                     .SetTraits(TStack("Pigheaded", 1))
@@ -4399,7 +4412,7 @@ namespace Pokefrost
             }
             foreach (CardData card in References.PlayerData.inventory.deck)
             {
-                if (card.name.Contains("websiteofsites.wildfrost.pokefrost") && card.cardType.name == "Friendly" && UnityEngine.Random.Range(0, 1f) < shinyrate)
+                if (card.name.Contains("websiteofsites.wildfrost.pokefrost") && UnityEngine.Random.Range(0, 1f) < shinyrate)
                 {
                     Shinify(card);
                 }
@@ -4408,13 +4421,13 @@ namespace Pokefrost
 
         private void GetShiny(Entity entity)
         {
-            if (entity.data.name.Contains("websiteofsites.wildfrost.pokefrost") && entity.data.cardType.name == "Friendly" && UnityEngine.Random.Range(0, 1f) < shinyrate)
+            if (entity.data.name.Contains("websiteofsites.wildfrost.pokefrost") && UnityEngine.Random.Range(0, 1f) < shinyrate)
             {
-                Shinify(entity.data);
+                entity.GetCard().mainImage.sprite = Shinify(entity.data);
             }
         }
 
-        internal void Shinify(CardData card)
+        internal Sprite Shinify(CardData card)
         {
             string[] splitName = card.name.Split('.');
             string trueName = splitName[3];
@@ -4423,6 +4436,7 @@ namespace Pokefrost
             card.mainSprite = sprite;
             CardData.StatusEffectStacks[] shinystatus = { new CardData.StatusEffectStacks(Get<StatusEffectData>("Shiny"), 1) };
             card.startWithEffects = card.startWithEffects.Concat(shinystatus).ToArray();
+            return sprite;
         }
 
         private void DebugShiny()
