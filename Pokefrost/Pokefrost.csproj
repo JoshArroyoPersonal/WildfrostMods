@@ -42,11 +42,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-Publicized">
-      <HintPath>..\..\..\..\Documents\Assembly-CSharp-Publicized.dll</HintPath>
+      <HintPath>..\..\..\..\Desktop\Managed\Assembly-CSharp-Publicized.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="BattleEditor">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\workshop\content\1811990\3158900413\BattleEditor.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\StreamingAssets\Mods\BattleEditor\BattleEditor.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="DeadExtensions">
