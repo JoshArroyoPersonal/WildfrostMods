@@ -76,7 +76,9 @@ namespace Pokefrost
             SFX = new SFXLoader(this.ImagePath("Sounds"));
             SFX.RegisterAllSoundsToGlobal();
 
-            statusList = new List<StatusEffectData>(30);
+            Ext.CreateColoredInkAnim(this, new Color(0.23f, 0.96f, 0.80f), "juice");
+
+            statusList = new List<StatusEffectData>(150);
             /*
             FloatingText floating = GameObject.FindObjectOfType<FloatingText>(true);
             Debug.Log("Got Icon sheet"+floating.name.ToString());
@@ -4254,7 +4256,7 @@ namespace Pokefrost
                 );
 
             bells.Add(
-                this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the port before the ship departs")
+                this.CreateBell("latiEvent", "Eon Ticket", "<Quest>: Reach the <Frostlands> before the ship departs")
                 .ChangeSprites("eonTicket.png","noDinger.png")
                 .WithStartScripts(ScriptableObject.CreateInstance<ScriptReturnNode>())
                 .WithSystemsToAdd("TicketTimerModifierSystem")

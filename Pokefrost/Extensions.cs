@@ -1,4 +1,5 @@
 ﻿using Deadpan.Enums.Engine.Components.Modding;
+using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,55 @@ namespace Pokefrost
 
         public static Sprite panel;
         public static Sprite panelSmall;
+
+        public static void CreateColoredInkAnim(WildfrostMod mod, Color color, string type)
+        {
+            VfxStatusSystem vfx = GameObject.FindObjectOfType<VfxStatusSystem>();
+            GameObject obj = GameObject.Instantiate(vfx.profileLookup["ink"].applyEffectPrefab, Pokefrost.pokefrostUI.transform);
+
+            ParticleSystem system;
+
+            //Dust - base color is white, no need to change sprites
+            system = obj.transform.GetChild(0).GetComponent<ParticleSystem>();
+            ParticleSystem.ColorOverLifetimeModule life = system.colorOverLifetime;
+            life.color = color;
+            ParticleSystem.MainModule module = system.main; //Cannot combine with the bottom line :/
+            module.startColor = color;
+
+            //Splatter (x3)
+            Sprite spr = mod.ImagePath("Splatter.png").ToSprite();
+            system = obj.transform.GetChild(4).GetComponent<ParticleSystem>();
+            system.textureSheetAnimation.AddSprite(spr);
+            system.textureSheetAnimation.RemoveSprite(0);
+            module = system.main;
+            module.startColor = color;
+            system = obj.transform.GetChild(5).GetComponent<ParticleSystem>();
+            system.textureSheetAnimation.AddSprite(spr);
+            system.textureSheetAnimation.RemoveSprite(0);
+            module = system.main;
+            module.startColor = color;
+            system = obj.transform.GetChild(6).GetComponent<ParticleSystem>();
+            system.textureSheetAnimation.AddSprite(spr);
+            system.textureSheetAnimation.RemoveSprite(0);
+            module = system.main;
+            module.startColor = color;
+
+            //Splat
+            spr = mod.ImagePath("Splat.png").ToSprite();
+            system = obj.transform.GetChild(9).GetComponent<ParticleSystem>();
+            system.textureSheetAnimation.AddSprite(spr);
+            system.textureSheetAnimation.RemoveSprite(0);
+            module = system.main;
+            module.startColor = color;
+
+            VfxStatusSystem.Profile profile = new VfxStatusSystem.Profile
+            {
+                type = type,
+                applyEffectPrefab = obj
+            };
+            vfx.profiles = vfx.profiles.AddItem(profile).ToArray();
+            vfx.profileLookup["juice"] = profile;
+        }
 
         public static void PopupText(Transform transform, string s, bool localized = true)
         {

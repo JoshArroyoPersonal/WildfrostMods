@@ -303,7 +303,7 @@ namespace Pokefrost
             if (node.data.TryGetValue("waves", out object value))
             {
                 BattleWaveManager.WaveData[] waves = ((SaveCollection<BattleWaveManager.WaveData>)value).collection;
-                for (int j = 1; j < waves.Length; j++)
+                for (int j = 0; j < waves.Length; j++)
                 {
                     if (waves[j].Count < 6)
                     {
