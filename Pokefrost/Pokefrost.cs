@@ -2625,7 +2625,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("natu", "Natu")
-                    .SetStats(4, 1, 4)
+                    .SetStats(8, 3, 4)
                     .SetSprites("natu.png", "natuBG.png")
                     .SStartEffects(("When Deployed Summon Placeholder To Hand", 1), ("Evolve Natu", 1))
                     .FreeModify(
