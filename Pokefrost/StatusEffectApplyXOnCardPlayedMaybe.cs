@@ -45,6 +45,11 @@ namespace Pokefrost
 
             int chance = GetAmount(entity);
 
+            if (chance == 0)
+            {
+                return false;
+            }
+
             int roll = Dead.Random.Range(1,100);
 
             if (chance >= roll)
