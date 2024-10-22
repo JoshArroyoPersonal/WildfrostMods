@@ -31,7 +31,7 @@ namespace Pokefrost
             if (entity == target && target.hp.current <= 0 && !target.silenced)
             {
                 target.PromptUpdate();
-                target.StartCoroutine(Animate());
+                ActionQueue.Stack(new ActionSequence(Animate()));
                 target.damage.current = Mathf.CeilToInt((float)target.damage.max * damageFactor);
                 target.hp.current = Mathf.CeilToInt((float)target.hp.max * healthFactor);
                 CountDown();
