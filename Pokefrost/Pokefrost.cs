@@ -43,8 +43,22 @@ namespace Pokefrost
         public static GIFLoader VFX;
         public static SFXLoader SFX;
 
-        private CardData.StatusEffectStacks SStack(string name, int count) => new CardData.StatusEffectStacks(Get<StatusEffectData>(name), count);
-        private CardData.TraitStacks TStack(string name, int count) => new CardData.TraitStacks(Get<TraitData>(name), count);
+        internal T TryGet<T>(string name) where T : DataFile
+        {
+            T data;
+            if (typeof(StatusEffectData).IsAssignableFrom(typeof(T)))
+                data = base.Get<StatusEffectData>(name) as T;
+            else
+                data = base.Get<T>(name);
+
+            if (data == null)
+                throw new Exception($"TryGet Error: Could not find a [{typeof(T).Name}] with the name [{name}] or [{Extensions.PrefixGUID(name, this)}]");
+
+            return data;
+        }
+
+        internal CardData.StatusEffectStacks SStack(string name, int count) => new CardData.StatusEffectStacks(Get<StatusEffectData>(name), count);
+        internal CardData.TraitStacks TStack(string name, int count) => new CardData.TraitStacks(Get<TraitData>(name), count);
 
         internal static GameObject pokefrostUI;
 
@@ -79,21 +93,7 @@ namespace Pokefrost
             Ext.CreateColoredInkAnim(this, new Color(0.23f, 0.96f, 0.80f), "juice");
 
             statusList = new List<StatusEffectData>(150);
-            /*
-            FloatingText floating = GameObject.FindObjectOfType<FloatingText>(true);
-            Debug.Log("Got Icon sheet"+floating.name.ToString());
-            TMP_SpriteAsset iconsheet = floating.GetComponentInChildren<TextMeshProUGUI>().spriteAsset;
-            for(int i = 0; i < 144; i++)
-            {
-                TMP_Sprite testaroo = new TMP_Sprite { sprite = iconsheet.spriteGlyphTable[i].sprite };
-                iconsheet.spriteInfoList.Add(testaroo);
-            }
-            TMP_Sprite testaroo2 = new TMP_Sprite { sprite = this.ImagePath("overshroomicon.png").ToSprite() };
-            iconsheet.spriteInfoList.Add(testaroo2);
-            Debug.Log("Got Glyph");
-            Debug.Log("[Josh] Changed icon_sheet");*/
 
-            //Debug.Log(this.ImagePath(""));
             pokefrostSprites = HopeUtils.CreateSpriteAsset("pokefrostSprites", directoryWithPNGs: this.ImagePath("Sprites"), textures: new Texture2D[] {  }, sprites: new Sprite[] {  });
             foreach(var character in pokefrostSprites.spriteCharacterTable)
             {
@@ -115,17 +115,6 @@ namespace Pokefrost
             KeywordData tauntedkey = this.CreateBasicKeyword("taunted", "Taunted", "Target only enemies with <keyword=taunt>|Hits them all!");
 
             this.CreateBasicKeyword("randomeffect", "Random Effect", "Does a random effect from the listed options");
-            /*KeywordData randomkey = Get<KeywordData>("hit").InstantiateKeepName();
-            randomkey.name = "Random Effect";
-            keycollection.SetString(randomkey.name + "_text", "Random Effect");
-            randomkey.titleKey = keycollection.GetString(randomkey.name + "_text");
-            keycollection.SetString(randomkey.name + "_desc", "Does a random effect from the listed options");
-            randomkey.descKey = keycollection.GetString(randomkey.name + "_desc");
-            randomkey.panelColor = new Color(0.75f, 0.42f, 0.94f);
-            randomkey.bodyColour = new Color(0.1f, 0.1f, 0.1f);
-            randomkey.titleColour = new Color(0, 0, 0);
-            randomkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", randomkey);*/
 
             this.CreateBasicKeyword("debuffed", "Debuffed", "Has a negative status");
 
@@ -708,14 +697,6 @@ namespace Pokefrost
             TraitData bombard2trait = Get<TraitData>("Bombard 2");
 
             KeywordData pluckkey = this.CreateBasicKeyword("pluck", "Pluck", "Hits lowest health target in row|Prioritizes front target in case of tie");
-            /*KeywordData pluckkey = Get<KeywordData>("hellbent").InstantiateKeepName();
-            pluckkey.name = "Pluck";
-            keycollection.SetString(pluckkey.name + "_text", "Pluck");
-            pluckkey.titleKey = keycollection.GetString(pluckkey.name + "_text");
-            keycollection.SetString(pluckkey.name + "_desc", "Hits lowest health target in row|Prioritizes front target in case of tie");
-            pluckkey.descKey = keycollection.GetString(pluckkey.name + "_desc");
-            pluckkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", pluckkey);*/
 
             TargetModeLowHealth lowhealthtarget = ScriptableObject.CreateInstance<TargetModeLowHealth>();
             StatusEffectChangeTargetMode pluckmode = Get<StatusEffectData>("Hit Random Target").InstantiateKeepName() as StatusEffectChangeTargetMode;
@@ -1044,16 +1025,6 @@ namespace Pokefrost
             statusList.Add(frenzyDeath);
 
             this.CreateBasicKeyword("wonderguard", "Wonder Guard", "Immune to direct damage");
-            /*KeywordData wonderGuardKey = ScriptableObject.CreateInstance<KeywordData>();
-            wonderGuardKey.name = "WonderGuard";
-            keycollection.SetString(wonderGuardKey.name + "_text", "Wonder Guard");
-            wonderGuardKey.titleKey = keycollection.GetString(wonderGuardKey.name + "_text");
-            keycollection.SetString(wonderGuardKey.name + "_desc", "Immune to direct damage");
-            wonderGuardKey.descKey = keycollection.GetString(wonderGuardKey.name + "_desc");
-            wonderGuardKey.showIcon = false;
-            wonderGuardKey.showName = true;
-            wonderGuardKey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", wonderGuardKey);*/
 
             StatusEffectImmuneToDamage wonderGuard = ScriptableObject.CreateInstance<StatusEffectImmuneToDamage>();
             wonderGuard.name = "Wonder Guard";
@@ -1076,20 +1047,6 @@ namespace Pokefrost
             this.CreateBasicKeyword("sketch", "Sketch", "When deployed, permanently copy the effects of a random enemy in the row|Counts down")
                 .ChangeColor(body: Color.black, note: Color.black)
                 .ChangePanel(this.ImagePath("sketchpaint.png").ToSprite(), new Color(0.9f, 0.9f, 0.8f));
-            /*KeywordData sketchkey = Get<KeywordData>("hit").InstantiateKeepName();
-            sketchkey.name = "Sketch";
-            keycollection.SetString(sketchkey.name + "_text", "Sketch");
-            sketchkey.titleKey = keycollection.GetString(sketchkey.name + "_text");
-            keycollection.SetString(sketchkey.name + "_desc", "When deployed, permanently copy the effects of a random enemy in the row|Counts down");
-            sketchkey.descKey = keycollection.GetString(sketchkey.name + "_desc");
-            sketchkey.panelSprite = this.ImagePath("sketchpaint.png").ToSprite();
-            //sketchkey.panelColor = new Color(1f, 1f, 1f);
-            sketchkey.bodyColour = new Color(0f, 0f, 0f);
-            sketchkey.noteColour = new Color(0f, 0f, 0f);
-            sketchkey.show = true;
-            sketchkey.showName = true;
-            sketchkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", sketchkey);*/
 
             StatusEffectSketch sketch = ScriptableObject.CreateInstance<StatusEffectSketch>();
             sketch.name = "Sketch";
@@ -1269,14 +1226,6 @@ namespace Pokefrost
             statusList.Add(immuneindirect);
 
             KeywordData immaterialkey = this.CreateBasicKeyword("Immaterial", "Immaterial", "Immune to indirect damage and prevents reactions");
-            /*KeywordData immaterialkey = Get<KeywordData>("hellbent").InstantiateKeepName();
-            immaterialkey.name = "Immaterial";
-            keycollection.SetString(immaterialkey.name + "_text", "Immaterial");
-            immaterialkey.titleKey = keycollection.GetString(immaterialkey.name + "_text");
-            keycollection.SetString(immaterialkey.name + "_desc", "Immune to indirect damage and prevents reactions");
-            immaterialkey.descKey = keycollection.GetString(immaterialkey.name + "_desc");
-            immaterialkey.ModAdded = this;
-            AddressableLoader.AddToGroup<KeywordData>("KeywordData", immaterialkey);*/
 
             TraitData immaterialtrait = ScriptableObject.CreateInstance<TraitData>();
             immaterialtrait.name = "Immaterial";
@@ -2312,7 +2261,7 @@ namespace Pokefrost
             ev28.Confirm();
 
             StatusEffectEvolveChingling ev29 = ScriptableObject.CreateInstance<StatusEffectEvolveChingling>();
-            ev29.Autofill("Evolve Chingling", $"<keyword=evolve>: Collect {a} <Sun Bells>", this);
+            ev29.Autofill("Evolve Chingling", $"<keyword=evolve>: Collect {a} <Sun Bells/Quest Items>", this);
             ev29.SetEvolution("chimecho");
             ev29.Confirm();
 
@@ -4222,15 +4171,15 @@ namespace Pokefrost
                 );
 
             bells.Add(
-                this.CreateBell("BlessingLatios", "Latios Bell of Impulse", "For the first minute of battle, the <Redraw Bell> fully recharges every turn")
-                .ChangeSprites("eonTicket.png", "noDinger.png")
+                this.CreateBell("BlessingLatios", "Latios Bell of Impatience", "For the first minute of battle, the <Redraw Bell> fully recharges every turn")
+                .ChangeSprites("latiosBell.png", "latiosDinger.png")
                 .WithSystemsToAdd("InitialBellCounterReductionModifierSystem")
                 );
 
             bells.Add(
-                this.CreateBell("BlessingLatias", "Latias Bell of Impatience", "When <Redraw Bell> is hit while not fully charged, draw 3 extra cards")
+                this.CreateBell("BlessingLatias", "Latias Bell of Impulse", "When leader is hit, count down <Redraw Bell> by 1")
                 .ChangeSprites("latiasBell.png", "latiasDinger.png")
-                .WithSystemsToAdd("EarlyBellDrawModifierSystem")
+                .WithSystemsToAdd("CountdownRedrawWhenLeaderIsHitModifierSystem")
                 );
 
             bells.Add(
@@ -4390,7 +4339,11 @@ namespace Pokefrost
                     for (int i = 0; i < 30; i++)
                     {
                         var r = UnityEngine.Random.Range(0, options.Count);
-                        CardUpgradeData charm = options[r].Clone();
+                        CardUpgradeData charm = options[r];
+                        if (!(charm.ModAdded == null || charm.ModAdded == this) && charm.scripts != null && charm.scripts.Length > 0)
+                        {
+                            continue;
+                        }
                         if (charm.CanAssign(cardData) && charm.tier > 0)
                         {
                             Debug.Log("Nosepass found " + charm.name.ToString());
@@ -4482,8 +4435,6 @@ namespace Pokefrost
             Events.OnBattleEnd += StatusEffectEvolve.CheckEvolve;
             //Events.PostBattle += DisplayEvolutions;
             Events.OnEntityOffered += GetShiny;
-            Events.OnCampaignStart += ShinyPet;
-            //Events.OnStatusIconCreated += PatchOvershroom;
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             Events.OnSceneLoaded += BattleFuse;
             Events.OnEntityChosen += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
@@ -4546,17 +4497,13 @@ namespace Pokefrost
             Events.OnEntityEnterBackpack -= RotomFuse;
             Events.OnCampaignStart -= ShinyPet;
             MoreEvents.OnCampaignGenerated -= ApplianceSpawns;
-            //Events.OnStatusIconCreated -= PatchOvershroom;
             Events.OnCheckEntityDrag -= ButtonExt.DisableDrag;
             Events.OnEntityFlee -= FurretFlee;
             Events.OnSceneLoaded -= BattleFuse;
             Events.OnCampaignLoaded -= CountNatus;
             Events.OnMapNodeReveal -= NatuForsee;
             Events.OnEntitySelect -= StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
-            //Events.OnCampaignLoadPreset -= RollForEvent;
             Events.OnEntityCreated -= FixImage;
-            CardManager.cardIcons["overshroom"].Destroy();
-            CardManager.cardIcons.Remove("overshroom");
             UnloadFromClasses();
             RevertVanillaChanges();
             Events.OnSceneChanged -= PokemonPhoto;
@@ -4999,119 +4946,6 @@ namespace Pokefrost
                 return false;
             }
             return true;
-        }
-    }
-
-    [HarmonyPatch(typeof(FinalBossGenerationSettings), "ReplaceCards", new Type[]
-        {
-            typeof(IList<CardData>)
-        })]
-    internal static class AppendCardReplacement
-    {
-        internal static void Prefix(FinalBossGenerationSettings __instance)
-        {
-            foreach(FinalBossGenerationSettings.ReplaceCard replacement in __instance.replaceCards)
-            {
-                if (replacement.card.name == "websiteofsites.wildfrost.pokefrost.eevee")
-                {
-                    return;
-                }
-            }
-
-            List<FinalBossGenerationSettings.ReplaceCard> replaceCards = new List<FinalBossGenerationSettings.ReplaceCard> ();
-            foreach(CardDataBuilder builder in Pokefrost.instance.list)
-            {
-                CardData card = Pokefrost.instance.Get<CardData>(builder._data.name);
-                foreach(CardData.StatusEffectStacks stack in card.startWithEffects)
-                {
-                    if (stack.data is StatusEffectEvolve ev)
-                    {
-                        Debug.Log($"[Pokefrost] Replacing {card.name}");
-                        CardData[] cards = ev.EvolveForFinalBoss(Pokefrost.instance);
-                        if (cards != null)
-                        {
-                            FinalBossGenerationSettings.ReplaceCard replacement = new FinalBossGenerationSettings.ReplaceCard
-                            {
-                                card = card,
-                                options = cards
-                            };
-                            replaceCards.Add(replacement);
-                        }
-                    }
-                }
-            }
-            __instance.replaceCards = __instance.replaceCards.AddRangeToArray(replaceCards.ToArray()).ToArray();
-        }
-    }
-
-    [HarmonyPatch(typeof(FinalBossGenerationSettings), "ProcessEffects", new Type[]
-        {
-            typeof(IList<CardData>)
-        })]
-    internal static class AppendEffectSwapper
-    {
-        internal static void Prefix(FinalBossGenerationSettings __instance)
-        {
-            foreach (FinalBossEffectSwapper swapper in __instance.effectSwappers)
-            {
-                if (swapper.effect.name.Contains("Buff Card In Deck On Kill")) //If it's already there no need to check further.
-                {
-                    return;
-                }
-            }
-
-            List<FinalBossEffectSwapper> swappers = new List<FinalBossEffectSwapper>();
-            swappers.Add(CreateSwapper("While Active Frenzy To Crown Allies", "While Active Frenzy To Allies", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Give Thick Club", "On Card Played Buff Marowak", minBoost: 0, maxBoost: 1));
-            swappers.Add(CreateSwapper("While Active Increase Effects To Hand", "Ongoing Increase Effects", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Give Slowking Crown", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Give Combo to Card in Hand", "On Turn Apply Attack To Self", minBoost: 0, maxBoost: 1));
-            swappers.Add(CreateSwapper("Discard Rightmost Button", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("When Deployed Sketch", attackOption: "Null", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Trigger All Button", "When Destroyed Trigger To Allies", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Trigger All Listener_1", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("When Ally Summoned Add Skull To Hand", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Trigger When Summon", "Trigger When Card Destroyed", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("On Hit Snowed Target Double Attack Otherwise Half", attackOption:"Snow", minBoost: 1, maxBoost: 2));
-            swappers.Add(CreateSwapper("Buff Card In Deck On Kill", "On Turn Apply Attack To Self", minBoost: 1, maxBoost: 3));
-            swappers.Add(CreateSwapper("Trigger Clunker Ahead", "On Turn Apply Scrap To RandomAlly", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("On Card Played Increase Attack Of Cards In Hand", "While Active Increase Attack To Allies", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("When Hit Add Scrap Pile To Hand", "On Turn Apply Scrap To RandomAlly", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("End of Turn Draw a Card", "When Hit Add Junk To Hand", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("While Active It Is Overshroom", attackOption: "Overload", minBoost: 4, maxBoost: 4));
-            swappers.Add(CreateSwapper("Gain Frenzy When Companion Is Killed", "MultiHit", minBoost: 2, maxBoost: 3));
-            swappers.Add(CreateSwapper("Revive", "Heal Self", minBoost: 3, maxBoost: 5));
-            swappers.Add(CreateSwapper("Rest Button", "Heal Self", minBoost: 3, maxBoost: 5));
-            swappers.Add(CreateSwapper("Rest Listener_1", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Redraw Cards", "Trigger When Redraw Hit", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Add Tar Blade Button", minBoost: 0, maxBoost: 0));
-            swappers.Add(CreateSwapper("Tar Shot Listener_1", minBoost: 0, maxBoost: 0));
-            __instance.effectSwappers = __instance.effectSwappers.AddRangeToArray(swappers.ToArray()).ToArray();
-        }
-
-        internal static FinalBossEffectSwapper CreateSwapper(string effect, string replaceOption = null, string attackOption = null, int minBoost = 0, int maxBoost = 0)
-        {
-            FinalBossEffectSwapper swapper = ScriptableObject.CreateInstance<FinalBossEffectSwapper>();
-            swapper.effect = Pokefrost.instance.Get<StatusEffectData>(effect);
-            swapper.replaceWithOptions = new StatusEffectData[0];
-            String s = "";
-            if (!replaceOption.IsNullOrEmpty())
-            {
-                swapper.replaceWithOptions = swapper.replaceWithOptions.Append(Pokefrost.instance.Get<StatusEffectData>(replaceOption)).ToArray();
-                s += swapper.replaceWithOptions[0].name;
-            }
-            if (!attackOption.IsNullOrEmpty())
-            {
-                swapper.replaceWithAttackEffect = Pokefrost.instance.Get<StatusEffectData>(attackOption);
-                s += swapper.replaceWithAttackEffect.name;
-            }
-            if (s.IsNullOrEmpty())
-            {
-                s = "Nothing";
-            }
-            swapper.boostRange = new Vector2Int(minBoost, maxBoost);
-            Debug.Log($"[Pokefrost] {swapper.effect.name} => {s} + {swapper.boostRange}");
-            return swapper;
         }
     }
 

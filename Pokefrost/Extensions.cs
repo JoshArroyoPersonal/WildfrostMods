@@ -164,7 +164,7 @@ namespace Pokefrost
         public static GameObject CreateButtonIcon(this WildfrostMod mod, string name, Sprite sprite, string type, string copyTextFrom, Color textColor, KeywordData[] keys)
         {
             GameObject gameObject = new GameObject(name);
-            UnityEngine.Object.DontDestroyOnLoad(gameObject);
+            gameObject.transform.SetParent(Pokefrost.pokefrostUI.transform);
             gameObject.SetActive(false);
             StatusIconExt icon = gameObject.AddComponent<StatusIconExt>();
             Dictionary<string, GameObject> cardIcons = CardManager.cardIcons;
@@ -208,7 +208,7 @@ namespace Pokefrost
         public static GameObject CreateIcon(this WildfrostMod mod, string name, Sprite sprite, string type, string copyTextFrom, Color textColor, KeywordData[] keys, int posX = 1)
         {
             GameObject gameObject = new GameObject(name);
-            UnityEngine.Object.DontDestroyOnLoad(gameObject);
+            gameObject.transform.SetParent(Pokefrost.pokefrostUI.transform);
             gameObject.SetActive(false);
             StatusIcon icon = gameObject.AddComponent<StatusIconExt>();
             Dictionary<string, GameObject> cardIcons = CardManager.cardIcons;

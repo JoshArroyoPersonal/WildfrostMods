@@ -66,6 +66,38 @@ namespace Pokefrost
             yield break;
         }
 
+        public override bool HasMissingData(CampaignNode node)
+        {
+            if (node.data.TryGetValue("cards", out object value) && value is SaveCollection<string> cardNames)
+            {
+                foreach (string s in cardNames.collection)
+                {
+                    if (AddressableLoader.Get<CardData>("CardData", s) == null)
+                    {
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                return true;
+            }
+
+            if (node.data.TryGetValue("charms", out object value2) && value2 is SaveCollection<string> charmNames)
+            {
+                foreach (string s in charmNames.collection)
+                {
+                    if (AddressableLoader.Get<CardUpgradeData>("CardUpgradeData", s) == null)
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            return true;
+        }
+
         public static List<CardData> ObtainCards(int choices, int valueCap)
         {
             List<CardData> allCards = AddressableLoader.GetGroup<CardData>("CardData").Clone();

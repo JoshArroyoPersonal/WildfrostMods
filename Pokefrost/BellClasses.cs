@@ -367,7 +367,7 @@ namespace Pokefrost
         }
     }
 
-    public class InitialBellCounterReductionModifierSystem : ModifierSystem
+    public class InitialBellCounterReductionModifierSystem : GameSystem
     {
         Timer timer;
         int preCounter;
@@ -447,6 +447,31 @@ namespace Pokefrost
             timer.Stop();
             timer.Hide();
             active = false;
+        }
+    }
+
+    public class CountdownRedrawWhenLeaderIsHitModifierSystem : GameSystem
+    {
+        public void OnEnable()
+        {
+            Events.OnEntityPostHit += Countdown;
+        }
+
+        public void OnDisable()
+        {
+            Events.OnEntityPostHit -= Countdown;
+        }
+
+        private void Countdown(Hit hit)
+        {
+            if (hit != null && hit.Offensive && hit.target != null && hit.target.data.cardType.name == "Leader" && hit.target.owner == References.Player)
+            {
+                RedrawBellSystem systme = GameObject.FindObjectOfType<RedrawBellSystem>();
+                if (systme != null)
+                {
+                    systme.SetCounter(Math.Max(0, systme.counter.current-1));
+                }
+            }
         }
     }
 }

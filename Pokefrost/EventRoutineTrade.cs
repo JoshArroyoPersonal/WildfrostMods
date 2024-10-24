@@ -220,6 +220,8 @@ namespace Pokefrost
             foreach(string upgrade in upgrades)
             {
                 CardUpgradeData upgradeData = AddressableLoader.Get<CardUpgradeData>("CardUpgradeData", upgrade);
+                if (upgradeData == null) { continue; }
+
                 if (upgradeData.CanAssign(cardData))
                 {
                     upgradeData.Clone().Assign(cardData);
