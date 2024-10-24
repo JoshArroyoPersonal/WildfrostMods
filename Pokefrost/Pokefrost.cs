@@ -5323,7 +5323,7 @@ namespace Pokefrost
         public static void DefineStrings()
         {
             StringTable ui = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
-            ui.SetString(key, "Unloading Anomolies Detected|Most problems should be resolved. For the best experience, please restart Wildfrost.|-[Pokefrost]");
+            ui.SetString(key, "Unloading Anomolies Detected|Bugs may be appear during gameplay. For the best experience, please restart Wildfrost.|-[Pokefrost]");
             ui.SetString(yesKey, "Of course!");
             ui.SetString(noKey, "No way!");
         }
