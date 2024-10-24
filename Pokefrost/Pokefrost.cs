@@ -2107,6 +2107,13 @@ namespace Pokefrost
                 .ApplyX(retreat, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
 
+            StatusEffectInstantReturnToHand bounce = Ext.CreateStatus<StatusEffectInstantReturnToHand>("Instant Return To Hand")
+                .Register(this);
+
+            StatusEffectApplyXOnCardPlayed bouncePlay = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Return Front Enemy To Hand", "Return the front enemy to hand")
+                .ApplyX(bounce, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
+                .Register(this);
+
             StatusEffectPlayCardsInHand triggerAllAlliesInHand = Ext.CreateStatus<StatusEffectPlayCardsInHand>("Trigger Allies In Hand")
                 .Register(this);
             TargetConstraint canTrigger = Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1];
@@ -2433,7 +2440,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateUnit("muk", "Muk")
-                    .SetStats(7, 0, 5)
+                    .SetStats(7, 0, 4)
                     .SetSprites("muk.png", "mukBG.png")
                     .SStartEffects(("Bonus Damage Equal To Darts In Hand",1), ("Add Tar Blade Button",3), ("Tar Shot Listener_1",1))
                     .AddPool("MagicUnitPool")
@@ -4900,7 +4907,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\nAdds 46 new companions, 2 new pets, 6 new charms, and a new map event.\n\n\nThe developers can be contacted through Steam or Discord (@Josh A, @Michael C)";
+        public override string Description => "Pokemon Companions\r\n\r\nAdds 58 new companions, 2 new pets, 7 new charms, and a new map event.\n\n\nThe developers can be contacted through Steam or Discord (@Josh A, @Michael C)";
 
         public override List<T> AddAssets<T, Y>()
         {
