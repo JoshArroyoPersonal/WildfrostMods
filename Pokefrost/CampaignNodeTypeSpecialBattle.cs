@@ -102,7 +102,7 @@ namespace Pokefrost
             {
                 b.AddRewards(node);
             }
-            
+            isBattle = true;
             yield break;
         }
     }

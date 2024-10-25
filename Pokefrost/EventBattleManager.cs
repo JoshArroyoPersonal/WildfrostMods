@@ -170,6 +170,11 @@ namespace Pokefrost
 
         private void RollForEvent(ref string[] lines)
         {
+            CampaignNodeTypeBattle node = Pokefrost.instance.Get<CampaignNodeType>("specialBattle") as CampaignNodeTypeBattle;
+            if (node != null)
+            {
+                node.isBattle = false;
+            }
             int width = lines.Length;
             int length = lines[0].Length;
             for (int i = 0; i < length; i++)

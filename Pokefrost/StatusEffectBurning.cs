@@ -25,7 +25,7 @@ namespace Pokefrost
 
         public void EntityHit(Hit hit)
         {
-            if (hit.target == target && hit.Offensive && hit.canRetaliate)
+            if (hit.target == target && hit.Offensive && hit.canRetaliate && hit.countsAsHit)
             {
                 Check();
             }
