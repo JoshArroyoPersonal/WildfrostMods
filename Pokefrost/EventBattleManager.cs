@@ -9,6 +9,7 @@ using BattleEditor;
 using Debug = UnityEngine.Debug;
 using Data = BossRewardData.Data;
 using System.Collections;
+using UnityEngine.UIElements;
 
 namespace Pokefrost
 {
@@ -175,6 +176,17 @@ namespace Pokefrost
             {
                 node.isBattle = false;
             }
+
+            float roll = Dead.Random.Range(0f, 1f);
+            float chance = minChance + (StormBellManager.GetCurrentStormPoints(StormBellManager.GetActiveStormBells())/10f)*(maxChance - minChance);
+
+            if (roll < chance)
+            {
+                successfulRoll = false;
+                return;
+            }
+
+
             int width = lines.Length;
             int length = lines[0].Length;
             for (int i = 0; i < length; i++)

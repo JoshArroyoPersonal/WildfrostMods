@@ -2619,7 +2619,7 @@ namespace Pokefrost
                     .CreateUnit("aipom", "Aipom")
                     .SetStats(6, 3, 3)
                     .SetSprites("aipom.png", "aipomBG.png")
-                    .SStartEffects(("On Kill Boost Effects", 1), ("Evolve Aipom", 12))
+                    .SStartEffects(("On Kill Boost Effects", 1), ("Evolve Aipom", 20))
                     .STraits(("Pickup", 2))
                     .AddPool()
                 );
@@ -3938,7 +3938,7 @@ namespace Pokefrost
                     .WithImage("murkrowCharm.png")
                     .SetTraits(TStack("Pluck", 1))
                     .SetConstraints(crow)
-                    .ChangeDamage(1)
+                    .ChangeDamage(2)
                     .WithTitle("Murkrow Charm")
                     .WithText("Gain <keyword=pluck>\n<+1><keyword=attack>\nCA-CAW")
             );
@@ -4484,7 +4484,7 @@ namespace Pokefrost
             ((StatusEffectApplyRandomOnCardPlayed)Get<StatusEffectData>("On Card Played Buff Marowak")).applyConstraints = new TargetConstraint[1] { onlymarowak };
 
             //DebugShiny();
-            Events.OnSceneChanged += PokemonPhoto;
+            //Events.OnSceneChanged += PokemonPhoto;
             Events.OnSceneLoaded += SceneLoaded;
             References.instance.StartCoroutine(UICollector.CollectPrefabs());
             References.instance.StartCoroutine(Commands.AddCustomCommands());
@@ -4527,7 +4527,7 @@ namespace Pokefrost
             Events.OnEntityCreated -= FixImage;
             UnloadFromClasses();
             RevertVanillaChanges();
-            Events.OnSceneChanged -= PokemonPhoto;
+            //Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
             Events.OnSceneChanged -= PickupRoutine.OnSceneChanged;
 
