@@ -1897,6 +1897,11 @@ namespace Pokefrost
             prophOfSwords.useCustomData = true;
             prophOfSwords.customDataKey = "Future Sight";
 
+            var futureSight = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Deal Damage To All Enemies", "Deal <{a}> damage to all enemies", boostable: true)
+                .ApplyX(null, StatusEffectApplyX.ApplyToFlags.Enemies)
+                .Register(this);
+            futureSight.dealDamage = true;
+
             this.CreateBasicKeyword("lavaplume", "Lava Plume", "<Free Action>: Convert the front enemy's <keyword=spice> into <keyword=burning>|Click to activate\nOnce per turn");
             this.CreateButtonIcon("magcargoLavaPlume", ImagePath("magcargobutton.png").ToSprite(), "lavaPlume", "", Color.white, new KeywordData[] { Get<KeywordData>("lavaplume") });
 
@@ -1961,6 +1966,10 @@ namespace Pokefrost
             luminPartSummon.card1 = Get<CardData>("LuminSealant");
             luminPartSummon.card2 = Get<CardData>("BrokenVase");
 
+            StatusEffectApplyXOnCardPlayed applyLumin = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("Apply Lumin To Random Ally", "Apply <keyword=lumin> to a random ally")
+                .ApplyX(TryGet<StatusEffectData>("Lumin"), StatusEffectApplyX.ApplyToFlags.RandomAlly)
+                .Register(this);
+
             StatusEffectApplyXOnCardPlayed luminSummonAttack = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Add Lumin Part To Hand")
                 .ApplyX(luminPartSummon, StatusEffectApplyX.ApplyToFlags.Self)
                 .Register(this);
@@ -1992,7 +2001,12 @@ namespace Pokefrost
                 .ApplyX(Get<StatusEffectData>("ImmuneToSnow"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
 
+            keycollection.SetString("websiteofsites.wildfrost.pokefrost.snowimmuneToAllies", "While active, allies gain <keyword=immunetosnow>");
+
+            Get<StatusEffectData>("While Active Snow Immune To Allies").textKey = keycollection.GetString("websiteofsites.wildfrost.pokefrost.snowimmuneToAllies");
+
             Get<KeywordData>("immunetosnow").showName = true;
+            Get<KeywordData>("immunetosnow").show = true;
 
             StatusEffectApplyXOnCardPlayed purify = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Cleanse Targets", "<keyword=cleanse> targets")
                 .ApplyX(Get<StatusEffectData>("Cleanse"), StatusEffectApplyX.ApplyToFlags.Target)
@@ -4938,7 +4952,7 @@ namespace Pokefrost
                 {
                     if (cardName.Contains(cardName2))
                     {
-                        __result = References.Classes[1];
+                        __result = References.Classes[2];
                         return false;
                     }
                 }
@@ -4946,7 +4960,7 @@ namespace Pokefrost
                 {
                     if (cardName.Contains(cardName2))
                     {
-                        __result = References.Classes[2];
+                        __result = References.Classes[1];
                         return false;
                     }
                 }

@@ -79,7 +79,10 @@ namespace Pokefrost
 
         static string[] traitsToRemove = new string[]
         {
-
+            "Pickup",
+            "Synchronize",
+            "Synchronize2",
+            "Salvage",
         };
 
         internal static void AddTraits(FinalBossGenerationSettings __instance)
@@ -116,7 +119,16 @@ namespace Pokefrost
                 CreateSwapper("Rest Listener_1", minBoost: 0, maxBoost: 0),
                 CreateSwapper("Redraw Cards", "Trigger When Redraw Hit", minBoost: 0, maxBoost: 0),
                 CreateSwapper("Add Tar Blade Button", minBoost: 0, maxBoost: 0),
-                CreateSwapper("Tar Shot Listener_1", minBoost: 0, maxBoost: 0)
+                CreateSwapper("Tar Shot Listener_1", minBoost: 0, maxBoost: 0),
+                CreateSwapper("Bonus Damage Equal To Darts In Hand", "Deal Bonus Damage Equal To Cards In Hand", minBoost: 0, maxBoost: 0),
+                CreateSwapper("Convert Spice To Burning To Front Enemy",minBoost: 0, maxBoost: 0),
+                CreateSwapper("Autotomize Button", minBoost:0, maxBoost:0),
+                CreateSwapper("While Active Unlimited Lumin", "Apply Lumin To Random Ally", minBoost:0, maxBoost:0),
+                CreateSwapper("On Turn Trigger Allies In Hand", minBoost:0, maxBoost:0),
+                CreateSwapper("Gain Hero On Recall", "Temporary Hero", minBoost:0, maxBoost:0),
+                CreateSwapper("Maybe Make Front Enemy Retreat", "On Card Played Return Front Enemy To Hand", minBoost:0, maxBoost:0),
+                CreateSwapper("On Turn Return Prophesized Card To Hand","Deal Damage To All Enemies", minBoost:39, maxBoost:59),
+                CreateSwapper("When Prophesized Card Played Give Allies Attack", minBoost: 0, maxBoost: 0),
             };
             __instance.effectSwappers = __instance.effectSwappers.AddRangeToArray(swappers.ToArray()).ToArray();
         }
@@ -151,7 +163,20 @@ namespace Pokefrost
         {
             FinalBossCardModifier[] modifiers = new FinalBossCardModifier[]
             {
-
+                CreateCardModifier("ambipom",
+                TraitScript("Trash", 1, 1)
+                ),
+                CreateCardModifier("gardevoir",
+                PassiveScript("Copy Effects Applied To Front Enemy", 1, 1)
+                ),
+                CreateCardModifier("gallade",
+                PassiveScript("Copy Effects Applied To Front Enemy", 1, 1)
+                ),
+                CreateCardModifier("cresselia",
+                PassiveScript("Trigger When Dream Card Played", 1, 1)
+                ),
+                CreateCardModifier("xatu",
+                CounterScript(10,10)),
             };
             __instance.cardModifiers = __instance.cardModifiers.AddRangeToArray(modifiers);
         }
@@ -186,6 +211,14 @@ namespace Pokefrost
             CardScriptAddTrait script = ScriptableObject.CreateInstance<CardScriptAddTrait>();
             script.name = "Add Trait: " + name;
             script.countRange = new Vector2Int(min, max);
+            return script;
+        }
+
+        static CardScriptSetCounter CounterScript(int min, int max)
+        {
+            CardScriptSetCounter script = ScriptableObject.CreateInstance<CardScriptSetCounter>();
+            script.name = "Counter to " + min + "-" + max;
+            script.counterRange = new Vector2Int(min, max);
             return script;
         }
     }
