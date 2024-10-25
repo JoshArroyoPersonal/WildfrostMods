@@ -2619,7 +2619,7 @@ namespace Pokefrost
                     .CreateUnit("aipom", "Aipom")
                     .SetStats(6, 3, 3)
                     .SetSprites("aipom.png", "aipomBG.png")
-                    .SStartEffects(("On Kill Boost Effects", 1), ("Evolve Aipom", 12))
+                    .SStartEffects(("On Kill Boost Effects", 1), ("Evolve Aipom", 20))
                     .STraits(("Pickup", 2))
                     .AddPool()
                 );
