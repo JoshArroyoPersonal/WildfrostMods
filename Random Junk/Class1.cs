@@ -103,11 +103,32 @@ namespace Tutorial2
                 {
                     ((StatusEffectInstantCombineCard)data).cardNames = new string[] { "GuardianGnome", "SunburstDart"};
                     ((StatusEffectInstantCombineCard)data).resultingCardName = "SplitBoss2";
-                    ((StatusEffectInstantCombineCard)data).spawnOnBoard = true;
+                    ((StatusEffectInstantCombineCard)data).checkDeck = false;
+                    ((StatusEffectInstantCombineCard)data).checkBoard = false;
                     ((StatusEffectInstantCombineCard)data).changeDeck = true;
-                    ((StatusEffectInstantCombineCard)data).extraUpgrades = new List<CardUpgradeData> { TryGet<CardUpgradeData>("CardUpgradePlink"), TryGet<CardUpgradeData>("CardUpgradeBattle"), TryGet<CardUpgradeData>("CardUpgradeBootleg")};
+                    ((StatusEffectInstantCombineCard)data).keepUpgrades = true;
                 })
                 );
+
+            assets.Add(
+                new StatusEffectDataBuilder(this).Create<StatusEffectApplyXWhenHit>("When Hit Combine Card Test")
+                .WithText("Test Combine")
+                .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+                {
+                    ((StatusEffectApplyXWhenHit)data).effectToApply = TryGet<StatusEffectData>("Instant Combine Card Test");
+                    ((StatusEffectApplyXWhenHit)data).applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+                    ((StatusEffectApplyXWhenHit)data).targetMustBeAlive = false;
+                    data.eventPriority = 999999999;
+                    
+
+                })
+                );
+
+
+
+
+
+
 
             preLoaded = true;
         }

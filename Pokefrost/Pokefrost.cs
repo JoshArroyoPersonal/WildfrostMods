@@ -4014,7 +4014,7 @@ namespace Pokefrost
                     .WithImage("masquerainCharm.png")
                     .WithType(CardUpgradeData.Type.Charm)
                     .SetTraits(TStack("U-turn", 1))
-                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2])
+                    .SetConstraints(Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[1], Get<CardUpgradeData>("CardUpgradeSpark").targetConstraints[2], Get<CardUpgradeData>("CardUpgradePig").targetConstraints[1])
                     .WithTitle("Masquerain Charm")
                     .WithText("Gain <keyword=uturn>")
             );
@@ -4869,7 +4869,7 @@ namespace Pokefrost
         public override string GUID => "websiteofsites.wildfrost.pokefrost";
         public override string[] Depends => new string[] { };
         public override string Title => "Pokefrost";
-        public override string Description => "Pokemon Companions\r\n\r\nAdds 58 new companions, 2 new pets, 7 new charms, and a new map event.\n\n\nThe developers can be contacted through Steam or Discord (@Josh A, @Michael C)";
+        public override string Description => "Pokemon Companions\r\n\r\nAdds 58 new companions, 2 new pets, 7 new charms, a new map event, and 3 quests ending new battles.\n\n\nThe developers can be contacted through Steam or Discord (@Josh A, @Michael C)\n\n\nThanks to Lost for Jolted icon, to MegaMairne for Ignite icon and animations, and to tonofdirt726 for recolors.";
 
         public override List<T> AddAssets<T, Y>()
         {
