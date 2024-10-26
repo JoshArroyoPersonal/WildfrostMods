@@ -124,12 +124,12 @@ namespace Pokefrost
             CardHand hand = obj.GetComponent<CardHand>();
             Debug.Log("[Pokefrost] Cleared!");
             hand.Clear();
-            IEnumerable<DataFile> data = new List<DataFile>();
+            List<DataFile> data = new List<DataFile>();
             foreach (RewardPool r in rewards)
             {
-                data = data.Concat(r.list);
+                data = data.Concat(r.list).ToList();
             }
-            IEnumerable<CardData> cards = data.Where((d) => d is CardData).Select((d) => (CardData)d);
+            List<CardData> cards = data.Where((d) => d is CardData).Select((d) => (CardData)d).ToList();
 
             Routine.Clump clump = new Routine.Clump();
             foreach (CardData card in cards.InRandomOrder())
