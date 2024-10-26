@@ -67,6 +67,7 @@ namespace Pokefrost
         public Pokefrost(string modDirectory) : base(modDirectory)
         {
             instance = this;
+            HarmonyInstance.PatchAll(typeof(PatchHarmony));
         }
 
         public Sprite ReplaceSprite(uint ex, Vector4 v)
@@ -1548,7 +1549,7 @@ namespace Pokefrost
             spicune.keyword = "spicune";
             spicune.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
 
-            this.CreateIconKeyword("burning", "Ignite", "Explodes when hit, damaging all targets in row then clearing | Applying more increases the explosion!", "burningicon").ChangeColor(title: new Color(1f, 0.2f, 0.2f), note: new Color(1f, 0.2f, 0.2f));
+            this.CreateIconKeyword("burning", "Ignite", "Explodes when hit or damaged, hurting allies in row then clearing | Applying more increases the explosion!", "burningicon").ChangeColor(title: new Color(1f, 0.2f, 0.2f), note: new Color(1f, 0.2f, 0.2f));
             this.CreateIcon("burningicon", ImagePath("burningicon.png").ToSprite(), "burning", "spice", Color.white, new KeywordData[] { Get<KeywordData>("burning") }, -1)
                 .GetComponentInChildren<TextMeshProUGUI>(true).gameObject.transform.localPosition = new Vector3 (0, -0.06f, 0);
 
@@ -5195,7 +5196,12 @@ namespace Pokefrost
                 }
             }
         }
+    }
 
-
+    [HarmonyPatch(typeof(WildfrostMod.DebugLoggerTextWriter), nameof(WildfrostMod.DebugLoggerTextWriter.WriteLine))]
+    class PatchHarmony
+    {
+        static bool Prefix() { Postfix(); return false; }
+        static void Postfix() => HarmonyLib.Tools.Logger.ChannelFilter = HarmonyLib.Tools.Logger.LogChannel.Warn | HarmonyLib.Tools.Logger.LogChannel.Error;
     }
 }
