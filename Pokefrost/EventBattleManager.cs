@@ -179,8 +179,10 @@ namespace Pokefrost
 
             float roll = Dead.Random.Range(0f, 1f);
             float chance = minChance + (StormBellManager.GetCurrentStormPoints(StormBellManager.GetActiveStormBells())/10f)*(maxChance - minChance);
+            Debug.Log($"[Pokefrost] {chance}");
 
-            if (roll < chance)
+
+            if (roll > chance)
             {
                 successfulRoll = false;
                 return;
