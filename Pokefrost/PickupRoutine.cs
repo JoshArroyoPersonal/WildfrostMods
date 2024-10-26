@@ -51,7 +51,7 @@ namespace Pokefrost
 
         public static void OnSceneChanged(Scene scene)
         {
-            if (scene.name == "Battle" || scene.name == "Town")
+            if (scene.name == "Battle" || scene.name == "Town" || scene.name == "CharacterSelect")
             {
                 queue.Clear();
             }
