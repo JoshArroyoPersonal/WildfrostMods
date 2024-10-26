@@ -67,6 +67,7 @@ namespace Pokefrost
         public Pokefrost(string modDirectory) : base(modDirectory)
         {
             instance = this;
+            HarmonyInstance.PatchAll(typeof(PatchHarmony));
         }
 
         public Sprite ReplaceSprite(uint ex, Vector4 v)
@@ -5195,7 +5196,12 @@ namespace Pokefrost
                 }
             }
         }
+    }
 
-
+    [HarmonyPatch(typeof(WildfrostMod.DebugLoggerTextWriter), nameof(WildfrostMod.DebugLoggerTextWriter.WriteLine))]
+    class PatchHarmony
+    {
+        static bool Prefix() { Postfix(); return false; }
+        static void Postfix() => HarmonyLib.Tools.Logger.ChannelFilter = HarmonyLib.Tools.Logger.LogChannel.Warn | HarmonyLib.Tools.Logger.LogChannel.Error;
     }
 }

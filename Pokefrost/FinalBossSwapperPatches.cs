@@ -176,7 +176,11 @@ namespace Pokefrost
                 PassiveScript("Trigger When Dream Card Played", 1, 1)
                 ),
                 CreateCardModifier("xatu",
-                CounterScript(10,10)),
+                CounterScript(10,10)
+                ),
+                CreateCardModifier("ludicolo",
+                CounterScript(5,5)
+                ),
             };
             __instance.cardModifiers = __instance.cardModifiers.AddRangeToArray(modifiers);
         }
