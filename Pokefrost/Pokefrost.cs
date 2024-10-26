@@ -3941,7 +3941,7 @@ namespace Pokefrost
                     .SetConstraints(crow)
                     .ChangeDamage(2)
                     .WithTitle("Murkrow Charm")
-                    .WithText("Gain <keyword=pluck>\n<+1><keyword=attack>\nCA-CAW")
+                    .WithText("Gain <keyword=pluck>\n<+2><keyword=attack>\nCA-CAW")
             );
 
             charmlist.Add(
