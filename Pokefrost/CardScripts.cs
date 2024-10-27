@@ -39,7 +39,7 @@ namespace Pokefrost
                         foreach(string item in collection.InRandomOrder())
                         {
                             if (Pokefrost.rotomAppliances.Contains(item)) { continue; }
-                            if (NotConsumeOrClunker(item)) { continue; }
+                            if (ConsumeOrClunker(item)) { continue; }
 
                             target.SetCustomData("Future Sight", item);
                             target.TryGetCustomData("Future Sight", out string value, "");
@@ -56,7 +56,7 @@ namespace Pokefrost
                         {
                             if (data2.items[item].category == "Items")
                             {
-                                if (NotConsumeOrClunker(data2.items[item].cardDataName)) { continue; }
+                                if (ConsumeOrClunker(data2.items[item].cardDataName)) { continue; }
 
                                 target.SetCustomData("Future Sight ID", node.id);
                                 target.SetCustomData("Future Sight", data2.items[item].cardDataName);
@@ -71,24 +71,24 @@ namespace Pokefrost
             }
         }
 
-        private bool NotConsumeOrClunker(string name)
+        private bool ConsumeOrClunker(string name)
         {
             CardData data = Pokefrost.instance.Get<CardData>(name);
             if (data?.cardType?.name != "Item")
             {
-                if (data.traits != null)
+                return true;
+            }
+            if (data.traits != null)
+            {
+                foreach (var trait in data.traits)
                 {
-                    foreach (var trait in data.traits)
+                    if (trait.data == null || trait.data.name == "Consume")
                     {
-                        if (trait.data == null || trait.data.name == "Consume")
-                        {
-                            return false;
-                        }
+                        return true;
                     }
                 }
-                return true;//Not Consume Item
             }
-            return false;
+            return false;//Not Consume Item
         }
     }
 
