@@ -28,7 +28,7 @@ namespace Pokefrost
                 }
                 foreach (CampaignNode node in Campaign.instance.nodes.InRandomOrder())
                 {
-                    Debug.Log($"[Pokefrost] {node.type.name}-{node.id}");
+                    //Debug.Log($"[Pokefrost] {node.type.name}-{node.id}");
                     if (node.id <= id)
                     {
                         continue;
@@ -43,7 +43,7 @@ namespace Pokefrost
 
                             target.SetCustomData("Future Sight", item);
                             target.TryGetCustomData("Future Sight", out string value, "");
-                            Debug.Log($"[Pokefrost] Foresaw {value}");
+                            Debug.Log($"[Pokefrost] Foresaw {value}, {node.id}");
                             target.SetCustomData("Future Sight ID", node.id);
                             return;
                         }
@@ -61,7 +61,7 @@ namespace Pokefrost
                                 target.SetCustomData("Future Sight ID", node.id);
                                 target.SetCustomData("Future Sight", data2.items[item].cardDataName);
                                 target.TryGetCustomData("Future Sight", out string value, "");
-                                Debug.Log($"[Pokefrost] Foresaw {value}");
+                                Debug.Log($"[Pokefrost] Foresaw {value}, {node.id}");
                                 return;
                             }
                         }

@@ -1597,7 +1597,7 @@ namespace Pokefrost
 
             Ext.CreateTrait<TraitData>("FalseSwipe", this, falseswipekey, falseswipe);
 
-            KeywordData resistkey = this.CreateBasicKeyword("resist", "Resist", "Reduce damage by <{0}>");
+            KeywordData resistkey = this.CreateBasicKeyword("resist", "Resist", "Reduce damage by <???>");
             resistkey.showName = true;
             resistkey.canStack = true;
             StatusEffectResist resist = Ext.CreateStatus<StatusEffectResist>("Resist", boostable:true)
@@ -1631,7 +1631,7 @@ namespace Pokefrost
                 .Register(this);
             pickup.constraint = (c) => c.cardType.name == "Item" || c.cardType.name == "Clunker";
             pickup.rewardPoolNames = new string[] { "GeneralItemPool", "SnowItemPool", "BasicItemPool", "MagicItemPool", "ClunkItemPool" };
-            KeywordData pickupKeyword = Ext.CreateBasicKeyword(this, "pickup", "Pickup", "Pick one card from a selection of <{0}> at the end of battle");
+            KeywordData pickupKeyword = Ext.CreateBasicKeyword(this, "pickup", "Pickup", "Pick one card from a selection of <???> at the end of battle");
             pickupKeyword.canStack = true;
             pickupKeyword.showName = true;
             pickupKeyword.showIcon = false;
@@ -4540,6 +4540,7 @@ namespace Pokefrost
 
         private void CountNatus()
         {
+            CardScriptForsee.ids.Clear();
             if (References.PlayerData?.inventory?.deck == null)
             {
                 return;
@@ -4992,14 +4993,18 @@ namespace Pokefrost
                         {
                             foreach (var effect in __instance.card.entity.statusEffects)
                             {
-                                if (effect.GetType().Name == dynamicTypes[index])
+                                bool directMatch = (effect.GetType().Name == dynamicTypes[index]);
+                                bool indirectMatch = (effect is StatusEffectApplyX applyX && applyX.effectToApply != null && applyX.effectToApply.GetType().Name == dynamicTypes[index]);
+                                if (directMatch || indirectMatch)
                                 {
                                     count = effect.GetAmount().ToString();
+                                    break;
                                 }
                             }
                         }
+                        
                         KeywordData keyword = AddressableLoader.Get<KeywordData>("KeywordData", s);
-                        ((CardPopUpPanel)value).Set(keyword, keyword.body.Replace("{0}", count));
+                        ((CardPopUpPanel)value).Set(keyword, keyword.body.Replace("???", count));
                     }
                 }
             }
