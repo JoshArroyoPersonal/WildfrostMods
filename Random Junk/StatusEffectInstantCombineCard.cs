@@ -135,7 +135,7 @@ namespace Random_Junk
 
                 if (queueAction)
                 {
-                    ActionQueue.Stack(action);
+                    ActionQueue.Add(action);
                 }
            
             }

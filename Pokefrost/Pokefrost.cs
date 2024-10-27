@@ -1586,6 +1586,7 @@ namespace Pokefrost
             StatusEffectApplyXWhenDestroyed onDeathBoost = Ext.CreateStatus<StatusEffectApplyXWhenDestroyed>("When Destroyed Boost Allies", "When destroyed, boost effects of all allies by <{a}>", boostable:true)
                 .ApplyX(Get<StatusEffectData>("Increase Effects"), StatusEffectApplyX.ApplyToFlags.Allies)
                 .Register(this);
+            onDeathBoost.targetMustBeAlive = false;
 
             KeywordData falseswipekey = this.CreateBasicKeyword("falseswipe", "False Swipe", "Deals nonlethal damage|Except to Clunkers");
             falseswipekey.showName = true;
