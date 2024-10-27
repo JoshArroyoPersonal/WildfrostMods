@@ -1675,6 +1675,7 @@ namespace Pokefrost
             StatusEffectTransfer attacktransfer = Ext.CreateStatus<StatusEffectTransfer>("Transfer Attack to Random Ally")
                 .ApplyX(attacktransfereffects, StatusEffectApplyX.ApplyToFlags.RandomAlly)
                 .Register(this);
+            attacktransfer.applyConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintDoesDamage>() };
             attacktransfer.targetConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintDoesDamage>() };
 
             StatusEffectApplyXOnCardPlayed attackhit = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Transfer Attack to Random Ally", "<keyword=transfer> '+{a}<keyword=attack>'")
