@@ -177,12 +177,7 @@ namespace Pokefrost
             Events.OnBattleEnd -= PauseTimer;
             if (timer)
             {
-                UpdateProgress((int)timer.Time);
                 timer.End();
-            }
-            else
-            {
-                UpdateProgress(0);
             }
         }
 
@@ -223,6 +218,7 @@ namespace Pokefrost
 
         public override void QuestBattleStart()
         {
+            this.Disable();
             timer.End();
         }
 

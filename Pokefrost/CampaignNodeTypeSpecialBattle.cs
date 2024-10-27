@@ -37,12 +37,12 @@ namespace Pokefrost
                     }
                 }
             }
-            if (flag)
+            if (flag || References.Map == null)
             {
                 Debug.Log("[Pokefrost] Quest succeeded! Entering bonus battle...");
-                theQuest.QuestBattleStart();
+                theQuest?.QuestBattleStart();
                 yield return base.Run(node);
-                theQuest.QuestBattleFinish();
+                theQuest?.QuestBattleFinish();
             }
             else
             {
@@ -50,7 +50,6 @@ namespace Pokefrost
                 Ext.PopupText(References.Map.FindNode(Campaign.FindCharacterNode(References.Player)).transform, failureText, false);
                 yield return Sequences.Wait(1f);
                 node.SetCleared();
-                References.Map.Continue();
             }
         }
 
