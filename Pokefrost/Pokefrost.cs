@@ -1413,7 +1413,7 @@ namespace Pokefrost
             buffmarowak.type = "marowak";
             buffmarowak.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             buffmarowak.keyword = "";
-            buffmarowak.hiddenKeywords = new KeywordData[] { Get<KeywordData>("random effect") };
+            buffmarowak.hiddenKeywords = new KeywordData[] { TryGet<KeywordData>("randomeffect") };
             buffmarowak.targetConstraints = new TargetConstraint[0];
             collection.SetString(buffmarowak.name + "_text", "Increase <Marowak's> <keyword=health> or <keyword=attack> by <{a}>");
             buffmarowak.textKey = collection.GetString(buffmarowak.name + "_text");
@@ -1539,6 +1539,7 @@ namespace Pokefrost
 
             StatusEffectSpicune spicune = Ext.CreateStatus<StatusEffectSpicune>("Spicune", null, type: "juice")
                 .Register(this);
+            spicune.eventPriority = -999;
             spicune.iconGroupName = "damage";
             spicune.visible = true;
             spicune.isStatus = true;
@@ -3553,7 +3554,6 @@ namespace Pokefrost
                     .SetSprites("jolteon.png", "jolteonBG.png")
                     .SStartEffects(("MultiHit", 1))
                     .SAttackEffects(("Jolted", 1))
-                    .STraits(("Aimless", 1))
                 );
 
             list.Add(
@@ -4324,7 +4324,7 @@ namespace Pokefrost
             for (int j = active.Count - 1; j >= 0; j--)
             {
                 CardData cardData = active.list[j];
-                if (cardData.name == "websiteofsites.wildfrost.pokefrost.marowak")
+                /*if (cardData.name == "websiteofsites.wildfrost.pokefrost.marowak")
                 {
                     Debug.Log("[Pokefrost] Marowak found a bone lying on the battlefield.");
                     foreach (CardData.StatusEffectStacks s in cardData.startWithEffects)
@@ -4335,7 +4335,7 @@ namespace Pokefrost
                             break;
                         }
                     }
-                }
+                }*/
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.slowking")
                 {
 

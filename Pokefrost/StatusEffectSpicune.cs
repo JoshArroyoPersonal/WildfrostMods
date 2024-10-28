@@ -33,17 +33,19 @@ namespace Pokefrost
 
         public override bool RunCardPlayedEvent(Entity entity, Entity[] targets)
         {
-            if (!cardPlayed && entity == target && count > 0)
+            if (entity == target && count > 0)
             {
-                cardPlayed = true;
+                //cardPlayed = true;
                 amountToClear = current;
-                return true;
+
+                return !(ActionQueue.GetActions().Any(a => a is ActionTrigger at && at.entity == target));
                 
             }
 
             return false;
         }
 
+        //Unused
         public override bool RunActionPerformedEvent(PlayAction action)
         {
             if (cardPlayed)
@@ -54,11 +56,11 @@ namespace Pokefrost
             return false;
         }
 
-        public IEnumerator ActionPerformed(PlayAction action)
+       /* public IEnumerator ActionPerformed(PlayAction action)
         {
             cardPlayed = false;
             yield return Clear(amountToClear);
-        }
+        }*/
 
         public IEnumerator Clear(int amount)
         {

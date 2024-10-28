@@ -74,7 +74,7 @@ namespace Pokefrost
         private bool ConsumeOrClunker(string name)
         {
             CardData data = Pokefrost.instance.Get<CardData>(name);
-            if (data?.cardType?.name != "Item")
+            if (data?.cardType?.name != "Item" || data?.playType == Card.PlayType.None)
             {
                 return true;
             }
