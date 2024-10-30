@@ -131,7 +131,7 @@ namespace Pokefrost
                 .ConstructWaves(2, 9, "PU", "GL", "Y")
                 .GiveMiniBossesCharms(new string[1] { "enemy_hooh" }, "CardUpgradeCloudberry", "CardUpgradeBlock")
                 .GiveMiniBossesCharms(new string[1] { "enemy_suicune" }, "CardUpgradeBlock", "CardUpgradeBoost")
-                .GiveMiniBossesCharms(new string[1] { "enemy_raikou" }, "CardUpgradeSun", "CardUpgradeBarrage")
+                .GiveMiniBossesCharms(new string[1] { "enemy_raikou" }, "CardUpgradeSun", "CardUpgradeAimless")
                 .GiveMiniBossesCharms(new string[1] { "enemy_entei" }, "CardUpgradeAttackAndHealth", "CardUpgradeTrashBad")
                 .SetGenerationScript(ScriptableObject.CreateInstance<BattleGenerationScriptHooh>())
                 .FreeModify<BattleDataWithRewards>(b =>

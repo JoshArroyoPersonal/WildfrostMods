@@ -176,6 +176,9 @@ namespace Pokefrost
             sequence.promptEnd = obj.GetComponent<CardHand>().entities.Count == 0;
             Coroutine hide = Campaign.instance.StartCoroutine(HideInDeckView());
             yield return objectGroup.GetComponent<ChooseNewCardSequence>().Run();
+            CardHand hand = obj.GetComponent<CardHand>();
+            Debug.Log("[Pokefrost] Cleared!");
+            hand.Clear();
             Campaign.instance.StopCoroutine(hide);
         }
 
