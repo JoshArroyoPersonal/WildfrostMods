@@ -85,7 +85,7 @@ namespace Pokefrost
                         }
 
                         List<CardUpgradeData> options = AddressableLoader.GetGroup<CardUpgradeData>("CardUpgradeData");
-                        int bonus = Dead.Random.Range(27, 25);
+                        int bonus = Dead.Random.Range(20, 25);
                         UnityEngine.Debug.Log("[Pokefrost] Furret rolled " + bonus.ToString() + " charms");
 
                         for (int i = 0; i < bonus; i++)

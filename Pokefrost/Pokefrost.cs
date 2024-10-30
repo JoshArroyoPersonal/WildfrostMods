@@ -2673,7 +2673,7 @@ namespace Pokefrost
 
             list.Add(
                 new CardDataBuilder(this)
-                    .CreateUnit("hisuiansneasel", "Hitsuian Sneasel", idleAnim: "PingAnimationProfile")
+                    .CreateUnit("hisuiansneasel", "Hisuian Sneasel", idleAnim: "PingAnimationProfile")
                     .SetStats(6, 0, 3)
                     .SetSprites("hisuiansneasel.png", "hisuiansneaselBG.png")
                     .SStartEffects(("Deal Bonus Damage Equal To Cards In Hand", 1), ("When Hit Draw", 1))
