@@ -21,6 +21,15 @@ namespace Pokefrost
             return selectedCard.data.name == CardName;
         }
 
+        public static void CheckEvolveFromSelect(ShopItem item)
+        {
+            Entity entity = item.GetComponentInChildren<Entity>();
+            if (entity != null)
+            {
+                CheckEvolveFromSelect(entity);
+            }
+        }
+
         public static void CheckEvolveFromSelect(Entity entity)
         {
             if (References.Player?.data?.inventory == null) { return; }

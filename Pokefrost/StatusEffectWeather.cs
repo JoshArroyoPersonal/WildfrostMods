@@ -25,6 +25,11 @@ namespace Pokefrost
             return false;
         }
 
+        public void OnDestroy()
+        {
+            Deactivate();
+        }
+
         public override bool RunEndEvent()
         {
             Deactivate();
@@ -35,11 +40,15 @@ namespace Pokefrost
         {
             if (active) return;
 
-            snowfall = GameObject.Find("Battle/Background/BackgroundSnowland(Clone)")?.GetComponentInChildren<SnowfallParticles>();
-            if (snowfall == null) return;
+            snowfall = GameObject.Find("Battle/Background/BackgroundSnowland(Clone)")?.GetComponentInChildren<SnowfallParticles>()
+                ?? GameObject.Find("Battle/Background/BackgroundFrostland 5(Clone)")?.GetComponentInChildren<SnowfallParticles>()
+                ?? GameObject.Find("Battle/Background/BackgroundFinalBoss 4(Clone)")?.GetComponentInChildren<SnowfallParticles>();
+            if (snowfall != null)
+            {
+                snowfall.frontSnow.startColor = color;
+            }
 
             active = true;
-            snowfall.frontSnow.startColor = color;
             Events.OnSetWeatherIntensity += Events_OnSetWeatherIntensity;
             Events.InvokeSetWeatherIntensity(0.2f, 1f);
         }

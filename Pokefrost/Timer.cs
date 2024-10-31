@@ -74,7 +74,7 @@ namespace Pokefrost
                 Text.SetText(failFormat);
                 time = 0;
                 running = false;
-                OnFinished.Invoke();
+                OnFinished?.Invoke();
                 return;
             }
             int intTime = (int)time;

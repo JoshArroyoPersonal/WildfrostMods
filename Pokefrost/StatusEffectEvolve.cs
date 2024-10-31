@@ -243,7 +243,7 @@ namespace Pokefrost
 
             for (int i = 0; i < count; i++)
             {
-                if (References.Player.data.inventory.deck.RemoveWhere((CardData a) => slateForEvolution[i].id == a.id))
+                if (list.RemoveWhere((CardData a) => slateForEvolution[i].id == a.id))
                 {
                     Debug.Log("[" + slateForEvolution[i].name + "] Removed From [" + References.Player.name + "] deck");
                     evolveEffects[i].Evolve(Pokefrost.instance, slateForEvolution[i]);

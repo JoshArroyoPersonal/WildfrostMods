@@ -50,6 +50,7 @@ namespace Pokefrost
                 Ext.PopupText(References.Map.FindNode(Campaign.FindCharacterNode(References.Player)).transform, failureText, false);
                 yield return Sequences.Wait(1f);
                 node.SetCleared();
+                References.Map.Continue();
             }
         }
 

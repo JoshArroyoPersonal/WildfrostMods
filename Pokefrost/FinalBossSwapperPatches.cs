@@ -198,6 +198,7 @@ namespace Pokefrost
         {
             CardScriptAddPassiveEffect script = ScriptableObject.CreateInstance<CardScriptAddPassiveEffect>();
             script.name = "Add Passive: " + name;
+            script.effect = Pokefrost.instance.TryGet<StatusEffectData>(name);
             script.countRange = new Vector2Int(min, max);
             return script;
         }
@@ -206,6 +207,7 @@ namespace Pokefrost
         {
             CardScriptAddAttackEffect script = ScriptableObject.CreateInstance<CardScriptAddAttackEffect>();
             script.name = "Add Attack Effect: " + name;
+            script.effect = Pokefrost.instance.TryGet<StatusEffectData>(name);
             script.countRange = new Vector2Int(min, max);
             return script;
         }
@@ -214,6 +216,7 @@ namespace Pokefrost
         {
             CardScriptAddTrait script = ScriptableObject.CreateInstance<CardScriptAddTrait>();
             script.name = "Add Trait: " + name;
+            script.trait = Pokefrost.instance.TryGet<TraitData>(name);
             script.countRange = new Vector2Int(min, max);
             return script;
         }

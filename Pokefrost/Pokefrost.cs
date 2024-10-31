@@ -4462,6 +4462,7 @@ namespace Pokefrost
             Events.OnCheckEntityDrag += ButtonExt.DisableDrag;
             Events.OnSceneLoaded += BattleFuse;
             Events.OnEntityChosen += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
+            Events.OnShopItemPurchase += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
             Events.OnSceneChanged += PickupRoutine.OnSceneChanged;
             
 
