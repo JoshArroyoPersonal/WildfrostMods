@@ -36,7 +36,7 @@ namespace Pokefrost
             }
         }
 
-        public CardStack FindEnemyReserveStack() 
+        public static CardStack FindEnemyReserveStack() 
         {
             foreach (CardStack cardStack in GameObject.FindObjectsOfType<CardStack>(true)) 
             {
@@ -48,7 +48,7 @@ namespace Pokefrost
             return null;
         }
 
-        public WaveDeploySystem FindWaveSystem()
+        public static WaveDeploySystem FindWaveSystem()
         {
 
             foreach (WaveDeploySystem waveSys in GameObject.FindObjectsOfType<WaveDeploySystem>(true))
@@ -61,7 +61,7 @@ namespace Pokefrost
             return null;
         }
 
-        public WaveDeploySystemOverflow FindWaveSystemOverflow()
+        public static WaveDeploySystemOverflow FindWaveSystemOverflow()
         {
 
             foreach (WaveDeploySystemOverflow waveSys in GameObject.FindObjectsOfType<WaveDeploySystemOverflow>(true))
@@ -74,7 +74,28 @@ namespace Pokefrost
             return null;
         }
 
-        public bool FixWaves(params Entity[] entities)
+        public static void FailSafe(int _)
+        {
+            List<Entity> list = Battle.GetCardsOnBoard(Battle.GetOpponent(References.Player));
+            if (list == null || list.Count > 0) { return; }
+
+            CardStack stack = FindEnemyReserveStack();
+            if (stack == null) { return; }
+
+            if (stack.Count > 0)
+            {
+                WaveDeploySystemOverflow overSys = FindWaveSystemOverflow();
+                if (overSys == null || overSys.currentWave < overSys.waves.Count) { return; }
+
+                FixWaves(stack.entities.Clone().ToArray());
+                return;
+            }
+
+            Battle.instance.winner = References.Player;
+            Battle.instance.phase = Battle.Phase.End;
+        }
+
+        public static bool FixWaves(params Entity[] entities)
         {
             
             if (entities.Count() == 0)

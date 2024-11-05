@@ -346,11 +346,11 @@ namespace Pokefrost
 
         public override IEnumerator BeginRoutine()
         {
-            Debug.Log(target?.name);
+            //Debug.Log(target?.name);
             if(target != null && target.data.name.Contains("websiteofsites.wildfrost.pokefrost"))
             {
-                Debug.Log(target.data.name);
-                Debug.Log(Pokefrost.instance.ToString());
+                //Debug.Log(target.data.name);
+                //Debug.Log(Pokefrost.instance.ToString());
                 string[] splitName = target.data.name.Split('.');
                 string trueName = splitName[3];
                 string fileName = Pokefrost.instance.ImagePath("shiny_" + trueName + ".png");

@@ -26,6 +26,7 @@ namespace Pokefrost
         {
             commands.Add(new CommandModifier());
             commands.Add(new CommandEvent());
+            commands.Add(new CommandDebug());
         }
 
         public class CommandModifier : Command
@@ -122,6 +123,32 @@ namespace Pokefrost
             {
                 predictedArgs = EventBattleManager.battleList.Keys.ToArray();
                 yield break;
+            }
+        }
+
+        public class CommandDebug : Command
+        {
+            public override string id => "poke.debug";
+
+            public override string format => "poke.debug";
+
+            public override string desc => "Runs arbitrary code for debugging";
+
+            public override bool IsRoutine => false;
+            public override void Run(string args)
+            {
+                List<StatusEffectData> list = AddressableLoader.GetGroup<StatusEffectData>("StatusEffectData");
+                Debug.Log("[Pokefrost] STARTING DEBUG: " + list.Count.ToString());
+                foreach (StatusEffectData data in list)
+                {
+                    
+                    if (data.type == null)
+                    {
+                        Debug.Log($"[Pokefrost] {data.name}");
+                    }
+                    
+                }
+                Debug.Log("[Pokefrost] ENDING DEBUG");
             }
         }
     }

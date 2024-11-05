@@ -147,7 +147,7 @@ namespace Pokefrost
                     }
                     else
                     {
-                        UnityEngine.Debug.Log("[[Michael]] Unrecognized/neutral charm: randomizing evolution.");
+                        UnityEngine.Debug.Log("[Pokefrost] Unrecognized/neutral charm: randomizing evolution.");
                         int r = UnityEngine.Random.Range(0, 7);
                         evolutionCardName = eeveelutions[r];
 
