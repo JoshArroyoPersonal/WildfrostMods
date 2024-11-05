@@ -40,7 +40,6 @@ namespace Pokefrost
 
         private IEnumerator Enable(Entity entity)
         {
-            Debug.Log("[Duskull] " + entity.data.cardType.name.ToString());
             if (entity.data.cardType.name == "Summoned")
             {
                 yield return Sequences.Wait(0.2f);

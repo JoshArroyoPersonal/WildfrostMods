@@ -309,6 +309,7 @@ namespace Pokefrost
             supergreed.temporary = 0;
             supergreed.textInsert = "<{a}><keyword=blings>";
             supergreed.name = "Drop Bling on Hit";
+            supergreed.type = "";
             collection.SetString(supergreed.name + "_text", "Lose <{a}><keyword=blings> when hit");
             supergreed.textKey = collection.GetString(supergreed.name + "_text");
             supergreed.textOrder = 0;
@@ -332,6 +333,7 @@ namespace Pokefrost
             hazeall.targetConstraints = new TargetConstraint[0];
             hazeall.textInsert = "<{a}><keyword=haze>";
             hazeall.name = "Apply Haze to All";
+            hazeall.type = "";
             collection.SetString(hazeall.name + "_text", "Apply <{a}><keyword=haze> to all");
             hazeall.textKey = collection.GetString(hazeall.name + "_text");
             hazeall.textOrder = 0;
@@ -365,6 +367,7 @@ namespace Pokefrost
             selfheal.targetConstraints = new TargetConstraint[0];
             selfheal.textInsert = "<{a}><keyword=health>";
             selfheal.name = "Heal Self";
+            selfheal.type = "";
             collection.SetString(selfheal.name + "_text", "Restore <{a}><keyword=health> to self");
             selfheal.textKey = collection.GetString(selfheal.name + "_text");
             selfheal.textOrder = 0;
@@ -388,6 +391,7 @@ namespace Pokefrost
             restoreall.targetConstraints = new TargetConstraint[0];
             restoreall.textInsert = "<{a}><keyword=health>";
             restoreall.name = "Heal & Cleanse All";
+            restoreall.type = "";
             collection.SetString(restoreall.name + "_text", "Restore <{a}><keyword=health> and <keyword=cleanse> all allies and self");
             restoreall.textKey = collection.GetString(restoreall.name + "_text");
             restoreall.textOrder = 0;
@@ -410,6 +414,7 @@ namespace Pokefrost
             boostallies.targetConstraints = new TargetConstraint[0];
             boostallies.textInsert = "";
             boostallies.name = "Boost Allies";
+            boostallies.type = "";
             collection.SetString(boostallies.name + "_text", "While active, boost the effects of all allies");
             boostallies.textKey = collection.GetString(boostallies.name + "_text");
             boostallies.textOrder = 0;
@@ -431,6 +436,7 @@ namespace Pokefrost
             unmovable.targetConstraints = new TargetConstraint[0];
             unmovable.textInsert = "<keyword=unmovable>";
             unmovable.name = "Unmovable to Some Allies";
+            unmovable.type = "";
             collection.SetString(unmovable.name + "_text", "While active, add <keyword=unmovable> to allies in other row");
             unmovable.textKey = collection.GetString(unmovable.name + "_text");
             unmovable.textOrder = 0;
@@ -451,6 +457,7 @@ namespace Pokefrost
             hitrow.targetConstraints = new TargetConstraint[0];
             hitrow.textInsert = "Hit Row";
             hitrow.name = "Hit Your Row";
+            hitrow.type = "";
             collection.SetString(hitrow.name + "_text", "Also hits allies in row");
             hitrow.textKey = collection.GetString(hitrow.name + "_text");
             hitrow.textOrder = 0;
@@ -472,6 +479,7 @@ namespace Pokefrost
             sundrum.targetConstraints = new TargetConstraint[0];
             sundrum.textInsert = "Reduce Counter Row";
             sundrum.name = "On Card Played Reduce Counter Row";
+            sundrum.type = "";
             collection.SetString(sundrum.name + "_text", "Count down <keyword=counter> by <{a}> to allies in row");
             sundrum.textKey = collection.GetString(sundrum.name + "_text");
             sundrum.textOrder = 0;
@@ -511,6 +519,7 @@ namespace Pokefrost
             blazetea.targetConstraints = Get<CardData>("BlazeTea").attackEffects[1].data.targetConstraints;
             blazetea.textInsert = "Add MultiHit To Random Ally";
             blazetea.name = "On Card Played Blaze Tea Random Ally";
+            blazetea.type = "";
             collection.SetString(blazetea.name + "_text", "Add <x{a}><keyword=frenzy> and increase <keyword=counter> by <{a}> to a random ally");
             blazetea.textKey = collection.GetString(blazetea.name + "_text");
             blazetea.textOrder = 0;
@@ -616,6 +625,7 @@ namespace Pokefrost
             statusList.Add(duskulleffect);
             StatusEffectTriggerWhenSummonDeployed duskulltrigger = ScriptableObject.CreateInstance<StatusEffectTriggerWhenSummonDeployed>();
             duskulltrigger.name = "Trigger When Summon";
+            duskulltrigger.type = "";
             duskulltrigger.isReaction = true;
             duskulltrigger.applyFormat = "";
             duskulltrigger.applyFormatKey = new UnityEngine.Localization.LocalizedString();
@@ -649,6 +659,7 @@ namespace Pokefrost
             triattack.effectsToapply = new StatusEffectData[] { Get<StatusEffectData>("Shroom"), Get<StatusEffectData>("Overload"), Get<StatusEffectData>("Weakness") };
             triattack.canBeBoosted = true;
             triattack.name = "On Card Played Apply Shroom Overburn Or Bom";
+            triattack.type = "";
             triattack.applyFormat = "";
             triattack.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             triattack.keyword = "";
@@ -679,6 +690,7 @@ namespace Pokefrost
             overoverburn.effectToApply = overoverburn.conditionEffect;
             overoverburn.applyEqualAmount = true;
             overoverburn.name = "Apply Overload Equal To Overload";
+            overoverburn.type = "";
             overoverburn.applyFormat = "";
             overoverburn.applyFormatKey = new UnityEngine.Localization.LocalizedString();
             overoverburn.keyword = "";
@@ -823,6 +835,7 @@ namespace Pokefrost
 
             StatusEffectApplyXWhenAnyoneTakesDamage teethtrigger = ScriptableObject.CreateInstance<StatusEffectApplyXWhenAnyoneTakesDamage>();
             teethtrigger.name = "Trigger When Teeth Damage";
+            teethtrigger.type = "";
             teethtrigger.effectToApply = Get<StatusEffectData>("Trigger (High Prio)");
             teethtrigger.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
             teethtrigger.isReaction = true;
@@ -842,6 +855,7 @@ namespace Pokefrost
 
             StatusEffectIncreaseAttackBasedOnCardsDrawnThisTurn drawattack = ScriptableObject.CreateInstance<StatusEffectIncreaseAttackBasedOnCardsDrawnThisTurn>();
             drawattack.name = "Increase Attack Based on Cards Drawn";
+            drawattack.type = "";
             drawattack.effectToGain = Get<StatusEffectData>("Ongoing Increase Attack");
             drawattack.canBeBoosted = true;
             drawattack.applyFormat = "";
@@ -858,6 +872,7 @@ namespace Pokefrost
 
             StatusEffectApplyXWhenClunkerDestroyed clunkertrash = ScriptableObject.CreateInstance<StatusEffectApplyXWhenClunkerDestroyed>();
             clunkertrash.name = "When Clunker Destroyed Add Junk To Hand";
+            clunkertrash.type = "";
             clunkertrash.effectToApply = Get<StatusEffectData>("Instant Summon Junk In Hand");
             clunkertrash.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
             clunkertrash.waitForAnimationEnd = true;
@@ -876,6 +891,7 @@ namespace Pokefrost
 
             StatusEffectApplyXWhenClunkerDestroyed clunkerscrap = ScriptableObject.CreateInstance<StatusEffectApplyXWhenClunkerDestroyed>();
             clunkerscrap.name = "When Clunker Destroyed Gain Scrap";
+            clunkerscrap.type = "";
             clunkerscrap.effectToApply = Get<StatusEffectData>("Scrap");
             clunkerscrap.applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
             clunkerscrap.waitForAnimationEnd = true;
@@ -894,6 +910,7 @@ namespace Pokefrost
 
             StatusEffectApplyXOnCardPlayed increasehandattack = ScriptableObject.CreateInstance<StatusEffectApplyXOnCardPlayed>();
             increasehandattack.name = "On Card Played Increase Attack Of Cards In Hand";
+            increasehandattack.type = "";
             increasehandattack.effectToApply = Get<StatusEffectData>("Increase Attack");
             increasehandattack.applyToFlags = StatusEffectApplyX.ApplyToFlags.Hand;
             increasehandattack.canBeBoosted = true;
@@ -911,6 +928,7 @@ namespace Pokefrost
 
             StatusEffectApplyXWhenHit cleanseteamonhit = ScriptableObject.CreateInstance<StatusEffectApplyXWhenHit>();
             cleanseteamonhit.name = "When Hit Cleanse Team";
+            cleanseteamonhit.type = "";
             cleanseteamonhit.effectToApply = Get<StatusEffectData>("Cleanse");
             cleanseteamonhit.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies | StatusEffectApplyX.ApplyToFlags.Self;
             cleanseteamonhit.waitForAnimationEnd = true;
@@ -928,6 +946,7 @@ namespace Pokefrost
 
             StatusEffectApplyXWhenCardDestroyed triggerwhencarddestroyed = Get<StatusEffectData>("Trigger When Enemy Is Killed").InstantiateKeepName() as StatusEffectApplyXWhenCardDestroyed;
             triggerwhencarddestroyed.name = "Trigger When Card Destroyed";
+            triggerwhencarddestroyed.type = "";
             triggerwhencarddestroyed.canBeAlly = true;
             triggerwhencarddestroyed.mustBeOnBoard = false;
             collection.SetString(triggerwhencarddestroyed.name + "_text", "Trigger when a card is destroyed");
@@ -935,7 +954,7 @@ namespace Pokefrost
             triggerwhencarddestroyed.textKey = collection.GetString(triggerwhencarddestroyed.name + "_text");
             triggerwhencarddestroyed.ModAdded = this;
             AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", triggerwhencarddestroyed);
-            statusList.Add(cleanseteamonhit);
+            statusList.Add(triggerwhencarddestroyed);
 
             StatusEffectApplyXOnCardPlayed triggerclunker = Get<StatusEffectData>("On Card Played Trigger RandomAlly").InstantiateKeepName() as StatusEffectApplyXOnCardPlayed;
             triggerclunker.name = "Trigger Clunker Ahead";
@@ -960,6 +979,7 @@ namespace Pokefrost
 
             StatusEffectXActsLikeShell snowActsLikeShell = ScriptableObject.CreateInstance<StatusEffectXActsLikeShell>();
             snowActsLikeShell.name = "Snow Acts Like Shell";
+            snowActsLikeShell.type = "";
             snowActsLikeShell.targetType = "snow";
             snowActsLikeShell.sprite = ImagePath("shnell.png").ToSprite();
             collection.SetString(snowActsLikeShell.name + "_text", "Uses <keyword=snow> as <keyword=shell>");
@@ -1117,6 +1137,7 @@ namespace Pokefrost
 
             StatusEffectApplyXOnCardPlayed triggerslowking = ScriptableObject.CreateInstance<StatusEffectApplyXOnCardPlayed>();
             triggerslowking.name = "On Card Played Trigger All Slowking Crowns";
+            triggerslowking.type = "";
             triggerslowking.effectToApply = Get<StatusEffectData>("Trigger (High Prio)");
             triggerslowking.applyToFlags = StatusEffectApplyX.ApplyToFlags.Allies;
             triggerslowking.applyConstraints = new TargetConstraint[] { ScriptableObject.CreateInstance<TargetConstraintHasSlowkingCrown>() };
@@ -4326,7 +4347,7 @@ namespace Pokefrost
             for (int j = active.Count - 1; j >= 0; j--)
             {
                 CardData cardData = active.list[j];
-                /*if (cardData.name == "websiteofsites.wildfrost.pokefrost.marowak")
+                if (cardData.name == "websiteofsites.wildfrost.pokefrost.marowak")
                 {
                     Debug.Log("[Pokefrost] Marowak found a bone lying on the battlefield.");
                     foreach (CardData.StatusEffectStacks s in cardData.startWithEffects)
@@ -4337,7 +4358,7 @@ namespace Pokefrost
                             break;
                         }
                     }
-                }*/
+                }
                 if (cardData.name == "websiteofsites.wildfrost.pokefrost.slowking")
                 {
 
@@ -4476,6 +4497,7 @@ namespace Pokefrost
             Events.OnCampaignLoaded += CountNatus;
             Events.OnMapNodeReveal += NatuForsee;
             Events.OnEntityCreated += FixImage;
+            Events.OnBattlePreTurnStart += StatusEffectRetreat.FailSafe;
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
