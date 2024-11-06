@@ -36,8 +36,21 @@ namespace Pokefrost
                     return false;
                 }
             }
+            CardData.StatusEffectStacks existingStatus = null;
+            if (hit.statusEffects != null)
+            {
+                existingStatus = hit.statusEffects.FirstOrDefault(s => s.data?.name == effectToApply.name);
+            }
 
-            hit.AddStatusEffect(new CardData.StatusEffectStacks(effectToApply, GetAmount()));
+            if (existingStatus == null)
+            {
+                hit.AddStatusEffect(new CardData.StatusEffectStacks(effectToApply, GetAmount()));
+            }
+            else
+            {
+                existingStatus.data.count += GetAmount();
+            }
+            
 
             return false;
         }
