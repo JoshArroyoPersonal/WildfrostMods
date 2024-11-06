@@ -2090,6 +2090,7 @@ namespace Pokefrost
 
             StatusEffectRetreat retreat = Ext.CreateStatus<StatusEffectRetreat>("Instant Retreat")
                 .Register(this);
+            retreat.eventPriority = -99998;
 
             StatusEffectApplyXOnCardPlayedMaybe randomTest = Ext.CreateStatus<StatusEffectApplyXOnCardPlayedMaybe>("Maybe Make Front Enemy Retreat", "<{a}>% chance to send the front enemy to the next wave", boostable:true)
                 .ApplyX(retreat, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
