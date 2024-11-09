@@ -65,6 +65,23 @@ namespace Pokefrost
                 Eyes("websiteofsites.wildfrost.pokefrost.lickilicky", (-0.14f,2.02f,1.10f,1.10f,0f), (0.49f,2.03f,1.10f,1.10f,0f)),
                 Eyes("websiteofsites.wildfrost.pokefrost.ludicolo", (-0.07f,1.41f,0.90f,1.20f,15f), (0.26f,1.48f,0.90f,1.20f,10f)),
                 Eyes("websiteofsites.wildfrost.pokefrost.lumineon", (0.59f,0.57f,1.00f,1.40f,0f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.machamp", (0.05f,1.30f,1.00f,1.00f,0f), (0.32f,1.23f,0.80f,0.80f,0f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.magcargo", (0.28f,1.74f,1.60f,2.60f,15f), (0.96f,1.83f,1.60f,2.60f,15f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.magneton", (0.03f,1.40f,2.00f,2.00f,0f), (-0.88f,0.54f,1.40f,1.90f,0f), (0.78f,0.52f,1.50f,1.90f,0f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.marowak", (0.64f,0.96f,1.00f,2.00f,50f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.muk", (0.06f,1.23f,1.20f,0.40f,15f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.musharna", (0.28f,0.67f,1.30f,1.30f,0f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.ninjask", (0.11f,0.95f,1.20f,1.20f,0f), (0.85f,1.04f,1.10f,1.10f,0f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.nosepass", (-0.33f,1.53f,2.50f,1.60f,30f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.persian", (0.52f,1.96f,0.80f,1.00f,30f), (0.99f,1.96f,1.30f,1.00f,30f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.polteageist", (-0.04f,2.19f,0.60f,1.00f,0f), (0.22f,2.22f,0.60f,1.00f,0f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.rotom", (-0.16f,1.37f,0.80f,1.70f,30f), (0.21f,1.48f,0.80f,1.70f,0f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.rotomfan", (0.02f,0.46f,0.90f,1.60f,30f), (0.40f,0.49f,0.90f,1.60f,355f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.rotomfrost", (-0.11f,1.10f,1.10f,2.00f,40f), (0.40f,1.20f,1.10f,2.00f,355f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.rotomheat", (-0.22f,1.15f,1.20f,2.00f,25f), (0.36f,1.12f,1.20f,2.00f,335f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.rotommow", (0.15f,0.71f,1.30f,2.10f,20f), (0.73f,0.63f,1.10f,2.00f,345f)),
+                Eyes("websiteofsites.wildfrost.pokefrost.rotomwash", (-0.53f,1.54f,1.00f,1.80f,35f), (0.00f,1.62f,1.00f,1.90f,345f)),
+
             };
 
             AddressableLoader.AddRangeToGroup("EyeData", list);
