@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using ADD = Pokefrost.AddressableExtMethods;
 
 namespace Pokefrost
 {
@@ -84,7 +85,7 @@ namespace Pokefrost
             GameObject background = new GameObject("Background");
             background.SetActive(false);
             background.transform.SetParent(controller.transform, false);
-            background.AddComponent<Image>().sprite = Pokefrost.instance.ImagePath("trade_background.png").ToSprite();
+            background.AddComponent<Image>().sprite = ADD.ASprite("trade_background");
             //background.transform.localPosition = new Vector3(-2.1f, -20.44f, 0);
             //background.transform.localScale = new Vector3(5.2f, 1.2f, 0);
             background.GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f, 1f);

@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
+using ADD = Pokefrost.AddressableExtMethods;
 
 namespace Pokefrost
 {
@@ -111,7 +112,7 @@ namespace Pokefrost
             {
                 titleObject.text = "<size=0.55>What? <#ff0>" + evolvedPokemonLastBattle.Count + "</color> Pokemon have evolved!";
             }
-            Pokefrost.SFX.TryPlaySound("evolution");
+            Pokefrost.fx.TryPlaySound("evolution");
             yield return sequence.StartCoroutine("CreateCards", pokemonEvolvedIntoLastBattle.ToArray());
             yield return SceneManager.WaitUntilUnloaded("CardFramesUnlocked");
             evolvedPokemonLastBattle.Clear();
@@ -146,7 +147,7 @@ namespace Pokefrost
             {
                 string[] splitName = evolutionCardName.Split('.');
                 string trueName = splitName[splitName.Length - 1];
-                Sprite sprite = mod.ImagePath("shiny_" + trueName + ".png").ToSprite();
+                Sprite sprite = ADD.ASprite("shiny_" + trueName + ".png");
                 sprite.name = "shiny";
                 evolution.mainSprite = sprite;
                 evolution.startWithEffects = CardData.StatusEffectStacks.Stack(evolution.startWithEffects, new CardData.StatusEffectStacks[]

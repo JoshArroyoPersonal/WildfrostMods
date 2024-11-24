@@ -52,7 +52,7 @@ namespace Pokefrost
 
             new BattleDataEditor(mod)
                 .Create<BattleDataWithRewards>("Darkrai")
-                .SetSprite("MapDarkrai.png", 200)
+                .SetASprite("MapDarkrai")
                 .SetNameRef("Dark Crater Pit")
                 .EnemyDictionary(('D', "enemy_darkrai"), ('H', "enemy_hypno"), ('M', "enemy_mismagius"), ('G', "enemy_magmortar"), ('S', "enemy_spiritomb"))
                 .StartWavePoolData(0, "Curses!")
@@ -85,7 +85,7 @@ namespace Pokefrost
 
             new BattleDataEditor(mod)
                 .Create<BattleDataWithRewards>("Lati Twins")
-                .SetSprite("MapLati.png", 200)
+                .SetASprite("MapLati")
                 .SetNameRef("Southern Island")
                 .EnemyDictionary(('P', "enemy_plusle"), ('M', "enemy_minun"), ('V', "enemy_volbeat"), ('I', "enemy_illumise"), ('D', "enemy_dustox"), ('B', "enemy_beautifly"), ('G', "enemy_gorebyss"), ('H', "enemy_huntail"), ('S', "enemy_solrock"), ('L', "enemy_lunatone"), ('A', "enemy_latias"), ('O', "enemy_latios"))
                 .StartWavePoolData(0, "Charging up")
@@ -120,7 +120,7 @@ namespace Pokefrost
 
             BattleDataEditor hooh = new BattleDataEditor(mod)
                 .Create<BattleDataWithRewards>("Ho-Oh")
-                .SetSprite("MapHooh.png", 200)
+                .SetASprite("MapHooh")
                 .SetNameRef("Mt. Faraway")
                 .EnemyDictionary(('H', "enemy_hooh"), ('E', "enemy_entei"), ('R', "enemy_raikou"), ('S', "enemy_suicune"), ('V', "enemy_vaporeon"), ('J', "enemy_jolteon"), ('F', "enemy_flareon"), ('P', "enemy_espeon"), ('U', "enemy_umbreon"), ('L', "enemy_leafeon"), ('G', "enemy_glaceon"), ('Y', "enemy_sylveon"))
                 .StartWavePoolData(0, "Mystery")

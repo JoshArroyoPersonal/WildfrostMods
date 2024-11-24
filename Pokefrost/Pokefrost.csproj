@@ -202,6 +202,10 @@
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\Unity.MemoryProfiler.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Unity.ResourceManager">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\Unity.ResourceManager.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.Services.Analytics">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Wildfrost\Modded\Wildfrost_Data\Managed\Unity.Services.Analytics.dll</HintPath>
       <Private>False</Private>
@@ -552,6 +556,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressableExtMethods.cs" />
     <Compile Include="BattleDataWithRewards.cs" />
     <Compile Include="BattleGenerationScriptHooh.cs" />
     <Compile Include="BellClasses.cs" />
@@ -565,6 +570,7 @@
     <Compile Include="EventBattleManager.cs" />
     <Compile Include="EventSaveSystem.cs" />
     <Compile Include="FinalBossSwapperPatches.cs" />
+    <Compile Include="ModComp.cs" />
     <Compile Include="QuestSystem.cs" />
     <Compile Include="ScriptableCardImages.cs" />
     <Compile Include="StatusEffectAdAttackEffects.cs" />

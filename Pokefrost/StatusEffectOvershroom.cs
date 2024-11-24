@@ -344,28 +344,16 @@ namespace Pokefrost
 
         public override bool HasBeginRoutine => true;
 
-        public override IEnumerator BeginRoutine()
+        public override bool RunBeginEvent()
         {
             //Debug.Log(target?.name);
             if(target != null && target.data.name.Contains("websiteofsites.wildfrost.pokefrost"))
             {
-                //Debug.Log(target.data.name);
-                //Debug.Log(Pokefrost.instance.ToString());
-                string[] splitName = target.data.name.Split('.');
-                string trueName = splitName[3];
-                string fileName = Pokefrost.instance.ImagePath("shiny_" + trueName + ".png");
-                Debug.Log("shiny_" + trueName);
-                if (!System.IO.File.Exists(fileName))
-                {
-                    Debug.Log("[Pokefrost] Oops, shiny file not found. Contact devs.");
-                    yield break;
-                }
-                Sprite sprite = Pokefrost.instance.ImagePath("shiny_" + trueName + ".png").ToSprite();
-                sprite.name = "shiny";
+                Sprite sprite = Pokefrost.instance.ApplyShinySprite(target.data);
                 target.data.mainSprite = sprite;
                 target.GetComponent<Card>().mainImage.sprite = sprite;
             }
-            yield break;
+            return false;
         }
     }
 

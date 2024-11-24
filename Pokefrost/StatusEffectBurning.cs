@@ -80,7 +80,7 @@ namespace Pokefrost
                     canRetaliate = false
                 };
                 clump.Add(hit.Process());
-                Pokefrost.VFX.TryPlayEffect("burntei", item.transform.position, item.transform.lossyScale);
+                Pokefrost.fx.TryPlayEffect("burntei", item.transform.position, item.transform.lossyScale);
             }
             SfxSystem.OneShot("event:/sfx/status/overburn_damage");
             clump.Add(Sequences.Wait(0.5f));
