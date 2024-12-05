@@ -10,6 +10,8 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Localization.Components;
 using UnityEngine.Localization.Tables;
+using UnityEngine.U2D;
+using ADD = Pokefrost.AddressableExtMethods;
 
 namespace Pokefrost
 {
@@ -36,7 +38,7 @@ namespace Pokefrost
             module.startColor = color;
 
             //Splatter (x3)
-            Sprite spr = mod.ImagePath("Splatter.png").ToSprite();
+            Sprite spr = ADD.ASprite("Splatter.png");
             system = obj.transform.GetChild(4).GetComponent<ParticleSystem>();
             system.textureSheetAnimation.AddSprite(spr);
             system.textureSheetAnimation.RemoveSprite(0);
@@ -90,10 +92,14 @@ namespace Pokefrost
 
         public static void LoadPanels(WildfrostMod mod)
         {
+            panel = ADD.ASprite("Panel");
+            panelSmall = ADD.ASprite("PanelSmall");
+            /*
             Texture2D tex = mod.ImagePath("Panel.png").ToTex();
             panel = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), 0.5f * Vector2.one, 15000, 0, SpriteMeshType.FullRect, new Vector4(25, 175, 200, 25));
             tex = mod.ImagePath("PanelSmall.png").ToTex();
             panelSmall = Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), 0.5f * Vector2.one, 15000, 0, SpriteMeshType.FullRect, new Vector4(50, 125, 150, 50));
+            */
         }
         public static T[] RemoveNulls<T>(this T[] data, WildfrostMod mod) where T : DataFile
         {
@@ -349,18 +355,6 @@ namespace Pokefrost
             return b;
         }
 
-        public static Sprite CreateBellSprite(float pivotx = 0.5f, float pivoty = 0.9f, int ppi = 327)
-        {
-            Texture2D tex = Pokefrost.instance.ImagePath("suicuneBell.png").ToTex();
-            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(pivotx, pivoty), ppi);
-        }
-
-        public static Sprite CreateDingerSprite(float pivotx = 0.5f, float pivoty = 1.5f, int ppi = 327)
-        {
-            Texture2D tex = Pokefrost.instance.ImagePath("suicuneDinger.png").ToTex();
-            return Sprite.Create(tex, new Rect(0, 0, tex.width, tex.height), new Vector2(pivotx, pivoty), ppi);
-        }
-
         public static CampaignNodeTypeBuilder BetterEvent(this CampaignNodeTypeBuilder cn, string key, WildfrostMod mod)
         {
             MapNode mapNode = mod.Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab.InstantiateKeepName();
@@ -368,8 +362,8 @@ namespace Pokefrost
             StringTable collection = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
             collection.SetString("map_" + mapNode.name, key);
             mapNode.label.GetComponentInChildren<LocalizeStringEvent>().StringReference = collection.GetString("map_" + mapNode.name);
-            mapNode.spriteOptions[0] = mod.ImagePath("trade_event.png").ToSprite();
-            mapNode.clearedSpriteOptions[0] = mod.ImagePath("trade_done.png").ToSprite();
+            mapNode.spriteOptions[0] = ADD.ASprite("trade_event");
+            mapNode.clearedSpriteOptions[0] = ADD.ASprite("trade_done");
             return cn.WithMapNodePrefab(mapNode)
                 .FreeModify<CampaignNodeTypeTrade>((data) =>
                 {
@@ -401,7 +395,27 @@ namespace Pokefrost
                 });
         }
 
+        public static CardUpgradeDataBuilder SEffects(this CardUpgradeDataBuilder b, params (string, int)[] statusEffects)
+        {
+            return b.SubscribeToAfterAllBuildEvent(
+                (data) =>
+                {
+                    CardData.StatusEffectStacks[] stacks = statusEffects.Select((status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
+                    data.effects = stacks;
+                });
+        }
+
         public static CardDataBuilder SAttackEffects(this CardDataBuilder b, params (string, int)[] statusEffects)
+        {
+            return b.SubscribeToAfterAllBuildEvent(
+                (data) =>
+                {
+                    CardData.StatusEffectStacks[] stacks = statusEffects.Select((status) => new CardData.StatusEffectStacks(Pokefrost.instance.Get<StatusEffectData>(status.Item1), status.Item2)).ToArray();
+                    data.attackEffects = stacks;
+                });
+        }
+
+        public static CardUpgradeDataBuilder SAttackEffects(this CardUpgradeDataBuilder b, params (string, int)[] statusEffects)
         {
             return b.SubscribeToAfterAllBuildEvent(
                 (data) =>
@@ -418,6 +432,16 @@ namespace Pokefrost
                 {
                     List<CardData.TraitStacks> t = traits.Select((tr) => new CardData.TraitStacks(Pokefrost.instance.Get<TraitData>(tr.Item1), tr.Item2)).ToList();
                     data.traits = t;
+                });
+        }
+
+        public static CardUpgradeDataBuilder STraits(this CardUpgradeDataBuilder b, params (string, int)[] traits)
+        {
+            return b.SubscribeToAfterAllBuildEvent(
+                (data) =>
+                {
+                    CardData.TraitStacks[] t = traits.Select((tr) => new CardData.TraitStacks(Pokefrost.instance.Get<TraitData>(tr.Item1), tr.Item2)).ToArray();
+                    data.giveTraits = t;
                 });
         }
     }

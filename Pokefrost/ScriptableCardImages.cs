@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
+using ADD = Pokefrost.AddressableExtMethods;
 
 namespace Pokefrost
 {
@@ -15,7 +16,7 @@ namespace Pokefrost
 
         bool shiny = false;
 
-        List<Sprite> sprites = new List<Sprite> { Pokefrost.instance.ImagePath("palafin.png").ToSprite(), Pokefrost.instance.ImagePath("shiny_palafin.png").ToSprite(), Pokefrost.instance.ImagePath("palafinhero.png").ToSprite(), Pokefrost.instance.ImagePath("shiny_palafinhero.png").ToSprite() };
+        List<Sprite> sprites = new List<Sprite> { ADD.ASprite("palafin"), ADD.ASprite("shiny_palafin"), ADD.ASprite("palafinhero"), ADD.ASprite("shiny_palafinhero") };
 
         public override void AssignEvent()
         {

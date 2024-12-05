@@ -110,7 +110,7 @@ namespace Pokefrost
                 BackgroundFade(1f, 0f, fadeOutDur, fadeOutType);
                 yield return new WaitForSeconds(fadeOutDur);
                 fader.SetActive(false);
-                Pokefrost.SFX.TryPlaySound("evolution");
+                Pokefrost.fx.TryPlaySound("evolution");
                 //continueButton.interactable = true;
             }
             yield return new WaitUntil(() => eventProgress > 1);
