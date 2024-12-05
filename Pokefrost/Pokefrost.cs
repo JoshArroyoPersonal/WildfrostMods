@@ -4208,10 +4208,6 @@ namespace Pokefrost
                     {
                         RewardPool pool = Extensions.GetRewardPool("GeneralModifierPool");
                         pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
-                        pool.list.Add(data);
                     }
                     )*/
                 );
