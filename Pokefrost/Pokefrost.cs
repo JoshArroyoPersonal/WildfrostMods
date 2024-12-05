@@ -2228,8 +2228,9 @@ namespace Pokefrost
             ev22.Confirm();
 
             StatusEffectEvolveKirlia ev23 = ScriptableObject.CreateInstance<StatusEffectEvolveKirlia>();
-            ev23.Autofill("Evolve Kirlia", $"<keyword=evolve>: Gain {a} unique effects", this);
+            ev23.Autofill("Evolve Kirlia", $"<keyword=evolve>: Gain {a} unique effects <i><color=#A6A6A6>(or a special effect)</color></i>", this);
             ev23.SetEvolutions("gardevoir", "gallade");
+            ev23.canBeBoosted = true;
             ev23.Confirm();
 
             StatusEffectEvolveFromKill ev24 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
@@ -5035,21 +5036,13 @@ namespace Pokefrost
     {
         static void Prefix(PetHutFlagSetter __instance)
         {
-
-            Texture2D Etex = Pokefrost.instance.ImagePath("eeveeflag.png").ToTex();
-            Sprite Espr = Sprite.Create(Etex, new Rect(0, 0, Etex.width, Etex.height), new Vector2(0.5f, 1f), 160);
-            Texture2D Rtex = Pokefrost.instance.ImagePath("rotomflag.png").ToTex();
+            //Pivot: (0.5,1.0), PixelDensity: 160
+            /*
+            Texture2D Rtex = ADD.SaferASprite("rotomflag.png").texture;
             Sprite Rspr = Sprite.Create(Rtex, new Rect(0, 0, Rtex.width, Rtex.height), new Vector2(0.5f, 1f), 160);
-
-            __instance.flagSprites = __instance.flagSprites.Append(Espr).ToArray();
-            __instance.flagSprites = __instance.flagSprites.Append(Rspr).ToArray();
-        }
-
-        static Sprite CreateSprite(int density)
-        {
-            Texture2D tex = Pokefrost.instance.ImagePath("eeveeflag.png").ToTex();
-            Sprite spr = Sprite.Create(tex, new Rect(0,0,tex.width,tex.height), new Vector2(0.5f, 1f), density);
-            return spr;
+            */
+            __instance.flagSprites = __instance.flagSprites.Append(ADD.ASprite("eeveeflag")).ToArray();
+            __instance.flagSprites = __instance.flagSprites.Append(ADD.ASprite("rotomflag")).ToArray();
         }
 
     }

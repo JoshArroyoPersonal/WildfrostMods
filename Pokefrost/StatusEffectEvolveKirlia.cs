@@ -91,6 +91,7 @@ namespace Pokefrost
            
         }
 
+        /*
         public void GardevoirOrGallade(CardData data, string newType)
         {
             data.TryGetCustomData<int>("Gardevoir", out int value, 0);
@@ -105,23 +106,30 @@ namespace Pokefrost
             }
             data.SetCustomData("Gardevoir", value + change);
         }
+        */
 
         public override bool ReadyToEvolve(CardData cardData)
         {
+            
             foreach (CardData.StatusEffectStacks statuses in cardData.startWithEffects)
             {
                 if (statuses.data.name == this.name)
                 {
-                    return (statuses.count == 0);
+                    return (GainedLumin(cardData) || statuses.count == 0);
                 }
             }
             return false;
         }
 
+        public static bool GainedLumin(CardData data)
+        {
+            data.TryGetCustomData<string>("Effects Applied", out string s, "");
+            return s.Contains(", lumin");
+        }
+
         public override void Evolve(WildfrostMod mod, CardData preEvo)
         {
-            preEvo.TryGetCustomData<int>("Gardevoir", out int value, 0);
-            evolutionCardName = (value >= 0) ? evolutions[0] : evolutions[1];
+            evolutionCardName = (GainedLumin(preEvo)) ? evolutions[1] : evolutions[0];
             base.Evolve(mod, preEvo);
         }
 
