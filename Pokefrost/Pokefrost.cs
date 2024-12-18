@@ -2089,6 +2089,56 @@ namespace Pokefrost
             returnIgnite.applyEqualAmount = true;
             returnIgnite.targetMustBeAlive = false;
 
+            this.CreateIconKeyword("foretell", "Foretell", "Trigger when all foretell clears | Counts down each turn", "foretell").ChangeColor(note: new Color(0.5f, 0.2f, 0.9f));
+            this.CreateIcon("foretell", ImagePath("foretell.png").ToSprite(), "foretell", "counter", Color.black, new KeywordData[] { Get<KeywordData>("foretell") }, 1);
+            //.transform.GetChild(0).transform.localPosition = new Vector3 (-0.09f, 0.125f, 0f);
+
+            TargetConstraintHasStatusType foretellConstraint = ScriptableObject.CreateInstance<TargetConstraintHasStatusType>();
+            foretellConstraint.not = true;
+            foretellConstraint.statusType = "foretell";
+
+            StatusEffectForetell foretell = Ext.CreateStatus<StatusEffectForetell>("Foretell", null, type: "foretell")
+                .Register(this);
+            foretell.iconGroupName = "counter";
+            foretell.visible = true;
+            foretell.removeOnDiscard = true;
+            foretell.isStatus = true;
+            foretell.stackable = true;
+            foretell.targetConstraints = new TargetConstraint[2] { ScriptableObject.CreateInstance<TargetConstraintIsUnit>(), foretellConstraint };
+            foretell.textInsert = "{a}";
+            foretell.keyword = "foretell";
+            foretell.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
+
+            StatusEffectBonusDamageEqualToX joltedBonus = Ext.CreateStatus<StatusEffectBonusDamageEqualToX>("Bonus Damage Equal To Jolted", "Deal additional damage equal to <keyword=jolted> on allies and enemies")
+                .Register(this);
+            joltedBonus.effectType = "jolted";
+            joltedBonus.on = StatusEffectBonusDamageEqualToX.On.Board;
+
+            StatusEffectApplyXOnCardPlayed joltedToUnSnowed = Ext.CreateStatus<StatusEffectApplyXOnCardPlayed>("On Card Played Apply Jolted To UnSnowed Enemies", "Apply <{a}><keyword=jolted> to all un-<keyword=snow>'d enemies")
+                .ApplyX(Get<StatusEffectData>("Jolted"), StatusEffectApplyX.ApplyToFlags.Enemies)
+                .Register(this);
+            TargetConstraintHasStatusType notSnowed = ScriptableObject.CreateInstance<TargetConstraintHasStatusType>();
+            notSnowed.not = true;
+            notSnowed.statusType = "snow";
+            joltedToUnSnowed.applyConstraints = new TargetConstraint[1] { notSnowed };
+
+            this.CreateIconKeyword("riptide", "Riptide", "Take damage after moving | Does not count down!", "riptide").ChangeColor(note: new Color(0f, 0.3f, 0.7f));
+            this.CreateIcon("riptide", ImagePath("riptide.png").ToSprite(), "riptide", "health", Color.black, new KeywordData[] { Get<KeywordData>("riptide") }, -1);
+            //.transform.GetChild(0).transform.localPosition = new Vector3 (-0.09f, 0.125f, 0f);
+
+            StatusEffectRiptide riptide = Ext.CreateStatus<StatusEffectRiptide>("Riptide", null, type: "riptide")
+                .Register(this);
+            riptide.iconGroupName = "health";
+            riptide.visible = true;
+            riptide.removeOnDiscard = true;
+            riptide.isStatus = true;
+            riptide.offensive = true;
+            riptide.stackable = true;
+            riptide.targetConstraints = new TargetConstraint[1] { ScriptableObject.CreateInstance<TargetConstraintIsUnit>() };
+            riptide.textInsert = "{a}";
+            riptide.keyword = "riptide";
+            riptide.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", $"<keyword=evolve>: Kill {a} bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -3849,6 +3899,37 @@ namespace Pokefrost
                     .SetASprites("sylveon.png", "sylveonBG.png")
                     .SStartEffects(("On Turn Heal & Cleanse Allies", 2))
                 );
+
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("Ele Basic Attack", "Spark")
+                    .SetStats(null, 2, 0)
+                    .WithValue(50)
+                    .SStartEffects(("Bonus Damage Equal To Jolted", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("Ele Snow", "Charged Snow")
+                    .SetStats(null, 0, 0)
+                    .WithValue(50)
+                    .SAttackEffects(("Snow", 2))
+                    .SStartEffects(("On Card Played Apply Jolted To UnSnowed Enemies", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("Ele Sun", "Shortfuse")
+                    .SetStats(null, 0, 0)
+                    .WithValue(50)
+                    .SAttackEffects(("Jolted", 2), ("Trigger", 1))
+                    .WithText("Trigger target")
+                );
+
+
+
+
 
             //
         }

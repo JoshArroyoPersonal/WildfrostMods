@@ -598,6 +598,7 @@
     <Compile Include="StatusEffectEvolveFromCardPickup.cs" />
     <Compile Include="StatusEffectEvolvePlayCards.cs" />
     <Compile Include="StatusEffectFalseSwipe.cs" />
+    <Compile Include="StatusEffectForetell.cs" />
     <Compile Include="StatusEffectInstantAddDeck.cs" />
     <Compile Include="StatusEffectInstantFullHeal.cs" />
     <Compile Include="StatusEffectInstantReturnToHand.cs" />
@@ -607,6 +608,7 @@
     <Compile Include="StatusEffectPlayCardsInHand.cs" />
     <Compile Include="StatusEffectRetreat.cs" />
     <Compile Include="StatusEffectRevive.cs" />
+    <Compile Include="StatusEffectRiptide.cs" />
     <Compile Include="StatusEffectRunScript.cs" />
     <Compile Include="StatusEffectSketch.cs" />
     <Compile Include="StatusEffectNincadaAndMurkrow.cs" />
