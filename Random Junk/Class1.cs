@@ -11,12 +11,16 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace Tutorial2
+namespace Random_Junk
 {
-    public class Tutorial2 : WildfrostMod
+    public class Random_Junk : WildfrostMod
     {
-        public Tutorial2(string modDirectory) : base(modDirectory)
+
+        public static Random_Junk instance;
+
+        public Random_Junk(string modDirectory) : base(modDirectory)
         {
+            instance = this;
         }
 
         public override string GUID => "websiteofsites.wildfrost.contest";
@@ -135,6 +139,7 @@ namespace Tutorial2
                     ((StatusEffectApplyX)data).applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
                     //Sadly we cannot set the petPrefab here as it gets destroyed, thus we will copy/edit the prefab in the Load method
                     ((StatusEffectApplyXOnCardPlayedWithPet)data).petPrefab = ((StatusEffectFreeAction)TryGet<StatusEffectData>("Free Action")).petPrefab.InstantiateKeepName();
+
                 })
                 );
 
@@ -165,6 +170,10 @@ namespace Tutorial2
 
                 //Different head options, you can have as many/little as you like
                 oomlin.headOptions = new Sprite[] { ImagePath("GoomlinBigHat.png").ToSprite(), ImagePath("GoomlinCrossStitch.png").ToSprite(), ImagePath("GoomlinEgg.png").ToSprite(), ImagePath("GoomlinStar.png").ToSprite(), ImagePath("GoomlinSwirl.png").ToSprite(), ImagePath("GoomlinDrill.png").ToSprite(), ImagePath("GoomlinWave.png").ToSprite() };
+                foreach (Sprite sprite in oomlin.headOptions)
+                {
+                    sprite.name = GUID+"Goomlin";
+                }
 
                 foreach (Image image in oomlin.showTween.GetComponentsInChildren<Image>()) //Prefab for when oomlin sits on the card
                 {
@@ -194,33 +203,17 @@ namespace Tutorial2
 
                 }
 
-                foreach (Image image in oomlin.usedPrefab.transform.GetComponentsInChildren<Image>()) //Prefrab for when the oomlin jumps off
-                {
-                    switch (image.name)
-                    {
-                        case "Body": //Full body that you see when the -oomlin jumps off
-                            image.sprite = ImagePath("GoomlinBodyFull.png").ToSprite(); break;
-                        case "EarLeft": //Left ear
-                            image.sprite = ImagePath("GoomlinEar_Left.png").ToSprite();
-                            image.transform.Translate(new Vector3(0.1f, 0.4f, 0f)); break;
-                        case "EarRight": //Right ear
-                            image.sprite = ImagePath("GoomlinEar_Right.png").ToSprite();
-                            image.transform.Translate(new Vector3(-0.1f, 0.4f, 0f)); break;
-                        case "Tail": //Tail for when the -oomlin jumps off
-                            image.sprite = ImagePath("GoomlinTail.png").ToSprite(); break;
-                        case "Head": //Head
-                            image.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
-                            image.transform.Translate(new Vector3(0f, 0.25f, 0f)); break;
-                    }
-                }
+                ((StatusEffectApplyXOnCardPlayedWithPet)TryGet<StatusEffectData>("When Played Gain Blings")).petPrefab = oomlin;
 
-            ((StatusEffectApplyXOnCardPlayedWithPet)TryGet<StatusEffectData>("When Played Gain Blings")).petPrefab = oomlin;
             }
+
+            
         }
 
         public override void Unload()
         {
             base.Unload();
+            Events.OnSceneChanged -= LoadOomlin;
             UnloadFromClasses();
         }
 

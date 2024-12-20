@@ -2139,6 +2139,14 @@ namespace Pokefrost
             riptide.keyword = "riptide";
             riptide.applyFormatKey = Get<StatusEffectData>("Shroom").applyFormatKey;
 
+            StatusEffectLoseAction doomlinEffect = Ext.CreateStatus<StatusEffectLoseAction>("Lose Action", null)
+                .Register(this);
+
+            KeywordData doomlinKey = this.CreateBasicKeyword("doomlin", "Doomlin", "When played skip your next turn");
+            heroKey.showName = true;
+
+            TraitData doomlinTrait = Ext.CreateTrait<TraitData>("Doomlin", this, doomlinKey, doomlinEffect);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", $"<keyword=evolve>: Kill {a} bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -4548,6 +4556,9 @@ namespace Pokefrost
             Events.OnEntityCreated += FixImage;
             Events.OnBattlePreTurnStart += StatusEffectRetreat.FailSafe;
 
+            //Doomlin
+            Events.OnSceneChanged += LoadOomlin;
+
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
 
@@ -4604,6 +4615,7 @@ namespace Pokefrost
             //Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
             Events.OnSceneChanged -= PickupRoutine.OnSceneChanged;
+            Events.OnSceneChanged -= LoadOomlin;
 
         }
 
@@ -4980,6 +4992,67 @@ namespace Pokefrost
 
             }
 
+        }
+
+        private void LoadOomlin(Scene scene)
+        {
+            if (scene.name == "Town")
+            {
+                ItemHolderPetNoomlin oomlin = ((StatusEffectFreeAction)TryGet<StatusEffectData>("Free Action")).petPrefab.InstantiateKeepName() as ItemHolderPetNoomlin;
+                //Different head options, you can have as many/little as you like
+                oomlin.headOptions = new Sprite[] { ImagePath("nosepass.png").ToSprite() };
+
+                foreach (Image image in oomlin.showTween.GetComponentsInChildren<Image>()) //Prefab for when oomlin sits on the card
+                {
+                    //To get the right offsets do the following:
+                    //(1) Give a card your effect
+                    //(2) Hover over the card and inspect this
+                    //(3) Click Inspect GameObject
+                    //(4) Click the arrow on Wobber, Flipper, CurveAnimator, Offset, Canvas, Front, FrameOutline, ItemHolderPetCreater, Noomlin(Clone)
+                    //Click on Head to adjust head scale/position of head with ears
+                    //Click on the arrow by Head and then click Head/EarLeft/EarRight to edit ears/head individuallys
+                    switch (image.name)
+                    {
+                        case "Body": //Body that hangs on top of card
+                            image.sprite = ImagePath("nosepass.png").ToSprite(); break;
+                        case "EarLeft": //Left ear
+                            image.sprite = ImagePath("nosepass.png").ToSprite();
+                            image.transform.Translate(new Vector3(0.1f, 0.4f, 0f)); break;
+                        case "EarRight": //Right ear
+                            image.sprite = ImagePath("nosepass.png").ToSprite();
+                            image.transform.Translate(new Vector3(-0.1f, 0.4f, 0f)); break;
+                        case "Tail": //Tail for when the -oomlin jumps off
+                            image.sprite = ImagePath("nosepass.png").ToSprite(); break;
+                        case "Head": //Head, done just to rescale it
+                            image.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
+                            image.transform.Translate(new Vector3(0f, 0.25f, 0f)); break;
+                    }
+
+                }
+
+                /*foreach (Image image in oomlin.usedPrefab.transform.GetComponentsInChildren<Image>()) //Prefrab for when the oomlin jumps off
+                {
+                    switch (image.name)
+                    {
+                        case "Body": //Full body that you see when the -oomlin jumps off
+                            image.sprite = ImagePath("nosepass.png").ToSprite(); break;
+                        case "EarLeft": //Left ear
+                            image.sprite = ImagePath("nosepass.png").ToSprite();
+                            image.transform.Translate(new Vector3(0.1f, 0.4f, 0f)); break;
+                        case "EarRight": //Right ear
+                            image.sprite = ImagePath("nosepass.png").ToSprite();
+                            image.transform.Translate(new Vector3(-0.1f, 0.4f, 0f)); break;
+                        case "Tail": //Tail for when the -oomlin jumps off
+                            image.sprite = ImagePath("nosepass.png").ToSprite(); break;
+                        case "Head": //Head
+                            image.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
+                            image.transform.Translate(new Vector3(0f, 0.25f, 0f)); break;
+                    }
+                }*/
+
+                ((StatusEffectLoseAction)TryGet<StatusEffectData>("Lose Action")).petPrefab = oomlin;
+
+            }
         }
 
     }

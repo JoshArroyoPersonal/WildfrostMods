@@ -1,6 +1,5 @@
 ﻿using Dead;
-using Deadpan.Enums.Engine.Components.Modding;
-using HarmonyLib;
+using Rewired;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,11 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Analytics;
 
-namespace Random_Junk
+namespace Pokefrost
 {
-    internal class StatusEffectApplyXOnCardPlayedWithPet : StatusEffectApplyXOnCardPlayed
+    internal class StatusEffectLoseAction : StatusEffectData
     {
 
         public ItemHolderPet petPrefab;
@@ -23,7 +22,6 @@ namespace Random_Junk
         {
             base.OnCardPlayed += CardPlayed;
         }
-
 
         public override bool RunBeginEvent()
         {
@@ -39,7 +37,6 @@ namespace Random_Junk
 
             return false;
         }
-
 
         public override bool RunCardMoveEvent(Entity entity)
         {
@@ -119,54 +116,10 @@ namespace Random_Junk
                 yield return Sequences.Wait(0.6f);
             }
 
-            yield return Check(entity, targets);
+            ActionQueue.Add(new ActionEndTurn(Battle.instance.player));
+            Battle.instance.playerCardController.Disable();
+            CardPopUp.Clear();
 
         }
-
-
     }
-
-
-
-    [HarmonyPatch(typeof(ItemHolderPetUsed), "SetUp")]
-    class GoomlinSetUp
-    {
-        public static Sprite fullBody = Random_Junk.instance.ImagePath("GoomlinBodyFull.png").ToSprite();
-
-        public static Sprite earLeft = Random_Junk.instance.ImagePath("GoomlinEar_Left.png").ToSprite();
-
-        public static Sprite earRight = Random_Junk.instance.ImagePath("GoomlinEar_Right.png").ToSprite();
-
-        public static Sprite tail = Random_Junk.instance.ImagePath("GoomlinTail.png").ToSprite();
-
-        static void Prefix(ItemHolderPetUsed __instance, Sprite headSprite)
-        {
-            if (headSprite.name == Random_Junk.instance.GUID + "Goomlin")
-            {
-                foreach (Image image in __instance.transform.GetComponentsInChildren<Image>())
-                {
-                    switch (image.name)
-                    {
-                        case "Body": //Full body that you see when the -oomlin jumps off
-                            image.sprite = fullBody; break;
-                        case "EarLeft": //Left ear
-                            image.sprite = earLeft;
-                            image.transform.Translate(new Vector3(0.1f, 0.4f, 0f)); break;
-                        case "EarRight": //Right ear
-                            image.sprite = earRight;
-                            image.transform.Translate(new Vector3(-0.1f, 0.4f, 0f)); break;
-                        case "Tail": //Tail for when the -oomlin jumps off
-                            image.sprite = tail; break;
-                        case "Head": //Head
-                            image.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
-                            image.transform.Translate(new Vector3(0f, 0.25f, 0f)); break;
-                    }
-                }
-            }
-        }
-    }
-
-
-
-
 }

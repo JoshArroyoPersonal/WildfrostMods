@@ -603,6 +603,7 @@
     <Compile Include="StatusEffectInstantFullHeal.cs" />
     <Compile Include="StatusEffectInstantReturnToHand.cs" />
     <Compile Include="StatusEffectJolted.cs" />
+    <Compile Include="StatusEffectLoseAction.cs" />
     <Compile Include="StatusEffectMoveCard.cs" />
     <Compile Include="StatusEffectPickup.cs" />
     <Compile Include="StatusEffectPlayCardsInHand.cs" />
