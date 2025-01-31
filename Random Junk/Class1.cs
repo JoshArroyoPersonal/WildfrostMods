@@ -8,13 +8,19 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-namespace Tutorial2
+namespace Random_Junk
 {
-    public class Tutorial2 : WildfrostMod
+    public class Random_Junk : WildfrostMod
     {
-        public Tutorial2(string modDirectory) : base(modDirectory)
+
+        public static Random_Junk instance;
+
+        public Random_Junk(string modDirectory) : base(modDirectory)
         {
+            instance = this;
         }
 
         public override string GUID => "websiteofsites.wildfrost.contest";
@@ -125,6 +131,18 @@ namespace Tutorial2
                 );
 
 
+            assets.Add(
+                new StatusEffectDataBuilder(this).Create<StatusEffectApplyXOnCardPlayedWithPet>("When Played Gain Blings")
+                .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
+                {
+                    ((StatusEffectApplyX)data).effectToApply = TryGet<StatusEffectData>("Gain Gold");
+                    ((StatusEffectApplyX)data).applyToFlags = StatusEffectApplyX.ApplyToFlags.Self;
+                    //Sadly we cannot set the petPrefab here as it gets destroyed, thus we will copy/edit the prefab in the Load method
+                    ((StatusEffectApplyXOnCardPlayedWithPet)data).petPrefab = ((StatusEffectFreeAction)TryGet<StatusEffectData>("Free Action")).petPrefab.InstantiateKeepName();
+
+                })
+                );
+
 
 
 
@@ -135,12 +153,67 @@ namespace Tutorial2
         public override void Load()
         {
             if (!preLoaded) { CreateModAssets(); }
+
             base.Load();
+
+            //We need to make our petPrefab here, otherwise the Prefab gets destroyed leading to a crash
+            Events.OnSceneChanged += LoadOomlin;
+
+
+        }
+
+        private void LoadOomlin(Scene scene)
+        {
+            if (scene.name == "Town")
+            {
+                ItemHolderPetNoomlin oomlin = ((StatusEffectFreeAction)TryGet<StatusEffectData>("Free Action")).petPrefab.InstantiateKeepName() as ItemHolderPetNoomlin;
+
+                //Different head options, you can have as many/little as you like
+                oomlin.headOptions = new Sprite[] { ImagePath("GoomlinBigHat.png").ToSprite(), ImagePath("GoomlinCrossStitch.png").ToSprite(), ImagePath("GoomlinEgg.png").ToSprite(), ImagePath("GoomlinStar.png").ToSprite(), ImagePath("GoomlinSwirl.png").ToSprite(), ImagePath("GoomlinDrill.png").ToSprite(), ImagePath("GoomlinWave.png").ToSprite() };
+                foreach (Sprite sprite in oomlin.headOptions)
+                {
+                    sprite.name = GUID+"Goomlin";
+                }
+
+                foreach (Image image in oomlin.showTween.GetComponentsInChildren<Image>()) //Prefab for when oomlin sits on the card
+                {
+                    //To get the right offsets do the following:
+                    //(1) Give a card your effect
+                    //(2) Hover over the card and inspect this
+                    //(3) Click Inspect GameObject
+                    //(4) Click the arrow on Wobber, Flipper, CurveAnimator, Offset, Canvas, Front, FrameOutline, ItemHolderPetCreater, Noomlin(Clone)
+                    //Click on Head to adjust head scale/position of head with ears
+                    //Click on the arrow by Head and then click Head/EarLeft/EarRight to edit ears/head individuallys
+                    switch (image.name)
+                    {
+                        case "Body": //Body that hangs on top of card
+                            image.sprite = ImagePath("GoomlinBody.png").ToSprite(); break;
+                        case "EarLeft": //Left ear
+                            image.sprite = ImagePath("GoomlinEar_Left.png").ToSprite();
+                            image.transform.Translate(new Vector3(0.1f, 0.4f, 0f)); break;
+                        case "EarRight": //Right ear
+                            image.sprite = ImagePath("GoomlinEar_Right.png").ToSprite();
+                            image.transform.Translate(new Vector3(-0.1f, 0.4f, 0f)); break;
+                        case "Tail": //Tail for when the -oomlin jumps off
+                            image.sprite = ImagePath("GoomlinTail.png").ToSprite(); break;
+                        case "Head": //Head, done just to rescale it
+                            image.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
+                            image.transform.Translate(new Vector3(0f, 0.25f, 0f)); break;
+                    }
+
+                }
+
+                ((StatusEffectApplyXOnCardPlayedWithPet)TryGet<StatusEffectData>("When Played Gain Blings")).petPrefab = oomlin;
+
+            }
+
+            
         }
 
         public override void Unload()
         {
             base.Unload();
+            Events.OnSceneChanged -= LoadOomlin;
             UnloadFromClasses();
         }
 
