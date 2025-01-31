@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using ADD = Pokefrost.AddressableExtMethods;
 
 namespace Pokefrost
 {
@@ -140,7 +141,8 @@ namespace Pokefrost
                     GameObject furretPanel = UICollector.PullPrefab("Box", "FurretBox", GameObject.Find("Canvas/SafeArea/EventManager/Event-InjuredCompanion(Clone)/EnterTweener/Zoomer/Inspect Companion/"));
                     furretPanel.GetComponent<RectTransform>().sizeDelta = new Vector2 (5f, 3f);
                     furretPanel.transform.localPosition = new Vector3 (5.3f, 1.9f, 0);
-                    Sprite sprite = Pokefrost.instance.ImagePath("FurretPanel.png").ToSprite();
+                    //Sprite sprite = Pokefrost.instance.ImagePath("FurretPanel.png").ToSprite();
+                    Sprite sprite = ADD.ASprite("FurretPanel");
                     Debug.Log("[Pokefrost] Made Sprite");
                     Image image = furretPanel.GetComponent<Image>();
                     if (image == null) { Debug.Log("[Pokefrost] Image null"); }
