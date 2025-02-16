@@ -108,8 +108,10 @@ namespace Pokefrost
         public static readonly string Key_Inked = "websiteofsites.wildfrost.pokefrost.buttonInked";
         public static readonly string Key_Generic = "websiteofsites.wildfrost.pokefrost.buttonGeneric";
         public static readonly string Key_Autotomize = "websiteofsites.wildfrost.pokefrost.buttonAutotomize";
+        public static readonly string Key_Plume = "websiteofsites.wildfrost.pokefrost.buttonErupt";
 
         public string genericPopup;
+        public string noTargetsPopup;
 
 
         [PokeLocalizer]
@@ -120,6 +122,7 @@ namespace Pokefrost
             tooltips.SetString(Key_Inked, "Inked!");
             tooltips.SetString(Key_Generic, "Not yet!");
             tooltips.SetString(Key_Autotomize, "Please recycle!");
+            tooltips.SetString(Key_Plume, "Enemy must have <sprite name=spice>!");
         }
 
         public PlayFromFlags playFrom = PlayFromFlags.Board;
@@ -161,6 +164,16 @@ namespace Pokefrost
             {
                 PopupText(Key_Inked);
                 return;
+            }
+
+            if (applyConstraints != null)
+            {
+                List<Entity> entities = GetTargets();
+                if (entities.FirstOrDefault((e) => applyConstraints.Where((t) => !t.Check(e) ).Count() == 0 ) == null)
+                {
+                    PopupText(noTargetsPopup ?? Key_Generic);
+                    return;
+                }
             }
 
             foreach (var constraint in clickConstraints)

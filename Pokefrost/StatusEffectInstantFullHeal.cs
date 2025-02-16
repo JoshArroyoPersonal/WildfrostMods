@@ -42,14 +42,18 @@ namespace Pokefrost
 
             for (int j = target.statusEffects.Count - 1; j >= 0; j--)
             {
-                if (target.statusEffects[j].HasDescOrIsKeyword)
-
-                if (target.statusEffects[j].GetType() == typeof(StatusEffectWhileActiveX))
+                if (j >= target.statusEffects.Count) //In case while active removes an effect entirely (rare)
                 {
-                    StatusEffectWhileActiveX activeEff = target.statusEffects[j] as StatusEffectWhileActiveX;
-                    if (activeEff.active == true)
+                    continue;
+                }
+                if (target.statusEffects[j].HasDescOrIsKeyword)
+                {
+                    if (target.statusEffects[j] is StatusEffectWhileActiveX whileActive)
                     {
-                        yield return activeEff.Deactivate();
+                        if (whileActive.active == true)
+                        {
+                            yield return whileActive.Deactivate();
+                        }
                     }
                 }
 

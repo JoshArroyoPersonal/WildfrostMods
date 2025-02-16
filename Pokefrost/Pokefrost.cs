@@ -128,28 +128,35 @@ namespace Pokefrost
 
             this.CreateBasicKeyword("legendary", "Legendary", "Counts as an additional leader|You lose when all your leaders die");
 
-            StatusEffectFreeTrait wilder = ScriptableObject.CreateInstance<StatusEffectFreeTrait>();
+            StatusEffectTemporaryTrait wilder = Ext.CreateStatus<StatusEffectTemporaryTrait>("Temporary Wild")
+                .Register(this);
             wilder.trait = this.Get<TraitData>("Wild");
-            wilder.silenced = null;
-            wilder.added = null;
-            wilder.addedAmount = 0;
-            wilder.targetConstraints = new TargetConstraint[0];
+            //wilder.silenced = null;
+            //wilder.added = null;
+            //wilder.addedAmount = 0;
+            //wilder.targetConstraints = new TargetConstraint[0];
             wilder.offensive = true;
-            wilder.isKeyword = false;
-            wilder.stackable = false;
+            //wilder.isKeyword = false;
+            //wilder.stackable = false;
             StringTable collection = LocalizationHelper.GetCollection("Card Text", SystemLanguage.English);
-            wilder.name = "Apply Wild Trait";
-            collection.SetString(wilder.name + "_text", "Apply <keyword=wild>");
-            wilder.textKey = collection.GetString(wilder.name + "_text");
-            wilder.ModAdded = this;
-            wilder.hiddenKeywords = new KeywordData[0];
-            wilder.textInsert = "Wild Party!";
-            wilder.applyFormat = "";
-            wilder.type = "";
+            //wilder.name = "Apply Wild Trait";
+            //collection.SetString(wilder.name + "_text", "Apply <keyword=wild>");
+            //wilder.textKey = collection.GetString(wilder.name + "_text");
+            //wilder.ModAdded = this;
+            //wilder.hiddenKeywords = new KeywordData[0];
+            //wilder.textInsert = "Wild Party!";
+            //wilder.applyFormat = "";
+            //wilder.type = "";
             //wilder.textKey = this.Get<StatusEffectData>("Instant Gain Aimless").textKey;
-            wilder.applyFormatKey = new UnityEngine.Localization.LocalizedString();
-            AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wilder);
-            statusList.Add(wilder);
+            //wilder.applyFormatKey = new UnityEngine.Localization.LocalizedString();
+            //AddressableLoader.AddToGroup<StatusEffectData>("StatusEffectData", wilder);
+            //statusList.Add(wilder);
+
+            StatusEffectApplyXInstant applyWild = Ext.CreateStatus<StatusEffectApplyXInstant>("Apply Wild Trait", "Apply <keyword=wild>")
+                .ApplyX(wilder, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+            applyWild.applyFormat = "";
+            applyWild.applyFormatKey = new UnityEngine.Localization.LocalizedString();
 
             KeywordData overshroomkey = this.CreateIconKeyword("overshroom", "Overshroom", "Acts like both <sprite name=overload> and <sprite name=shroom>|Counts as both too!", "overshroomicon")
                 .ChangeColor(title: new Color(0, 0.6f, 0.6f), note: new Color(0, 0.6f, 0.6f));
@@ -1897,6 +1904,10 @@ namespace Pokefrost
             StatusTokenApplyX lavaPlume = this.CreateStatusButton<StatusTokenApplyX>("Convert Spice To Burning To Front Enemy", "lavaPlume")
                 .ApplyX(spiceToBurning, StatusEffectApplyX.ApplyToFlags.FrontEnemy)
                 .Register(this);
+            TargetConstraintHasStatus hasBurning = ScriptableObject.CreateInstance<TargetConstraintHasStatus>();
+            hasBurning.status = Get<StatusEffectData>("Spice");
+            lavaPlume.applyConstraints = new TargetConstraint[] { hasBurning };
+            lavaPlume.noTargetsPopup = StatusTokenApplyX.Key_Plume;
             lavaPlume.oncePerTurn = true;
 
             this.CreateBasicKeyword("fidget", "Fidget", "<Free Action>: Replace <Trash> with <Recycle> and vice versa|Click to activate");

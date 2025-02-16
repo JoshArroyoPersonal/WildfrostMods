@@ -57,7 +57,19 @@ namespace Pokefrost
             }
             for (int i = target.statusEffects.Count - 1; i >= keepHowMany; i--)
             {
+                if (i >= target.statusEffects.Count) //In case while active removes an effect applied before while active (rare)
+                {
+                    continue;
+                }
+
                 StatusEffectData status = target.statusEffects[i];
+                if (status is StatusEffectWhileActiveX whileActive)
+                {
+                    if (whileActive.active)
+                    {
+                        yield return whileActive.Deactivate(); //Could decrease count faster than expected
+                    }
+                }
                 yield return status.Remove();
             }
         }
