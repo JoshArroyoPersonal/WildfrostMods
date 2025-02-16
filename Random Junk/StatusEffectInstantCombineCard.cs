@@ -422,7 +422,7 @@ namespace Random_Junk
             if (spawnOnBoard)
             {
 
-                if (row.owner == References.Player && row.Count != 3)
+                if (row.owner == References.Player && row.Count != row.max)
                 {
                     yield return Sequences.CardMove(finalEntity, new CardContainer[1] { row });
                     finalEntity.inPlay = true;
@@ -446,24 +446,20 @@ namespace Random_Junk
                     for (int i = 0; i < 2; i++)
                     {
                         row = Battle.instance.GetRow(References.Player, i);
-                        if (row.Count != 3)
+                        if (row.Count != row.max)
                         {
 
                             yield return Sequences.CardMove(finalEntity, new CardContainer[1] { row });
                             finalEntity.inPlay = true;
                             flag = false;
 
-                            Debug.Log("[Testy Westy] Hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee before effects");
-
                             foreach (StatusEffectData effect in finalEntity.statusEffects)
                             {
-                                Debug.Log("[Testy Westy] Hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee in effects");
 
                                 if (effect is StatusEffectWhileActiveX activeEffect)
                                 {
                                     if (!activeEffect.active)
                                     {
-                                        Debug.Log("[Testy Westy] True Hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
                                         yield return activeEffect.Activate();
                                     }
                                 }
