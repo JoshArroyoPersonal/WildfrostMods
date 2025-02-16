@@ -26,7 +26,7 @@ namespace Undiscovered
 
         [ConfigManagerTitle("Type Affected")]
         [ConfigManagerDesc("Determines which cards appear more often")]
-        [ConfigOptions("Undiscovered", "Modded (Not Charms)", "Modded")]
+        [ConfigOptions("Undiscovered", "Modded (Not Charms)", "Modded", "Not Golden", "Not Chiseled")]
         [ConfigItem("Undiscovered", "", "Type")]
         public string boostoption = "Undiscovered";
 
@@ -64,6 +64,14 @@ namespace Undiscovered
                 case "Modded (Not Charms)":
                     rlist = __instance.list.OrderBy((a) => ModRandom(a, 0f, 1f - Undiscovered.instance.strength / 101f, 1f, true)).ToList();
                     break;
+
+                case "Not Golden":
+                    rlist = __instance.list.OrderBy((a) => GoldRandom(a, 0f, 1f - Undiscovered.instance.strength / 101f, 1f, 2)).ToList();
+                    break;
+
+                case "Not Chiseled":
+                    rlist = __instance.list.OrderBy((a) => GoldRandom(a, 0f, 1f - Undiscovered.instance.strength / 101f, 1f, 1)).ToList();
+                    break;
             }
             __instance.current.AddRange(rlist);
             return false;
@@ -84,6 +92,18 @@ namespace Undiscovered
         static float ModRandom(DataFile item, float min, float mid, float max, bool charm=false)
         {
             if (item.ModAdded == null || (charm && item is CardUpgradeData))
+            {
+                return UnityEngine.Random.Range(min, max);
+            }
+            else
+            {
+                return UnityEngine.Random.Range(min, mid);
+            }
+        }
+
+        static float GoldRandom(DataFile item, float min, float mid, float max, int frame)
+        {
+            if (CardFramesSystem.GetFrameLevel(item.name) >= frame)
             {
                 return UnityEngine.Random.Range(min, max);
             }
