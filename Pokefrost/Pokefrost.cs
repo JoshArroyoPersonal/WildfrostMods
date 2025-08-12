@@ -3973,7 +3973,7 @@ namespace Pokefrost
                 );
 
 
-            */
+            
             list.Add(
                 new CardDataBuilder(this)
                     .CreateItem("Wat Basic Attack", "Old Rod")
@@ -3995,7 +3995,7 @@ namespace Pokefrost
                     .CreateItem("Wat Sun", "Sun Tide")
                     .WithValue(50)
                 );
-
+            */
 
 
 
