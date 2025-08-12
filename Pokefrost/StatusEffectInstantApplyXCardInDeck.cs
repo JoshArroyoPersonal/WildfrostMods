@@ -17,7 +17,7 @@ namespace Pokefrost
             List<CardData> cards = deck.InRandomOrder().ToList();
             foreach (CardData card in cards)
             {
-                UnityEngine.Debug.Log($"[Pokefrost] {card.title}");
+                //UnityEngine.Debug.Log($"[Pokefrost] {card.title}");
                 if (!SatisfiesConstraints(card))
                 {
                     continue;

@@ -658,6 +658,7 @@
     <Compile Include="StatusEffectEvolveEevee.cs" />
     <Compile Include="StatusEffectEvolveFromKill.cs" />
     <Compile Include="StatusEffectEvolveExternalFactor.cs" />
+    <Compile Include="Sudowoodo.cs" />
     <Compile Include="TargetModeLowHealth.cs" />
     <Compile Include="TargetModeTaunt.cs" />
     <Compile Include="Timer.cs" />

@@ -67,6 +67,17 @@ namespace Pokefrost
         internal CardData.StatusEffectStacks SStack(string name, int count) => new CardData.StatusEffectStacks(Get<StatusEffectData>(name), count);
         internal CardData.TraitStacks TStack(string name, int count) => new CardData.TraitStacks(Get<TraitData>(name), count);
 
+        private T[] DataList<T>(params string[] names) where T : DataFile => names.Select((s) => TryGet<T>(s)).ToArray();
+
+        private RewardPool CreateRewardPool(string name, string type, DataFile[] list)
+        {
+            RewardPool pool = ScriptableObject.CreateInstance<RewardPool>();
+            pool.name = name;
+            pool.type = type;
+            pool.list = list.ToList();
+            return pool;
+        }
+
         internal static GameObject pokefrostUI;
 
         public static Sprite sprite;
@@ -2158,6 +2169,14 @@ namespace Pokefrost
 
             TraitData doomlinTrait = Ext.CreateTrait<TraitData>("Doomlin", this, doomlinKey, doomlinEffect);
 
+            StatusEffectMoveCard returnToHand = Ext.CreateStatus<StatusEffectMoveCard>("Return To Hand")
+                .Register(this);
+            returnToHand.toWhere = StatusEffectMoveCard.Containers.Hand;
+
+            StatusEffectApplyXWhenHit returnToHandWhenHit = Ext.CreateStatus<StatusEffectApplyXWhenHit>("When Hit Return To Hand", "When hit, return to hand")
+                .ApplyX(returnToHand, StatusEffectApplyX.ApplyToFlags.Self)
+                .Register(this);
+
             StatusEffectEvolveFromKill ev1 = ScriptableObject.CreateInstance<StatusEffectEvolveFromKill>();
             ev1.Autofill("Evolve Magikarp", $"<keyword=evolve>: Kill {a} bosses or minibosses", this);
             ev1.SetEvolution("websiteofsites.wildfrost.pokefrost.gyarados");
@@ -2666,7 +2685,15 @@ namespace Pokefrost
                     .CreateUnit("xatu", "Xatu")
                     .SetStats(8, 3, 4)
                     .SetASprites("xatu.png", "xatuBG.png")
-                    .SStartEffects(("On Turn Return Prophesized Card To Hand", 1), ("When Prophesized Card Played Give Allies Attack", 1))
+                    .SStartEffects(("On Turn Return Prophesized Card To Hand", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateUnit("sudowoodo", "Sudowoodo")
+                    .SetStats(12, 2, 3)
+                    .SetSprites("sudowoodo.png", "sudowoodoBG.png")
+                    .SStartEffects(("When Hit Return To Hand", 1))
                 );
 
             list.Add(
@@ -3919,7 +3946,7 @@ namespace Pokefrost
                     .SStartEffects(("On Turn Heal & Cleanse Allies", 2))
                 );
 
-
+            /*
             list.Add(
                 new CardDataBuilder(this)
                     .CreateItem("Ele Basic Attack", "Spark")
@@ -3947,7 +3974,7 @@ namespace Pokefrost
                 );
 
 
-
+            */
 
 
             //
@@ -4327,26 +4354,84 @@ namespace Pokefrost
                 );
         }
 
+        public static List<ClassDataBuilder> tribes = new List<ClassDataBuilder>();
+        private void CreateTribe()
+        {
+            ClassData basic = TryGet<ClassData>("Basic");
+            tribes.Add(new ClassDataBuilder(this)
+                .Create("tribe")
+                .WithFlag(basic.flag)
+                .WithSelectSfxEvent(basic.selectSfxEvent)
+                .WithCharacterPrefab(basic.characterPrefab)
+                .SubscribeToAfterAllBuildEvent(
+                data =>
+                {
+                    data.id = "pokefrost.tribe";
+
+                    GameObject gameObject = data.characterPrefab.gameObject.InstantiateKeepName();
+                    UnityEngine.Object.DontDestroyOnLoad(gameObject);
+                    gameObject.name = "Player (pokefrost.tribe)";
+                    data.characterPrefab = gameObject.GetComponent<Character>();
+                    data.characterPrefab.title = "Player (pokefrost.tribe)";
+
+                    data.leaders = DataList<CardData>("Leader1_heal_on_kill");
+
+                    Inventory inventory = ScriptableObject.CreateInstance<Inventory>();
+                    inventory.deck.list = DataList<CardData>().ToList();
+                    data.startingInventory = inventory;
+
+                    RewardPool unitPool = CreateRewardPool("PokefrostUnitPool", "Units", DataList<CardData>());
+                    RewardPool itemPool = CreateRewardPool("PokefrostItemPool", "Items", DataList<CardData>());
+                    RewardPool charmPool = CreateRewardPool("PokefrostCharmPool", "Charms", DataList<CardData>());
+
+                    data.rewardPools = new RewardPool[]
+                    {
+                        unitPool,
+                        itemPool,
+                        charmPool,
+                        Extensions.GetRewardPool("GeneralUnitPool"),
+                        Extensions.GetRewardPool("GeneralItemPool"),
+                        Extensions.GetRewardPool("GeneralCharmPool"),
+                        Extensions.GetRewardPool("GeneralModifierPool"),
+                        Extensions.GetRewardPool("SnowUnitPool"),
+                        Extensions.GetRewardPool("SnowItemPool"),
+                        Extensions.GetRewardPool("SnowCharmPool"),
+                    };
+
+                    GameMode gameMode = TryGet<GameMode>("GameModeNormal");
+                    gameMode.classes = gameMode.classes.Append(data).ToArray();
+                })
+             );
+
+
+        }
+
+        public List<string> cardNames = new List<string>{ "Blue", "Blunky" };
+        public List<string> cardNames2 = new List<string> { "Tusk", "Crowbar", "CardUpgradeWildcard" };
+
+        private void FillRewardPools()
+        {
+            Debug.Log("[Pokefrost] Filling Reward Pools");
+            RewardPool unitPool = Extensions.GetRewardPool("PokefrostUnitPool");
+            unitPool.list = cardNames.Concat(cardNames2).Select(s => Get<CardData>(s)).Where(c => c != null && c.cardType.name == "Friendly").Select(c => c as DataFile).ToList();
+            RewardPool itemPool = Extensions.GetRewardPool("PokefrostItemPool");
+            itemPool.list = cardNames.Concat(cardNames2).Select(s => Get<CardData>(s)).Where(c => c != null && (c.cardType.name == "Item" || c.cardType.name == "Clunker")).Select(c => c as DataFile).ToList();
+            RewardPool charmPool = Extensions.GetRewardPool("PokefrostCharmPool");
+            charmPool.list = cardNames.Concat(cardNames2).Select(s => Get<CardUpgradeData>(s)).Where(c => c != null).Select(c => c as DataFile).ToList();
+        }
+
+        private Task FillInventory()
+        {
+            Debug.Log("[Pokefrost] Filling Reward Pools");
+            if (References.Player.name.Contains("pokefrost.tribe"))
+            {
+                References.PlayerData.inventory.deck.Add(TryGet<CardData>("Junk").Clone());
+            }
+            return Task.CompletedTask;
+        }
+
         private void CreateEvents()
         {
-            /*CampaignNodeTypeBetterEvent cn = ScriptableObject.CreateInstance<CampaignNodeTypeBetterEvent>();
-            cn.key = "Trade";
-            cn.name = "CampaignNodeTrade";
-            cn.canEnter = true;
-            cn.canLink = true;
-            cn.interactable = true;
-            cn.canSkip = true;
-            cn.letter = "t";
-            cn.mapNodePrefab = Get<CampaignNodeType>("CampaignNodeCharm").mapNodePrefab.InstantiateKeepName();
-            cn.mapNodePrefab.transform.SetParent(pokefrostUI.transform, false);
-            StringTable collection = LocalizationHelper.GetCollection("UI Text", SystemLanguage.English);
-            collection.SetString("map_"+cn.name, "Trade");
-            cn.mapNodePrefab.label.GetComponentInChildren<LocalizeStringEvent>().StringReference = collection.GetString("map_" + cn.name);
-            cn.mapNodePrefab.spriteOptions[0] = ImagePath("trade_event.png").ToSprite();
-            cn.mapNodePrefab.clearedSpriteOptions[0] = ImagePath("trade_done.png").ToSprite();
-            cn.mapNodeSprite = ImagePath("trade_event.png").ToSprite();
-            cn.zoneName = "Trade";
-            AddressableLoader.AddToGroup<CampaignNodeType>("CampaignNodeType", cn);*/
             Ext.CreateCampaignNodeType<CampaignNodeTypeTrade>(this, "trade", "t")
                 .BetterEvent("Trade", this)
                 .Register(this);
@@ -4362,40 +4447,7 @@ namespace Pokefrost
                 .Register(this);
         }
 
-        /*
-        public void TauntedFailsafe(Entity entity, ref int amount)
-        {
-            for(int i=entity.traits.Count-1; i>=0; i--)
-            {
-                if (entity.traits[i].data.name == "Taunted")
-                {
-                    foreach(Entity e in entity.GetAllEnemies())
-                    {
-                        foreach(Entity.TraitStacks t in e.traits)
-                        {
-                            if (t.data.name == "Taunt")
-                            {
-                                return;
-                            }
-                        }
-                    }
-                    for(int j=entity.statusEffects.Count-1; j>=0; j--)
-                    {
-                        if (entity.statusEffects[j]?.name == "Temporary Taunted" )
-                        {
-                            entity.StartCoroutine(entity.statusEffects[j].Remove());
-                            return;
-                        }
-                    }
-                }
-            }
-        }
-        */
-
-        private void LoadStatusEffects()
-        {
-            AddressableLoader.AddRangeToGroup("StatusEffectData", statusList);
-        }
+        
 
         private void PokemonPostBattle()
         {
@@ -4531,6 +4583,7 @@ namespace Pokefrost
                 CreateModAssetsCards();
                 CreateModAssetsCharms();
                 CreateModAssetsBells();
+                //CreateTribe();
                 AddGreetings();
                 AddShades();
                 EyeDataAdder.Eyes();
@@ -4554,7 +4607,9 @@ namespace Pokefrost
             Events.OnEntityChosen += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
             Events.OnShopItemPurchase += StatusEffectEvolveFromCardPickup.CheckEvolveFromSelect;
             Events.OnSceneChanged += PickupRoutine.OnSceneChanged;
-            
+            Events.OnSceneChanged += Sudowoodo.OnSceneChanged;
+            //Events.OnPreCampaignPopulate += FillRewardPools;
+            //Events.OnCampaignGenerated += FillInventory;
 
 
             //Pokemon specific events
@@ -4626,7 +4681,9 @@ namespace Pokefrost
             //Events.OnSceneChanged -= PokemonPhoto;
             Events.OnSceneLoaded -= SceneLoaded;
             Events.OnSceneChanged -= PickupRoutine.OnSceneChanged;
+            Events.OnSceneChanged -= Sudowoodo.OnSceneChanged;
             Events.OnSceneChanged -= LoadOomlin;
+            //Events.OnPreCampaignPopulate -= FillRewardPools;
 
         }
 
@@ -4756,6 +4813,9 @@ namespace Pokefrost
                     pool.list.RemoveAllWhere((item) => item == null || item.ModAdded == this); //Find and remove everything that needs to be removed.
                 }
             }
+
+            GameMode gameMode = TryGet<GameMode>("GameModeNormal");
+            gameMode.classes = gameMode.classes.Where(x => x != null && x.ModAdded != this).ToArray();
         }
 
         private void ApplianceSpawns()
@@ -4974,6 +5034,7 @@ namespace Pokefrost
                 case "CardData": return list.Cast<T>().ToList();
                 case "CardUpgradeData": return charmlist.Cast<T>().ToList();
                 case "GameModifierData": return bells.Cast<T>().ToList();
+                case "ClassData": return tribes.Cast<T>().ToList();
             }
 
             return base.AddAssets<T, Y>();

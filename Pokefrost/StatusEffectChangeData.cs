@@ -79,7 +79,7 @@ namespace Pokefrost
             IEnumerable<CardData> cards = InPettyRandomOrder(AddressableLoader.GetGroup<CardData>("CardData"));
             foreach (CardData card in cards)
             {
-                Debug.Log($"[Test] {card.title}");
+                //Debug.Log($"[Test] {card.title}");
                 //Must be an item, that is playable, that has a sprite, that does not have consume or recycle
                 if (card.cardType.name == "Item" && card.playType != Card.PlayType.None && card.mainSprite?.name != "Nothing" && (card.traits == null  || !card.traits.Exists((CardData.TraitStacks b) => (b.data.name == "Consume" || b.data.name == "Recycle")) ))
                 {
