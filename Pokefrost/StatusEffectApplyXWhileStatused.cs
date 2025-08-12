@@ -9,6 +9,7 @@ using static Rewired.Controller;
 
 namespace Pokefrost
 {
+
     internal class StatusEffectApplyXWhileStatused : StatusEffectData
     {
 

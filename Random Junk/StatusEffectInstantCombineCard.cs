@@ -83,6 +83,8 @@ namespace Random_Junk
         public bool keepUpgrades = true;
         public List<CardUpgradeData> extraUpgrades;
 
+        public bool keepHealth = false;
+
         public bool spawnOnBoard = false;
 
         public bool changeDeck = false;
@@ -113,7 +115,7 @@ namespace Random_Junk
 
             if (combo.AllCardsInDeck(fulldeck))
             {
-                CombineAction action = new CombineAction(keepUpgrades, extraUpgrades, spawnOnBoard, target.containers[0]);
+                CombineAction action = new CombineAction(keepUpgrades, extraUpgrades, keepHealth, spawnOnBoard, target.containers[0]);
                 action.combineSceneName = combineSceneName;
                 action.tooFuse = combo.FindCards(fulldeck);
                 action.combo = combo;
@@ -182,7 +184,16 @@ namespace Random_Junk
                     upgrade.Assign(cardDataClone);
                 }
 
-                References.Player.data.inventory.deck.Add(cardDataClone);
+                
+                if (cardDataClone.cardType.miniboss)
+                {
+                    References.Player.data.inventory.deck.Insert(0, cardDataClone);
+                }
+
+                else
+                {
+                    References.Player.data.inventory.deck.Add(cardDataClone);
+                }
 
 
             }
@@ -204,14 +215,17 @@ namespace Random_Junk
 
             public List<CardUpgradeData> extraUpgrades;
 
+            public bool keepHealth;
+
             public bool spawnOnBoard;
 
             public CardContainer row;
 
-            public CombineAction(bool keepUpgrades, List<CardUpgradeData> extraUpgrades, bool spawnOnBoard, CardContainer row)
+            public CombineAction(bool keepUpgrades, List<CardUpgradeData> extraUpgrades, bool keepHealth, bool spawnOnBoard, CardContainer row)
             {
                 this.keepUpgrades = keepUpgrades;
                 this.extraUpgrades = extraUpgrades;
+                this.keepHealth = keepHealth;
                 this.spawnOnBoard = spawnOnBoard;
                 this.row = row;
 
@@ -232,7 +246,7 @@ namespace Random_Junk
                 });
                 if ((bool)combineSequence)
                 {
-                    yield return combineSequence.Run2(tooFuse, combo.resultingCardName, keepUpgrades, extraUpgrades, spawnOnBoard, row);
+                    yield return combineSequence.Run2(tooFuse, combo.resultingCardName, keepUpgrades, extraUpgrades, keepHealth, spawnOnBoard, row);
                 }
 
                 yield return SceneManager.Unload(combineSceneName);
@@ -244,7 +258,7 @@ namespace Random_Junk
 
     public static class CombineCardSequenceExtension
     {
-        public static IEnumerator Run2(this CombineCardSequence seq, List<Entity> cardsToCombine, string resultingCard, bool keepUpgrades, List<CardUpgradeData> extraUpgrades, bool spawnOnBoard, CardContainer row)
+        public static IEnumerator Run2(this CombineCardSequence seq, List<Entity> cardsToCombine, string resultingCard, bool keepUpgrades, List<CardUpgradeData> extraUpgrades, bool keepHealth, bool spawnOnBoard, CardContainer row)
         {
             CardData cardDataClone = AddressableLoader.GetCardDataClone(resultingCard);
 
@@ -264,10 +278,10 @@ namespace Random_Junk
             }
 
 
-            yield return Run2(seq, cardsToCombine.ToArray(), cardDataClone, spawnOnBoard, row);
+            yield return Run2(seq, cardsToCombine.ToArray(), cardDataClone, spawnOnBoard, row, keepHealth);
         }
 
-        public static IEnumerator Run2(this CombineCardSequence seq, Entity[] entities, CardData finalCard, bool spawnOnBoard, CardContainer row)
+        public static IEnumerator Run2(this CombineCardSequence seq, Entity[] entities, CardData finalCard, bool spawnOnBoard, CardContainer row, bool keepHealth)
         {
 
             PauseMenu.Block();
@@ -276,15 +290,45 @@ namespace Random_Junk
             card.transform.SetParent(seq.finalEntityParent);
             Entity finalEntity = card.entity;
             Routine.Clump clump = new Routine.Clump();
+
+
             Entity[] array = entities;
             foreach (Entity entity in array)
             {
-                clump.Add(entity.display.UpdateData());
+                //clump.Add(entity.display.UpdateData());
+                foreach(StatusEffectData effect in entity.statusEffects)
+                {
+                    if(effect is StatusEffectWhileActiveX activeEffect)
+                    {
+                        if (activeEffect.active)
+                        {
+                            yield return activeEffect.Deactivate();
+                        }
+                    }
+                }
+
+
             }
 
             clump.Add(finalEntity.display.UpdateData());
+
             clump.Add(Sequences.Wait(0.5f));
             yield return clump.WaitForEnd();
+
+            if (keepHealth)
+            {
+                foreach (Entity ent in entities)
+                {
+                    if (ent.hp.current > 0)
+                    {
+                        finalEntity.hp = ent.hp;
+                        break;
+                    }
+                }
+
+                clump.Add(finalEntity.display.UpdateDisplay());
+
+            }
 
             array = entities;
             foreach (Entity entity2 in array)
@@ -378,11 +422,23 @@ namespace Random_Junk
             if (spawnOnBoard)
             {
 
-                if (row.owner == References.Player && row.Count != 3)
+                if (row.owner == References.Player && row.Count != row.max)
                 {
                     yield return Sequences.CardMove(finalEntity, new CardContainer[1] { row });
                     finalEntity.inPlay = true;
                     flag = false;
+
+                    foreach (StatusEffectData effect in finalEntity.statusEffects)
+                    {
+
+                        if (effect is StatusEffectWhileActiveX activeEffect)
+                        {
+                            if (!activeEffect.active)
+                            {
+                                yield return activeEffect.Activate();
+                            }
+                        }
+                    }
                 }
 
                 if (flag)
@@ -390,12 +446,24 @@ namespace Random_Junk
                     for (int i = 0; i < 2; i++)
                     {
                         row = Battle.instance.GetRow(References.Player, i);
-                        if (row.Count != 3)
+                        if (row.Count != row.max)
                         {
 
                             yield return Sequences.CardMove(finalEntity, new CardContainer[1] { row });
                             finalEntity.inPlay = true;
                             flag = false;
+
+                            foreach (StatusEffectData effect in finalEntity.statusEffects)
+                            {
+
+                                if (effect is StatusEffectWhileActiveX activeEffect)
+                                {
+                                    if (!activeEffect.active)
+                                    {
+                                        yield return activeEffect.Activate();
+                                    }
+                                }
+                            }
 
                             break;
                         }

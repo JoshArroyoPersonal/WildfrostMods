@@ -107,12 +107,14 @@ namespace Random_Junk
                 new StatusEffectDataBuilder(this).Create<StatusEffectInstantCombineCard>("Instant Combine Card Test")
                 .SubscribeToAfterAllBuildEvent(delegate (StatusEffectData data)
                 {
-                    ((StatusEffectInstantCombineCard)data).cardNames = new string[] { "GuardianGnome", "SunburstDart"};
-                    ((StatusEffectInstantCombineCard)data).resultingCardName = "SplitBoss2";
+                    ((StatusEffectInstantCombineCard)data).cardNames = new string[] { "Tusk", "SunburstDart"};
+                    ((StatusEffectInstantCombineCard)data).resultingCardName = "Spyke";
                     ((StatusEffectInstantCombineCard)data).checkDeck = false;
-                    ((StatusEffectInstantCombineCard)data).checkBoard = false;
+                    ((StatusEffectInstantCombineCard)data).checkBoard = true;
                     ((StatusEffectInstantCombineCard)data).changeDeck = true;
+                    ((StatusEffectInstantCombineCard)data).spawnOnBoard = true;
                     ((StatusEffectInstantCombineCard)data).keepUpgrades = true;
+                    ((StatusEffectInstantCombineCard)data).keepHealth = true;
                 })
                 );
 

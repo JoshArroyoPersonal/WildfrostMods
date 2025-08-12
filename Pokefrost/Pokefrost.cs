@@ -2165,7 +2165,6 @@ namespace Pokefrost
                 .Register(this);
 
             KeywordData doomlinKey = this.CreateBasicKeyword("doomlin", "Doomlin", "When played skip your next turn");
-            heroKey.showName = true;
 
             TraitData doomlinTrait = Ext.CreateTrait<TraitData>("Doomlin", this, doomlinKey, doomlinEffect);
 
@@ -3950,7 +3949,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateItem("Ele Basic Attack", "Spark")
-                    .SetStats(null, 2, 0)
+                    .SetDamage(2)
                     .WithValue(50)
                     .SStartEffects(("Bonus Damage Equal To Jolted", 1))
                 );
@@ -3958,7 +3957,7 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateItem("Ele Snow", "Charged Snow")
-                    .SetStats(null, 0, 0)
+                    .SetDamage(0)
                     .WithValue(50)
                     .SAttackEffects(("Snow", 2))
                     .SStartEffects(("On Card Played Apply Jolted To UnSnowed Enemies", 1))
@@ -3967,14 +3966,38 @@ namespace Pokefrost
             list.Add(
                 new CardDataBuilder(this)
                     .CreateItem("Ele Sun", "Shortfuse")
-                    .SetStats(null, 0, 0)
+                    .SetDamage(0)
                     .WithValue(50)
-                    .SAttackEffects(("Jolted", 2), ("Trigger", 1))
+                    .SAttackEffects(("Jolted", 3), ("Trigger", 1))
                     .WithText("Trigger target")
                 );
 
 
             */
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("Wat Basic Attack", "Old Rod")
+                    .SetDamage(2)
+                    .WithValue(50)
+                    .STraits(("Pull", 1))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("Wat Snow", "Refereshing Snow")
+                    .SetDamage(0)
+                    .WithValue(50)
+                    .SAttackEffects(("Snow", 4), ("Heal", 2))
+                );
+
+            list.Add(
+                new CardDataBuilder(this)
+                    .CreateItem("Wat Sun", "Sun Tide")
+                    .WithValue(50)
+                );
+
+
+
 
 
             //
@@ -4624,6 +4647,7 @@ namespace Pokefrost
 
             //Doomlin
             Events.OnSceneChanged += LoadOomlin;
+            Events.OnBattleEnd += FreeActionFlag.Reset;
 
             FloatingText ftext = GameObject.FindObjectOfType<FloatingText>(true);
             ftext.textAsset.spriteAsset.fallbackSpriteAssets.Add(pokefrostSprites);
@@ -4683,6 +4707,7 @@ namespace Pokefrost
             Events.OnSceneChanged -= PickupRoutine.OnSceneChanged;
             Events.OnSceneChanged -= Sudowoodo.OnSceneChanged;
             Events.OnSceneChanged -= LoadOomlin;
+            Events.OnBattleEnd -= FreeActionFlag.Reset;
             //Events.OnPreCampaignPopulate -= FillRewardPools;
 
         }
@@ -5072,7 +5097,11 @@ namespace Pokefrost
             {
                 ItemHolderPetNoomlin oomlin = ((StatusEffectFreeAction)TryGet<StatusEffectData>("Free Action")).petPrefab.InstantiateKeepName() as ItemHolderPetNoomlin;
                 //Different head options, you can have as many/little as you like
-                oomlin.headOptions = new Sprite[] { ImagePath("nosepass.png").ToSprite() };
+                oomlin.headOptions = new Sprite[] { ImagePath("Doomlin/DoomlinHead.png").ToSprite() };
+                foreach (Sprite sprite in oomlin.headOptions)
+                {
+                    sprite.name = GUID + "Doomlin";
+                }
 
                 foreach (Image image in oomlin.showTween.GetComponentsInChildren<Image>()) //Prefab for when oomlin sits on the card
                 {
@@ -5086,41 +5115,21 @@ namespace Pokefrost
                     switch (image.name)
                     {
                         case "Body": //Body that hangs on top of card
-                            image.sprite = ImagePath("nosepass.png").ToSprite(); break;
+                            image.sprite = ImagePath("Doomlin/DoomlinBody.png").ToSprite(); break;
                         case "EarLeft": //Left ear
-                            image.sprite = ImagePath("nosepass.png").ToSprite();
-                            image.transform.Translate(new Vector3(0.1f, 0.4f, 0f)); break;
+                            image.sprite = ImagePath("Doomlin/DoomlinEar_Left.png").ToSprite();
+                            image.transform.Translate(new Vector3(-0.1f, 0f, 0f)); break;
                         case "EarRight": //Right ear
-                            image.sprite = ImagePath("nosepass.png").ToSprite();
-                            image.transform.Translate(new Vector3(-0.1f, 0.4f, 0f)); break;
+                            image.sprite = ImagePath("Doomlin/DoomlinEar_Right.png").ToSprite();
+                            image.transform.Translate(new Vector3(0.1f, 0f, 0f)); break;
                         case "Tail": //Tail for when the -oomlin jumps off
-                            image.sprite = ImagePath("nosepass.png").ToSprite(); break;
+                            image.sprite = ImagePath("Doomlin/DoomlinTail.png").ToSprite(); break;
                         case "Head": //Head, done just to rescale it
                             image.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
                             image.transform.Translate(new Vector3(0f, 0.25f, 0f)); break;
                     }
 
                 }
-
-                /*foreach (Image image in oomlin.usedPrefab.transform.GetComponentsInChildren<Image>()) //Prefrab for when the oomlin jumps off
-                {
-                    switch (image.name)
-                    {
-                        case "Body": //Full body that you see when the -oomlin jumps off
-                            image.sprite = ImagePath("nosepass.png").ToSprite(); break;
-                        case "EarLeft": //Left ear
-                            image.sprite = ImagePath("nosepass.png").ToSprite();
-                            image.transform.Translate(new Vector3(0.1f, 0.4f, 0f)); break;
-                        case "EarRight": //Right ear
-                            image.sprite = ImagePath("nosepass.png").ToSprite();
-                            image.transform.Translate(new Vector3(-0.1f, 0.4f, 0f)); break;
-                        case "Tail": //Tail for when the -oomlin jumps off
-                            image.sprite = ImagePath("nosepass.png").ToSprite(); break;
-                        case "Head": //Head
-                            image.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
-                            image.transform.Translate(new Vector3(0f, 0.25f, 0f)); break;
-                    }
-                }*/
 
                 ((StatusEffectLoseAction)TryGet<StatusEffectData>("Lose Action")).petPrefab = oomlin;
 

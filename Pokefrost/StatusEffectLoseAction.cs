@@ -1,4 +1,6 @@
 ﻿using Dead;
+using Deadpan.Enums.Engine.Components.Modding;
+using HarmonyLib;
 using Rewired;
 using System;
 using System.Collections;
@@ -8,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Analytics;
+using UnityEngine.UI;
 
 namespace Pokefrost
 {
@@ -116,10 +119,70 @@ namespace Pokefrost
                 yield return Sequences.Wait(0.6f);
             }
 
-            ActionQueue.Add(new ActionEndTurn(Battle.instance.player));
-            Battle.instance.playerCardController.Disable();
-            CardPopUp.Clear();
+            FreeActionFlag.flag = true;
 
         }
     }
+
+
+    [HarmonyPatch(typeof(ItemHolderPetUsed), "SetUp")]
+    class DoomlinSetUp
+    {
+        public static Sprite fullBody = Pokefrost.instance.ImagePath("Doomlin/DoomlinBodyFull.png").ToSprite();
+
+        public static Sprite earLeft = Pokefrost.instance.ImagePath("Doomlin/DoomlinEar_Left.png").ToSprite();
+
+        public static Sprite earRight = Pokefrost.instance.ImagePath("Doomlin/DoomlinEar_Right.png").ToSprite();
+
+        public static Sprite tail = Pokefrost.instance.ImagePath("Doomlin/DoomlinTail.png").ToSprite();
+
+        static void Prefix(ItemHolderPetUsed __instance, Sprite headSprite)
+        {
+            if (headSprite.name == Pokefrost.instance.GUID + "Doomlin")
+            {
+                foreach (Image image in __instance.transform.GetComponentsInChildren<Image>())
+                {
+                    switch (image.name)
+                    {
+                        case "Body": //Full body that you see when the -oomlin jumps off
+                            image.sprite = fullBody; break;
+                        case "EarLeft": //Left ear
+                            image.sprite = earLeft;
+                            image.transform.Translate(new Vector3(-0.1f, 0f, 0f)); break;
+                        case "EarRight": //Right ear
+                            image.sprite = earRight;
+                            image.transform.Translate(new Vector3(0.1f, 0f, 0f)); break;
+                        case "Tail": //Tail for when the -oomlin jumps off
+                            image.sprite = tail; break;
+                        case "Head": //Head
+                            image.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
+                            image.transform.Translate(new Vector3(0f, 0.25f, 0f)); break;
+                    }
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(Battle), "WaitForTurnEnd")]
+    class FreeActionFlag
+    {
+        public static bool flag = false;
+        static void Postfix(Character character, CardController cardController)
+        {
+            if (flag)
+            {
+                character.endTurn = true;
+                flag = false;
+            }
+
+        }
+
+        public static void Reset()
+        {
+            flag = false;
+        }
+
+    }
+
+
 }
